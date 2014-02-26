@@ -104,7 +104,7 @@ describe Oga::Lexer do
     example 'lex a comment' do
       lex('<!-- foo -->').should == [
         [:T_SMALLER, '<', 1, 1],
-        [:T_EXCLAMATION, '!', 1, 2],
+        [:T_BANG, '!', 1, 2],
         [:T_DASH, '-', 1, 3],
         [:T_DASH, '-', 1, 4],
         [:T_SPACE, ' ', 1, 5],

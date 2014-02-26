@@ -73,19 +73,19 @@ module Oga
 
       any_escaped = /\\./;
 
-      smaller     = '<';
-      greater     = '>';
-      slash       = '/';
-      exclamation = '!';
-      equals      = '=';
-      colon       = ':';
-      dash        = '-';
+      smaller = '<';
+      greater = '>';
+      slash   = '/';
+      bang    = '!';
+      equals  = '=';
+      colon   = ':';
+      dash    = '-';
 
       s_quote  = "'";
       d_quote  = '"';
 
       # FIXME: there really should be a better way of doing this.
-      text = (any - s_quote - d_quote - equals - exclamation - slash -
+      text = (any - s_quote - d_quote - equals - bang - slash -
         greater - smaller - whitespace - newline - colon - dash)+;
 
       # Unicode characters, taken from whitequark's wonderful parser library.
@@ -95,18 +95,18 @@ module Oga
       unicode = any - ascii;
 
       main := |*
-        whitespace  => { t(:T_SPACE) };
-        newline     => { t(:T_NEWLINE); advance_line };
-        smaller     => { t(:T_SMALLER) };
-        greater     => { t(:T_GREATER) };
-        slash       => { t(:T_SLASH) };
-        d_quote     => { t(:T_DQUOTE) };
-        s_quote     => { t(:T_SQUOTE) };
-        dash        => { t(:T_DASH) };
-        colon       => { t(:T_COLON) };
-        exclamation => { t(:T_EXCLAMATION) };
-        equals      => { t(:T_EQUALS) };
-        text        => { t(:T_TEXT) };
+        whitespace => { t(:T_SPACE) };
+        newline    => { t(:T_NEWLINE); advance_line };
+        smaller    => { t(:T_SMALLER) };
+        greater    => { t(:T_GREATER) };
+        slash      => { t(:T_SLASH) };
+        d_quote    => { t(:T_DQUOTE) };
+        s_quote    => { t(:T_SQUOTE) };
+        dash       => { t(:T_DASH) };
+        colon      => { t(:T_COLON) };
+        bang       => { t(:T_BANG) };
+        equals     => { t(:T_EQUALS) };
+        text       => { t(:T_TEXT) };
       *|;
     }%%
   end # Lexer
