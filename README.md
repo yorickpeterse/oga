@@ -11,7 +11,7 @@ From [Wikipedia][oga-wikipedia]:
 
 > Oga: A large two-person saw used for ripping large boards in the days before
 > power saws. One person stood on a raised platform, with the board below him,
-> and the other person stood underneath them. 
+> and the other person stood underneath them.
 
 ## Planned Features
 
@@ -50,7 +50,7 @@ Pull parsing:
     require 'oga'
 
     parser = Oga::Parser::Pull.new('<p>Hello</p>')
-    
+
     parser.each do |node|
       puts node.text
     end
@@ -99,10 +99,16 @@ Oga is an attempt at solving this problem. By writing it in pure Ruby the
 initial performance will probably not be as great. However, I feel this is a
 problem with individual Ruby implementations, not the language itself. Also, by
 writing it in Ruby we don't have to deal with all the crazy things of C/C++ or
-even Java. 
+even Java.
 
 In theory it should also allow it to run on every Ruby implementation, be it
 JRuby, Rubinius, Topaz or even mruby.
+
+## License
+
+All source code in this repository is licensed under the MIT license unless
+specified otherwise. A copy of this license can be found in the file "LICENSE"
+in the root directory of this repository.
 
 [nokogiri]: https://github.com/sparklemotion/nokogiri
 [oga-wikipedia]: https://en.wikipedia.org/wiki/Japanese_saw#Other_Japanese_saws
