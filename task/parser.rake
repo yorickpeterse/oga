@@ -1,4 +1,3 @@
-=begin
 rule '.rb' => '.y' do |task|
   Cliver.assert('racc', '~> 1.4')
 
@@ -6,5 +5,4 @@ rule '.rb' => '.y' do |task|
 end
 
 desc 'Generates the parser'
-task :parser => [PARSER_OUTPUT]
-=end
+task :parser => [HTML_PARSER]

@@ -8,10 +8,9 @@ GEMSPEC = Gem::Specification.load('oga.gemspec')
 LEXER_INPUT  = 'lib/oga/lexer.rl'
 LEXER_OUTPUT = 'lib/oga/lexer.rb'
 
-#PARSER_INPUT  = 'lib/oga/parser.y'
-#PARSER_OUTPUT = 'lib/oga/parser.rb'
+HTML_PARSER = 'lib/oga/parser/html.rb'
 
-GENERATED_FILES = ['coverage', 'yardoc', LEXER_OUTPUT]
+GENERATED_FILES = ['coverage', 'yardoc', LEXER_OUTPUT, HTML_PARSER]
 
 GENERATED_FILES.each do |file|
   CLEAN << file if File.exist?(file)
