@@ -1,0 +1,6 @@
+yardoc
+coverage
+pkg
+Gemfile.lock
+
+lib/oga/lexer.rb
