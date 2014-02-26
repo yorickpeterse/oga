@@ -78,12 +78,14 @@ module Oga
       slash       = '/';
       exclamation = '!';
       equals      = '=';
+      colon       = ':';
 
       s_quote  = "'";
       d_quote  = '"';
 
+      # FIXME: there really should be a better way of doing this.
       text = (any - s_quote - d_quote - equals - exclamation - slash -
-        greater - smaller - whitespace - newline)+;
+        greater - smaller - whitespace - newline - colon)+;
 
       # Unicode characters, taken from whitequark's wonderful parser library.
       # (I honestly need to buy that dude a beer or 100). Basically this
@@ -99,6 +101,7 @@ module Oga
         slash       => { t(:T_SLASH) };
         d_quote     => { t(:T_DQUOTE) };
         s_quote     => { t(:T_SQUOTE) };
+        colon       => { t(:T_COLON) };
         exclamation => { t(:T_EXCLAMATION) };
         equals      => { t(:T_EQUALS) };
         text        => { t(:T_TEXT) };
