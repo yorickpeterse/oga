@@ -10,5 +10,15 @@ module Oga
     def s(type, *children)
       return Oga::AST::Node.new(type, children)
     end
+
+    ##
+    # Lexes a string and returns the tokens.
+    #
+    # @param [String] input
+    # @return [Array]
+    #
+    def lex(input)
+      return Oga::Lexer.new.lex(input)
+    end
   end # ParsingHelpers
 end # Oga

@@ -68,19 +68,22 @@ module Oga
       # Use instance variables for `ts` and friends.
       access @;
 
-      any_escaped = /\\./;
-
-      newline = '\n';
-
+      newline    = '\n';
       whitespace = [ \t];
 
-      s_quote = "'";
-      d_quote = '"';
+      any_escaped = /\\./;
 
-      s_string = s_quote ([^'\\] | any_escaped)* s_quote;
-      d_string = d_quote ([^"\\] | any_escaped)* d_quote;
+      smaller     = '<';
+      greater     = '>';
+      slash       = '/';
+      exclamation = '!';
+      equals      = '=';
 
-      string = s_string | d_string;
+      s_quote  = "'";
+      d_quote  = '"';
+
+      text = (any - s_quote - d_quote - equals - exclamation - slash -
+        greater - smaller - whitespace - newline)+;
 
       # Unicode characters, taken from whitequark's wonderful parser library.
       # (I honestly need to buy that dude a beer or 100). Basically this
@@ -89,9 +92,17 @@ module Oga
       unicode = any - ascii;
 
       main := |*
-        whitespace => { t(:T_SPACE) };
-        newline    => { t(:T_NEWLINE); advance_line };
+        whitespace  => { t(:T_SPACE) };
+        newline     => { t(:T_NEWLINE); advance_line };
+        smaller     => { t(:T_SMALLER) };
+        greater     => { t(:T_GREATER) };
+        slash       => { t(:T_SLASH) };
+        d_quote     => { t(:T_DQUOTE) };
+        s_quote     => { t(:T_SQUOTE) };
+        exclamation => { t(:T_EXCLAMATION) };
+        equals      => { t(:T_EQUALS) };
+        text        => { t(:T_TEXT) };
       *|;
     }%%
   end # Lexer
-end # Gaia
+end # Oga
