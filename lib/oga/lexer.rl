@@ -73,20 +73,23 @@ module Oga
 
       any_escaped = /\\./;
 
-      smaller = '<';
-      greater = '>';
-      slash   = '/';
-      bang    = '!';
-      equals  = '=';
-      colon   = ':';
-      dash    = '-';
+      smaller  = '<';
+      greater  = '>';
+      slash    = '/';
+      bang     = '!';
+      equals   = '=';
+      colon    = ':';
+      dash     = '-';
+      lbracket = '[';
+      rbracket = ']';
 
       s_quote  = "'";
       d_quote  = '"';
 
       # FIXME: there really should be a better way of doing this.
       text = (any - s_quote - d_quote - equals - bang - slash -
-        greater - smaller - whitespace - newline - colon - dash)+;
+        greater - smaller - whitespace - newline - colon - dash -
+        lbracket - rbracket)+;
 
       # Unicode characters, taken from whitequark's wonderful parser library.
       # (I honestly need to buy that dude a beer or 100). Basically this
@@ -103,6 +106,8 @@ module Oga
         d_quote    => { t(:T_DQUOTE) };
         s_quote    => { t(:T_SQUOTE) };
         dash       => { t(:T_DASH) };
+        rbracket   => { t(:T_RBRACKET) };
+        lbracket   => { t(:T_LBRACKET) };
         colon      => { t(:T_COLON) };
         bang       => { t(:T_BANG) };
         equals     => { t(:T_EQUALS) };
