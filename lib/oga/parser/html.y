@@ -26,9 +26,14 @@ rule
     : T_SMALLER T_TEXT T_GREATER { val[1] }
     ;
 
+  tag_end
+    # </p>
+    : T_SMALLER T_SLASH T_TEXT T_GREATER
+    ;
+
   tag
     # <p>foo</p>
-    : tag_start tag_body T_SMALLER T_SLASH T_TEXT T_GREATER
+    : tag_start tag_body tag_end
       {
         s(:element, val[0], val[1])
       }
