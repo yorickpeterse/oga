@@ -109,15 +109,6 @@ module Oga
         'HTML'i whitespace* any* greater;
 
       # CDATA
-      #
-      # http://www.w3.org/TR/html-markup/syntax.html#cdata-sections
-      #
-      # CDATA tags are broken up into 3 parts: the start, the content and the
-      # end tag.
-      #
-      # In HTML CDATA tags have no meaning/are not supported. Oga does support
-      # them but treats their contents as plain text.
-      #
       cdata_start = smaller bang lbracket 'CDATA' lbracket;
       cdata_end   = rbracket rbracket greater;
 
@@ -129,8 +120,13 @@ module Oga
 
         # CDATA
         #
-        # When processing CDATA patterns we'll emit tokens for the start tag,
-        # the content and the end tag.
+        # http://www.w3.org/TR/html-markup/syntax.html#cdata-sections
+        #
+        # CDATA tags are broken up into 3 parts: the start, the content and the
+        # end tag.
+        #
+        # In HTML CDATA tags have no meaning/are not supported. Oga does
+        # support them but treats their contents as plain text.
         #
         cdata_start
           %{
