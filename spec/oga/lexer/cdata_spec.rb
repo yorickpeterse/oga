@@ -4,15 +4,17 @@ describe Oga::Lexer do
   context 'cdata tags' do
     example 'lex a cdata tag' do
       lex('<![CDATA[foo]]>').should == [
-        [:T_SMALLER, '<', 1, 1],
-        [:T_BANG, '!', 1, 2],
-        [:T_LBRACKET, '[', 1, 3],
-        [:T_TEXT, 'CDATA', 1, 4],
-        [:T_LBRACKET, '[', 1, 9],
+        [:T_CDATA_START, '<![CDATA[', 1, 1],
         [:T_TEXT, 'foo', 1, 10],
-        [:T_RBRACKET, ']', 1, 13],
-        [:T_RBRACKET, ']', 1, 14],
-        [:T_GREATER, '>', 1, 15],
+        [:T_CDATA_END, ']]>', 1, 13]
+      ]
+    end
+
+    example 'lex tags inside CDATA tags as regular text' do
+      lex('<![CDATA[<p>Foo</p>]]>').should == [
+        [:T_CDATA_START, '<![CDATA[', 1, 1],
+        [:T_TEXT, '<p>Foo</p>', 1, 10],
+        [:T_CDATA_END, ']]>', 1, 20]
       ]
     end
   end

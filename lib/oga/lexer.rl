@@ -108,11 +108,50 @@ module Oga
       doctype = smaller whitespace* bang whitespace* 'DOCTYPE'i whitespace*
         'HTML'i whitespace* any* greater;
 
+      # CDATA
+      #
+      # http://www.w3.org/TR/html-markup/syntax.html#cdata-sections
+      #
+      # CDATA tags are broken up into 3 parts: the start, the content and the
+      # end tag.
+      #
+      # In HTML CDATA tags have no meaning/are not supported. Oga does support
+      # them but treats their contents as plain text.
+      #
+      cdata_start = smaller bang lbracket 'CDATA' lbracket;
+      cdata_end   = rbracket rbracket greater;
+
       main := |*
         whitespace => { t(:T_SPACE) };
         newline    => { t(:T_NEWLINE); advance_line };
 
         doctype  => { t(:T_DOCTYPE) };
+
+        # CDATA
+        #
+        # When processing CDATA patterns we'll emit tokens for the start tag,
+        # the content and the end tag.
+        #
+        cdata_start
+          %{
+            @cdata_start = p
+            t(:T_CDATA_START, @ts, p)
+          }
+
+        # Consume everything except ], which is the start of the ending tag.
+        (any - rbracket)+
+          %{
+            t(:T_TEXT, @cdata_start, p)
+
+            @cdata_start = nil
+          }
+
+        cdata_end
+          >{
+            t(:T_CDATA_END, p, pe)
+          };
+
+        # General rules and actions.
         smaller  => { t(:T_SMALLER) };
         greater  => { t(:T_GREATER) };
         slash    => { t(:T_SLASH) };
