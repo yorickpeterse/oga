@@ -83,35 +83,48 @@ module Oga
       lbracket = '[';
       rbracket = ']';
 
-      s_quote  = "'";
-      d_quote  = '"';
+      s_quote = "'";
+      d_quote = '"';
 
       # FIXME: there really should be a better way of doing this.
       text = (any - s_quote - d_quote - equals - bang - slash -
         greater - smaller - whitespace - newline - colon - dash -
         lbracket - rbracket)+;
 
-      # Unicode characters, taken from whitequark's wonderful parser library.
-      # (I honestly need to buy that dude a beer or 100). Basically this
-      # takes all characters and removes ASCII ones from the list, thus
-      # leaving you with Unicode.
-      unicode = any - ascii;
+      # DOCTYPES
+      #
+      # http://www.w3.org/TR/html-markup/syntax.html#doctype-syntax
+      #
+      # Doctypes are treated with some extra care on lexer level to make the
+      # parser's life easier. If they were treated as regular text it would be
+      # a pain to specify a proper doctype in Racc since it can't match on a
+      # token's value (only on its type).
+      #
+      # Doctype parsing is also relaxed compared to the W3 specification. For
+      # example, the specification defines 4 doctype formats each having
+      # different rules. Because Oga doesn't really use the doctype for
+      # anything we'll just slap all the formats into a single rule. Easy
+      # enough.
+      doctype = smaller whitespace* bang whitespace* 'DOCTYPE'i whitespace*
+        'HTML'i whitespace* any* greater;
 
       main := |*
         whitespace => { t(:T_SPACE) };
         newline    => { t(:T_NEWLINE); advance_line };
-        smaller    => { t(:T_SMALLER) };
-        greater    => { t(:T_GREATER) };
-        slash      => { t(:T_SLASH) };
-        d_quote    => { t(:T_DQUOTE) };
-        s_quote    => { t(:T_SQUOTE) };
-        dash       => { t(:T_DASH) };
-        rbracket   => { t(:T_RBRACKET) };
-        lbracket   => { t(:T_LBRACKET) };
-        colon      => { t(:T_COLON) };
-        bang       => { t(:T_BANG) };
-        equals     => { t(:T_EQUALS) };
-        text       => { t(:T_TEXT) };
+
+        doctype  => { t(:T_DOCTYPE) };
+        smaller  => { t(:T_SMALLER) };
+        greater  => { t(:T_GREATER) };
+        slash    => { t(:T_SLASH) };
+        d_quote  => { t(:T_DQUOTE) };
+        s_quote  => { t(:T_SQUOTE) };
+        dash     => { t(:T_DASH) };
+        rbracket => { t(:T_RBRACKET) };
+        lbracket => { t(:T_LBRACKET) };
+        colon    => { t(:T_COLON) };
+        bang     => { t(:T_BANG) };
+        equals   => { t(:T_EQUALS) };
+        text     => { t(:T_TEXT) };
       *|;
     }%%
   end # Lexer

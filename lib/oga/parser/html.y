@@ -2,7 +2,7 @@ class Oga::Parser::HTML
 
 token T_SPACE T_NEWLINE T_SMALLER T_GREATER T_SLASH
 token T_DQUOTE T_SQUOTE T_DASH T_RBRACKET T_LBRACKET
-token T_COLON T_BANG T_EQUALS T_TEXT
+token T_COLON T_BANG T_EQUALS T_TEXT T_DOCTYPE
 
 options no_result_var
 
@@ -19,7 +19,16 @@ rule
 
   expression
     : tag
+    | doctype
     ;
+
+  # Doctypes
+
+  doctype
+    : T_DOCTYPE { s(:doctype, val[0]) }
+    ;
+
+  # Generic HTML tags
 
   tag_start
     # <p>
@@ -41,6 +50,16 @@ rule
 
   tag_body
     : T_TEXT
+    ;
+
+  whitespaces
+    : whitespaces whitespace
+    | whitespace
+    ;
+
+  whitespace
+    : T_NEWLINE
+    | T_SPACE
     ;
 end
 

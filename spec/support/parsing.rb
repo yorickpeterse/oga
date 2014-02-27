@@ -20,5 +20,15 @@ module Oga
     def lex(input)
       return Oga::Lexer.new.lex(input)
     end
+
+    ##
+    # Parses the given HTML and returns an AST.
+    #
+    # @param [String] input
+    # @return [Oga::AST::Node]
+    #
+    def parse_html(input)
+      return Oga::Parser::HTML.new.parse(input)
+    end
   end # ParsingHelpers
 end # Oga
