@@ -29,6 +29,9 @@ module Oga
       @tokens = []
       @stack  = []
       @top    = 0
+
+      @string_buffer = ''
+      @text_buffer   = ''
     end
 
     def lex(data)
@@ -75,11 +78,17 @@ module Oga
       @tokens << token
     end
 
+    def emit_text_buffer
+      add_token(:T_TEXT, @text_buffer)
+
+      @text_buffer = ''
+    end
+
     def emit_string_buffer
       add_token(:T_STRING, @string_buffer)
       advance_column
 
-      @string_buffer = nil
+      @string_buffer = ''
     end
 
     %%{
@@ -109,8 +118,11 @@ module Oga
       dquote = '"';
       squote = "'";
 
+      action buffer_text {
+        @text_buffer << text
+      }
+
       action buffer_string {
-        @string_buffer ||= ''
         @string_buffer << text
       }
 
@@ -184,8 +196,7 @@ module Oga
 
       cdata := |*
         cdata_end => {
-          add_token(:T_TEXT, @cdata_buffer)
-          @cdata_buffer = nil
+          emit_text_buffer
 
           t(:T_CDATA_END)
 
@@ -194,7 +205,7 @@ module Oga
 
         # Consume everything else character by character and store it in a
         # separate buffer.
-        any => { @cdata_buffer << text };
+        any => buffer_text;
       *|;
 
       main := |*
@@ -210,8 +221,6 @@ module Oga
         # @cdata_buffer is used to store the content of the CDATA tag.
         cdata_start => {
           t(:T_CDATA_START)
-
-          @cdata_buffer = ''
 
           fgoto cdata;
         };
