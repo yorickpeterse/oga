@@ -229,14 +229,15 @@ module Oga
         '<' => { t(:T_SMALLER) };
         '>' => { t(:T_GREATER) };
         '/' => { t(:T_SLASH) };
-        '"' => { t(:T_DQUOTE) };
-        "'" => { t(:T_SQUOTE) };
         '-' => { t(:T_DASH) };
         ']' => { t(:T_RBRACKET) };
         '[' => { t(:T_LBRACKET) };
         ':' => { t(:T_COLON) };
         '!' => { t(:T_BANG) };
         '=' => { t(:T_EQUALS) };
+
+        dquote => { t(:T_DQUOTE) };
+        squote => { t(:T_SQUOTE) };
       *|;
     }%%
   end # Lexer
