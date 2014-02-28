@@ -177,7 +177,7 @@ module Oga
 
         '>' => {
           t(:T_DOCTYPE_END)
-          fgoto main;
+          fret;
         };
       *|;
 
@@ -200,7 +200,7 @@ module Oga
 
           t(:T_CDATA_END)
 
-          fgoto main;
+          fret;
         };
 
         # Consume everything else character by character and store it in a
@@ -215,14 +215,14 @@ module Oga
         doctype_start => {
           t(:T_DOCTYPE_START)
 
-          fgoto doctype;
+          fcall doctype;
         };
 
         # @cdata_buffer is used to store the content of the CDATA tag.
         cdata_start => {
           t(:T_CDATA_START)
 
-          fgoto cdata;
+          fcall cdata;
         };
 
         # General rules and actions.
