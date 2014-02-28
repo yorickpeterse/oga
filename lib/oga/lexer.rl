@@ -27,6 +27,8 @@ module Oga
       @ts     = nil
       @te     = nil
       @tokens = []
+      @stack  = []
+      @top    = 0
     end
 
     def lex(data)
@@ -73,6 +75,13 @@ module Oga
       @tokens << token
     end
 
+    def emit_string_buffer
+      add_token(:T_STRING, @string_buffer)
+      advance_column
+
+      @string_buffer = nil
+    end
+
     %%{
       # Use instance variables for `ts` and friends.
       access @;
@@ -80,22 +89,85 @@ module Oga
       newline    = '\n' | '\r\n';
       whitespace = [ \t];
 
+      action emit_space {
+        t(:T_SPACE)
+      }
+
+      action emit_newline {
+        t(:T_NEWLINE)
+        advance_line
+      }
+
+      # String processing
+      #
+      # These actions/definitions can be used to process single and/or double
+      # quoted strings (e.g. for tag attribute values).
+      #
+      # The string_dquote and string_squote machines should not be used
+      # directly, instead the corresponding actions should be used.
+      #
+      dquote = '"';
+      squote = "'";
+
+      action buffer_string {
+        @string_buffer ||= ''
+        @string_buffer << text
+      }
+
+      action string_dquote {
+        advance_column
+        fcall string_dquote;
+      }
+
+      action string_squote {
+        advance_column
+        fcall string_squote;
+      }
+
+      string_dquote := |*
+        ^dquote => buffer_string;
+        dquote  => {
+          emit_string_buffer
+          fret;
+        };
+      *|;
+
+      string_squote := |*
+        ^squote => buffer_string;
+        squote  => {
+          emit_string_buffer
+          fret;
+        };
+      *|;
+
       # DOCTYPES
       #
       # http://www.w3.org/TR/html-markup/syntax.html#doctype-syntax
       #
-      # Doctypes are treated with some extra care on lexer level to make the
-      # parser's life easier. If they were treated as regular text it would be
-      # a pain to specify a proper doctype in Racc since it can't match on a
-      # token's value (only on its type).
+      # These rules support the 3 flavours of doctypes:
       #
-      # Doctype parsing is also relaxed compared to the W3 specification. For
-      # example, the specification defines 4 doctype formats each having
-      # different rules. Because Oga doesn't really use the doctype for
-      # anything we'll just slap all the formats into a single rule. Easy
-      # enough.
-      doctype = '<' whitespace* '!' whitespace* 'DOCTYPE'i whitespace*
-        'HTML'i whitespace* any* '>';
+      # 1. Normal doctypes, as introduced in the HTML5 specification.
+      # 2. Deprecated doctypes, the more verbose ones used prior to HTML5.
+      # 3. Legacy doctypes
+      #
+      doctype_start = '<!DOCTYPE'i whitespace+ 'HTML'i;
+
+      doctype := |*
+        'PUBLIC' | 'SYSTEM' => { t(:T_DOCTYPE_TYPE) };
+
+        # Lex the public/system IDs as regular strings.
+        dquote => string_dquote;
+        squote => string_squote;
+
+        # Whitespace inside doctypes is ignored since there's no point in
+        # including it.
+        whitespace => { advance_column };
+
+        '>' => {
+          t(:T_DOCTYPE_END)
+          fgoto main;
+        };
+      *|;
 
       # CDATA
       #
@@ -111,12 +183,6 @@ module Oga
       cdata_end   = ']]>';
 
       cdata := |*
-        cdata_start => {
-          t(:T_CDATA_START)
-
-          @cdata_buffer = ''
-        };
-
         cdata_end => {
           add_token(:T_TEXT, @cdata_buffer)
           @cdata_buffer = nil
@@ -132,13 +198,23 @@ module Oga
       *|;
 
       main := |*
-        whitespace => { t(:T_SPACE) };
-        newline    => { t(:T_NEWLINE); advance_line };
+        whitespace => emit_space;
+        newline    => emit_newline;
 
-        doctype  => { t(:T_DOCTYPE) };
+        doctype_start => {
+          t(:T_DOCTYPE_START)
 
-        # Jump to the cdata machine right away without processing anything.
-        cdata_start >{ fhold; fgoto cdata; };
+          fgoto doctype;
+        };
+
+        # @cdata_buffer is used to store the content of the CDATA tag.
+        cdata_start => {
+          t(:T_CDATA_START)
+
+          @cdata_buffer = ''
+
+          fgoto cdata;
+        };
 
         # General rules and actions.
         '<' => { t(:T_SMALLER) };
