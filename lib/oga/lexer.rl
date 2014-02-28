@@ -197,14 +197,34 @@ module Oga
       cdata := |*
         cdata_end => {
           emit_text_buffer
-
           t(:T_CDATA_END)
-
           fret;
         };
 
-        # Consume everything else character by character and store it in a
-        # separate buffer.
+        any => buffer_text;
+      *|;
+
+      # Comments
+      #
+      # http://www.w3.org/TR/html-markup/syntax.html#comments
+      #
+      # Comments are lexed into 3 parts: the start tag, the content and the end
+      # tag.
+      #
+      # Unlike the W3 specification these rules *do* allow character sequences
+      # such as `--` and `->`. Putting extra checks in for these sequences
+      # would actually make the rules/actions more complex.
+      #
+      comment_start = '<!--';
+      comment_end   = '-->';
+
+      comment := |*
+        comment_end => {
+          emit_text_buffer
+          t(:T_COMMENT_END)
+          fret;
+        };
+
         any => buffer_text;
       *|;
 
@@ -214,15 +234,17 @@ module Oga
 
         doctype_start => {
           t(:T_DOCTYPE_START)
-
           fcall doctype;
         };
 
-        # @cdata_buffer is used to store the content of the CDATA tag.
         cdata_start => {
           t(:T_CDATA_START)
-
           fcall cdata;
+        };
+
+        comment_start => {
+          t(:T_COMMENT_START)
+          fcall comment;
         };
 
         # General rules and actions.
