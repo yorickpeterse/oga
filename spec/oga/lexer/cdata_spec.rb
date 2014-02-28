@@ -17,5 +17,13 @@ describe Oga::Lexer do
         [:T_CDATA_END, ']]>', 1, 20]
       ]
     end
+
+    example 'lex double brackets inside a CDATA tag' do
+      lex('<![CDATA[]]]]>').should == [
+        [:T_CDATA_START, '<![CDATA[', 1, 1],
+        [:T_TEXT, ']]', 1, 10],
+        [:T_CDATA_END, ']]>', 1, 12]
+      ]
+    end
   end
 end

@@ -56,7 +56,16 @@ module Oga
     end
 
     def t(type, start = @ts, stop = @te)
-      value = @data[start...stop]
+      value = text(start, stop)
+
+      add_token(type, value)
+    end
+
+    def text(start = @ts, stop = @te)
+      return @data[start...stop]
+    end
+
+    def add_token(type, value)
       token = [type, value, @line, @column]
 
       advance_column(value.length)
@@ -109,8 +118,38 @@ module Oga
         'HTML'i whitespace* any* greater;
 
       # CDATA
+      #
+      # http://www.w3.org/TR/html-markup/syntax.html#cdata-sections
+      #
+      # CDATA tags are broken up into 3 parts: the start, the content and the
+      # end tag.
+      #
+      # In HTML CDATA tags have no meaning/are not supported. Oga does
+      # support them but treats their contents as plain text.
+      #
       cdata_start = smaller bang lbracket 'CDATA' lbracket;
       cdata_end   = rbracket rbracket greater;
+
+      cdata := |*
+        cdata_start => {
+          t(:T_CDATA_START)
+
+          @cdata_buffer = ''
+        };
+
+        cdata_end => {
+          add_token(:T_TEXT, @cdata_buffer)
+          @cdata_buffer = nil
+
+          t(:T_CDATA_END)
+
+          fgoto main;
+        };
+
+        # Consume everything else character by character and store it in a
+        # separate buffer.
+        any => { @cdata_buffer << text };
+      *|;
 
       main := |*
         whitespace => { t(:T_SPACE) };
@@ -118,34 +157,8 @@ module Oga
 
         doctype  => { t(:T_DOCTYPE) };
 
-        # CDATA
-        #
-        # http://www.w3.org/TR/html-markup/syntax.html#cdata-sections
-        #
-        # CDATA tags are broken up into 3 parts: the start, the content and the
-        # end tag.
-        #
-        # In HTML CDATA tags have no meaning/are not supported. Oga does
-        # support them but treats their contents as plain text.
-        #
-        cdata_start
-          %{
-            @cdata_start = p
-            t(:T_CDATA_START, @ts, p)
-          }
-
-        # Consume everything except ], which is the start of the ending tag.
-        (any - rbracket)+
-          %{
-            t(:T_TEXT, @cdata_start, p)
-
-            @cdata_start = nil
-          }
-
-        cdata_end
-          >{
-            t(:T_CDATA_END, p, pe)
-          };
+        # Jump to the cdata machine right away without processing anything.
+        cdata_start >{ fhold; fgoto cdata; };
 
         # General rules and actions.
         smaller  => { t(:T_SMALLER) };
