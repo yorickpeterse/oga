@@ -77,28 +77,8 @@ module Oga
       # Use instance variables for `ts` and friends.
       access @;
 
-      newline    = '\n';
+      newline    = '\n' | '\r\n';
       whitespace = [ \t];
-
-      any_escaped = /\\./;
-
-      smaller  = '<';
-      greater  = '>';
-      slash    = '/';
-      bang     = '!';
-      equals   = '=';
-      colon    = ':';
-      dash     = '-';
-      lbracket = '[';
-      rbracket = ']';
-
-      s_quote = "'";
-      d_quote = '"';
-
-      # FIXME: there really should be a better way of doing this.
-      text = (any - s_quote - d_quote - equals - bang - slash -
-        greater - smaller - whitespace - newline - colon - dash -
-        lbracket - rbracket)+;
 
       # DOCTYPES
       #
@@ -114,8 +94,8 @@ module Oga
       # different rules. Because Oga doesn't really use the doctype for
       # anything we'll just slap all the formats into a single rule. Easy
       # enough.
-      doctype = smaller whitespace* bang whitespace* 'DOCTYPE'i whitespace*
-        'HTML'i whitespace* any* greater;
+      doctype = '<' whitespace* '!' whitespace* 'DOCTYPE'i whitespace*
+        'HTML'i whitespace* any* '>';
 
       # CDATA
       #
@@ -127,8 +107,8 @@ module Oga
       # In HTML CDATA tags have no meaning/are not supported. Oga does
       # support them but treats their contents as plain text.
       #
-      cdata_start = smaller bang lbracket 'CDATA' lbracket;
-      cdata_end   = rbracket rbracket greater;
+      cdata_start = '<![CDATA[';
+      cdata_end   = ']]>';
 
       cdata := |*
         cdata_start => {
@@ -161,18 +141,17 @@ module Oga
         cdata_start >{ fhold; fgoto cdata; };
 
         # General rules and actions.
-        smaller  => { t(:T_SMALLER) };
-        greater  => { t(:T_GREATER) };
-        slash    => { t(:T_SLASH) };
-        d_quote  => { t(:T_DQUOTE) };
-        s_quote  => { t(:T_SQUOTE) };
-        dash     => { t(:T_DASH) };
-        rbracket => { t(:T_RBRACKET) };
-        lbracket => { t(:T_LBRACKET) };
-        colon    => { t(:T_COLON) };
-        bang     => { t(:T_BANG) };
-        equals   => { t(:T_EQUALS) };
-        text     => { t(:T_TEXT) };
+        '<' => { t(:T_SMALLER) };
+        '>' => { t(:T_GREATER) };
+        '/' => { t(:T_SLASH) };
+        '"' => { t(:T_DQUOTE) };
+        "'" => { t(:T_SQUOTE) };
+        '-' => { t(:T_DASH) };
+        ']' => { t(:T_RBRACKET) };
+        '[' => { t(:T_LBRACKET) };
+        ':' => { t(:T_COLON) };
+        '!' => { t(:T_BANG) };
+        '=' => { t(:T_EQUALS) };
       *|;
     }%%
   end # Lexer
