@@ -43,5 +43,17 @@ describe Oga::Lexer do
         [:T_ELEM_CLOSE, 'p', 1, 11]
       ]
     end
+
+    example 'lex nested elements and text nodes' do
+      lex('<p>Foo<a>bar</a>baz</p>').should == [
+        [:T_ELEM_OPEN, 'p', 1, 1],
+        [:T_TEXT, 'Foo', 1, 4],
+        [:T_ELEM_OPEN, 'a', 1, 7],
+        [:T_TEXT, 'bar', 1, 10],
+        [:T_ELEM_CLOSE, 'a', 1, 13],
+        [:T_TEXT, 'baz', 1, 17],
+        [:T_ELEM_CLOSE, 'p', 1, 20]
+      ]
+    end
   end
 end
