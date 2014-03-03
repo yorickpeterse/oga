@@ -9,24 +9,17 @@ describe Oga::Lexer do
 
   context 'whitespace' do
     example 'lex regular whitespace' do
-      lex(' ').should == [[:T_SPACE, ' ', 1, 1]]
+      lex(' ').should == [[:T_TEXT, ' ', 1, 1]]
     end
 
     example 'lex a newline' do
-      lex("\n").should == [[:T_NEWLINE, "\n", 1, 1]]
-    end
-
-    example 'advance column numbers for spaces' do
-      lex('  ').should == [
-        [:T_SPACE, ' ', 1, 1],
-        [:T_SPACE, ' ', 1, 2]
-      ]
+      lex("\n").should == [[:T_TEXT, "\n", 1, 1]]
     end
 
     example 'advance line numbers for newlines' do
       lex("\n ").should == [
-        [:T_NEWLINE, "\n", 1, 1],
-        [:T_SPACE, ' ', 2, 1]
+        [:T_TEXT, "\n", 1, 1],
+        [:T_TEXT, ' ', 2, 1]
       ]
     end
   end

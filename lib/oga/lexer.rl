@@ -79,6 +79,8 @@ module Oga
     end
 
     def emit_text_buffer
+      return if @text_buffer.empty?
+
       add_token(:T_TEXT, @text_buffer)
 
       @text_buffer = ''
@@ -98,12 +100,8 @@ module Oga
       newline    = '\n' | '\r\n';
       whitespace = [ \t];
 
-      action emit_space {
-        t(:T_SPACE)
-      }
-
       action emit_newline {
-        t(:T_NEWLINE)
+        t(:T_TEXT)
         advance_line
       }
 
@@ -228,9 +226,66 @@ module Oga
         any => buffer_text;
       *|;
 
+      # Elements
+      #
+      # http://www.w3.org/TR/html-markup/syntax.html#syntax-elements
+      #
+      element_name  = [a-zA-Z0-9\-_]+;
+      element_start = '<' element_name;
+
+      # First emit the token, then advance the column. This way the column
+      # number points to the < and not the "p" in <p>.
+      action open_element {
+        t(:T_ELEM_OPEN, p)
+
+        advance_column
+
+        fcall element;
+      }
+
+      element_text := |*
+        ^'<' => buffer_text;
+
+        '<' => {
+          emit_text_buffer
+          fhold;
+          fret;
+        };
+      *|;
+
+      element := |*
+        whitespace => { advance_column };
+
+        element_start => open_element;
+
+        # Consume the text inside the element.
+        '>' => {
+          advance_column
+          fcall element_text;
+        };
+
+        # Attributes and their values.
+        element_name
+          %{
+            t(:T_ATTR, @ts, p)
+          }
+        '=' (dquote @string_dquote | squote @string_squote);
+
+        # Non self-closing tags.
+        '</' element_name {
+          emit_text_buffer
+          t(:T_ELEM_CLOSE, p)
+
+          # Advance by two to take the closing </ into account. This is done
+          # after emitting tokens to ensure that they point to the start of
+          # the tag.
+          advance_column(2)
+          fret;
+        };
+      *|;
+
       main := |*
-        whitespace => emit_space;
-        newline    => emit_newline;
+        newline => emit_newline;
 
         doctype_start => {
           t(:T_DOCTYPE_START)
@@ -247,19 +302,10 @@ module Oga
           fcall comment;
         };
 
-        # General rules and actions.
-        '<' => { t(:T_SMALLER) };
-        '>' => { t(:T_GREATER) };
-        '/' => { t(:T_SLASH) };
-        '-' => { t(:T_DASH) };
-        ']' => { t(:T_RBRACKET) };
-        '[' => { t(:T_LBRACKET) };
-        ':' => { t(:T_COLON) };
-        '!' => { t(:T_BANG) };
-        '=' => { t(:T_EQUALS) };
+        element_start => open_element;
 
-        dquote => { t(:T_DQUOTE) };
-        squote => { t(:T_SQUOTE) };
+        #dquote => { t(:T_DQUOTE) };
+        #squote => { t(:T_SQUOTE) };
       *|;
     }%%
   end # Lexer
