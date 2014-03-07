@@ -73,7 +73,7 @@ module Oga
     def add_token(type, value)
       token = [type, value, @line, @column]
 
-      advance_column(value.length)
+      advance_column(value.length) if value
 
       @tokens << token
     end
@@ -125,12 +125,10 @@ module Oga
       }
 
       action string_dquote {
-        advance_column
         fcall string_dquote;
       }
 
       action string_squote {
-        advance_column
         fcall string_squote;
       }
 
@@ -138,6 +136,7 @@ module Oga
         ^dquote => buffer_string;
         dquote  => {
           emit_string_buffer
+          advance_column
           fret;
         };
       *|;
@@ -146,6 +145,7 @@ module Oga
         ^squote => buffer_string;
         squote  => {
           emit_string_buffer
+          advance_column
           fret;
         };
       *|;
@@ -236,7 +236,7 @@ module Oga
       # First emit the token, then advance the column. This way the column
       # number points to the < and not the "p" in <p>.
       action open_element {
-        t(:T_ELEM_OPEN, p)
+        t(:T_ELEM_OPEN, @ts + 1)
 
         advance_column
 
@@ -268,10 +268,11 @@ module Oga
         element_name
           %{
             t(:T_ATTR, @ts, p)
+            advance_column
           }
         '=' (dquote @string_dquote | squote @string_squote);
 
-        # Non self-closing tags.
+        # Non self-closing elements.
         '</' element_name {
           emit_text_buffer
           t(:T_ELEM_CLOSE, p)
@@ -280,6 +281,13 @@ module Oga
           # after emitting tokens to ensure that they point to the start of
           # the tag.
           advance_column(2)
+          fret;
+        };
+
+        # self-closing / void elements.
+        '/>' => {
+          advance_column
+          add_token(:T_ELEM_CLOSE, nil)
           fret;
         };
       *|;

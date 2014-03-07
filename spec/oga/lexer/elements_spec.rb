@@ -28,8 +28,8 @@ describe Oga::Lexer do
         [:T_ELEM_OPEN, 'p', 1, 1],
         [:T_ATTR, 'class', 1, 4],
         [:T_STRING, 'foo', 1, 10],
-        [:T_TEXT, 'Hello', 1, 15],
-        [:T_ELEM_CLOSE, 'p', 1, 20]
+        [:T_TEXT, 'Hello', 1, 16],
+        [:T_ELEM_CLOSE, 'p', 1, 21]
       ]
     end
   end
@@ -53,6 +53,24 @@ describe Oga::Lexer do
         [:T_ELEM_CLOSE, 'a', 1, 13],
         [:T_TEXT, 'baz', 1, 17],
         [:T_ELEM_CLOSE, 'p', 1, 20]
+      ]
+    end
+  end
+
+  context 'void elements' do
+    example 'lex a void element' do
+      lex('<br />').should == [
+        [:T_ELEM_OPEN, 'br', 1, 1],
+        [:T_ELEM_CLOSE, nil, 1, 6]
+      ]
+    end
+
+    example 'lex a void element with an attribute' do
+      lex('<br class="foo" />').should == [
+        [:T_ELEM_OPEN, 'br', 1, 1],
+        [:T_ATTR, 'class', 1, 5],
+        [:T_STRING, 'foo', 1, 11],
+        [:T_ELEM_CLOSE, nil, 1, 18]
       ]
     end
   end

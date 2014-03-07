@@ -13,8 +13,8 @@ describe Oga::Lexer do
       lex('<!DOCTYPE HTML PUBLIC "foobar" "baz">').should == [
         [:T_DOCTYPE_START, '<!DOCTYPE HTML', 1, 1],
         [:T_DOCTYPE_TYPE, 'PUBLIC', 1, 16],
-        [:T_STRING, 'foobar', 1, 24],
-        [:T_STRING, 'baz', 1, 33],
+        [:T_STRING, 'foobar', 1, 23],
+        [:T_STRING, 'baz', 1, 32],
         [:T_DOCTYPE_END, '>', 1, 37]
       ]
     end
@@ -23,8 +23,8 @@ describe Oga::Lexer do
       lex("<!DOCTYPE HTML PUBLIC 'foobar' 'baz'>").should == [
         [:T_DOCTYPE_START, '<!DOCTYPE HTML', 1, 1],
         [:T_DOCTYPE_TYPE, 'PUBLIC', 1, 16],
-        [:T_STRING, 'foobar', 1, 24],
-        [:T_STRING, 'baz', 1, 33],
+        [:T_STRING, 'foobar', 1, 23],
+        [:T_STRING, 'baz', 1, 32],
         [:T_DOCTYPE_END, '>', 1, 37]
       ]
     end
