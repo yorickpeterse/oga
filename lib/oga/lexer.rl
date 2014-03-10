@@ -230,18 +230,34 @@ module Oga
       #
       # http://www.w3.org/TR/html-markup/syntax.html#syntax-elements
       #
-      element_name  = [a-zA-Z0-9\-_]+;
-      element_start = '<' element_name;
 
-      # First emit the token, then advance the column. This way the column
-      # number points to the < and not the "p" in <p>.
+      # Action that creates the tokens for the opening tag, name and namespace
+      # (if any). Remaining work is delegated to a dedicated machine.
       action open_element {
-        t(:T_ELEM_OPEN, @ts + 1)
-
+        add_token(:T_ELEM_OPEN, nil)
         advance_column
+
+        # Add the element name. If the name includes a namespace we'll break
+        # the name up into two separate tokens.
+        name = text(@ts + 1)
+
+        if name.include?(':')
+          ns, name = name.split(':')
+
+          add_token(:T_ELEM_NS, ns)
+
+          # Advance the column for the colon (:) that separates the namespace
+          # and element name.
+          advance_column
+        end
+
+        add_token(:T_ELEM_NAME, name)
 
         fcall element;
       }
+
+      element_name  = [a-zA-Z0-9\-_:]+;
+      element_start = '<' element_name;
 
       element_text := |*
         ^'<' => buffer_text;
@@ -275,12 +291,13 @@ module Oga
         # Non self-closing elements.
         '</' element_name {
           emit_text_buffer
-          t(:T_ELEM_CLOSE, p)
+          add_token(:T_ELEM_CLOSE, nil)
 
-          # Advance by two to take the closing </ into account. This is done
-          # after emitting tokens to ensure that they point to the start of
-          # the tag.
+          # Advance the column for the </
           advance_column(2)
+
+          # Advance the column for the closing name.
+          advance_column(@te - p)
           fret;
         };
 
@@ -311,9 +328,6 @@ module Oga
         };
 
         element_start => open_element;
-
-        #dquote => { t(:T_DQUOTE) };
-        #squote => { t(:T_SQUOTE) };
       *|;
     }%%
   end # Lexer
