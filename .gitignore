@@ -4,4 +4,4 @@ pkg
 Gemfile.lock
 
 lib/oga/lexer.rb
-lib/oga/parser/html.rb
+lib/oga/parser.rb
