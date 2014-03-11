@@ -1,8 +1,9 @@
 class Oga::Parser
 
 token T_NEWLINE T_SPACE
-token T_STRING
+token T_STRING T_TEXT
 token T_DOCTYPE_START T_DOCTYPE_END T_DOCTYPE_TYPE
+token T_CDATA_START T_CDATA_END
 
 options no_result_var
 
@@ -19,6 +20,7 @@ rule
 
   expression
     : doctype
+    | cdata
     ;
 
   # Doctypes
@@ -44,6 +46,16 @@ rule
       {
         s(:doctype, val[1], val[2], val[3])
       }
+    ;
+
+  # CDATA tags
+
+  cdata
+    # <![CDATA[]]>
+    : T_CDATA_START T_CDATA_END { s(:cdata) }
+
+    # <![CDATA[foo]]>
+    | T_CDATA_START T_TEXT T_CDATA_END { s(:cdata, val[1]) }
     ;
 
   whitespaces
