@@ -28,7 +28,7 @@ module Oga
     # @return [Oga::AST::Node]
     #
     def parse_html(input)
-      return Oga::Parser::HTML.new.parse(input)
+      return Oga::Parser.new.parse(input)
     end
   end # ParsingHelpers
 end # Oga

@@ -8,7 +8,7 @@ GEMSPEC = Gem::Specification.load('oga.gemspec')
 LEXER_INPUT  = 'lib/oga/lexer.rl'
 LEXER_OUTPUT = 'lib/oga/lexer.rb'
 
-HTML_PARSER = 'lib/oga/parser/html.rb'
+HTML_PARSER = 'lib/oga/parser.rb'
 
 GENERATED_FILES = ['coverage', 'yardoc', LEXER_OUTPUT, HTML_PARSER]
 
