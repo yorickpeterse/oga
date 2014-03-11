@@ -1,8 +1,8 @@
 class Oga::Parser
 
-token T_SPACE T_NEWLINE T_SMALLER T_GREATER T_SLASH
-token T_DQUOTE T_SQUOTE T_DASH T_RBRACKET T_LBRACKET
-token T_COLON T_BANG T_EQUALS T_TEXT T_DOCTYPE
+token T_NEWLINE T_SPACE
+token T_STRING
+token T_DOCTYPE_START T_DOCTYPE_END T_DOCTYPE_TYPE
 
 options no_result_var
 
@@ -18,38 +18,32 @@ rule
     ;
 
   expression
-    : tag
-    | doctype
+    : doctype
     ;
 
   # Doctypes
 
   doctype
-    : T_DOCTYPE { s(:doctype, val[0]) }
-    ;
+    # <!DOCTYPE html>
+    : T_DOCTYPE_START T_DOCTYPE_END { s(:doctype) }
 
-  # Generic HTML tags
-
-  tag_start
-    # <p>
-    : T_SMALLER T_TEXT T_GREATER { val[1] }
-    ;
-
-  tag_end
-    # </p>
-    : T_SMALLER T_SLASH T_TEXT T_GREATER
-    ;
-
-  tag
-    # <p>foo</p>
-    : tag_start tag_body tag_end
+    # <!DOCTYPE html PUBLIC>
+    | T_DOCTYPE_START T_DOCTYPE_TYPE T_DOCTYPE_END
       {
-        s(:element, val[0], val[1])
+        s(:doctype, val[1])
       }
-    ;
 
-  tag_body
-    : T_TEXT
+    # <!DOCTYPE html PUBLIC "foo">
+    | T_DOCTYPE_START T_DOCTYPE_TYPE T_STRING T_DOCTYPE_END
+      {
+        s(:doctype, val[1], val[2])
+      }
+
+    # <!DOCTYPE html PUBLIC "foo" "bar">
+    | T_DOCTYPE_START T_DOCTYPE_TYPE T_STRING T_STRING T_DOCTYPE_END
+      {
+        s(:doctype, val[1], val[2], val[3])
+      }
     ;
 
   whitespaces
