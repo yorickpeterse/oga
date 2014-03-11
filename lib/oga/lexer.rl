@@ -269,6 +269,24 @@ module Oga
         };
       *|;
 
+      element_closing_tag := |*
+        whitespace => { advance_column };
+
+        element_name => {
+          emit_text_buffer
+          add_token(:T_ELEM_CLOSE, nil)
+
+          # Advance the column for the </
+          advance_column(2)
+
+          # Advance the column for the closing name.
+          advance_column(@te - p)
+          fret;
+        };
+
+        '>' => { fret; };
+      *|;
+
       element := |*
         whitespace => { advance_column };
 
@@ -289,15 +307,8 @@ module Oga
         '=' (dquote @string_dquote | squote @string_squote);
 
         # Non self-closing elements.
-        '</' element_name {
-          emit_text_buffer
-          add_token(:T_ELEM_CLOSE, nil)
-
-          # Advance the column for the </
-          advance_column(2)
-
-          # Advance the column for the closing name.
-          advance_column(@te - p)
+        '</' => {
+          fcall element_closing_tag;
           fret;
         };
 
