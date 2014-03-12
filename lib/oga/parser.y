@@ -4,6 +4,7 @@ token T_NEWLINE T_SPACE
 token T_STRING T_TEXT
 token T_DOCTYPE_START T_DOCTYPE_END T_DOCTYPE_TYPE
 token T_CDATA_START T_CDATA_END
+token T_COMMENT_START T_COMMENT_END
 
 options no_result_var
 
@@ -21,6 +22,7 @@ rule
   expression
     : doctype
     | cdata
+    | comment
     ;
 
   # Doctypes
@@ -56,6 +58,16 @@ rule
 
     # <![CDATA[foo]]>
     | T_CDATA_START T_TEXT T_CDATA_END { s(:cdata, val[1]) }
+    ;
+
+  # Comments
+
+  comment
+    # <!---->
+    : T_COMMENT_START T_COMMENT_END { s(:comment) }
+
+    # <!-- foo -->
+    | T_COMMENT_START T_TEXT T_COMMENT_END { s(:comment, val[1]) }
     ;
 
   whitespaces
