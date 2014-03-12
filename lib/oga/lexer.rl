@@ -120,6 +120,10 @@ module Oga
         @text_buffer << text
       }
 
+      action emit_text_buffer {
+        emit_text_buffer
+      }
+
       action buffer_string {
         @string_buffer << text
       }
@@ -326,24 +330,30 @@ module Oga
       *|;
 
       main := |*
-        newline => emit_newline;
+        newline @emit_text_buffer => emit_newline;
 
-        doctype_start => {
+        doctype_start @emit_text_buffer => {
           t(:T_DOCTYPE_START)
           fcall doctype;
         };
 
-        cdata_start => {
+        cdata_start @emit_text_buffer => {
           t(:T_CDATA_START)
           fcall cdata;
         };
 
-        comment_start => {
+        comment_start @emit_text_buffer => {
           t(:T_COMMENT_START)
           fcall comment;
         };
 
-        element_start => open_element;
+        element_start @emit_text_buffer => open_element;
+
+        any => {
+          @text_buffer << text
+
+          emit_text_buffer if @te == eof
+        };
       *|;
     }%%
   end # Lexer

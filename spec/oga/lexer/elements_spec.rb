@@ -25,6 +25,14 @@ describe Oga::Lexer do
         [:T_ELEM_CLOSE, nil, 1, 9]
       ]
     end
+
+    example 'lex text followed by a paragraph element' do
+      lex('Foo<p>').should == [
+        [:T_TEXT, 'Foo', 1, 1],
+        [:T_ELEM_OPEN, nil, 1, 4],
+        [:T_ELEM_NAME, 'p', 1, 5]
+      ]
+    end
   end
 
   context 'elements with attributes' do
