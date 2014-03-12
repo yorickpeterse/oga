@@ -299,10 +299,7 @@ module Oga
         };
 
         # Attributes and their values.
-        element_name
-          %{
-            t(:T_ATTR, @ts, p)
-          }
+        element_name %{ t(:T_ATTR, @ts, p) }
 
         # The value of the attribute. Attribute values are not required. e.g.
         # in <p data-foo></p> data-foo would be a boolean attribute.
