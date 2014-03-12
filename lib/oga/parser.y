@@ -76,23 +76,7 @@ rule
   # Elements
 
   element
-    # <p></p>
-    : element_open T_ELEM_CLOSE { s(:element, val[0]) }
-
-    # <p class="foo"></p>
-    | element_open attributes T_ELEM_CLOSE
-      {
-        s(:element, val[0], val[1])
-      }
-
-    # <p>foo</p>
-    | element_open text T_ELEM_CLOSE
-      {
-        s(:element, val[0], nil, val[1])
-      }
-
-    # <p class="foo">Bar</p>
-    | element_open attributes text T_ELEM_CLOSE
+    : element_open attributes element_body T_ELEM_CLOSE
       {
         s(:element, val[0], val[1], val[2])
       }
@@ -106,10 +90,17 @@ rule
     | T_ELEM_OPEN T_ELEM_NS T_ELEM_NAME { [val[1], val[2]] }
     ;
 
+  element_body
+    : text
+    | element
+    | /* none */ { nil }
+    ;
+
   # Attributes
 
   attributes
     : attributes_ { s(:attributes, val[0]) }
+    | /* none */  { nil }
     ;
 
   attributes_
