@@ -5,6 +5,7 @@ token T_STRING T_TEXT
 token T_DOCTYPE_START T_DOCTYPE_END T_DOCTYPE_TYPE
 token T_CDATA_START T_CDATA_END
 token T_COMMENT_START T_COMMENT_END
+token T_ELEM_OPEN T_ELEM_NAME T_ELEM_NS T_ELEM_CLOSE T_ATTR
 
 options no_result_var
 
@@ -23,6 +24,8 @@ rule
     : doctype
     | cdata
     | comment
+    | element
+    | text
     ;
 
   # Doctypes
@@ -69,6 +72,66 @@ rule
     # <!-- foo -->
     | T_COMMENT_START T_TEXT T_COMMENT_END { s(:comment, val[1]) }
     ;
+
+  # Elements
+
+  element
+    # <p></p>
+    : element_open T_ELEM_CLOSE { s(:element, val[0]) }
+
+    # <p class="foo"></p>
+    | element_open attributes T_ELEM_CLOSE
+      {
+        s(:element, val[0], val[1])
+      }
+
+    # <p>foo</p>
+    | element_open text T_ELEM_CLOSE
+      {
+        s(:element, val[0], nil, val[1])
+      }
+
+    # <p class="foo">Bar</p>
+    | element_open attributes text T_ELEM_CLOSE
+      {
+        s(:element, val[0], val[1], val[2])
+      }
+    ;
+
+  element_open
+    # <p>
+    : T_ELEM_OPEN T_ELEM_NAME { [nil, val[1]] }
+
+    # <foo:p>
+    | T_ELEM_OPEN T_ELEM_NS T_ELEM_NAME { [val[1], val[2]] }
+    ;
+
+  # Attributes
+
+  attributes
+    : attributes_ { s(:attributes, val[0]) }
+    ;
+
+  attributes_
+    : attributes_ attribute { val }
+    | attribute             { val }
+    ;
+
+  attribute
+    # foo
+    : T_ATTR { s(:attribute, val[0]) }
+
+    # foo="bar"
+    | T_ATTR T_STRING { s(:attribute, val[0], val[1]) }
+    ;
+
+  # Plain text
+
+  text
+    : T_TEXT { s(:text, val[0]) }
+    ;
+
+  # Whitespace
 
   whitespaces
     : whitespaces whitespace
