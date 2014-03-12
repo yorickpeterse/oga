@@ -25,6 +25,17 @@ describe Oga::Lexer do
         [:T_ELEM_CLOSE, nil, 1, 9]
       ]
     end
+  end
+
+  context 'elements with attributes' do
+    example 'lex an element with an attribute without a value' do
+      lex('<p foo></p>').should == [
+        [:T_ELEM_OPEN, nil, 1, 1],
+        [:T_ELEM_NAME, 'p', 1, 2],
+        [:T_ATTR, 'foo', 1, 4],
+        [:T_ELEM_CLOSE, nil, 1, 8]
+      ]
+    end
 
     example 'lex a paragraph element with attributes' do
       lex('<p class="foo">Hello</p>').should == [

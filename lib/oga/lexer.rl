@@ -302,9 +302,17 @@ module Oga
         element_name
           %{
             t(:T_ATTR, @ts, p)
-            advance_column
           }
-        '=' (dquote @string_dquote | squote @string_squote);
+
+        # The value of the attribute. Attribute values are not required. e.g.
+        # in <p data-foo></p> data-foo would be a boolean attribute.
+        (
+          '=' >{ advance_column }
+
+          # The value of the attribute, wrapped in either single or double
+          # quotes.
+          (dquote @string_dquote | squote @string_squote)
+        )*;
 
         # Non self-closing elements.
         '</' => {
