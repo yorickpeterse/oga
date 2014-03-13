@@ -1,6 +1,5 @@
 class Oga::Parser
 
-token T_NEWLINE T_SPACE
 token T_STRING T_TEXT
 token T_DOCTYPE_START T_DOCTYPE_END T_DOCTYPE_TYPE
 token T_CDATA_START T_CDATA_END
@@ -90,10 +89,19 @@ rule
     | T_ELEM_OPEN T_ELEM_NS T_ELEM_NAME { [val[1], val[2]] }
     ;
 
-  element_body
-    : text
+  elements
+    : elements element { val }
     | element
-    | /* none */ { nil }
+    ;
+
+  element_body
+    : texts
+    | texts elements          { val }
+    | texts elements texts    { val }
+    | elements
+    | elements texts          { val }
+    | elements texts elements { val }
+    | /* none */              { nil }
     ;
 
   # Attributes
@@ -122,16 +130,9 @@ rule
     : T_TEXT { s(:text, val[0]) }
     ;
 
-  # Whitespace
-
-  whitespaces
-    : whitespaces whitespace
-    | whitespace
-    ;
-
-  whitespace
-    : T_NEWLINE
-    | T_SPACE
+  texts
+    : texts text { val }
+    | text
     ;
 end
 

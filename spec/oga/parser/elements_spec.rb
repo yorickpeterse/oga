@@ -86,5 +86,63 @@ describe Oga::Parser do
         s(:element, nil, 'p', nil, s(:element, nil, 'a', nil, nil))
       )
     end
+
+    example 'parse an element with children text, element' do
+      parse_html('<p>Foo<a>Bar</a></p>').should == s(
+        :document,
+        s(
+          :element,
+          nil,
+          'p',
+          nil,
+          s(:text, 'Foo'),
+          s(:element, nil, 'a', nil, s(:text, 'Bar'))
+        )
+      )
+    end
+
+    example 'parse an element with children text, element, text' do
+      parse_html('<p>Foo<a>Bar</a>Baz</p>').should == s(
+        :document,
+        s(
+          :element,
+          nil,
+          'p',
+          nil,
+          s(:text, 'Foo'),
+          s(:element, nil, 'a', nil, s(:text, 'Bar')),
+          s(:text, 'Baz')
+        )
+      )
+    end
+
+    example 'parse an element with children element, text' do
+      parse_html('<p><a>Bar</a>Baz</p>').should == s(
+        :document,
+        s(
+          :element,
+          nil,
+          'p',
+          nil,
+          s(:element, nil, 'a', nil, s(:text, 'Bar')),
+          s(:text, 'Baz')
+        )
+      )
+    end
+
+    example 'parse an element with children element, text, element' do
+      parse_html('<p><a>Bar</a>Baz<span>Da</span></p>').should == s(
+        :document,
+        s(
+          :element,
+          nil,
+          'p',
+          nil,
+          s(:element, nil, 'a', nil, s(:text, 'Bar')),
+          s(:text, 'Baz'),
+          s(:element, nil, 'span', nil, s(:text, 'Da'))
+        )
+      )
+    end
   end
 end

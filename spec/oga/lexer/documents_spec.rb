@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Oga::Parser do
+describe Oga::Lexer do
   context 'HTML documents' do
     example 'lex a basic HTML document' do
       html = <<-EOF
