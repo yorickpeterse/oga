@@ -264,7 +264,13 @@ module Oga
       element_start = '<' element_name;
 
       element_text := |*
-        ^'<' => buffer_text;
+        newline => {
+          emit_text_buffer
+          t(:T_TEXT)
+          advance_line
+        };
+
+        ^('<' | newline) => buffer_text;
 
         '<' => {
           emit_text_buffer
@@ -284,7 +290,8 @@ module Oga
           advance_column(2)
 
           # Advance the column for the closing name.
-          advance_column(@te - p)
+          advance_column(text.length)
+
           fret;
         };
 
