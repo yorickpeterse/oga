@@ -16,6 +16,7 @@ describe Oga::Parser do
       parse_html(html).should == s(
         :document,
         s(:doctype),
+        s(:text, "\n"),
 
         # <html>
         s(
@@ -24,12 +25,16 @@ describe Oga::Parser do
           'html',
           nil,
 
+          s(:text, "\n"),
+
           # <head>
           s(
             :element,
             nil,
             'head',
             nil,
+
+            s(:text, "\n"),
 
             # <title>
             s(
@@ -38,11 +43,15 @@ describe Oga::Parser do
               'title',
               nil,
               s(:text, 'Title')
-            )
+            ),
+
+            s(:text, "\n")
           ),
 
           # <body>
-          s(:element, nil, 'body', nil, nil)
+          s(:text, "\n"),
+          s(:element, nil, 'body', nil, nil),
+          s(:text, "\n")
         ),
         s(:text, "\n")
       )

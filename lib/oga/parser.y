@@ -95,13 +95,14 @@ rule
     ;
 
   element_body
+    : element_body element_body_ { val }
+    | element_body_
+    | /* none */ { nil }
+    ;
+
+  element_body_
     : texts
-    | texts elements          { val }
-    | texts elements texts    { val }
     | elements
-    | elements texts          { val }
-    | elements texts elements { val }
-    | /* none */              { nil }
     ;
 
   # Attributes
