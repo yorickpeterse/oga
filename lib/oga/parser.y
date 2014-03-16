@@ -139,8 +139,8 @@ end
 
 ---- inner
 
-  def initialize
-    @lexer = Lexer.new
+  def initialize(options = {})
+    @lexer = Lexer.new(options)
   end
 
   def reset

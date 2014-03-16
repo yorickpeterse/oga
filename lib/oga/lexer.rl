@@ -6,6 +6,27 @@ module Oga
   class Lexer
     %% write data; # %
 
+    attr_reader :html
+
+    HTML_VOID_ELEMENTS = [
+      'area',
+      'base',
+      'br',
+      'col',
+      'command',
+      'embed',
+      'hr',
+      'img',
+      'input',
+      'keygen',
+      'link',
+      'meta',
+      'param',
+      'source',
+      'track',
+      'wbr'
+    ]
+
     # Lazy way of forwarding instance method calls used internally by Ragel to
     # their corresponding class methods.
     private_methods.grep(/^_lexer_/).each do |name|
@@ -16,19 +37,24 @@ module Oga
       private(name)
     end
 
-    def initialize
+    def initialize(options = {})
+      options.each do |key, value|
+        instance_variable_set("@#{key}", value) if respond_to?(key)
+      end
+
       reset
     end
 
     def reset
-      @line   = 1
-      @column = 1
-      @data   = nil
-      @ts     = nil
-      @te     = nil
-      @tokens = []
-      @stack  = []
-      @top    = 0
+      @line     = 1
+      @column   = 1
+      @data     = nil
+      @ts       = nil
+      @te       = nil
+      @tokens   = []
+      @stack    = []
+      @top      = 0
+      @elements = []
 
       @string_buffer = ''
       @text_buffer   = ''
@@ -47,6 +73,10 @@ module Oga
       reset
 
       return tokens
+    end
+
+    def html?
+      return !!html
     end
 
     private
@@ -91,6 +121,10 @@ module Oga
       advance_column
 
       @string_buffer = ''
+    end
+
+    def current_element
+      return @elements.last
     end
 
     %%{
@@ -255,6 +289,8 @@ module Oga
           advance_column
         end
 
+        @elements << name
+
         add_token(:T_ELEM_NAME, name)
 
         fcall element;
@@ -270,7 +306,11 @@ module Oga
           advance_line
         };
 
-        ^('<' | newline) => buffer_text;
+        ^('<' | newline) => {
+          @text_buffer << text
+
+          emit_text_buffer if @te == eof
+        };
 
         '<' => {
           emit_text_buffer
@@ -305,7 +345,15 @@ module Oga
 
         # Consume the text inside the element.
         '>' => {
+          # If HTML lexing is enabled and we're in a void element we'll bail
+          # out right away.
+          if html? and HTML_VOID_ELEMENTS.include?(current_element)
+            add_token(:T_ELEM_CLOSE, nil)
+            @elements.pop
+          end
+
           advance_column
+
           fcall element_text;
         };
 
@@ -325,6 +373,9 @@ module Oga
         # Non self-closing elements.
         '</' => {
           fcall element_closing_tag;
+
+          @elements.pop
+
           fret;
         };
 
@@ -332,6 +383,9 @@ module Oga
         '/>' => {
           advance_column
           add_token(:T_ELEM_CLOSE, nil)
+
+          @elements.pop
+
           fret;
         };
       *|;

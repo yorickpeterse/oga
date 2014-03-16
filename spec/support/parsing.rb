@@ -15,10 +15,11 @@ module Oga
     # Lexes a string and returns the tokens.
     #
     # @param [String] input
+    # @param [Hash] options
     # @return [Array]
     #
-    def lex(input)
-      return Oga::Lexer.new.lex(input)
+    def lex(input, options = {})
+      return Oga::Lexer.new(options).lex(input)
     end
 
     ##
@@ -28,7 +29,7 @@ module Oga
     # @return [Oga::AST::Node]
     #
     def parse_html(input)
-      return Oga::Parser.new.parse(input)
+      return Oga::Parser.new(:html => true).parse(input)
     end
   end # ParsingHelpers
 end # Oga
