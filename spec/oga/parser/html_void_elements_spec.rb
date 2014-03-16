@@ -3,21 +3,21 @@ require 'spec_helper'
 describe Oga::Parser do
   context 'HTML void elements' do
     example 'parse a void element that omits the closing /' do
-      parse_html('<link>').should == s(
+      parse('<link>', :html => true).should == s(
         :document,
         s(:element, nil, 'link', nil, nil)
       )
     end
 
     example 'parse a void element inside another element' do
-      parse_html('<head><link></head>').should == s(
+      parse('<head><link></head>', :html => true).should == s(
         :document,
         s(:element, nil, 'head', nil, s(:element, nil, 'link', nil, nil))
       )
     end
 
     example 'parse a void element with attributes inside another element' do
-      parse_html('<head><link href="foo.css"></head>').should == s(
+      parse('<head><link href="foo.css"></head>', :html => true).should == s(
         :document,
         s(
           :element,
@@ -36,7 +36,7 @@ describe Oga::Parser do
     end
 
     example 'parse a void element and a non void element in the same parent' do
-      parse_html('<head><link><title>Foo</title></head>').should == s(
+      parse('<head><link><title>Foo</title></head>', :html => true).should == s(
         :document,
         s(
           :element,

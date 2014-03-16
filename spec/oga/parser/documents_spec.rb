@@ -13,7 +13,7 @@ describe Oga::Parser do
 </html>
       EOF
 
-      parse_html(html).should == s(
+      parse(html).should == s(
         :document,
         s(:doctype),
         s(:text, "\n"),

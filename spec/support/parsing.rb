@@ -26,10 +26,11 @@ module Oga
     # Parses the given HTML and returns an AST.
     #
     # @param [String] input
+    # @param [Hash] options
     # @return [Oga::AST::Node]
     #
-    def parse_html(input)
-      return Oga::Parser.new(:html => true).parse(input)
+    def parse(input, options = {})
+      return Oga::Parser.new(options).parse(input)
     end
   end # ParsingHelpers
 end # Oga
