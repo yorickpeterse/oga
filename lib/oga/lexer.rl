@@ -81,8 +81,8 @@ module Oga
 
     private
 
-    def advance_line
-      @line  += 1
+    def advance_line(amount = 1)
+      @line  += amount
       @column = 1
     end
 
@@ -113,7 +113,17 @@ module Oga
 
       add_token(:T_TEXT, @text_buffer)
 
+      lines = @text_buffer.count("\n")
+
+      advance_line(lines) if lines > 0
+
       @text_buffer = ''
+    end
+
+    def buffer_text_until_eof(eof)
+      @text_buffer << text
+
+      emit_text_buffer if @te == eof
     end
 
     def emit_string_buffer
@@ -133,11 +143,6 @@ module Oga
 
       newline    = '\n' | '\r\n';
       whitespace = [ \t];
-
-      action emit_newline {
-        t(:T_TEXT)
-        advance_line
-      }
 
       # String processing
       #
@@ -300,16 +305,8 @@ module Oga
       element_start = '<' element_name;
 
       element_text := |*
-        newline => {
-          emit_text_buffer
-          t(:T_TEXT)
-          advance_line
-        };
-
-        ^('<' | newline) => {
-          @text_buffer << text
-
-          emit_text_buffer if @te == eof
+        ^'<' => {
+          buffer_text_until_eof(eof)
         };
 
         '<' => {
@@ -391,8 +388,6 @@ module Oga
       *|;
 
       main := |*
-        newline @emit_text_buffer => emit_newline;
-
         doctype_start @emit_text_buffer => {
           t(:T_DOCTYPE_START)
           fcall doctype;
@@ -411,9 +406,7 @@ module Oga
         element_start @emit_text_buffer => open_element;
 
         any => {
-          @text_buffer << text
-
-          emit_text_buffer if @te == eof
+          buffer_text_until_eof(eof)
         };
       *|;
     }%%
