@@ -12,6 +12,11 @@ rvm:
   - rbx-2.2
   - jruby
 
+matrix:
+  allow_failures:
+    # JRuby is allowed to fail until Racc has a pure Java port.
+    - rvm: jruby
+
 notifications:
   email:
     recipients:
