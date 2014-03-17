@@ -20,27 +20,24 @@ describe Oga::Parser do
 
         # <html>
         s(
-          :element,
+          :html,
           nil,
-          'html',
           nil,
 
           s(:text, "\n"),
 
           # <head>
           s(
-            :element,
+            :head,
             nil,
-            'head',
             nil,
 
             s(:text, "\n"),
 
             # <title>
             s(
-              :element,
+              :title,
               nil,
-              'title',
               nil,
               s(:text, 'Title')
             ),
@@ -50,7 +47,7 @@ describe Oga::Parser do
 
           # <body>
           s(:text, "\n"),
-          s(:element, nil, 'body', nil, nil),
+          s(:body, nil, nil, nil),
           s(:text, "\n")
         ),
         s(:text, "\n")

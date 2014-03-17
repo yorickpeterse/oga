@@ -5,14 +5,14 @@ describe Oga::Parser do
     example 'parse a void element that omits the closing /' do
       parse('<link>', :html => true).should == s(
         :document,
-        s(:element, nil, 'link', nil, nil)
+        s(:link, nil, nil, nil)
       )
     end
 
     example 'parse a void element inside another element' do
       parse('<head><link></head>', :html => true).should == s(
         :document,
-        s(:element, nil, 'head', nil, s(:element, nil, 'link', nil, nil))
+        s(:head, nil, nil, s(:link, nil, nil, nil))
       )
     end
 
@@ -20,14 +20,12 @@ describe Oga::Parser do
       parse('<head><link href="foo.css"></head>', :html => true).should == s(
         :document,
         s(
-          :element,
+          :head,
           nil,
-          'head',
           nil,
           s(
-            :element,
+            :link,
             nil,
-            'link',
             s(:attributes, s(:attribute, 'href', 'foo.css')),
             nil
           )
@@ -39,24 +37,11 @@ describe Oga::Parser do
       parse('<head><link><title>Foo</title></head>', :html => true).should == s(
         :document,
         s(
-          :element,
+          :head,
           nil,
-          'head',
           nil,
-          s(
-            :element,
-            nil,
-            'link',
-            nil,
-            nil
-          ),
-          s(
-            :element,
-            nil,
-            'title',
-            nil,
-            s(:text, 'Foo')
-          )
+          s(:link, nil, nil, nil),
+          s(:title, nil, nil, s(:text, 'Foo'))
         )
       )
     end

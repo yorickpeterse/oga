@@ -77,16 +77,18 @@ rule
   element
     : element_open attributes element_body T_ELEM_CLOSE
       {
-        s(:element, val[0], val[1], val[2])
+        namespace, name = val[0]
+
+        s(name, namespace, val[1], val[2])
       }
     ;
 
   element_open
     # <p>
-    : T_ELEM_OPEN T_ELEM_NAME { [nil, val[1]] }
+    : T_ELEM_OPEN T_ELEM_NAME { [nil, val[1].to_sym] }
 
     # <foo:p>
-    | T_ELEM_OPEN T_ELEM_NS T_ELEM_NAME { [val[1], val[2]] }
+    | T_ELEM_OPEN T_ELEM_NS T_ELEM_NAME { [val[1], val[2].to_sym] }
     ;
 
   elements

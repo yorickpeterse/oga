@@ -3,30 +3,27 @@ require 'spec_helper'
 describe Oga::Parser do
   context 'elements' do
     example 'parse an empty element' do
-      parse('<p></p>').should == s(
-        :document,
-        s(:element, nil, 'p', nil, nil)
-      )
+      parse('<p></p>').should == s(:document, s(:p, nil, nil, nil))
     end
 
     example 'parse an element with text' do
       parse('<p>foo</p>').should == s(
         :document,
-        s(:element, nil, 'p', nil, s(:text, 'foo'))
+        s(:p, nil, nil, s(:text, 'foo'))
       )
     end
 
     example 'parse an element with a single attribute' do
       parse('<p foo></p>').should == s(
         :document,
-        s(:element, nil, 'p', s(:attributes, s(:attribute, 'foo')), nil)
+        s(:p, nil, s(:attributes, s(:attribute, 'foo')), nil)
       )
     end
 
     example 'parse an element with a single attribute with a value' do
       parse('<p foo="bar"></p>').should == s(
         :document,
-        s(:element, nil, 'p', s(:attributes, s(:attribute, 'foo', 'bar')), nil)
+        s(:p, nil, s(:attributes, s(:attribute, 'foo', 'bar')), nil)
       )
     end
 
@@ -34,9 +31,8 @@ describe Oga::Parser do
       parse('<p foo="bar" baz="bad"></p>').should == s(
         :document,
         s(
-          :element,
+          :p,
           nil,
-          'p',
           s(
             :attributes,
             s(:attribute, 'foo', 'bar'),
@@ -51,9 +47,8 @@ describe Oga::Parser do
       parse('<p class="foo">Bar</p>').should == s(
         :document,
         s(
-          :element,
+          :p,
           nil,
-          'p',
           s(:attributes, s(:attribute, 'class', 'foo')),
           s(:text, 'Bar')
         )
@@ -63,7 +58,7 @@ describe Oga::Parser do
     example 'parse an element with a namespace' do
       parse('<foo:p></p>').should == s(
         :document,
-        s(:element, 'foo', 'p', nil, nil)
+        s(:p, 'foo', nil, nil)
       )
     end
 
@@ -71,9 +66,8 @@ describe Oga::Parser do
       parse('<foo:p class="bar"></p>').should == s(
         :document,
         s(
-          :element,
+          :p,
           'foo',
-          'p',
           s(:attributes, s(:attribute, 'class', 'bar')),
           nil
         )
@@ -83,7 +77,7 @@ describe Oga::Parser do
     example 'parse an element nested inside another element' do
       parse('<p><a></a></p>').should == s(
         :document,
-        s(:element, nil, 'p', nil, s(:element, nil, 'a', nil, nil))
+        s(:p, nil, nil, s(:a, nil, nil, nil))
       )
     end
 
@@ -91,12 +85,11 @@ describe Oga::Parser do
       parse('<p>Foo<a>Bar</a></p>').should == s(
         :document,
         s(
-          :element,
+          :p,
           nil,
-          'p',
           nil,
           s(:text, 'Foo'),
-          s(:element, nil, 'a', nil, s(:text, 'Bar'))
+          s(:a, nil, nil, s(:text, 'Bar'))
         )
       )
     end
@@ -105,12 +98,11 @@ describe Oga::Parser do
       parse('<p>Foo<a>Bar</a>Baz</p>').should == s(
         :document,
         s(
-          :element,
+          :p,
           nil,
-          'p',
           nil,
           s(:text, 'Foo'),
-          s(:element, nil, 'a', nil, s(:text, 'Bar')),
+          s(:a, nil, nil, s(:text, 'Bar')),
           s(:text, 'Baz')
         )
       )
@@ -120,11 +112,10 @@ describe Oga::Parser do
       parse('<p><a>Bar</a>Baz</p>').should == s(
         :document,
         s(
-          :element,
+          :p,
           nil,
-          'p',
           nil,
-          s(:element, nil, 'a', nil, s(:text, 'Bar')),
+          s(:a, nil, nil, s(:text, 'Bar')),
           s(:text, 'Baz')
         )
       )
@@ -134,13 +125,12 @@ describe Oga::Parser do
       parse('<p><a>Bar</a>Baz<span>Da</span></p>').should == s(
         :document,
         s(
-          :element,
+          :p,
           nil,
-          'p',
           nil,
-          s(:element, nil, 'a', nil, s(:text, 'Bar')),
+          s(:a, nil, nil, s(:text, 'Bar')),
           s(:text, 'Baz'),
-          s(:element, nil, 'span', nil, s(:text, 'Da'))
+          s(:span, nil, nil, s(:text, 'Da'))
         )
       )
     end
