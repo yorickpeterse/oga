@@ -159,10 +159,6 @@ module Oga
         @text_buffer << text
       }
 
-      action emit_text_buffer {
-        emit_text_buffer
-      }
-
       action buffer_string {
         @string_buffer << text
       }
@@ -277,6 +273,7 @@ module Oga
       # Action that creates the tokens for the opening tag, name and namespace
       # (if any). Remaining work is delegated to a dedicated machine.
       action open_element {
+        emit_text_buffer
         add_token(:T_ELEM_OPEN, nil)
         advance_column
 
@@ -388,22 +385,25 @@ module Oga
       *|;
 
       main := |*
-        doctype_start @emit_text_buffer => {
+        doctype_start => {
+          emit_text_buffer
           t(:T_DOCTYPE_START)
           fcall doctype;
         };
 
-        cdata_start @emit_text_buffer => {
+        cdata_start => {
+          emit_text_buffer
           t(:T_CDATA_START)
           fcall cdata;
         };
 
-        comment_start @emit_text_buffer => {
+        comment_start => {
+          emit_text_buffer
           t(:T_COMMENT_START)
           fcall comment;
         };
 
-        element_start @emit_text_buffer => open_element;
+        element_start => open_element;
 
         any => {
           buffer_text_until_eof(eof)
