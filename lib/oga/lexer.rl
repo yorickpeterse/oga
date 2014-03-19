@@ -2,12 +2,26 @@
 
 module Oga
   ##
+  # Low level lexer that supports both XML and HTML (using an extra option). To
+  # lex HTML input set the `:html` option to `true` when creating an instance
+  # of the lexer:
+  #
+  #     lexer = Oga::Lexer.new(:html => true)
+  #
+  # @!attribute [r] html
+  #  @return [TrueClass|FalseClass]
   #
   class Lexer
     %% write data; # %
 
     attr_reader :html
 
+    ##
+    # Names of the HTML void elements that should be handled when HTML lexing
+    # is enabled.
+    #
+    # @return [Array]
+    #
     HTML_VOID_ELEMENTS = [
       'area',
       'base',
@@ -37,6 +51,13 @@ module Oga
       private(name)
     end
 
+    ##
+    # @param [Hash] options
+    #
+    # @option options [Symbol] :html When set to `true` the lexer will treat
+    #  the input as HTML instead of SGML/XML. This makes it possible to lex
+    #  HTML void elements such as `<link href="">`.
+    #
     def initialize(options = {})
       options.each do |key, value|
         instance_variable_set("@#{key}", value) if respond_to?(key)
@@ -45,6 +66,10 @@ module Oga
       reset
     end
 
+    ##
+    # Resets the internal state of the lexer. Typically you don't need to call
+    # this method yourself as its called by #lex after lexing a given String.
+    #
     def reset
       @line     = 1
       @column   = 1
@@ -60,6 +85,17 @@ module Oga
       @text_buffer   = ''
     end
 
+    ##
+    # Lexes the supplied String and returns an Array of tokens. Each token is
+    # an Array in the following format:
+    #
+    #     [TYPE, VALUE]
+    #
+    # The type is a symbol, the value is either nil or a String.
+    #
+    # @param [String] data The string to lex.
+    # @return [Array]
+    #
     def lex(data)
       @data       = data
       lexer_start = self.class.lexer_start
@@ -75,31 +111,67 @@ module Oga
       return tokens
     end
 
+    ##
+    # @return [TrueClass|FalseClass]
+    #
     def html?
       return !!html
     end
 
     private
 
+    ##
+    # @param [Fixnum] amount The amount of lines to advance.
+    #
     def advance_line(amount = 1)
       @line  += amount
       @column = 1
     end
 
+    ##
+    # @param [Fixnum] length The amount of columns to advance.
+    #
     def advance_column(length = 1)
       @column += length
     end
 
+    ##
+    # Emits a token who's value is based on the supplied start/stop position.
+    #
+    # @param [Symbol] type The token type.
+    # @param [Fixnum] start
+    # @param [Fixnum] stop
+    #
+    # @see #text
+    # @see #add_token
+    #
     def t(type, start = @ts, stop = @te)
       value = text(start, stop)
 
       add_token(type, value)
     end
 
+    ##
+    # Returns the text of the current buffer based on the supplied start and
+    # stop position.
+    #
+    # By default `@ts` and `@te` are used as the start/stop position.
+    #
+    # @param [Fixnum] start
+    # @param [Fixnum] stop
+    # @return [String]
+    #
     def text(start = @ts, stop = @te)
       return @data[start...stop]
     end
 
+    ##
+    # Adds a token with the given type and value to the list. If a value is
+    # given the column number is also advanced based on the value's length.
+    #
+    # @param [Symbol] type The token type.
+    # @param [String] value The token value.
+    #
     def add_token(type, value)
       token = [type, value, @line, @column]
 
@@ -108,6 +180,10 @@ module Oga
       @tokens << token
     end
 
+    ##
+    # Emits the current text buffer if we have any. The current line number is
+    # advanced based on the amount of newlines in the buffer.
+    #
     def emit_text_buffer
       return if @text_buffer.empty?
 
@@ -120,12 +196,22 @@ module Oga
       @text_buffer = ''
     end
 
+    ##
+    # Buffers text until the current token position hits the EOF position. Once
+    # this position is reached the buffer is emitted.
+    #
+    # @param [Fixnum] eof The EOF position.
+    # @see #emit_text_buffer
+    #
     def buffer_text_until_eof(eof)
       @text_buffer << text
 
       emit_text_buffer if @te == eof
     end
 
+    ##
+    # Emits and resets the current string buffer.
+    #
     def emit_string_buffer
       add_token(:T_STRING, @string_buffer)
       advance_column
@@ -133,6 +219,11 @@ module Oga
       @string_buffer = ''
     end
 
+    ##
+    # Returns the name of the element we're currently in.
+    #
+    # @return [String]
+    #
     def current_element
       return @elements.last
     end
