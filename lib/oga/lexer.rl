@@ -144,14 +144,11 @@ module Oga
       newline    = '\n' | '\r\n';
       whitespace = [ \t];
 
-      # String processing
+      # Strings
       #
-      # These actions/definitions can be used to process single and/or double
-      # quoted strings (e.g. for tag attribute values).
-      #
-      # The string_dquote and string_squote machines should not be used
-      # directly, instead the corresponding actions should be used.
-      #
+      # Strings in HTML can either be single or double quoted. If a string
+      # starts with one of these quotes it must be closed with the same type of
+      # quote.
       dquote = '"';
       squote = "'";
 
@@ -163,14 +160,15 @@ module Oga
         @string_buffer << text
       }
 
-      action string_dquote {
+      action start_string_dquote {
         fcall string_dquote;
       }
 
-      action string_squote {
+      action start_string_squote {
         fcall string_squote;
       }
 
+      # Machine for processing double quoted strings.
       string_dquote := |*
         ^dquote => buffer_string;
         dquote  => {
@@ -180,6 +178,7 @@ module Oga
         };
       *|;
 
+      # Machine for processing single quoted strings.
       string_squote := |*
         ^squote => buffer_string;
         squote  => {
@@ -201,12 +200,20 @@ module Oga
       #
       doctype_start = '<!DOCTYPE'i whitespace+ 'HTML'i;
 
+      action start_doctype {
+        emit_text_buffer
+        t(:T_DOCTYPE_START)
+        fcall doctype;
+      }
+
+      # Machine for processing doctypes. Doctype values such as the public and
+      # system IDs are treated as T_STRING tokens.
       doctype := |*
         'PUBLIC' | 'SYSTEM' => { t(:T_DOCTYPE_TYPE) };
 
         # Lex the public/system IDs as regular strings.
-        dquote => string_dquote;
-        squote => string_squote;
+        dquote => start_string_dquote;
+        squote => start_string_squote;
 
         # Whitespace inside doctypes is ignored since there's no point in
         # including it.
@@ -231,6 +238,14 @@ module Oga
       cdata_start = '<![CDATA[';
       cdata_end   = ']]>';
 
+      action start_cdata {
+        emit_text_buffer
+        t(:T_CDATA_START)
+        fcall cdata;
+      }
+
+      # Machine that for processing the contents of CDATA tags. Everything
+      # inside a CDATA tag is treated as plain text.
       cdata := |*
         cdata_end => {
           emit_text_buffer
@@ -255,6 +270,14 @@ module Oga
       comment_start = '<!--';
       comment_end   = '-->';
 
+      action start_comment {
+        emit_text_buffer
+        t(:T_COMMENT_START)
+        fcall comment;
+      }
+
+      # Machine used for processing the contents of a comment. Everything
+      # inside a comment is treated as plain text (similar to CDATA tags).
       comment := |*
         comment_end => {
           emit_text_buffer
@@ -272,7 +295,7 @@ module Oga
 
       # Action that creates the tokens for the opening tag, name and namespace
       # (if any). Remaining work is delegated to a dedicated machine.
-      action open_element {
+      action start_element {
         emit_text_buffer
         add_token(:T_ELEM_OPEN, nil)
         advance_column
@@ -295,119 +318,74 @@ module Oga
 
         add_token(:T_ELEM_NAME, name)
 
-        fcall element;
+        fcall element_head;
       }
 
       element_name  = [a-zA-Z0-9\-_:]+;
       element_start = '<' element_name;
 
-      element_text := |*
-        ^'<' => {
-          buffer_text_until_eof(eof)
-        };
+      # Machine used for processing the characters inside a element head. An
+      # element head is everything between `<NAME` (where NAME is the element
+      # name) and `>`.
+      #
+      # For example, in `<p foo="bar">` the element head is ` foo="bar"`.
+      #
+      element_head := |*
+        (whitespace | '=') => { advance_column };
 
-        '<' => {
-          emit_text_buffer
+        # Attribute names.
+        element_name => { t(:T_ATTR) };
+
+        # Attribute values.
+        dquote => start_string_dquote;
+        squote => start_string_squote;
+
+        # The closing character of the open tag.
+        ('>' | '/') => {
           fhold;
           fret;
         };
       *|;
 
-      element_closing_tag := |*
-        whitespace => { advance_column };
+      main := |*
+        element_start => start_element;
+        doctype_start => start_doctype;
+        cdata_start   => start_cdata;
+        comment_start => start_comment;
+        element_start => start_element;
 
-        element_name => {
-          emit_text_buffer
-          add_token(:T_ELEM_CLOSE, nil)
-
-          # Advance the column for the </
-          advance_column(2)
-
-          # Advance the column for the closing name.
-          advance_column(text.length)
-
-          fret;
-        };
-
-        '>' => { fret; };
-      *|;
-
-      element := |*
-        whitespace => { advance_column };
-
-        element_start => open_element;
-
-        # Consume the text inside the element.
+        # Enter the body of the tag. If HTML mode is enabled and the current
+        # element is a void element we'll close it and bail out.
         '>' => {
-          # If HTML lexing is enabled and we're in a void element we'll bail
-          # out right away.
           if html? and HTML_VOID_ELEMENTS.include?(current_element)
             add_token(:T_ELEM_CLOSE, nil)
             @elements.pop
           end
 
           advance_column
-
-          fcall element_text;
         };
 
-        # Attributes and their values.
-        element_name %{ t(:T_ATTR, @ts, p) }
+        # Regular closing tags.
+        '</' element_name '>' => {
+          emit_text_buffer
+          add_token(:T_ELEM_CLOSE, nil)
 
-        # The value of the attribute. Attribute values are not required. e.g.
-        # in <p data-foo></p> data-foo would be a boolean attribute.
-        (
-          '=' >{ advance_column }
-
-          # The value of the attribute, wrapped in either single or double
-          # quotes.
-          (dquote @string_dquote | squote @string_squote)
-        )*;
-
-        # Non self-closing elements.
-        '</' => {
-          fcall element_closing_tag;
+          advance_column(@te - @ts)
 
           @elements.pop
-
-          fret;
         };
 
-        # self-closing / void elements.
+        # Self closing elements that are not handled by the HTML mode.
         '/>' => {
           advance_column
           add_token(:T_ELEM_CLOSE, nil)
 
           @elements.pop
-
-          fret;
-        };
-      *|;
-
-      main := |*
-        doctype_start => {
-          emit_text_buffer
-          t(:T_DOCTYPE_START)
-          fcall doctype;
         };
 
-        cdata_start => {
-          emit_text_buffer
-          t(:T_CDATA_START)
-          fcall cdata;
-        };
-
-        comment_start => {
-          emit_text_buffer
-          t(:T_COMMENT_START)
-          fcall comment;
-        };
-
-        element_start => open_element;
-
-        any => {
-          buffer_text_until_eof(eof)
-        };
+        # Note that this rule should be declared at the very bottom as it will
+        # otherwise take precedence over the other rules.
+        any => { buffer_text_until_eof(eof) };
       *|;
     }%%
   end # Lexer
