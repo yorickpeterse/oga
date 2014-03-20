@@ -145,19 +145,31 @@ end
   end
 
   def on_error(type, value, stack)
-    name      = token_to_str(type)
-    line_str  = @lines[@line - 1]
+    name  = token_to_str(type)
+    index = @line - 1
+    lines = ''
 
-    raise Racc::ParseError, <<-EOF.strip
-Unexpected #{name} with value #{value.inspect} on line #{@line}
+    # Show up to 2 lines before and after the offending line (if they exist).
+    (-2..2).each do |offset|
+      line = @lines[index + offset]
 
-Offending code:
+      if line
+        number = @line + offset
 
-#{line_str}
+        if offset == 0
+          prefix = '=> '
+        else
+          prefix = '   '
+        end
 
-Current stack:
+        lines << "#{prefix}#{number}: #{line}"
+      end
+    end
 
-#{stack.inspect}
+    raise Racc::ParseError, <<-EOF
+Unexpected #{name} with value #{value.inspect} on line #{@line}:
+
+#{lines}
     EOF
   end
 
