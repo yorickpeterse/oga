@@ -17,6 +17,7 @@ rule
   expressions
     : expressions expression { val.compact }
     | expression             { val[0] }
+    | /* none */             { nil }
     ;
 
   expression
@@ -75,7 +76,7 @@ rule
   # Elements
 
   element
-    : element_open attributes element_body T_ELEM_CLOSE
+    : element_open attributes expressions T_ELEM_CLOSE
       {
         s(:element, val[0], val[1], val[2])
       }
@@ -87,22 +88,6 @@ rule
 
     # <foo:p>
     | T_ELEM_OPEN T_ELEM_NS T_ELEM_NAME { [val[1], val[2]] }
-    ;
-
-  elements
-    : elements element { val }
-    | element
-    ;
-
-  element_body
-    : element_body element_body_ { val }
-    | element_body_
-    | /* none */ { nil }
-    ;
-
-  element_body_
-    : texts
-    | elements
     ;
 
   # Attributes
@@ -129,11 +114,6 @@ rule
 
   text
     : T_TEXT { s(:text, val[0]) }
-    ;
-
-  texts
-    : texts text { val }
-    | text
     ;
 end
 
