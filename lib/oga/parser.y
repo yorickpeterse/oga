@@ -151,18 +151,17 @@ end
 
     # Show up to 5 lines before and after the offending line (if they exist).
     (-5..5).each do |offset|
-      line = @lines[index + offset]
+      line   = @lines[index + offset]
+      number = @line + offset
 
-      if line
-        number = @line + offset
-
+      if line and number > 0
         if offset == 0
           prefix = '=> '
         else
           prefix = '   '
         end
 
-        lines << "#{prefix}#{number}: #{line}"
+        lines << "#{prefix}#{number}: #{line.strip}\n"
       end
     end
 
