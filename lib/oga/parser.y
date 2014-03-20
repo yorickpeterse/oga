@@ -150,7 +150,7 @@ end
     lines = ''
 
     # Show up to 2 lines before and after the offending line (if they exist).
-    (-2..2).each do |offset|
+    (-5..5).each do |offset|
       line = @lines[index + offset]
 
       if line
