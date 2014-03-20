@@ -72,7 +72,6 @@ module Oga
     #
     def reset
       @line     = 1
-      @column   = 1
       @data     = nil
       @ts       = nil
       @te       = nil
@@ -124,15 +123,7 @@ module Oga
     # @param [Fixnum] amount The amount of lines to advance.
     #
     def advance_line(amount = 1)
-      @line  += amount
-      @column = 1
-    end
-
-    ##
-    # @param [Fixnum] length The amount of columns to advance.
-    #
-    def advance_column(length = 1)
-      @column += length
+      @line += amount
     end
 
     ##
@@ -166,16 +157,13 @@ module Oga
     end
 
     ##
-    # Adds a token with the given type and value to the list. If a value is
-    # given the column number is also advanced based on the value's length.
+    # Adds a token with the given type and value to the list.
     #
     # @param [Symbol] type The token type.
     # @param [String] value The token value.
     #
     def add_token(type, value)
-      token = [type, value, @line, @column]
-
-      advance_column(value.length) if value
+      token = [type, value, @line]
 
       @tokens << token
     end
@@ -214,7 +202,6 @@ module Oga
     #
     def emit_string_buffer
       add_token(:T_STRING, @string_buffer)
-      advance_column
 
       @string_buffer = ''
     end
@@ -264,7 +251,6 @@ module Oga
         ^dquote => buffer_string;
         dquote  => {
           emit_string_buffer
-          advance_column
           fret;
         };
       *|;
@@ -274,7 +260,6 @@ module Oga
         ^squote => buffer_string;
         squote  => {
           emit_string_buffer
-          advance_column
           fret;
         };
       *|;
@@ -308,7 +293,7 @@ module Oga
 
         # Whitespace inside doctypes is ignored since there's no point in
         # including it.
-        whitespace => { advance_column };
+        whitespace;
 
         '>' => {
           t(:T_DOCTYPE_END)
@@ -389,7 +374,6 @@ module Oga
       action start_element {
         emit_text_buffer
         add_token(:T_ELEM_OPEN, nil)
-        advance_column
 
         # Add the element name. If the name includes a namespace we'll break
         # the name up into two separate tokens.
@@ -399,10 +383,6 @@ module Oga
           ns, name = name.split(':')
 
           add_token(:T_ELEM_NS, ns)
-
-          # Advance the column for the colon (:) that separates the namespace
-          # and element name.
-          advance_column
         end
 
         @elements << name
@@ -422,7 +402,7 @@ module Oga
       # For example, in `<p foo="bar">` the element head is ` foo="bar"`.
       #
       element_head := |*
-        (whitespace | '=') => { advance_column };
+        whitespace | '=';
 
         # Attribute names.
         element_name => { t(:T_ATTR) };
@@ -452,8 +432,6 @@ module Oga
             add_token(:T_ELEM_CLOSE, nil)
             @elements.pop
           end
-
-          advance_column
         };
 
         # Regular closing tags.
@@ -461,14 +439,11 @@ module Oga
           emit_text_buffer
           add_token(:T_ELEM_CLOSE, nil)
 
-          advance_column(@te - @ts)
-
           @elements.pop
         };
 
         # Self closing elements that are not handled by the HTML mode.
         '/>' => {
-          advance_column
           add_token(:T_ELEM_CLOSE, nil)
 
           @elements.pop

@@ -4,51 +4,51 @@ describe Oga::Lexer do
   context 'comments' do
     example 'lex a comment' do
       lex('<!-- foo -->').should == [
-        [:T_COMMENT_START, '<!--', 1, 1],
-        [:T_TEXT, ' foo ', 1, 5],
-        [:T_COMMENT_END, '-->', 1, 10]
+        [:T_COMMENT_START, '<!--', 1],
+        [:T_TEXT, ' foo ', 1],
+        [:T_COMMENT_END, '-->', 1]
       ]
     end
 
     example 'lex a comment containing --' do
       lex('<!-- -- -->').should == [
-        [:T_COMMENT_START, '<!--', 1, 1],
-        [:T_TEXT, ' -- ', 1, 5],
-        [:T_COMMENT_END, '-->', 1, 9]
+        [:T_COMMENT_START, '<!--', 1],
+        [:T_TEXT, ' -- ', 1],
+        [:T_COMMENT_END, '-->', 1]
       ]
     end
 
     example 'lex a comment containing ->' do
       lex('<!-- -> -->').should == [
-        [:T_COMMENT_START, '<!--', 1, 1],
-        [:T_TEXT, ' -> ', 1, 5],
-        [:T_COMMENT_END, '-->', 1, 9]
+        [:T_COMMENT_START, '<!--', 1],
+        [:T_TEXT, ' -> ', 1],
+        [:T_COMMENT_END, '-->', 1]
       ]
     end
 
     example 'lex a comment followed by text' do
       lex('<!---->foo').should == [
-        [:T_COMMENT_START, '<!--', 1, 1],
-        [:T_COMMENT_END, '-->', 1, 5],
-        [:T_TEXT, 'foo', 1, 8]
+        [:T_COMMENT_START, '<!--', 1],
+        [:T_COMMENT_END, '-->', 1],
+        [:T_TEXT, 'foo', 1]
       ]
     end
 
     example 'lex text followed by a comment' do
       lex('foo<!---->').should == [
-        [:T_TEXT, 'foo', 1, 1],
-        [:T_COMMENT_START, '<!--', 1, 4],
-        [:T_COMMENT_END, '-->', 1, 8]
+        [:T_TEXT, 'foo', 1],
+        [:T_COMMENT_START, '<!--', 1],
+        [:T_COMMENT_END, '-->', 1]
       ]
     end
 
     example 'lex an element followed by a comment' do
       lex('<p></p><!---->').should == [
-        [:T_ELEM_OPEN, nil, 1, 1],
-        [:T_ELEM_NAME, 'p', 1, 2],
-        [:T_ELEM_CLOSE, nil, 1, 4],
-        [:T_COMMENT_START, '<!--', 1, 8],
-        [:T_COMMENT_END, '-->', 1, 12]
+        [:T_ELEM_OPEN, nil, 1],
+        [:T_ELEM_NAME, 'p', 1],
+        [:T_ELEM_CLOSE, nil, 1],
+        [:T_COMMENT_START, '<!--', 1],
+        [:T_COMMENT_END, '-->', 1]
       ]
     end
   end

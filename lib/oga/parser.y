@@ -124,25 +124,22 @@ end
   end
 
   def reset
-    @lines  = []
-    @line   = 1
-    @column = 1
+    @lines = []
+    @line  = 1
   end
 
   def s(type, *children)
     return AST::Node.new(
       type,
       children.flatten,
-      :line   => @line,
-      :column => @column
+      :line => @line
     )
   end
 
   def next_token
-    type, value, line, column = @tokens.shift
+    type, value, line = @tokens.shift
 
-    @line   = line if line
-    @column = column if column
+    @line = line if line
 
     return type ? [type, value] : [false, false]
   end
@@ -150,18 +147,13 @@ end
   def on_error(type, value, stack)
     name      = token_to_str(type)
     line_str  = @lines[@line - 1]
-    indicator = '~' * (@column - 1) + '^'
 
     raise Racc::ParseError, <<-EOF.strip
-Failed to parse the supplied input.
-
-Reason:   unexpected #{name} with value #{value.inspect}
-Location: line #{@line}, column #{@column}
+Unexpected #{name} with value #{value.inspect} on line #{@line}
 
 Offending code:
 
 #{line_str}
-#{indicator}
 
 Current stack:
 
