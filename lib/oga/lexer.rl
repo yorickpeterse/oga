@@ -404,6 +404,8 @@ module Oga
       element_head := |*
         whitespace | '=';
 
+        newline => { advance_line };
+
         # Attribute names.
         element_name => { t(:T_ATTR) };
 

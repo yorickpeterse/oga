@@ -33,6 +33,14 @@ describe Oga::Lexer do
         [:T_ELEM_NAME, 'p', 1]
       ]
     end
+
+    example 'lex an element with a newline in the open tag' do
+      lex("<p\n></p>").should == [
+        [:T_ELEM_OPEN, nil, 1],
+        [:T_ELEM_NAME, 'p', 1],
+        [:T_ELEM_CLOSE, nil, 2]
+      ]
+    end
   end
 
   context 'elements with attributes' do
