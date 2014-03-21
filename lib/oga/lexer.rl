@@ -80,7 +80,7 @@ module Oga
       @top      = 0
       @elements = []
 
-      @string_buffer = ''
+      @buffer_start_position = nil
     end
 
     ##
@@ -168,67 +168,47 @@ module Oga
     end
 
     ##
-    # Enables text buffering starting at the given position.
+    # Enables buffering starting at the given position.
     #
     # @param [Fixnum] position The start position of the buffer, set to `@te`
     #  by default.
     #
-    def buffer_text(position = @te)
-      @text_start_position = position
+    def start_buffer(position = @te)
+      @buffer_start_position = position
     end
 
     ##
-    # Returns `true` if we're currently buffering text.
+    # Returns `true` if we're currently buffering.
     #
     # @return [TrueClass|FalseClass]
     #
-    def buffer_text?
-      return !!@text_start_position
+    def buffering?
+      return !!@buffer_start_position
     end
 
     ##
-    # Emits the current text buffer if we have any. The current line number is
+    # Emits the current buffer if we have any. The current line number is
     # advanced based on the amount of newlines in the buffer.
     #
     # @param [Fixnum] position The end position of the buffer, set to `@ts` by
     #  default.
     #
-    def emit_text_buffer(position = @ts)
-      return unless @text_start_position
+    # @param [Symbol] type The type of node to emit.
+    #
+    def emit_buffer(position = @ts, type = :T_TEXT)
+      return unless @buffer_start_position
 
-      content = text(@text_start_position, position)
+      content = text(@buffer_start_position, position)
 
       unless content.empty?
-        add_token(:T_TEXT, content)
+        add_token(type, content)
 
         lines = content.count("\n")
 
         advance_line(lines) if lines > 0
       end
 
-      @text_start_position = nil
-    end
-
-    ##
-    # Buffers text until the current token position hits the EOF position. Once
-    # this position is reached the buffer is emitted.
-    #
-    # @param [Fixnum] eof The EOF position.
-    # @see #emit_text_buffer
-    #
-    def buffer_text_until_eof(eof)
-      @text_buffer << text
-
-      emit_text_buffer if @te == eof
-    end
-
-    ##
-    # Emits and resets the current string buffer.
-    #
-    def emit_string_buffer
-      add_token(:T_STRING, @string_buffer)
-
-      @string_buffer = ''
+      @buffer_start_position = nil
     end
 
     ##
@@ -255,34 +235,36 @@ module Oga
       dquote = '"';
       squote = "'";
 
-      action buffer_string {
-        @string_buffer << text
-      }
-
       action start_string_dquote {
+        start_buffer
+
         fcall string_dquote;
       }
 
       action start_string_squote {
+        start_buffer
+
         fcall string_squote;
       }
 
       # Machine for processing double quoted strings.
       string_dquote := |*
-        ^dquote => buffer_string;
-        dquote  => {
-          emit_string_buffer
+        dquote => {
+          emit_buffer(@ts, :T_STRING)
           fret;
         };
+
+        any;
       *|;
 
       # Machine for processing single quoted strings.
       string_squote := |*
-        ^squote => buffer_string;
-        squote  => {
-          emit_string_buffer
+        squote => {
+          emit_buffer(@ts, :T_STRING)
           fret;
         };
+
+        any;
       *|;
 
       # DOCTYPES
@@ -298,7 +280,7 @@ module Oga
       doctype_start = '<!DOCTYPE'i whitespace+ 'HTML'i;
 
       action start_doctype {
-        emit_text_buffer
+        emit_buffer
         t(:T_DOCTYPE_START)
         fcall doctype;
       }
@@ -336,10 +318,10 @@ module Oga
       cdata_end   = ']]>';
 
       action start_cdata {
-        emit_text_buffer
+        emit_buffer
         t(:T_CDATA_START)
 
-        buffer_text
+        start_buffer
 
         fcall cdata;
       }
@@ -348,7 +330,7 @@ module Oga
       # inside a CDATA tag is treated as plain text.
       cdata := |*
         cdata_end => {
-          emit_text_buffer
+          emit_buffer
           t(:T_CDATA_END)
 
           fret;
@@ -372,10 +354,10 @@ module Oga
       comment_end   = '-->';
 
       action start_comment {
-        emit_text_buffer
+        emit_buffer
         t(:T_COMMENT_START)
 
-        buffer_text
+        start_buffer
 
         fcall comment;
       }
@@ -384,7 +366,7 @@ module Oga
       # inside a comment is treated as plain text (similar to CDATA tags).
       comment := |*
         comment_end => {
-          emit_text_buffer
+          emit_buffer
           t(:T_COMMENT_END)
 
           fret;
@@ -401,7 +383,7 @@ module Oga
       # Action that creates the tokens for the opening tag, name and namespace
       # (if any). Remaining work is delegated to a dedicated machine.
       action start_element {
-        emit_text_buffer
+        emit_buffer
         add_token(:T_ELEM_OPEN, nil)
 
         # Add the element name. If the name includes a namespace we'll break
@@ -467,7 +449,7 @@ module Oga
 
         # Regular closing tags.
         '</' element_name '>' => {
-          emit_text_buffer
+          emit_buffer
           add_token(:T_ELEM_CLOSE, nil)
 
           @elements.pop
@@ -484,11 +466,11 @@ module Oga
         # otherwise take precedence over the other rules.
         any => {
           # First character, start buffering (unless we already are buffering).
-          buffer_text(@ts) unless buffer_text?
+          start_buffer(@ts) unless buffering?
 
           # EOF, emit the text buffer.
           if @te == eof
-            emit_text_buffer(@te)
+            emit_buffer(@te)
           end
         };
       *|;
