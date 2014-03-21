@@ -81,7 +81,6 @@ module Oga
       @elements = []
 
       @string_buffer = ''
-      @text_buffer   = ''
     end
 
     ##
@@ -169,19 +168,45 @@ module Oga
     end
 
     ##
+    # Enables text buffering starting at the given position.
+    #
+    # @param [Fixnum] position The start position of the buffer, set to `@te`
+    #  by default.
+    #
+    def buffer_text(position = @te)
+      @text_start_position = position
+    end
+
+    ##
+    # Returns `true` if we're currently buffering text.
+    #
+    # @return [TrueClass|FalseClass]
+    #
+    def buffer_text?
+      return !!@text_start_position
+    end
+
+    ##
     # Emits the current text buffer if we have any. The current line number is
     # advanced based on the amount of newlines in the buffer.
     #
-    def emit_text_buffer
-      return if @text_buffer.empty?
+    # @param [Fixnum] position The end position of the buffer, set to `@ts` by
+    #  default.
+    #
+    def emit_text_buffer(position = @ts)
+      return unless @text_start_position
 
-      add_token(:T_TEXT, @text_buffer)
+      content = text(@text_start_position, position)
 
-      lines = @text_buffer.count("\n")
+      unless content.empty?
+        add_token(:T_TEXT, content)
 
-      advance_line(lines) if lines > 0
+        lines = content.count("\n")
 
-      @text_buffer = ''
+        advance_line(lines) if lines > 0
+      end
+
+      @text_start_position = nil
     end
 
     ##
@@ -229,10 +254,6 @@ module Oga
       # quote.
       dquote = '"';
       squote = "'";
-
-      action buffer_text {
-        @text_buffer << text
-      }
 
       action buffer_string {
         @string_buffer << text
@@ -317,6 +338,9 @@ module Oga
       action start_cdata {
         emit_text_buffer
         t(:T_CDATA_START)
+
+        buffer_text
+
         fcall cdata;
       }
 
@@ -326,10 +350,11 @@ module Oga
         cdata_end => {
           emit_text_buffer
           t(:T_CDATA_END)
+
           fret;
         };
 
-        any => buffer_text;
+        any;
       *|;
 
       # Comments
@@ -349,6 +374,9 @@ module Oga
       action start_comment {
         emit_text_buffer
         t(:T_COMMENT_START)
+
+        buffer_text
+
         fcall comment;
       }
 
@@ -358,10 +386,11 @@ module Oga
         comment_end => {
           emit_text_buffer
           t(:T_COMMENT_END)
+
           fret;
         };
 
-        any => buffer_text;
+        any;
       *|;
 
       # Elements
@@ -453,7 +482,15 @@ module Oga
 
         # Note that this rule should be declared at the very bottom as it will
         # otherwise take precedence over the other rules.
-        any => { buffer_text_until_eof(eof) };
+        any => {
+          # First character, start buffering (unless we already are buffering).
+          buffer_text(@ts) unless buffer_text?
+
+          # EOF, emit the text buffer.
+          if @te == eof
+            emit_text_buffer(@te)
+          end
+        };
       *|;
     }%%
   end # Lexer
