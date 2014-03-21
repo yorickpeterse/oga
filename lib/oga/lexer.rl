@@ -436,7 +436,6 @@ module Oga
         doctype_start => start_doctype;
         cdata_start   => start_cdata;
         comment_start => start_comment;
-        element_start => start_element;
 
         # Enter the body of the tag. If HTML mode is enabled and the current
         # element is a void element we'll close it and bail out.
