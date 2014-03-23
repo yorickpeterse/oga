@@ -95,7 +95,7 @@ module Oga
     # @return [Array]
     #
     def lex(data)
-      @data       = data.chars.to_a
+      @data       = data.codepoints
       lexer_start = self.class.lexer_start
       eof         = data.length
 
@@ -152,7 +152,7 @@ module Oga
     # @return [String]
     #
     def text(start = @ts, stop = @te)
-      return @data[start...stop].join('')
+      return @data[start...stop].pack('U*')
     end
 
     ##
@@ -223,6 +223,7 @@ module Oga
     %%{
       # Use instance variables for `ts` and friends.
       access @;
+      getkey (@data[p] || 0);
 
       newline    = '\n' | '\r\n';
       whitespace = [ \t];
