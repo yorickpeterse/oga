@@ -95,7 +95,7 @@ module Oga
     # @return [Array]
     #
     def lex(data)
-      @data       = data.codepoints
+      @data       = data.unpack('U*')
       lexer_start = self.class.lexer_start
       eof         = data.length
 
