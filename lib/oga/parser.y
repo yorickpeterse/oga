@@ -1,3 +1,12 @@
+##
+# Low level AST parser that supports both XML and HTML.
+#
+# Note that this parser itself does not deal with special HTML void elements.
+# It requires every tag to have a closing tag. As such you'll need to enable
+# HTML parsing mode when parsing HTML. This can be done as following:
+#
+#     parser = Oga::Parser.new(:html => true)
+#
 class Oga::Parser
 
 token T_STRING T_TEXT
@@ -118,16 +127,30 @@ rule
 end
 
 ---- inner
-
+  ##
+  # @param [Hash] options
+  #
+  # @option options [TrueClass|FalseClass] :html Enables HTML parsing mode.
+  # @see Oga::Lexer#initialize
+  #
   def initialize(options = {})
     @lexer = Lexer.new(options)
   end
 
+  ##
+  # Resets the internal state of the parser.
+  #
   def reset
     @lines = []
     @line  = 1
   end
 
+  ##
+  # Emits a new AST token.
+  #
+  # @param [Symbol] type
+  # @param [Array] children
+  #
   def s(type, *children)
     return AST::Node.new(
       type,
@@ -136,6 +159,11 @@ end
     )
   end
 
+  ##
+  # Returns the next token from the lexer.
+  #
+  # @return [Array]
+  #
   def next_token
     type, value, line = @tokens.shift
 
@@ -144,6 +172,12 @@ end
     return type ? [type, value] : [false, false]
   end
 
+  ##
+  # @param [Fixnum] type The type of token the error occured on.
+  # @param [String] value The value of the token.
+  # @param [Array] stack The current stack of parsed nodes.
+  # @raise [Racc::ParseError]
+  #
   def on_error(type, value, stack)
     name  = token_to_str(type)
     index = @line - 1
@@ -172,6 +206,16 @@ Unexpected #{name} with value #{value.inspect} on line #{@line}:
     EOF
   end
 
+  ##
+  # Parses the supplied string and returns the AST.
+  #
+  # @example
+  #  parser = Oga::Parser.new
+  #  ast    = parser.parse('<foo>bar</foo>')
+  #
+  # @param [String] string
+  # @return [Oga::AST::Node]
+  #
   def parse(string)
     @lines  = string.lines
     @tokens = @lexer.lex(string)
