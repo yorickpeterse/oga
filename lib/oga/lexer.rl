@@ -95,7 +95,7 @@ module Oga
     # @return [Array]
     #
     def lex(data)
-      @data       = data
+      @data       = data.chars.to_a
       lexer_start = self.class.lexer_start
       eof         = data.length
 
@@ -152,7 +152,7 @@ module Oga
     # @return [String]
     #
     def text(start = @ts, stop = @te)
-      return @data[start...stop]
+      return @data[start...stop].join('')
     end
 
     ##
