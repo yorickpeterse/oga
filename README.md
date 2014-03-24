@@ -104,6 +104,16 @@ even Java.
 In theory it should also allow it to run on every Ruby implementation, be it
 JRuby, Rubinius, Topaz or even mruby.
 
+## Donations
+
+<img src="doge.png" align="right" />
+
+Writing an XML/HTML parser is a lot of work. If you feel generous enough you
+can reward my work by donating some [Dogecoin][dogecoin] to address
+`DUN6ACHZefdroMkwvkyoQD67ZeTac6pJpz`. If you'd like to reward me using a real
+currency (such as Monopoly money, aka Euros) you can send them to Paypal
+address `yorickpeterse@gmail.com`.
+
 ## License
 
 All source code in this repository is licensed under the MIT license unless
@@ -113,3 +123,4 @@ in the root directory of this repository.
 [nokogiri]: https://github.com/sparklemotion/nokogiri
 [oga-wikipedia]: https://en.wikipedia.org/wiki/Japanese_saw#Other_Japanese_saws
 [ox]: https://github.com/ohler55/ox
+[dogecoin]: http://dogecoin.com/
