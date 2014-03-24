@@ -282,7 +282,7 @@ module Oga
 
       action start_doctype {
         emit_buffer
-        t(:T_DOCTYPE_START)
+        add_token(:T_DOCTYPE_START, nil)
         fcall doctype;
       }
 
@@ -300,7 +300,7 @@ module Oga
         whitespace;
 
         '>' => {
-          t(:T_DOCTYPE_END)
+          add_token(:T_DOCTYPE_END, nil)
           fret;
         };
       *|;

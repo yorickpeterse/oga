@@ -14,8 +14,8 @@ describe Oga::Lexer do
       EOF
 
       lex(html).should == [
-        [:T_DOCTYPE_START, '<!DOCTYPE html', 1],
-        [:T_DOCTYPE_END, '>', 1],
+        [:T_DOCTYPE_START, nil, 1],
+        [:T_DOCTYPE_END, nil, 1],
         [:T_TEXT, "\n", 1],
 
         # <html>
