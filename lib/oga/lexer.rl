@@ -161,7 +161,7 @@ module Oga
     # @param [Symbol] type The token type.
     # @param [String] value The token value.
     #
-    def add_token(type, value)
+    def add_token(type, value = nil)
       token = [type, value, @line]
 
       @tokens << token
@@ -282,7 +282,7 @@ module Oga
 
       action start_doctype {
         emit_buffer
-        add_token(:T_DOCTYPE_START, nil)
+        add_token(:T_DOCTYPE_START)
         fcall doctype;
       }
 
@@ -300,7 +300,7 @@ module Oga
         whitespace;
 
         '>' => {
-          add_token(:T_DOCTYPE_END, nil)
+          add_token(:T_DOCTYPE_END)
           fret;
         };
       *|;
@@ -320,7 +320,7 @@ module Oga
 
       action start_cdata {
         emit_buffer
-        add_token(:T_CDATA_START, nil)
+        add_token(:T_CDATA_START)
 
         start_buffer
 
@@ -332,7 +332,7 @@ module Oga
       cdata := |*
         cdata_end => {
           emit_buffer
-          add_token(:T_CDATA_END, nil)
+          add_token(:T_CDATA_END)
 
           fret;
         };
@@ -356,7 +356,7 @@ module Oga
 
       action start_comment {
         emit_buffer
-        add_token(:T_COMMENT_START, nil)
+        add_token(:T_COMMENT_START)
 
         start_buffer
 
@@ -368,7 +368,7 @@ module Oga
       comment := |*
         comment_end => {
           emit_buffer
-          add_token(:T_COMMENT_END, nil)
+          add_token(:T_COMMENT_END)
 
           fret;
         };
@@ -385,7 +385,7 @@ module Oga
 
       action start_xml_decl {
         emit_buffer
-        add_token(:T_XML_DECL_START, nil)
+        add_token(:T_XML_DECL_START)
 
         start_buffer
 
@@ -396,7 +396,7 @@ module Oga
       xml_decl := |*
         xml_decl_end => {
           emit_buffer
-          add_token(:T_XML_DECL_END, nil)
+          add_token(:T_XML_DECL_END)
 
           fret;
         };
@@ -413,7 +413,7 @@ module Oga
       # (if any). Remaining work is delegated to a dedicated machine.
       action start_element {
         emit_buffer
-        add_token(:T_ELEM_START, nil)
+        add_token(:T_ELEM_START)
 
         # Add the element name. If the name includes a namespace we'll break
         # the name up into two separate tokens.
