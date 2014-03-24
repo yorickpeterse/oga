@@ -356,7 +356,7 @@ module Oga
 
       action start_comment {
         emit_buffer
-        t(:T_COMMENT_START)
+        add_token(:T_COMMENT_START, nil)
 
         start_buffer
 
@@ -368,7 +368,7 @@ module Oga
       comment := |*
         comment_end => {
           emit_buffer
-          t(:T_COMMENT_END)
+          add_token(:T_COMMENT_END, nil)
 
           fret;
         };
