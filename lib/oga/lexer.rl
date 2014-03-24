@@ -385,7 +385,7 @@ module Oga
       # (if any). Remaining work is delegated to a dedicated machine.
       action start_element {
         emit_buffer
-        add_token(:T_ELEM_OPEN, nil)
+        add_token(:T_ELEM_START, nil)
 
         # Add the element name. If the name includes a namespace we'll break
         # the name up into two separate tokens.
@@ -442,7 +442,7 @@ module Oga
         # element is a void element we'll close it and bail out.
         '>' => {
           if html? and HTML_VOID_ELEMENTS.include?(current_element)
-            add_token(:T_ELEM_CLOSE, nil)
+            add_token(:T_ELEM_END, nil)
             @elements.pop
           end
         };
@@ -450,14 +450,14 @@ module Oga
         # Regular closing tags.
         '</' element_name '>' => {
           emit_buffer
-          add_token(:T_ELEM_CLOSE, nil)
+          add_token(:T_ELEM_END, nil)
 
           @elements.pop
         };
 
         # Self closing elements that are not handled by the HTML mode.
         '/>' => {
-          add_token(:T_ELEM_CLOSE, nil)
+          add_token(:T_ELEM_END, nil)
 
           @elements.pop
         };

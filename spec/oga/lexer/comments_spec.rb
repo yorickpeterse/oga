@@ -44,9 +44,9 @@ describe Oga::Lexer do
 
     example 'lex an element followed by a comment' do
       lex('<p></p><!---->').should == [
-        [:T_ELEM_OPEN, nil, 1],
+        [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'p', 1],
-        [:T_ELEM_CLOSE, nil, 1],
+        [:T_ELEM_END, nil, 1],
         [:T_COMMENT_START, '<!--', 1],
         [:T_COMMENT_END, '-->', 1]
       ]

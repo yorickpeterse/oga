@@ -13,7 +13,7 @@ token T_STRING T_TEXT
 token T_DOCTYPE_START T_DOCTYPE_END T_DOCTYPE_TYPE
 token T_CDATA_START T_CDATA_END
 token T_COMMENT_START T_COMMENT_END
-token T_ELEM_OPEN T_ELEM_NAME T_ELEM_NS T_ELEM_CLOSE T_ATTR
+token T_ELEM_START T_ELEM_NAME T_ELEM_NS T_ELEM_END T_ATTR
 
 options no_result_var
 
@@ -85,7 +85,7 @@ rule
   # Elements
 
   element
-    : element_open attributes expressions T_ELEM_CLOSE
+    : element_open attributes expressions T_ELEM_END
       {
         s(:element, val[0], val[1], val[2])
       }
@@ -93,10 +93,10 @@ rule
 
   element_open
     # <p>
-    : T_ELEM_OPEN T_ELEM_NAME { [nil, val[1]] }
+    : T_ELEM_START T_ELEM_NAME { [nil, val[1]] }
 
     # <foo:p>
-    | T_ELEM_OPEN T_ELEM_NS T_ELEM_NAME { [val[1], val[2]] }
+    | T_ELEM_START T_ELEM_NS T_ELEM_NAME { [val[1], val[2]] }
     ;
 
   # Attributes
