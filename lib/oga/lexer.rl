@@ -320,7 +320,7 @@ module Oga
 
       action start_cdata {
         emit_buffer
-        t(:T_CDATA_START)
+        add_token(:T_CDATA_START, nil)
 
         start_buffer
 
@@ -332,7 +332,7 @@ module Oga
       cdata := |*
         cdata_end => {
           emit_buffer
-          t(:T_CDATA_END)
+          add_token(:T_CDATA_END, nil)
 
           fret;
         };
