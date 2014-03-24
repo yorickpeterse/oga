@@ -111,7 +111,7 @@ JRuby, Rubinius, Topaz or even mruby.
 Writing an XML/HTML parser is a lot of work. If you feel generous enough you
 can reward my work by donating some [Dogecoin][dogecoin] to address
 `DUN6ACHZefdroMkwvkyoQD67ZeTac6pJpz`. If you'd like to reward me using a real
-currency (such as Monopoly money, aka Euros) you can send them to Paypal
+currency (such as Monopoly money, aka Euros) you can send it to Paypal
 address `yorickpeterse@gmail.com`.
 
 ## License
