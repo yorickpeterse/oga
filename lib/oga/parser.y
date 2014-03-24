@@ -14,6 +14,7 @@ token T_DOCTYPE_START T_DOCTYPE_END T_DOCTYPE_TYPE
 token T_CDATA_START T_CDATA_END
 token T_COMMENT_START T_COMMENT_END
 token T_ELEM_START T_ELEM_NAME T_ELEM_NS T_ELEM_END T_ATTR
+token T_XML_DECL_START T_XML_DECL_END
 
 options no_result_var
 
@@ -35,6 +36,7 @@ rule
     | comment
     | element
     | text
+    | xmldecl
     ;
 
   # Doctypes
@@ -118,6 +120,11 @@ rule
     # foo="bar"
     | T_ATTR T_STRING { s(:attribute, val[0], val[1]) }
     ;
+
+  # XML declarations
+  xmldecl
+    : T_XML_DECL_START T_XML_DECL_END      { s(:xml_decl) }
+    | T_XML_DECL_START text T_XML_DECL_END { s(:xml_decl, val[1]) }
 
   # Plain text
 

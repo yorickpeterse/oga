@@ -376,6 +376,34 @@ module Oga
         any;
       *|;
 
+      # XML declaration tags
+      #
+      # http://www.w3.org/TR/REC-xml/#sec-prolog-dtd
+      #
+      xml_decl_start = '<?xml';
+      xml_decl_end   = '?>';
+
+      action start_xml_decl {
+        emit_buffer
+        add_token(:T_XML_DECL_START, nil)
+
+        start_buffer
+
+        fcall xml_decl;
+      }
+
+      # Machine that processes the contents of an XML declaration tag.
+      xml_decl := |*
+        xml_decl_end => {
+          emit_buffer
+          add_token(:T_XML_DECL_END, nil)
+
+          fret;
+        };
+
+        any;
+      *|;
+
       # Elements
       #
       # http://www.w3.org/TR/html-markup/syntax.html#syntax-elements
@@ -433,10 +461,11 @@ module Oga
       *|;
 
       main := |*
-        element_start => start_element;
-        doctype_start => start_doctype;
-        cdata_start   => start_cdata;
-        comment_start => start_comment;
+        element_start  => start_element;
+        doctype_start  => start_doctype;
+        cdata_start    => start_cdata;
+        comment_start  => start_comment;
+        xml_decl_start => start_xml_decl;
 
         # Enter the body of the tag. If HTML mode is enabled and the current
         # element is a void element we'll close it and bail out.
