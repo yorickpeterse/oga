@@ -3,9 +3,9 @@
 module Oga
   module XML
     ##
-    # Low level lexer that supports both XML and HTML (using an extra option). To
-    # lex HTML input set the `:html` option to `true` when creating an instance
-    # of the lexer:
+    # Low level lexer that supports both XML and HTML (using an extra option).
+    # To lex HTML input set the `:html` option to `true` when creating an
+    # instance of the lexer:
     #
     #     lexer = Oga::Lexer.new(:html => true)
     #
@@ -42,8 +42,8 @@ module Oga
         'wbr'
       ]
 
-      # Lazy way of forwarding instance method calls used internally by Ragel to
-      # their corresponding class methods.
+      # Lazy way of forwarding instance method calls used internally by Ragel
+      # to their corresponding class methods.
       private_methods.grep(/^_lexer_/).each do |name|
         define_method(name) do
           return self.class.send(name)
@@ -56,8 +56,8 @@ module Oga
       # @param [Hash] options
       #
       # @option options [Symbol] :html When set to `true` the lexer will treat
-      #  the input as HTML instead of SGML/XML. This makes it possible to lex
-      #  HTML void elements such as `<link href="">`.
+      # the input as HTML instead of SGML/XML. This makes it possible to lex
+      # HTML void elements such as `<link href="">`.
       #
       def initialize(options = {})
         options.each do |key, value|
@@ -68,8 +68,9 @@ module Oga
       end
 
       ##
-      # Resets the internal state of the lexer. Typically you don't need to call
-      # this method yourself as its called by #lex after lexing a given String.
+      # Resets the internal state of the lexer. Typically you don't need to
+      # call this method yourself as its called by #lex after lexing a given
+      # String.
       #
       def reset
         @line     = 1
@@ -191,8 +192,8 @@ module Oga
       # Emits the current buffer if we have any. The current line number is
       # advanced based on the amount of newlines in the buffer.
       #
-      # @param [Fixnum] position The end position of the buffer, set to `@ts` by
-      #  default.
+      # @param [Fixnum] position The end position of the buffer, set to `@ts`
+      #  by default.
       #
       # @param [Symbol] type The type of node to emit.
       #
@@ -232,8 +233,8 @@ module Oga
         # Strings
         #
         # Strings in HTML can either be single or double quoted. If a string
-        # starts with one of these quotes it must be closed with the same type of
-        # quote.
+        # starts with one of these quotes it must be closed with the same type
+        # of quote.
         dquote = '"';
         squote = "'";
 
@@ -287,8 +288,8 @@ module Oga
           fcall doctype;
         }
 
-        # Machine for processing doctypes. Doctype values such as the public and
-        # system IDs are treated as T_STRING tokens.
+        # Machine for processing doctypes. Doctype values such as the public
+        # and system IDs are treated as T_STRING tokens.
         doctype := |*
           'PUBLIC' | 'SYSTEM' => { emit(:T_DOCTYPE_TYPE) };
 
@@ -345,12 +346,12 @@ module Oga
         #
         # http://www.w3.org/TR/html-markup/syntax.html#comments
         #
-        # Comments are lexed into 3 parts: the start tag, the content and the end
-        # tag.
+        # Comments are lexed into 3 parts: the start tag, the content and the
+        # end tag.
         #
-        # Unlike the W3 specification these rules *do* allow character sequences
-        # such as `--` and `->`. Putting extra checks in for these sequences
-        # would actually make the rules/actions more complex.
+        # Unlike the W3 specification these rules *do* allow character
+        # sequences such as `--` and `->`. Putting extra checks in for these
+        # sequences would actually make the rules/actions more complex.
         #
         comment_start = '<!--';
         comment_end   = '-->';
@@ -410,8 +411,9 @@ module Oga
         # http://www.w3.org/TR/html-markup/syntax.html#syntax-elements
         #
 
-        # Action that creates the tokens for the opening tag, name and namespace
-        # (if any). Remaining work is delegated to a dedicated machine.
+        # Action that creates the tokens for the opening tag, name and
+        # namespace (if any). Remaining work is delegated to a dedicated
+        # machine.
         action start_element {
           emit_buffer
           add_token(:T_ELEM_START)
@@ -492,8 +494,8 @@ module Oga
             @elements.pop
           };
 
-          # Note that this rule should be declared at the very bottom as it will
-          # otherwise take precedence over the other rules.
+          # Note that this rule should be declared at the very bottom as it
+          # will otherwise take precedence over the other rules.
           any => {
             # First character, start buffering (unless we already are buffering).
             start_buffer(@ts) unless buffering?
