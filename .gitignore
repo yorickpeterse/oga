@@ -3,5 +3,5 @@ coverage
 pkg
 Gemfile.lock
 
-lib/oga/lexer.rb
-lib/oga/parser.rb
+lib/oga/xml/lexer.rb
+lib/oga/xml/parser.rb
