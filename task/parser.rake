@@ -5,4 +5,4 @@ rule '.rb' => '.y' do |task|
 end
 
 desc 'Generates the parser'
-task :parser => [HTML_PARSER]
+task :parser => [PARSER_OUTPUT]
