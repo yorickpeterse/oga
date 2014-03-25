@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Oga::Parser do
+describe Oga::XML::Parser do
   context 'elements' do
     example 'parse an empty element' do
       parse('<p></p>').should == s(

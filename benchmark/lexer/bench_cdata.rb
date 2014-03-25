@@ -5,7 +5,7 @@ string = 'Hello, how are you doing today?'
 small  = "<![CDATA[#{string}]]>"
 medium = "<![CDATA[#{string * 1_000}]]>"
 large  = "<![CDATA[#{string * 10_000}]]>"
-lexer  = Oga::Lexer.new
+lexer  = Oga::XML::Lexer.new
 
 Benchmark.ips do |bench|
   bench.report 'CDATA with a small body' do

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Oga::Parser do
+describe Oga::XML::Parser do
   context 'doctypes' do
     example 'parse a doctype' do
       parse('<!DOCTYPE html>').should == s(:document, s(:doctype))

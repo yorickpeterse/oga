@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Oga::Lexer do
+describe Oga::XML::Lexer do
   context 'cdata tags' do
     example 'lex a cdata tag' do
       lex('<![CDATA[foo]]>').should == [

@@ -5,10 +5,10 @@ require 'cliver'
 
 GEMSPEC = Gem::Specification.load('oga.gemspec')
 
-LEXER_INPUT  = 'lib/oga/lexer.rl'
-LEXER_OUTPUT = 'lib/oga/lexer.rb'
+LEXER_INPUT  = 'lib/oga/xml/lexer.rl'
+LEXER_OUTPUT = 'lib/oga/xml/lexer.rb'
 
-HTML_PARSER = 'lib/oga/parser.rb'
+HTML_PARSER = 'lib/oga/xml/parser.rb'
 
 GENERATED_FILES = ['coverage', 'yardoc', LEXER_OUTPUT, HTML_PARSER]
 

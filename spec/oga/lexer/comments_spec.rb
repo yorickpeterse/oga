@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Oga::Lexer do
+describe Oga::XML::Lexer do
   context 'comments' do
     example 'lex a comment' do
       lex('<!-- foo -->').should == [

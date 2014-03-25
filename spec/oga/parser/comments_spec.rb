@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Oga::Parser do
+describe Oga::XML::Parser do
   context 'comments' do
     example 'parse an empty comment' do
       parse('<!---->').should == s(:document, s(:comment))

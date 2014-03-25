@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Oga::Lexer do
+describe Oga::XML::Lexer do
   context 'XML declaration tags' do
     example 'lex a start tag' do
       lex('<?xml').should == [[:T_XML_DECL_START, nil, 1]]

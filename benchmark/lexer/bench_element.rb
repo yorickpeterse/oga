@@ -4,7 +4,7 @@ require 'benchmark/ips'
 simple     = '<p>Hello world</p>'
 attributes = '<p class="foo">Hello world</p>'
 nested     = '<p>Hello<strong>world</strong></p>'
-lexer      = Oga::Lexer.new
+lexer      = Oga::XML::Lexer.new
 
 Benchmark.ips do |bench|
   bench.report 'text only' do

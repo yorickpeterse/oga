@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Oga::Parser do
+describe Oga::XML::Parser do
   context 'cdata tags' do
     example 'parse a cdata tag' do
       parse('<![CDATA[foo]]>').should == s(:document, s(:cdata, 'foo'))

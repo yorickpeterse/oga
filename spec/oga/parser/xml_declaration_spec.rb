@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Oga::Parser do
+describe Oga::XML::Parser do
   context 'XML declaration tags' do
     example 'lex an XML declaration tag' do
       parse('<?xml hello ?>').should == s(

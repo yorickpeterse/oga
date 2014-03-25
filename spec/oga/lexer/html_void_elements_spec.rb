@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Oga::Lexer do
+describe Oga::XML::Lexer do
   context 'HTML void elements' do
     example 'lex a void element that omits the closing /' do
       lex('<link>', :html => true).should == [

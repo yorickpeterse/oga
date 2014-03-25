@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Oga::Lexer do
+describe Oga::XML::Lexer do
   context 'elements' do
     example 'lex an opening element' do
       lex('<p>').should == [

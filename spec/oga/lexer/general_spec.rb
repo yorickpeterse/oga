@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Oga::Lexer do
+describe Oga::XML::Lexer do
   context 'regular text' do
     example 'lex regular text' do
       lex('hello').should == [[:T_TEXT, 'hello', 1]]

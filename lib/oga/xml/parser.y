@@ -5,9 +5,9 @@
 # It requires every tag to have a closing tag. As such you'll need to enable
 # HTML parsing mode when parsing HTML. This can be done as following:
 #
-#     parser = Oga::Parser.new(:html => true)
+#     parser = Oga::XML::Parser.new(:html => true)
 #
-class Oga::Parser
+class Oga::XML::Parser
 
 token T_STRING T_TEXT
 token T_DOCTYPE_START T_DOCTYPE_END T_DOCTYPE_TYPE

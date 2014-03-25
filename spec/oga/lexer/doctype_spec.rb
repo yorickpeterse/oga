@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Oga::Lexer do
+describe Oga::XML::Lexer do
   context 'doctypes' do
     example 'lex the HTML5 doctype' do
       lex('<!DOCTYPE html>').should == [
