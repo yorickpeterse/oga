@@ -136,7 +136,7 @@ module Oga
       # @see #text
       # @see #add_token
       #
-      def t(type, start = @ts, stop = @te)
+      def emit(type, start = @ts, stop = @te)
         value = text(start, stop)
 
         add_token(type, value)
@@ -290,7 +290,7 @@ module Oga
         # Machine for processing doctypes. Doctype values such as the public and
         # system IDs are treated as T_STRING tokens.
         doctype := |*
-          'PUBLIC' | 'SYSTEM' => { t(:T_DOCTYPE_TYPE) };
+          'PUBLIC' | 'SYSTEM' => { emit(:T_DOCTYPE_TYPE) };
 
           # Lex the public/system IDs as regular strings.
           dquote => start_string_dquote;
@@ -448,7 +448,7 @@ module Oga
           newline => { advance_line };
 
           # Attribute names.
-          element_name => { t(:T_ATTR) };
+          element_name => { emit(:T_ATTR) };
 
           # Attribute values.
           dquote => start_string_dquote;

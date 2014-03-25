@@ -545,7 +545,7 @@ begin
 # line 293 "lib/oga/xml/lexer.rl"
 		begin
  @te = p+1
- begin  t(:T_DOCTYPE_TYPE)  end
+ begin  emit(:T_DOCTYPE_TYPE)  end
 		end
 	when 26 then
 # line 240 "lib/oga/xml/lexer.rl"
@@ -756,7 +756,7 @@ p = p - 1;		end
 # line 451 "lib/oga/xml/lexer.rl"
 		begin
  @te = p
-p = p - 1; begin  t(:T_ATTR)  end
+p = p - 1; begin  emit(:T_ATTR)  end
 		end
 	when 3 then
 # line 284 "lib/oga/xml/lexer.rl"
@@ -1015,7 +1015,7 @@ end
       # @see #text
       # @see #add_token
       #
-      def t(type, start = @ts, stop = @te)
+      def emit(type, start = @ts, stop = @te)
         value = text(start, stop)
 
         add_token(type, value)
