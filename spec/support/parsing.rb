@@ -23,7 +23,7 @@ module Oga
     end
 
     ##
-    # Parses the given HTML and returns an AST.
+    # Parses the given XML and returns an AST.
     #
     # @param [String] input
     # @param [Hash] options
@@ -31,6 +31,15 @@ module Oga
     #
     def parse(input, options = {})
       return Oga::XML::Parser.new(options).parse(input)
+    end
+
+    ##
+    # Parses the given HTML and returns an AST.
+    #
+    # @see #parse
+    #
+    def parse_html(input, options = {})
+      return Oga::HTML::Parser.new(options).parse(input)
     end
   end # ParsingHelpers
 end # Oga
