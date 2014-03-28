@@ -5,6 +5,21 @@ describe Oga::XML::TreeBuilder do
     @builder = described_class.new
   end
 
+  context '#on_document' do
+    before do
+      node = s(:document, s(:element, nil, 'p', nil, nil))
+      @tag = @builder.process(node)
+    end
+
+    example 'return a Document node' do
+      @tag.is_a?(Oga::XML::Document).should == true
+    end
+
+    example 'include the children of the element' do
+      @tag.children[0].is_a?(Oga::XML::Element).should == true
+    end
+  end
+
   context '#on_element' do
     context 'simple elements' do
       before do
