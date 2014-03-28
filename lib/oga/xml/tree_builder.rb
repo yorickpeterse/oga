@@ -6,7 +6,7 @@ module Oga
     # @!attribute [r] ast
     #  @return [Oga::AST::Node]
     #
-    class Builder < ::AST::Processor
+    class TreeBuilder < ::AST::Processor
       attr_reader :ast
 
       def on_document(node)
@@ -74,6 +74,6 @@ module Oga
       def on_attribute(node)
         return *node
       end
-    end # Builder
+    end # TreeBuilder
   end # XML
 end # Oga
