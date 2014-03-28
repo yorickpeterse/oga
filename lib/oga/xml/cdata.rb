@@ -2,10 +2,11 @@ module Oga
   module XML
     ##
     #
-    class Comment < Text
+    #
+    class Cdata < Text
       def to_xml
-        return "<!--#{text}-->"
+        return "<![CDATA[#{text}]]>"
       end
-    end # Comment
+    end # Cdata
   end # XML
 end # Oga

@@ -61,7 +61,9 @@ module Oga
         return Text.new(:text => node.children[0])
       end
 
-      alias_method :on_cdata, :on_text
+      def on_cdata(node)
+        return Cdata.new(:text => node.children[0])
+      end
 
       def on_attributes(node)
         pairs = process_all(node)
