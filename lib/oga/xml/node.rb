@@ -1,20 +1,20 @@
 module Oga
   module XML
     ##
-    # @!attribute [r] parent
+    # @!attribute [rw] parent
     #  @return [Oga::XML::Node]
     #
-    # @!attribute [r] children
+    # @!attribute [rw] children
     #  @return [Array<Oga::XML::Node>]
     #
-    # @!attribute [r] next
+    # @!attribute [rw] next
     #  @return [Oga::XML::NOde]
     #
-    # @!attribute [r] previous
+    # @!attribute [rw] previous
     #  @return [Oga::XML::Node]
     #
     class Node
-      attr_reader :parent, :children, :next, :previous
+      attr_accessor :parent, :children, :next, :previous
 
       ##
       # @param [Hash] options
@@ -30,6 +30,10 @@ module Oga
         options.each do |key, value|
           instance_variable_set("@#{key}", value) if respond_to?(key)
         end
+
+        @children ||= []
+
+        after_initialize if respond_to?(:after_initialize)
       end
     end # Element
   end # XML
