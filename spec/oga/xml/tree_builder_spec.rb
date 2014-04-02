@@ -20,6 +20,33 @@ describe Oga::XML::TreeBuilder do
     end
   end
 
+  context '#on_document with XML declarations' do
+    before do
+      decl = s(:xml_decl, s(:attributes, s(:attribute, 'encoding', 'UTF-8')))
+      node = s(:document, decl)
+      @tag = @builder.process(node)
+    end
+
+    example 'set the XML declaration of the document' do
+      @tag.xml_declaration.is_a?(Oga::XML::XmlDeclaration).should == true
+    end
+  end
+
+  context '#on_xml_decl' do
+    before do
+      node = s(:xml_decl, s(:attributes, s(:attribute, 'encoding', 'UTF-8')))
+      @tag = @builder.process(node)
+    end
+
+    example 'return an XmlDeclaration node' do
+      @tag.is_a?(Oga::XML::XmlDeclaration).should == true
+    end
+
+    example 'include the encoding of the tag' do
+      @tag.encoding.should == 'UTF-8'
+    end
+  end
+
   context '#on_element' do
     context 'simple elements' do
       before do

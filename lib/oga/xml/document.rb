@@ -4,10 +4,16 @@ module Oga
     # Class description
     #
     class Document < Node
-      attr_accessor :dtd, :xml_version, :encoding
+      attr_accessor :xml_declaration
 
       def to_xml
-        return children.map(&:to_xml).join('')
+        xml = children.map(&:to_xml).join('')
+
+        if xml_declaration
+          xml = xml_declaration.to_xml + xml
+        end
+
+        return xml
       end
     end # Document
   end # XML

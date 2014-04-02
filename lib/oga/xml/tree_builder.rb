@@ -18,13 +18,30 @@ module Oga
       #
       def on_document(node)
         document = Document.new
-        document.children = process_all(node)
+
+        process_all(node).each do |child|
+          if child.is_a?(XmlDeclaration)
+            document.xml_declaration = child
+          else
+            document.children << child
+          end
+        end
 
         document.children.each do |child|
           child.parent = document
         end
 
         return document
+      end
+
+      ##
+      # @param [Oga::AST::Node] node
+      # @return [Oga::XML::XmlDeclaration]
+      #
+      def on_xml_decl(node)
+        attributes = process(node.children[0])
+
+        return XmlDeclaration.new(attributes)
       end
 
       ##
@@ -101,6 +118,10 @@ module Oga
       #
       def on_attribute(node)
         return *node
+      end
+
+      def handler_missing(node)
+        raise "No handler for node type #{node.type.inspect}"
       end
 
       private

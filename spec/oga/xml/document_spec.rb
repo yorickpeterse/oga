@@ -29,4 +29,21 @@ describe Oga::XML::Document do
       @document.to_xml.should == '<!--foo-->'
     end
   end
+
+  context '#to_xml with XML declarations' do
+    before do
+      decl     = Oga::XML::XmlDeclaration.new(:version => '5.0')
+      children = [Oga::XML::Comment.new(:text => 'foo')]
+
+      @document = described_class.new(
+        :xml_declaration => decl,
+        :children        => children
+      )
+    end
+
+    example 'include the XML of the declaration tag' do
+      @document.to_xml
+        .should == '<?xml version="5.0" encoding="UTF-8" ?><!--foo-->'
+    end
+  end
 end
