@@ -229,6 +229,7 @@ module Oga
 
         newline    = '\n' | '\r\n';
         whitespace = [ \t];
+        identifier = [a-zA-Z0-9\-_]+;
 
         # Strings
         #
@@ -403,6 +404,12 @@ module Oga
             fret;
           };
 
+          # Attributes and their values (e.g. version="1.0").
+          identifier => { emit(:T_ATTR) };
+
+          dquote => start_string_dquote;
+          squote => start_string_squote;
+
           any;
         *|;
 
@@ -450,7 +457,7 @@ module Oga
           newline => { advance_line };
 
           # Attribute names.
-          element_name => { emit(:T_ATTR) };
+          identifier => { emit(:T_ATTR) };
 
           # Attribute values.
           dquote => start_string_dquote;

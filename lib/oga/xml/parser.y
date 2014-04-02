@@ -123,8 +123,8 @@ rule
 
   # XML declarations
   xmldecl
-    : T_XML_DECL_START T_XML_DECL_END      { s(:xml_decl) }
-    | T_XML_DECL_START text T_XML_DECL_END { s(:xml_decl, val[1]) }
+    : T_XML_DECL_START T_XML_DECL_END            { s(:xml_decl) }
+    | T_XML_DECL_START attributes T_XML_DECL_END { s(:xml_decl, val[1]) }
 
   # Plain text
 

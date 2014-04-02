@@ -16,7 +16,8 @@ describe Oga::XML::Lexer do
     example 'lex a tag with text inside it' do
       lex('<?xml version="1.0" ?>').should == [
         [:T_XML_DECL_START, nil, 1],
-        [:T_TEXT, ' version="1.0" ', 1],
+        [:T_ATTR, 'version', 1],
+        [:T_STRING, '1.0', 1],
         [:T_XML_DECL_END, nil, 1]
       ]
     end
