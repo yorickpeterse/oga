@@ -3,8 +3,19 @@ module Oga
     ##
     # Class description
     #
-    class Document < Node
-      attr_accessor :doctype, :xml_declaration
+    class Document
+      attr_accessor :children, :doctype, :xml_declaration
+
+      ##
+      # @param [Hash] options
+      #
+      def initialize(options = {})
+        options.each do |key, value|
+          instance_variable_set("@#{key}", value) if respond_to?(key)
+        end
+
+        @children ||= []
+      end
 
       def to_xml
         xml = children.map(&:to_xml).join('')
