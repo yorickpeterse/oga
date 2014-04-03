@@ -22,6 +22,10 @@ module Oga
         process_all(node).each do |child|
           if child.is_a?(XmlDeclaration)
             document.xml_declaration = child
+
+          elsif child.is_a?(Doctype)
+            document.doctype = child
+
           else
             document.children << child
           end
@@ -42,6 +46,19 @@ module Oga
         attributes = process(node.children[0])
 
         return XmlDeclaration.new(attributes)
+      end
+
+      ##
+      # @param [Oga::AST::Node] node
+      # @return [Oga::XML::Doctype]
+      #
+      def on_doctype(node)
+        return Doctype.new(
+          :name      => node.children[0],
+          :type      => node.children[1],
+          :public_id => node.children[2],
+          :system_id => node.children[3]
+        )
       end
 
       ##

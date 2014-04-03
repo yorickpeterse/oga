@@ -32,6 +32,18 @@ describe Oga::XML::TreeBuilder do
     end
   end
 
+  context '#on_document with doctypes' do
+    before do
+      doctype = s(:doctype, 'html', 'PUBLIC', 'foo', 'bar')
+      node    = s(:document, doctype)
+      @tag    = @builder.process(node)
+    end
+
+    example 'set the doctype of the document' do
+      @tag.doctype.is_a?(Oga::XML::Doctype).should == true
+    end
+  end
+
   context '#on_xml_decl' do
     before do
       node = s(:xml_decl, s(:attributes, s(:attribute, 'encoding', 'UTF-8')))
@@ -44,6 +56,33 @@ describe Oga::XML::TreeBuilder do
 
     example 'include the encoding of the tag' do
       @tag.encoding.should == 'UTF-8'
+    end
+  end
+
+  context '#on_doctype' do
+    before do
+      node = s(:doctype, 'html', 'PUBLIC', 'foo', 'bar')
+      @tag = @builder.process(node)
+    end
+
+    example 'return a Doctype node' do
+      @tag.is_a?(Oga::XML::Doctype).should == true
+    end
+
+    example 'include the doctype name' do
+      @tag.name.should == 'html'
+    end
+
+    example 'include the doctype type' do
+      @tag.type.should == 'PUBLIC'
+    end
+
+    example 'include the public ID' do
+      @tag.public_id.should == 'foo'
+    end
+
+    example 'include the system ID' do
+      @tag.system_id.should == 'bar'
     end
   end
 

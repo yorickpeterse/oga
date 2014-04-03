@@ -46,4 +46,20 @@ describe Oga::XML::Document do
         .should == '<?xml version="5.0" encoding="UTF-8" ?><!--foo-->'
     end
   end
+
+  context '#to_xml with doctypes' do
+    before do
+      doctype  = Oga::XML::Doctype.new(:name => 'html', :type => 'PUBLIC')
+      children = [Oga::XML::Comment.new(:text => 'foo')]
+
+      @document = described_class.new(
+        :doctype  => doctype,
+        :children => children
+      )
+    end
+
+    example 'include the doctype' do
+      @document.to_xml.should == '<!DOCTYPE html PUBLIC><!--foo-->'
+    end
+  end
 end
