@@ -120,6 +120,11 @@ module Oga
         return *node
       end
 
+      ##
+      # Raises for every unhandled node.
+      #
+      # @param [Oga::AST::Node] node
+      #
       def handler_missing(node)
         raise "No handler for node type #{node.type.inspect}"
       end

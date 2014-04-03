@@ -228,4 +228,15 @@ describe Oga::XML::TreeBuilder do
       @builder.process(s(:attributes)).should == {}
     end
   end
+
+  context '#handler_missing' do
+    before do
+      @node = s(:foo, 'bar')
+    end
+
+    example 'raise when processing an unknown node' do
+      lambda { @builder.process(@node) }
+        .should raise_error('No handler for node type :foo')
+    end
+  end
 end
