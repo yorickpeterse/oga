@@ -30,6 +30,20 @@ module Oga
 
         return xml
       end
+
+      def inspect
+        class_name  = self.class.to_s.split('::').last
+        child_lines = children.map { |child| child.inspect(4) }.join("\n")
+
+        return <<-EOF.strip
+#{class_name}(
+  doctype: #{doctype.inspect}
+  xml_declaration: #{xml_declaration.inspect}
+  children: [
+#{child_lines}
+])
+        EOF
+      end
     end # Document
   end # XML
 end # Oga

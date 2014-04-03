@@ -30,6 +30,22 @@ module Oga
 
         return "<#{ns}#{name}#{attrs}>#{body}</#{name}>"
       end
+
+      def extra_inspect_data(indent)
+        spacing     = ' ' * indent
+        child_lines = children.map { |child| child.inspect(indent + 4) }
+          .join("\n")
+
+        return <<-EOF.chomp
+
+#{spacing}  name: #{name.inspect}
+#{spacing}  namespace: #{namespace.inspect}
+#{spacing}  attributes: #{attributes.inspect}
+#{spacing}  children: [
+#{child_lines}
+#{spacing}]
+        EOF
+      end
     end # Element
   end # XML
 end # Oga

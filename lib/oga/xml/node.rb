@@ -35,6 +35,16 @@ module Oga
 
         after_initialize if respond_to?(:after_initialize)
       end
+
+      def inspect(indent = 0)
+        class_name = self.class.to_s.split('::').last
+        spacing    = ' ' * indent
+
+        return "#{spacing}#{class_name}(#{extra_inspect_data(indent)})"
+      end
+
+      def extra_inspect_data
+      end
     end # Element
   end # XML
 end # Oga

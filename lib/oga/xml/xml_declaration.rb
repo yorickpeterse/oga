@@ -33,6 +33,19 @@ module Oga
 
         return "<?xml #{pairs.join(' ')} ?>"
       end
+
+
+      def inspect
+        class_name = self.class.to_s.split('::').last
+
+        return <<-EOF.strip
+#{class_name}(
+    version: #{version.inspect}
+    encoding: #{encoding.inspect}
+    standalone: #{standalone.inspect}
+  )
+        EOF
+      end
     end # XmlDeclaration
   end # XML
 end # Oga

@@ -24,6 +24,19 @@ module Oga
 
         return segments + '>'
       end
+
+      def inspect(indent = 0)
+        class_name = self.class.to_s.split('::').last
+
+        return <<-EOF.strip
+#{class_name}(
+    name: #{name.inspect}
+    type: #{type.inspect}
+    public_id: #{public_id.inspect}
+    system_id: #{system_id.inspect}
+  )
+        EOF
+      end
     end # Doctype
   end # XML
 end # Oga
