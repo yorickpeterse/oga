@@ -63,6 +63,16 @@ describe Oga::XML::Lexer do
         [:T_ELEM_END, nil, 1]
       ]
     end
+
+    example 'lex a paragraph element with single quoted attributes' do
+      lex("<p class='foo'></p>").should == [
+        [:T_ELEM_START, nil, 1],
+        [:T_ELEM_NAME, 'p', 1],
+        [:T_ATTR, 'class', 1],
+        [:T_STRING, 'foo', 1],
+        [:T_ELEM_END, nil, 1]
+      ]
+    end
   end
 
   context 'nested elements' do
