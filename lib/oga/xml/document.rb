@@ -21,11 +21,11 @@ module Oga
         xml = children.map(&:to_xml).join('')
 
         if doctype
-          xml = doctype.to_xml + xml
+          xml = doctype.to_xml + "\n" + xml.strip
         end
 
         if xml_declaration
-          xml = xml_declaration.to_xml + xml
+          xml = xml_declaration.to_xml + "\n" + xml.strip
         end
 
         return xml

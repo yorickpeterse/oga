@@ -43,7 +43,7 @@ describe Oga::XML::Document do
 
     example 'include the XML of the declaration tag' do
       @document.to_xml
-        .should == '<?xml version="5.0" encoding="UTF-8" ?><!--foo-->'
+        .should == %Q{<?xml version="5.0" encoding="UTF-8" ?>\n<!--foo-->}
     end
   end
 
@@ -59,7 +59,26 @@ describe Oga::XML::Document do
     end
 
     example 'include the doctype' do
-      @document.to_xml.should == '<!DOCTYPE html PUBLIC><!--foo-->'
+      @document.to_xml.should == %Q{<!DOCTYPE html PUBLIC>\n<!--foo-->}
+    end
+  end
+
+  context '#to_xml with XML declarations and doctypes' do
+    before do
+      decl     = Oga::XML::XmlDeclaration.new(:version => '5.0')
+      doctype  = Oga::XML::Doctype.new(:name => 'html', :type => 'PUBLIC')
+      children = [Oga::XML::Comment.new(:text => 'foo')]
+
+      @document = described_class.new(
+        :doctype         => doctype,
+        :xml_declaration => decl,
+        :children        => children
+      )
+    end
+
+    example 'include the doctype and XML declaration' do
+      @document.to_xml.should == '<?xml version="5.0" encoding="UTF-8" ?>' \
+        "\n<!DOCTYPE html PUBLIC>\n<!--foo-->"
     end
   end
 end
