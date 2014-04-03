@@ -3,27 +3,27 @@ require 'spec_helper'
 describe Oga::XML::Parser do
   context 'doctypes' do
     example 'parse a doctype' do
-      parse('<!DOCTYPE html>').should == s(:document, s(:doctype))
+      parse('<!DOCTYPE html>').should == s(:document, s(:doctype, 'html'))
     end
 
     example 'parse a doctype with the doctype type' do
       parse('<!DOCTYPE html PUBLIC>').should == s(
         :document,
-        s(:doctype, 'PUBLIC')
+        s(:doctype, 'html', 'PUBLIC')
       )
     end
 
     example 'parse a doctype with a public ID' do
       parse('<!DOCTYPE html PUBLIC "foo">').should == s(
         :document,
-        s(:doctype, 'PUBLIC', 'foo')
+        s(:doctype, 'html', 'PUBLIC', 'foo')
       )
     end
 
     example 'parse a doctype with a public and private ID' do
       parse('<!DOCTYPE html PUBLIC "foo" "bar">').should == s(
         :document,
-        s(:doctype, 'PUBLIC', 'foo', 'bar')
+        s(:doctype, 'html', 'PUBLIC', 'foo', 'bar')
       )
     end
 
@@ -35,6 +35,7 @@ describe Oga::XML::Parser do
         :document,
         s(
           :doctype,
+          'HTML',
           'PUBLIC',
           '-//W3C//DTD HTML 4.01//EN',
           'http://www.w3.org/TR/html4/strict.dtd'

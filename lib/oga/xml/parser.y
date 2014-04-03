@@ -10,7 +10,7 @@
 class Oga::XML::Parser
 
 token T_STRING T_TEXT
-token T_DOCTYPE_START T_DOCTYPE_END T_DOCTYPE_TYPE
+token T_DOCTYPE_START T_DOCTYPE_END T_DOCTYPE_TYPE T_DOCTYPE_NAME
 token T_CDATA_START T_CDATA_END
 token T_COMMENT_START T_COMMENT_END
 token T_ELEM_START T_ELEM_NAME T_ELEM_NS T_ELEM_END T_ATTR
@@ -43,24 +43,24 @@ rule
 
   doctype
     # <!DOCTYPE html>
-    : T_DOCTYPE_START T_DOCTYPE_END { s(:doctype) }
+    : T_DOCTYPE_START T_DOCTYPE_NAME T_DOCTYPE_END { s(:doctype, val[1]) }
 
     # <!DOCTYPE html PUBLIC>
-    | T_DOCTYPE_START T_DOCTYPE_TYPE T_DOCTYPE_END
-      {
-        s(:doctype, val[1])
-      }
-
-    # <!DOCTYPE html PUBLIC "foo">
-    | T_DOCTYPE_START T_DOCTYPE_TYPE T_STRING T_DOCTYPE_END
+    | T_DOCTYPE_START T_DOCTYPE_NAME T_DOCTYPE_TYPE T_DOCTYPE_END
       {
         s(:doctype, val[1], val[2])
       }
 
-    # <!DOCTYPE html PUBLIC "foo" "bar">
-    | T_DOCTYPE_START T_DOCTYPE_TYPE T_STRING T_STRING T_DOCTYPE_END
+    # <!DOCTYPE html PUBLIC "foo">
+    | T_DOCTYPE_START T_DOCTYPE_NAME T_DOCTYPE_TYPE T_STRING T_DOCTYPE_END
       {
         s(:doctype, val[1], val[2], val[3])
+      }
+
+    # <!DOCTYPE html PUBLIC "foo" "bar">
+    | T_DOCTYPE_START T_DOCTYPE_NAME T_DOCTYPE_TYPE T_STRING T_STRING T_DOCTYPE_END
+      {
+        s(:doctype, val[1], val[2], val[3], val[4])
       }
     ;
 

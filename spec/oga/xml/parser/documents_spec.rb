@@ -15,7 +15,7 @@ describe Oga::XML::Parser do
 
       parse(html).should == s(
         :document,
-        s(:doctype),
+        s(:doctype, 'html'),
         s(:text, "\n"),
 
         # <html>

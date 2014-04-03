@@ -15,6 +15,7 @@ describe Oga::XML::Lexer do
 
       lex(html).should == [
         [:T_DOCTYPE_START, nil, 1],
+        [:T_DOCTYPE_NAME, 'html', 1],
         [:T_DOCTYPE_END, nil, 1],
         [:T_TEXT, "\n", 1],
 

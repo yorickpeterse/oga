@@ -281,7 +281,7 @@ module Oga
         # 2. Deprecated doctypes, the more verbose ones used prior to HTML5.
         # 3. Legacy doctypes
         #
-        doctype_start = '<!DOCTYPE'i whitespace+ 'HTML'i;
+        doctype_start = '<!DOCTYPE'i whitespace+;
 
         action start_doctype {
           emit_buffer
@@ -301,6 +301,8 @@ module Oga
           # Whitespace inside doctypes is ignored since there's no point in
           # including it.
           whitespace;
+
+          identifier => { emit(:T_DOCTYPE_NAME) };
 
           '>' => {
             add_token(:T_DOCTYPE_END)
