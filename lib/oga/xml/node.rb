@@ -8,7 +8,7 @@ module Oga
     #  @return [Array<Oga::XML::Node>]
     #
     # @!attribute [rw] next
-    #  @return [Oga::XML::NOde]
+    #  @return [Oga::XML::Node]
     #
     # @!attribute [rw] previous
     #  @return [Oga::XML::Node]
