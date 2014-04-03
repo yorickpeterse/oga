@@ -47,6 +47,21 @@ describe Oga::XML::TreeBuilder do
     end
   end
 
+  context '#on_comment' do
+    before do
+      node = s(:comment, 'foo')
+      @tag = @builder.process(node)
+    end
+
+    example 'return a Comment node' do
+      @tag.is_a?(Oga::XML::Comment).should == true
+    end
+
+    example 'include the text of the comment' do
+      @tag.text.should == 'foo'
+    end
+  end
+
   context '#on_element' do
     context 'simple elements' do
       before do
