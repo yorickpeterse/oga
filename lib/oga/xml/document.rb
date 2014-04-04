@@ -35,10 +35,22 @@ module Oga
         class_name  = self.class.to_s.split('::').last
         child_lines = children.map { |child| child.inspect(4) }.join("\n")
 
+        if doctype
+          dtd = doctype.inspect(2)
+        else
+          dtd = doctype.inspect
+        end
+
+        if xml_declaration
+          decl = xml_declaration.inspect(2)
+        else
+          decl = xml_declaration.inspect
+        end
+
         return <<-EOF.strip
 #{class_name}(
-  doctype: #{doctype.inspect}
-  xml_declaration: #{xml_declaration.inspect}
+  doctype: #{dtd}
+  xml_declaration: #{decl}
   children: [
 #{child_lines}
 ])

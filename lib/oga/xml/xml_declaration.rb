@@ -35,15 +35,16 @@ module Oga
       end
 
 
-      def inspect
+      def inspect(indent = 0)
         class_name = self.class.to_s.split('::').last
+        spacing    = ' ' * indent
 
         return <<-EOF.strip
 #{class_name}(
-    version: #{version.inspect}
-    encoding: #{encoding.inspect}
-    standalone: #{standalone.inspect}
-  )
+#{spacing}  version: #{version.inspect}
+#{spacing}  encoding: #{encoding.inspect}
+#{spacing}  standalone: #{standalone.inspect}
+#{spacing})
         EOF
       end
     end # XmlDeclaration
