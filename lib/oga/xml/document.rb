@@ -1,13 +1,30 @@
 module Oga
   module XML
     ##
-    # Class description
+    # Class used for storing information about an entire XML document. This
+    # includes the doctype, XML declaration, child nodes and more.
+    #
+    # @!attribute [rw] children
+    #  The child nodes of the document.
+    #  @return [Array]
+    #
+    # @!attribute [rw] doctype
+    #  The doctype of the document.
+    #  @return [Oga::XML::Doctype]
+    #
+    # @!attribute [rw] xml_declaration
+    #  The XML declaration of the document.
+    #  @return [Oga::XML::XmlDeclaration]
     #
     class Document
       attr_accessor :children, :doctype, :xml_declaration
 
       ##
       # @param [Hash] options
+      #
+      # @option options [Array] :children
+      # @option options [Oga::XML::Doctype] :doctype
+      # @option options [Oga::XML::XmlDeclaration] :xml_declaration
       #
       def initialize(options = {})
         options.each do |key, value|
@@ -17,6 +34,11 @@ module Oga
         @children ||= []
       end
 
+      ##
+      # Converts the document and its child nodes to XML.
+      #
+      # @return [String]
+      #
       def to_xml
         xml = children.map(&:to_xml).join('')
 
@@ -31,6 +53,12 @@ module Oga
         return xml
       end
 
+      ##
+      # Inspects the document and its child nodes. Child nodes are indented for
+      # each nesting level.
+      #
+      # @return [String]
+      #
       def inspect
         class_name  = self.class.to_s.split('::').last
         child_lines = children.map { |child| child.inspect(4) }.join("\n")

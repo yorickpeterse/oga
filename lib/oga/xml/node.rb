@@ -1,6 +1,9 @@
 module Oga
   module XML
     ##
+    # A single, generic XML node that can have a parent, next, previous and
+    # child nodes.
+    #
     # @!attribute [rw] parent
     #  @return [Oga::XML::Node]
     #
@@ -36,6 +39,14 @@ module Oga
         after_initialize if respond_to?(:after_initialize)
       end
 
+      ##
+      # Generates the inspect value for the current node. Sub classes can
+      # overwrite the {#extra_inspect_data} method to customize the output
+      # format.
+      #
+      # @param [Fixnum] indent
+      # @return [String]
+      #
       def inspect(indent = 0)
         class_name = self.class.to_s.split('::').last
         spacing    = ' ' * indent
@@ -43,8 +54,10 @@ module Oga
         return "#{spacing}#{class_name}(#{extra_inspect_data(indent)})"
       end
 
-      def extra_inspect_data
-      end
+      ##
+      # @return [String]
+      #
+      def extra_inspect_data; end
     end # Element
   end # XML
 end # Oga

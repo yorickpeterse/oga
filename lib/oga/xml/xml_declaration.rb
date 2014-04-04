@@ -1,7 +1,19 @@
 module Oga
   module XML
     ##
+    # Class containing information about an XML declaration tag.
     #
+    # @!attribute [rw] version
+    #  The XML version.
+    #  @return [String]
+    #
+    # @!attribute [rw] encoding
+    #  The XML document's encoding.
+    #  @return [String]
+    #
+    # @!attribute [rw] standalone
+    #  Whether or not the document is a standalone document.
+    #  @return [String]
     #
     class XmlDeclaration
       attr_accessor :version, :encoding, :standalone
@@ -9,8 +21,8 @@ module Oga
       ##
       # @param [Hash] options
       #
-      # @option options [String] :version The XML version.
-      # @option options [String] :encoding The XML encoding.
+      # @option options [String] :version
+      # @option options [String] :encoding
       # @option options [String] :standalone
       #
       def initialize(options = {})
@@ -22,6 +34,11 @@ module Oga
         @encoding ||= 'UTF-8'
       end
 
+      ##
+      # Converts the declaration tag to XML.
+      #
+      # @return [String]
+      #
       def to_xml
         pairs = []
 
@@ -34,7 +51,10 @@ module Oga
         return "<?xml #{pairs.join(' ')} ?>"
       end
 
-
+      ##
+      # @param [Fixnum] indent
+      # @return [String]
+      #
       def inspect(indent = 0)
         class_name = self.class.to_s.split('::').last
         spacing    = ' ' * indent
