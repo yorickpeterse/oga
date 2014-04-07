@@ -206,7 +206,7 @@ end
       end
     end
 
-    raise Racc::ParseError, <<-EOF
+    raise Racc::ParseError, <<-EOF.strip
 Unexpected #{name} with value #{value.inspect} on line #{@line}:
 
 #{lines}

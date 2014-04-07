@@ -41,5 +41,17 @@ module Oga
     def parse_html(input, options = {})
       return Oga::HTML::Parser.new(options).parse(input)
     end
+
+    ##
+    # Parses the given invalid XML and returns the error message.
+    #
+    # @param [String] xml
+    # @return [String]
+    #
+    def parse_error(xml)
+      parse(xml)
+    rescue Racc::ParseError => error
+      return error.message
+    end
   end # ParsingHelpers
 end # Oga
