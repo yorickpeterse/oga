@@ -2,6 +2,10 @@ require 'spec_helper'
 
 describe Oga::XML::Parser do
   context 'HTML documents' do
+    example 'parse an empty document' do
+      parse('').should == s(:document)
+    end
+
     example 'parse a basic HTML document' do
       html = <<-EOF
 <!DOCTYPE html>
