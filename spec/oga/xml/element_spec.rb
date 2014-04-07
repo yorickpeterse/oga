@@ -57,4 +57,27 @@ describe Oga::XML::Element do
       instance.to_xml.should == '<p><!--foo--></p>'
     end
   end
+
+  context '#inspect' do
+    before do
+      children  = [Oga::XML::Comment.new(:text => 'foo')]
+      @instance = described_class.new(
+        :name       => 'p',
+        :children   => children,
+        :attributes => {'class' => 'foo'}
+      )
+    end
+
+    example 'pretty-print the node' do
+      @instance.inspect.should == <<-EOF.strip
+Element(
+  name: "p"
+  namespace: nil
+  attributes: {"class"=>"foo"}
+  children: [
+    Comment(text: "foo")
+])
+      EOF
+    end
+  end
 end

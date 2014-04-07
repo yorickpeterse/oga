@@ -42,4 +42,20 @@ describe Oga::XML::XmlDeclaration do
         .should == '<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>'
     end
   end
+
+  context '#inspect' do
+    before do
+      @instance = described_class.new(:version => '1.0')
+    end
+
+    example 'pretty-print the node' do
+      @instance.inspect.should == <<-EOF.strip
+XmlDeclaration(
+  version: "1.0"
+  encoding: "UTF-8"
+  standalone: nil
+)
+      EOF
+    end
+  end
 end

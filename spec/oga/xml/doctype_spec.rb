@@ -46,4 +46,21 @@ describe Oga::XML::Doctype do
       instance.to_xml.should == '<!DOCTYPE html PUBLIC "foo" "bar">'
     end
   end
+
+  context '#inspect' do
+    before do
+      @instance = described_class.new(:name => 'html', :type => 'PUBLIC')
+    end
+
+    example 'pretty-print the node' do
+      @instance.inspect.should == <<-EOF.strip
+Doctype(
+  name: "html"
+  type: "PUBLIC"
+  public_id: nil
+  system_id: nil
+)
+      EOF
+    end
+  end
 end
