@@ -85,8 +85,9 @@ describe Oga::XML::Document do
   context '#inspect' do
     before do
       @instance = described_class.new(
-        :doctype  => Oga::XML::Doctype.new(:name => 'html'),
-        :children => [Oga::XML::Comment.new(:text => 'foo')]
+        :doctype         => Oga::XML::Doctype.new(:name => 'html'),
+        :xml_declaration => Oga::XML::XmlDeclaration.new,
+        :children        => [Oga::XML::Comment.new(:text => 'foo')]
       )
     end
 
@@ -99,9 +100,24 @@ Document(
     public_id: nil
     system_id: nil
   )
-  xml_declaration: nil
+  xml_declaration: XmlDeclaration(
+    version: "1.0"
+    encoding: "UTF-8"
+    standalone: nil
+  )
   children: [
     Comment(text: "foo")
+])
+      EOF
+    end
+
+    example 'pretty-print a document without a doctype and XML declaration' do
+      described_class.new.inspect.should == <<-EOF.strip
+Document(
+  doctype: nil
+  xml_declaration: nil
+  children: [
+
 ])
       EOF
     end
