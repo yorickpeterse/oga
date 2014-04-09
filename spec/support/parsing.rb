@@ -19,7 +19,7 @@ module Oga
     # @return [Array]
     #
     def lex(input, options = {})
-      return Oga::XML::Lexer.new(options).lex(input)
+      return Oga::XML::Lexer.new(input, options).lex
     end
 
     ##
@@ -30,7 +30,7 @@ module Oga
     # @return [Oga::AST::Node]
     #
     def parse(input, options = {})
-      return Oga::XML::Parser.new(options).parse(input)
+      return Oga::XML::Parser.new(input, options).parse
     end
 
     ##
@@ -39,7 +39,7 @@ module Oga
     # @see #parse
     #
     def parse_html(input, options = {})
-      return Oga::HTML::Parser.new(options).parse(input)
+      return Oga::HTML::Parser.new(input, options).parse
     end
 
     ##

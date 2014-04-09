@@ -135,13 +135,14 @@ end
 
 ---- inner
   ##
+  # @param [String] data The input to parse.
+  #
   # @param [Hash] options
+  # @see Oga::XML::Lexer#initialize
   #
-  # @option options [TrueClass|FalseClass] :html Enables HTML parsing mode.
-  # @see Oga::Lexer#initialize
-  #
-  def initialize(options = {})
-    @lexer = Lexer.new(options)
+  def initialize(data, options = {})
+    @data  = data
+    @lexer = Lexer.new(data, options)
   end
 
   ##
@@ -172,7 +173,7 @@ end
   # @return [Array]
   #
   def next_token
-    type, value, line = @tokens.shift
+    type, value, line = @lexer.advance
 
     @line = line if line
 
@@ -188,11 +189,12 @@ end
   def on_error(type, value, stack)
     name  = token_to_str(type)
     index = @line - 1
-    lines = ''
+    lines = @data.lines.to_a
+    code  = ''
 
     # Show up to 5 lines before and after the offending line (if they exist).
     (-5..5).each do |offset|
-      line   = @lines[index + offset]
+      line   = lines[index + offset]
       number = @line + offset
 
       if line and number > 0
@@ -202,31 +204,28 @@ end
           prefix = '   '
         end
 
-        lines << "#{prefix}#{number}: #{line.strip}\n"
+        code << "#{prefix}#{number}: #{line.strip}\n"
       end
     end
 
     raise Racc::ParseError, <<-EOF.strip
 Unexpected #{name} with value #{value.inspect} on line #{@line}:
 
-#{lines}
+#{code}
     EOF
   end
 
   ##
-  # Parses the supplied string and returns the AST.
+  # Parses the input and returns the corresponding AST.
   #
   # @example
-  #  parser = Oga::Parser.new
-  #  ast    = parser.parse('<foo>bar</foo>')
+  #  parser = Oga::Parser.new('<foo>bar</foo>')
+  #  ast    = parser.parse
   #
-  # @param [String] string
   # @return [Oga::AST::Node]
   #
-  def parse(string)
-    @lines  = string.lines
-    @tokens = @lexer.lex(string)
-    ast     = do_parse
+  def parse
+    ast = do_parse
 
     reset
 

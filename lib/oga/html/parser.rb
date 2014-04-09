@@ -6,13 +6,14 @@ module Oga
     #
     class Parser < XML::Parser
       ##
+      # @param [String] data
       # @param [Hash] options
       # @see Oga::XML::Parser#initialize
       #
-      def initialize(options = {})
+      def initialize(data, options = {})
         options = options.merge(:html => true)
 
-        super(options)
+        super(data, options)
       end
     end # Parser
   end # HTML

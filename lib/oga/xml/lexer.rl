@@ -53,16 +53,20 @@ module Oga
       end
 
       ##
+      # @param [String] data The data to lex.
+      #
       # @param [Hash] options
       #
       # @option options [Symbol] :html When set to `true` the lexer will treat
       # the input as HTML instead of SGML/XML. This makes it possible to lex
       # HTML void elements such as `<link href="">`.
       #
-      def initialize(options = {})
+      def initialize(data, options = {})
         options.each do |key, value|
           instance_variable_set("@#{key}", value) if respond_to?(key)
         end
+
+        @data = data.unpack('U*')
 
         reset
       end
@@ -74,7 +78,6 @@ module Oga
       #
       def reset
         @line     = 1
-        @data     = nil
         @ts       = nil
         @te       = nil
         @tokens   = []
@@ -83,6 +86,9 @@ module Oga
         @cs       = self.class.lexer_start
         @act      = 0
         @elements = []
+        @eof      = @data.length
+        @p        = 0
+        @pe       = @eof
 
         @buffer_start_position = nil
       end
@@ -102,8 +108,12 @@ module Oga
       # @return [Array]
       # @see #advance
       #
-      def lex(data)
-        tokens = advance(data)
+      def lex
+        tokens = []
+
+        while token = advance
+          tokens << token
+        end
 
         reset
 
@@ -118,16 +128,10 @@ module Oga
       # @param [String] data The String to consume.
       # @return [Array]
       #
-      def advance(data)
-        @data = data.unpack('U*')
-        eof   = data.length
-
-        p  = 0
-        pe = eof
-
+      def advance
         %% write exec; # % fix highlight
 
-        return @tokens
+        return @tokens.shift
       end
 
       ##
@@ -244,7 +248,10 @@ module Oga
       %%{
         # Use instance variables for `ts` and friends.
         access @;
-        getkey (@data[p] || 0);
+        getkey (@data[@p] || 0);
+        variable p @p;
+        variable pe @pe;
+        variable eof @eof;
 
         newline    = '\n' | '\r\n';
         whitespace = [ \t];
@@ -529,7 +536,7 @@ module Oga
             start_buffer(@ts) unless buffering?
 
             # EOF, emit the text buffer.
-            if @te == eof
+            if @te == @eof
               emit_buffer(@te)
             end
           };
