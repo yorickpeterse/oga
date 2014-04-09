@@ -80,6 +80,8 @@ module Oga
         @tokens   = []
         @stack    = []
         @top      = 0
+        @cs       = self.class.lexer_start
+        @act      = 0
         @elements = []
 
         @buffer_start_position = nil
@@ -93,22 +95,39 @@ module Oga
       #
       # The type is a symbol, the value is either nil or a String.
       #
-      # @param [String] data The string to lex.
+      # This method resets the internal state of the lexer after consuming the
+      # input.
+      #
+      # @param [String] data The string to consume.
       # @return [Array]
+      # @see #advance
       #
       def lex(data)
-        @data       = data.unpack('U*')
-        lexer_start = self.class.lexer_start
-        eof         = data.length
-
-        %% write init;
-        %% write exec;
-
-        tokens = @tokens
+        tokens = advance(data)
 
         reset
 
         return tokens
+      end
+
+      ##
+      # Advances through the input and generates the corresponding tokens.
+      #
+      # This method does *not* reset the internal state of the lexer.
+      #
+      # @param [String] data The String to consume.
+      # @return [Array]
+      #
+      def advance(data)
+        @data = data.unpack('U*')
+        eof   = data.length
+
+        p  = 0
+        pe = eof
+
+        %% write exec; # % fix highlight
+
+        return @tokens
       end
 
       ##
