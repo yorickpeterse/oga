@@ -4,18 +4,17 @@ require 'benchmark/ips'
 simple     = '<p>Hello world</p>'
 attributes = '<p class="foo">Hello world</p>'
 nested     = '<p>Hello<strong>world</strong></p>'
-lexer      = Oga::XML::Lexer.new
 
 Benchmark.ips do |bench|
   bench.report 'text only' do
-    lexer.lex(simple)
+    Oga::XML::Lexer.new(simple).lex
   end
 
   bench.report 'text + attributes' do
-    lexer.lex(attributes)
+    Oga::XML::Lexer.new(attributes).lex
   end
 
   bench.report 'text + children' do
-    lexer.lex(nested)
+    Oga::XML::Lexer.new(nested).lex
   end
 end
