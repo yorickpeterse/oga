@@ -73,6 +73,16 @@ describe Oga::XML::Lexer do
         [:T_ELEM_END, nil, 1]
       ]
     end
+
+    example 'lex a paragraph element with a namespaced attribute' do
+      lex('<p foo:bar="baz"></p>').should == [
+        [:T_ELEM_START, nil, 1],
+        [:T_ELEM_NAME, 'p', 1],
+        [:T_ATTR, 'foo:bar', 1],
+        [:T_STRING, 'baz', 1],
+        [:T_ELEM_END, nil, 1]
+      ]
+    end
   end
 
   context 'nested elements' do

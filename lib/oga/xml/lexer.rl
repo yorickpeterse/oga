@@ -255,7 +255,7 @@ module Oga
 
         newline    = '\n' | '\r\n';
         whitespace = [ \t];
-        identifier = [a-zA-Z0-9\-_]+;
+        identifier = [a-zA-Z0-9\-_:]+;
 
         # Strings
         #
@@ -470,8 +470,7 @@ module Oga
           fcall element_head;
         }
 
-        element_name  = [a-zA-Z0-9\-_:]+;
-        element_start = '<' element_name;
+        element_start = '<' identifier;
 
         # Machine used for processing the characters inside a element head. An
         # element head is everything between `<NAME` (where NAME is the element
@@ -515,7 +514,7 @@ module Oga
           };
 
           # Regular closing tags.
-          '</' element_name '>' => {
+          '</' identifier '>' => {
             emit_buffer
             add_token(:T_ELEM_END, nil)
 
