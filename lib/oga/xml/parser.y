@@ -204,7 +204,13 @@ end
           prefix = '   '
         end
 
-        code << "#{prefix}#{number}: #{line.strip}\n"
+        line = line.strip
+
+        if line.length > 80
+          line = line[0..79] + ' (more)'
+        end
+
+        code << "#{prefix}#{number}: #{line}\n"
       end
     end
 
