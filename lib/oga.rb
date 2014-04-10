@@ -1,4 +1,5 @@
 require 'ast'
+require 'set'
 
 require_relative 'oga/ast/node'
 

@@ -21,9 +21,9 @@ module Oga
       # Names of the HTML void elements that should be handled when HTML lexing
       # is enabled.
       #
-      # @return [Array]
+      # @return [Set]
       #
-      HTML_VOID_ELEMENTS = [
+      HTML_VOID_ELEMENTS = Set.new([
         'area',
         'base',
         'br',
@@ -40,7 +40,7 @@ module Oga
         'source',
         'track',
         'wbr'
-      ]
+      ])
 
       # Lazy way of forwarding instance method calls used internally by Ragel
       # to their corresponding class methods.
