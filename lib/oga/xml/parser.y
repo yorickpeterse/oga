@@ -168,16 +168,18 @@ end
   end
 
   ##
-  # Returns the next token from the lexer.
+  # Yields the next token from the lexer.
   #
-  # @return [Array]
+  # @yieldparam [Array]
   #
-  def next_token
-    type, value, line = @lexer.advance
+  def yield_next_token
+    @lexer.advance do |(type, value, line)|
+      @line = line if line
 
-    @line = line if line
+      yield [type, value]
+    end
 
-    return type ? [type, value] : [false, false]
+    yield [false, false]
   end
 
   ##
@@ -231,7 +233,7 @@ Unexpected #{name} with value #{value.inspect} on line #{@line}:
   # @return [Oga::AST::Node]
   #
   def parse
-    ast = do_parse
+    ast = yyparse(self, :yield_next_token)
 
     reset
 

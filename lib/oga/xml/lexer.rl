@@ -7,13 +7,18 @@ module Oga
     # To lex HTML input set the `:html` option to `true` when creating an
     # instance of the lexer:
     #
-    #     lexer = Oga::Lexer.new(:html => true)
+    #     lexer = Oga::XML::Lexer.new(:html => true)
     #
     # @!attribute [r] html
     #  @return [TrueClass|FalseClass]
     #
+    # @!attribute [r] tokens
+    #  @return [Array]
+    #
     class Lexer
-      %% write data; # %
+      %% write data;
+
+      # % fix highlight
 
       attr_reader :html
 
@@ -80,7 +85,6 @@ module Oga
         @line     = 1
         @ts       = nil
         @te       = nil
-        @tokens   = []
         @stack    = []
         @top      = 0
         @cs       = self.class.lexer_start
@@ -94,12 +98,7 @@ module Oga
       end
 
       ##
-      # Lexes the supplied String and returns an Array of tokens. Each token is
-      # an Array in the following format:
-      #
-      #     [TYPE, VALUE]
-      #
-      # The type is a symbol, the value is either nil or a String.
+      # Gathers all the tokens for the input and returns them as an Array.
       #
       # This method resets the internal state of the lexer after consuming the
       # input.
@@ -111,7 +110,7 @@ module Oga
       def lex
         tokens = []
 
-        while token = advance
+        advance do |token|
           tokens << token
         end
 
@@ -121,17 +120,32 @@ module Oga
       end
 
       ##
-      # Advances through the input and generates the corresponding tokens.
+      # Advances through the input and generates the corresponding tokens. Each
+      # token is yielded to the supplied block.
+      #
+      # Each token is an Array in the following format:
+      #
+      #     [TYPE, VALUE]
+      #
+      # The type is a symbol, the value is either nil or a String.
+      #
+      # This method stores the supplied block in `@block` and resets it after
+      # the lexer loop has finished.
       #
       # This method does *not* reset the internal state of the lexer.
+      #
       #
       # @param [String] data The String to consume.
       # @return [Array]
       #
-      def advance
-        %% write exec; # % fix highlight
+      def advance(&block)
+        @block = block
 
-        return @tokens.shift
+        %% write exec;
+
+        # % fix highlight
+      ensure
+        @block = nil
       end
 
       ##
@@ -189,7 +203,8 @@ module Oga
       def add_token(type, value = nil)
         token = [type, value, @line]
 
-        @tokens << token
+        @block.call(token)
+        #@tokens << token
       end
 
       ##
@@ -463,7 +478,7 @@ module Oga
             add_token(:T_ELEM_NS, ns)
           end
 
-          @elements << name
+          @elements << name if html
 
           add_token(:T_ELEM_NAME, name)
 
