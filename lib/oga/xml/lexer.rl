@@ -47,16 +47,6 @@ module Oga
         'wbr'
       ])
 
-      # Lazy way of forwarding instance method calls used internally by Ragel
-      # to their corresponding class methods.
-      private_methods.grep(/^_lexer_/).each do |name|
-        define_method(name) do
-          return self.class.send(name)
-        end
-
-        private(name)
-      end
-
       ##
       # @param [String] data The data to lex.
       #
@@ -140,6 +130,16 @@ module Oga
       #
       def advance(&block)
         @block = block
+
+        _lexer_eof_trans          = self.class.send(:_lexer_eof_trans)
+        _lexer_from_state_actions = self.class.send(:_lexer_from_state_actions)
+        _lexer_index_offsets      = self.class.send(:_lexer_index_offsets)
+        _lexer_indicies           = self.class.send(:_lexer_indicies)
+        _lexer_key_spans          = self.class.send(:_lexer_key_spans)
+        _lexer_to_state_actions   = self.class.send(:_lexer_to_state_actions)
+        _lexer_trans_actions      = self.class.send(:_lexer_trans_actions)
+        _lexer_trans_keys         = self.class.send(:_lexer_trans_keys)
+        _lexer_trans_targs        = self.class.send(:_lexer_trans_targs)
 
         %% write exec;
 
