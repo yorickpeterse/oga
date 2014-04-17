@@ -5,3 +5,5 @@ Gemfile.lock
 
 lib/oga/xml/lexer.rb
 lib/oga/xml/parser.rb
+
+benchmark/fixtures/big.xml
