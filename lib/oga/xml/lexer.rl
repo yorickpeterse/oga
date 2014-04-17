@@ -71,7 +71,7 @@ module Oga
           instance_variable_set("@#{key}", value) if respond_to?(key)
         end
 
-        @data = data.unpack('U*')
+        @data = data
 
         reset
       end
@@ -90,7 +90,7 @@ module Oga
         @cs       = self.class.lexer_start
         @act      = 0
         @elements = []
-        @eof      = @data.length
+        @eof      = @data.bytesize
         @p        = 0
         @pe       = @eof
 
@@ -191,7 +191,7 @@ module Oga
       # @return [String]
       #
       def text(start = @ts, stop = @te)
-        return @data[start...stop].pack('U*')
+        return @data.byteslice(start, stop - start)
       end
 
       ##
@@ -204,7 +204,6 @@ module Oga
         token = [type, value, @line]
 
         @block.call(token)
-        #@tokens << token
       end
 
       ##
@@ -263,7 +262,7 @@ module Oga
       %%{
         # Use instance variables for `ts` and friends.
         access @;
-        getkey (@data[@p] || 0);
+        getkey (@data.getbyte(@p) || 0);
         variable p @p;
         variable pe @pe;
         variable eof @eof;
