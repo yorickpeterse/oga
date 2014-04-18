@@ -1,4 +1,4 @@
 desc 'Runs the tests'
-task :test => [:regenerate] do
+task :test => [:generate] do
   sh 'rspec spec'
 end
