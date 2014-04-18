@@ -477,7 +477,7 @@ module Oga
             add_token(:T_ELEM_NS, ns)
           end
 
-          @elements << name if html
+          @elements << name if html?
 
           add_token(:T_ELEM_NAME, name)
 
@@ -532,14 +532,14 @@ module Oga
             emit_buffer
             add_token(:T_ELEM_END, nil)
 
-            @elements.pop
+            @elements.pop if html?
           };
 
           # Self closing elements that are not handled by the HTML mode.
           '/>' => {
             add_token(:T_ELEM_END, nil)
 
-            @elements.pop
+            @elements.pop if html?
           };
 
           # Note that this rule should be declared at the very bottom as it
