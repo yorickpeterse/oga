@@ -1,24 +1,37 @@
 require 'spec_helper'
 
 describe Oga::XML::Parser do
-  context 'cdata tags' do
-    example 'parse an empty cdata tag' do
-      parse('<![CDATA[]]>').should == s(:document, s(:cdata))
+  context 'empty cdata tags' do
+    before :all do
+      @node = parse('<![CDATA[]]>').children[0]
     end
 
-    example 'parse a cdata tag' do
-      parse('<![CDATA[foo]]>').should == s(:document, s(:cdata, 'foo'))
+    example 'return a Cdata instance' do
+      @node.is_a?(Oga::XML::Cdata).should == true
+    end
+  end
+
+  context 'cdata tags with text' do
+    before :all do
+      @node = parse('<![CDATA[foo]]>').children[0]
     end
 
-    example 'parse an element inside a cdata tag' do
-      parse('<![CDATA[<p>foo</p>]]>').should == s(
-        :document,
-        s(:cdata, '<p>foo</p>')
-      )
+    example 'return a Cdata instance' do
+      @node.is_a?(Oga::XML::Cdata).should == true
     end
 
-    example 'parse double brackets inside a cdata tag' do
-      parse('<![CDATA[]]]]>').should == s(:document, s(:cdata, ']]'))
+    example 'set the text of the tag' do
+      @node.text.should == 'foo'
+    end
+  end
+
+  context 'cdata tags with nested elements' do
+    before :all do
+      @node = parse('<![CDATA[<p>foo</p>]]>').children[0]
+    end
+
+    example 'set the HTML as raw text' do
+      @node.text.should == '<p>foo</p>'
     end
   end
 end

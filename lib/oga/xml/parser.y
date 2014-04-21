@@ -20,14 +20,14 @@ options no_result_var
 
 rule
   document
-    : expressions { s(:document, val[0]) }
-    | /* none */  { s(:document) }
+    : expressions { create_document(val[0]) }
+    | /* none */  { create_document }
     ;
 
   expressions
     : expressions expression { val.compact }
-    | expression             { val[0] }
-    | /* none */             { nil }
+    | expression             { val }
+    | /* none */             { [] }
     ;
 
   expression
@@ -43,24 +43,32 @@ rule
 
   doctype
     # <!DOCTYPE html>
-    : T_DOCTYPE_START T_DOCTYPE_NAME T_DOCTYPE_END { s(:doctype, val[1]) }
+    : T_DOCTYPE_START T_DOCTYPE_NAME T_DOCTYPE_END
+      {
+        Doctype.new(:name => val[1])
+      }
 
     # <!DOCTYPE html PUBLIC>
     | T_DOCTYPE_START T_DOCTYPE_NAME T_DOCTYPE_TYPE T_DOCTYPE_END
       {
-        s(:doctype, val[1], val[2])
+        Doctype.new(:name => val[1], :type => val[2])
       }
 
     # <!DOCTYPE html PUBLIC "foo">
     | T_DOCTYPE_START T_DOCTYPE_NAME T_DOCTYPE_TYPE T_STRING T_DOCTYPE_END
       {
-        s(:doctype, val[1], val[2], val[3])
+        Doctype.new(:name => val[1], :type => val[2], :public_id => val[3])
       }
 
     # <!DOCTYPE html PUBLIC "foo" "bar">
     | T_DOCTYPE_START T_DOCTYPE_NAME T_DOCTYPE_TYPE T_STRING T_STRING T_DOCTYPE_END
       {
-        s(:doctype, val[1], val[2], val[3], val[4])
+        Doctype.new(
+          :name      => val[1],
+          :type      => val[2],
+          :public_id => val[3],
+          :system_id => val[4]
+        )
       }
     ;
 
@@ -68,30 +76,23 @@ rule
 
   cdata
     # <![CDATA[]]>
-    : T_CDATA_START T_CDATA_END { s(:cdata) }
+    : T_CDATA_START T_CDATA_END { Cdata.new }
 
     # <![CDATA[foo]]>
-    | T_CDATA_START T_TEXT T_CDATA_END { s(:cdata, val[1]) }
+    | T_CDATA_START T_TEXT T_CDATA_END { Cdata.new(:text => val[1]) }
     ;
 
   # Comments
 
   comment
     # <!---->
-    : T_COMMENT_START T_COMMENT_END { s(:comment) }
+    : T_COMMENT_START T_COMMENT_END { Comment.new }
 
     # <!-- foo -->
-    | T_COMMENT_START T_TEXT T_COMMENT_END { s(:comment, val[1]) }
+    | T_COMMENT_START T_TEXT T_COMMENT_END { Comment.new(:text => val[1]) }
     ;
 
   # Elements
-
-  element
-    : element_open attributes expressions T_ELEM_END
-      {
-        s(:element, val[0], val[1], val[2])
-      }
-    ;
 
   element_open
     # <p>
@@ -101,11 +102,44 @@ rule
     | T_ELEM_START T_ELEM_NS T_ELEM_NAME { [val[1], val[2]] }
     ;
 
+  element_start
+    : element_open attributes
+      {
+        Element.new(
+          :namespace  => val[0][0],
+          :name       => val[0][1],
+          :attributes => val[1]
+        )
+      }
+    ;
+
+  element
+    : element_start expressions T_ELEM_END
+      {
+        element = val[0]
+
+        element.children = val[1].flatten
+
+        link_children(element)
+
+        element
+      }
+    ;
+
   # Attributes
 
   attributes
-    : attributes_ { s(:attributes, val[0]) }
-    | /* none */  { nil }
+    : attributes_
+      {
+        attrs = {}
+
+        val[0].flatten.each do |pair|
+          attrs = attrs.merge(pair)
+        end
+
+        attrs
+      }
+    | /* none */  { {} }
     ;
 
   attributes_
@@ -115,21 +149,33 @@ rule
 
   attribute
     # foo
-    : T_ATTR { s(:attribute, val[0]) }
+    : T_ATTR
+      {
+        {val[0] => nil}
+      }
 
     # foo="bar"
-    | T_ATTR T_STRING { s(:attribute, val[0], val[1]) }
+    | T_ATTR T_STRING
+      {
+        {val[0] => val[1]}
+      }
     ;
 
   # XML declarations
   xmldecl
-    : T_XML_DECL_START T_XML_DECL_END            { s(:xml_decl) }
-    | T_XML_DECL_START attributes T_XML_DECL_END { s(:xml_decl, val[1]) }
+    : T_XML_DECL_START T_XML_DECL_END
+      {
+        XmlDeclaration.new
+      }
+    | T_XML_DECL_START attributes T_XML_DECL_END
+      {
+        XmlDeclaration.new(val[1])
+      }
 
   # Plain text
 
   text
-    : T_TEXT { s(:text, val[0]) }
+    : T_TEXT { Text.new(:text => val[0]) }
     ;
 end
 
@@ -151,20 +197,6 @@ end
   def reset
     @lines = []
     @line  = 1
-  end
-
-  ##
-  # Emits a new AST token.
-  #
-  # @param [Symbol] type
-  # @param [Array] children
-  #
-  def s(type, *children)
-    return AST::Node.new(
-      type,
-      children.flatten,
-      :line => @line
-    )
   end
 
   ##
@@ -238,6 +270,65 @@ Unexpected #{name} with value #{value.inspect} on line #{@line}:
     reset
 
     return ast
+  end
+
+  private
+
+  ##
+  # Creates a new {Oga;:XML::Document} node with the specified child elements.
+  #
+  # @param [Array] children
+  # @return [Oga::XML::Document]
+  #
+  def create_document(children = [])
+    if children.is_a?(Array)
+      children = children.flatten
+    else
+      children = [children]
+    end
+
+    document = Document.new
+
+    children.each do |child|
+      if child.is_a?(Doctype)
+        document.doctype = child
+
+      elsif child.is_a?(XmlDeclaration)
+        document.xml_declaration = child
+
+      else
+        document.children << child
+      end
+    end
+
+    link_children(document)
+
+    return document
+  end
+
+  ##
+  # Links the child nodes together by setting attributes such as the
+  # previous, next and parent node.
+  #
+  # @param [Oga::XML::Node] node
+  #
+  def link_children(node)
+    amount = node.children.length
+
+    node.children.each_with_index do |child, index|
+      prev_index = index - 1
+      next_index = index + 1
+
+      if index > 0
+        child.previous = node.children[prev_index]
+      end
+
+      if next_index <= amount
+        child.next = node.children[next_index]
+      end
+
+      child.parent = node
+    end
   end
 
 # vim: set ft=racc:

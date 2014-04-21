@@ -1,13 +1,27 @@
 require 'spec_helper'
 
 describe Oga::XML::Parser do
-  context 'comments' do
-    example 'parse an empty comment' do
-      parse('<!---->').should == s(:document, s(:comment))
+  context 'empty comments' do
+    before :all do
+      @node = parse('<!---->').children[0]
     end
 
-    example 'parse a comment' do
-      parse('<!--foo-->').should == s(:document, s(:comment, 'foo'))
+    example 'return a Comment instance' do
+      @node.is_a?(Oga::XML::Comment).should == true
+    end
+  end
+
+  context 'comments with text' do
+    before :all do
+      @node = parse('<!--foo-->').children[0]
+    end
+
+    example 'return a Comment instance' do
+      @node.is_a?(Oga::XML::Comment).should == true
+    end
+
+    example 'set the text of the comment' do
+      @node.text.should == 'foo'
     end
   end
 end

@@ -1,46 +1,83 @@
 require 'spec_helper'
 
 describe Oga::XML::Parser do
-  context 'doctypes' do
-    example 'parse a doctype' do
-      parse('<!DOCTYPE html>').should == s(:document, s(:doctype, 'html'))
+  context 'basic doctypes' do
+    before :all do
+      @document = parse('<!DOCTYPE html>')
     end
 
-    example 'parse a doctype with the doctype type' do
-      parse('<!DOCTYPE html PUBLIC>').should == s(
-        :document,
-        s(:doctype, 'html', 'PUBLIC')
-      )
+    example 'return a Doctype instance' do
+      @document.doctype.is_a?(Oga::XML::Doctype).should == true
     end
 
-    example 'parse a doctype with a public ID' do
-      parse('<!DOCTYPE html PUBLIC "foo">').should == s(
-        :document,
-        s(:doctype, 'html', 'PUBLIC', 'foo')
-      )
+    example 'set the name of the doctype' do
+      @document.doctype.name.should == 'html'
+    end
+  end
+
+  context 'doctypes with a type' do
+    before :all do
+      @document = parse('<!DOCTYPE html PUBLIC>')
     end
 
-    example 'parse a doctype with a public and private ID' do
-      parse('<!DOCTYPE html PUBLIC "foo" "bar">').should == s(
-        :document,
-        s(:doctype, 'html', 'PUBLIC', 'foo', 'bar')
-      )
+    example 'return a Doctype instance' do
+      @document.doctype.is_a?(Oga::XML::Doctype).should == true
     end
 
-    example 'parse an HTML 4 strict doctype' do
-      doctype = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" ' \
-        '"http://www.w3.org/TR/html4/strict.dtd">'
+    example 'set the name of the doctype' do
+      @document.doctype.name.should == 'html'
+    end
 
-      parse(doctype).should == s(
-        :document,
-        s(
-          :doctype,
-          'HTML',
-          'PUBLIC',
-          '-//W3C//DTD HTML 4.01//EN',
-          'http://www.w3.org/TR/html4/strict.dtd'
-        )
-      )
+    example 'set the type of the doctype' do
+      @document.doctype.type.should == 'PUBLIC'
+    end
+  end
+
+  context 'doctypes with a public ID' do
+    before :all do
+      @document = parse('<!DOCTYPE html PUBLIC "foo">')
+    end
+
+    example 'return a Doctype instance' do
+      @document.doctype.is_a?(Oga::XML::Doctype).should == true
+    end
+
+    example 'set the name of the doctype' do
+      @document.doctype.name.should == 'html'
+    end
+
+    example 'set the type of the doctype' do
+      @document.doctype.type.should == 'PUBLIC'
+    end
+
+    example 'set the public ID of the doctype' do
+      @document.doctype.public_id.should == 'foo'
+    end
+  end
+
+  context 'doctypes with a system ID' do
+    before :all do
+      @document = parse('<!DOCTYPE html PUBLIC "foo" "bar">')
+    end
+
+    example 'return a Doctype instance' do
+      @document.doctype.is_a?(Oga::XML::Doctype).should == true
+    end
+
+    example 'set the name of the doctype' do
+      @document.doctype.name.should == 'html'
+    end
+
+    example 'set the type of the doctype' do
+      @document.doctype.type.should == 'PUBLIC'
+    end
+
+    example 'set the public ID of the doctype' do
+      @document.doctype.public_id.should == 'foo'
+    end
+
+    example 'set the system ID of the doctype' do
+      @document.doctype.system_id.should == 'bar'
     end
   end
 end

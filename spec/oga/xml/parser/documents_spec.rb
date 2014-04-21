@@ -1,13 +1,20 @@
 require 'spec_helper'
 
 describe Oga::XML::Parser do
-  context 'HTML documents' do
-    example 'parse an empty document' do
-      parse('').should == s(:document)
+  context 'empty documents' do
+    before :all do
+      @document = parse('')
     end
 
-    example 'parse a basic HTML document' do
-      html = <<-EOF
+    example 'return a Document instance' do
+      @document.is_a?(Oga::XML::Document).should == true
+    end
+  end
+
+  context 'HTML documents' do
+    before :all do
+      html = <<-EOF.strip
+<?xml version="1.5" ?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,48 +24,23 @@ describe Oga::XML::Parser do
 </html>
       EOF
 
-      parse(html).should == s(
-        :document,
-        s(:doctype, 'html'),
-        s(:text, "\n"),
+      @document = parse(html, :html => true)
+    end
 
-        # <html>
-        s(
-          :element,
-          nil,
-          'html',
-          nil,
+    example 'return a Document instance' do
+      @document.is_a?(Oga::XML::Document).should == true
+    end
 
-          s(:text, "\n"),
+    example 'set the doctype of the document' do
+      @document.doctype.is_a?(Oga::XML::Doctype).should == true
+    end
 
-          # <head>
-          s(
-            :element,
-            nil,
-            'head',
-            nil,
+    example 'set the XML declaration of the document' do
+      @document.xml_declaration.is_a?(Oga::XML::XmlDeclaration).should == true
+    end
 
-            s(:text, "\n"),
-
-            # <title>
-            s(
-              :element,
-              nil,
-              'title',
-              nil,
-              s(:text, 'Title')
-            ),
-
-            s(:text, "\n")
-          ),
-
-          # <body>
-          s(:text, "\n"),
-          s(:element, nil, 'body', nil, nil),
-          s(:text, "\n")
-        ),
-        s(:text, "\n")
-      )
+    example 'set the children of the document' do
+      @document.children.empty?.should == false
     end
   end
 end

@@ -1,64 +1,45 @@
 require 'spec_helper'
 
 describe Oga::XML::Parser do
-  context 'HTML void elements' do
-    example 'parse a void element that omits the closing /' do
-      parse('<link>', :html => true).should == s(
-        :document,
-        s(:element, nil, 'link', nil, nil)
-      )
+  context 'void elements' do
+    before :all do
+      @node = parse('<link>', :html => true).children[0]
     end
 
-    example 'parse a void element inside another element' do
-      parse('<head><link></head>', :html => true).should == s(
-        :document,
-        s(:element, nil, 'head', nil, s(:element, nil, 'link', nil, nil))
-      )
+    example 'return an Element instance' do
+      @node.is_a?(Oga::XML::Element).should == true
     end
 
-    example 'parse a void element with attributes inside another element' do
-      parse('<head><link href="foo.css"></head>', :html => true).should == s(
-        :document,
-        s(
-          :element,
-          nil,
-          'head',
-          nil,
-          s(
-            :element,
-            nil,
-            'link',
-            s(:attributes, s(:attribute, 'href', 'foo.css')),
-            nil
-          )
-        )
-      )
+    example 'set the name of the element' do
+      @node.name.should == 'link'
+    end
+  end
+
+  context 'nested void elements' do
+    before :all do
+      @node = parse('<head><link></head>', :html => true).children[0]
     end
 
-    example 'parse a void element and a non void element in the same parent' do
-      parse('<head><link><title>Foo</title></head>', :html => true).should == s(
-        :document,
-        s(
-          :element,
-          nil,
-          'head',
-          nil,
-          s(
-            :element,
-            nil,
-            'link',
-            nil,
-            nil
-          ),
-          s(
-            :element,
-            nil,
-            'title',
-            nil,
-            s(:text, 'Foo')
-          )
-        )
-      )
+    example 'set the name of the outer element' do
+      @node.name.should == 'head'
+    end
+
+    example 'set the name of the inner element' do
+      @node.children[0].name.should == 'link'
+    end
+  end
+
+  context 'void elements with attributes' do
+    before :all do
+      @node = parse('<link href="foo">', :html => true).children[0]
+    end
+
+    example 'set the name of the element' do
+      @node.name.should == 'link'
+    end
+
+    example 'set the attributes' do
+      @node.attributes.should == {'href' => 'foo'}
     end
   end
 end

@@ -16,7 +16,6 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 1.9.3'
 
   s.add_dependency 'racc'
-  s.add_dependency 'ast'
 
   s.add_development_dependency 'cliver'
   s.add_development_dependency 'rake'

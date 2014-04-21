@@ -1,7 +1,4 @@
-require 'ast'
 require 'set'
-
-require_relative 'oga/ast/node'
 
 require_relative 'oga/xml/lexer'
 require_relative 'oga/xml/parser'
@@ -13,6 +10,5 @@ require_relative 'oga/xml/comment'
 require_relative 'oga/xml/cdata'
 require_relative 'oga/xml/xml_declaration'
 require_relative 'oga/xml/doctype'
-require_relative 'oga/xml/tree_builder'
 
 require_relative 'oga/html/parser'
