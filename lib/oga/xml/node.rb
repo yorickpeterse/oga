@@ -17,6 +17,8 @@ module Oga
     #  @return [Oga::XML::Node]
     #
     class Node
+      include ChildMixin
+
       attr_accessor :parent, :children, :next, :previous
 
       ##
@@ -37,6 +39,15 @@ module Oga
         @children ||= []
 
         after_initialize if respond_to?(:after_initialize)
+      end
+
+      ##
+      # @param [Array] nodes
+      #
+      def children=(nodes)
+        @children = nodes
+
+        link_child_nodes
       end
 
       ##

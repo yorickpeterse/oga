@@ -120,8 +120,6 @@ rule
 
         element.children = val[1].flatten
 
-        link_children(element)
-
         element
       }
     ;
@@ -287,7 +285,8 @@ Unexpected #{name} with value #{value.inspect} on line #{@line}:
       children = [children]
     end
 
-    document = Document.new
+    document    = Document.new
+    child_nodes = []
 
     children.each do |child|
       if child.is_a?(Doctype)
@@ -297,38 +296,13 @@ Unexpected #{name} with value #{value.inspect} on line #{@line}:
         document.xml_declaration = child
 
       else
-        document.children << child
+        child_nodes << child
       end
     end
 
-    link_children(document)
+    document.children = child_nodes
 
     return document
-  end
-
-  ##
-  # Links the child nodes together by setting attributes such as the
-  # previous, next and parent node.
-  #
-  # @param [Oga::XML::Node] node
-  #
-  def link_children(node)
-    amount = node.children.length
-
-    node.children.each_with_index do |child, index|
-      prev_index = index - 1
-      next_index = index + 1
-
-      if index > 0
-        child.previous = node.children[prev_index]
-      end
-
-      if next_index <= amount
-        child.next = node.children[next_index]
-      end
-
-      child.parent = node
-    end
   end
 
 # vim: set ft=racc:

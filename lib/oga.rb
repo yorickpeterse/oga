@@ -1,5 +1,6 @@
 require 'set'
 
+require_relative 'oga/xml/child_mixin'
 require_relative 'oga/xml/lexer'
 require_relative 'oga/xml/parser'
 require_relative 'oga/xml/node'
