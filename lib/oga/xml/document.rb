@@ -17,8 +17,6 @@ module Oga
     #  @return [Oga::XML::XmlDeclaration]
     #
     class Document
-      include ChildMixin
-
       attr_accessor :children, :doctype, :xml_declaration
 
       ##
@@ -34,15 +32,6 @@ module Oga
         end
 
         @children ||= []
-      end
-
-      ##
-      # @param [Array] nodes
-      #
-      def children=(nodes)
-        @children = nodes
-
-        link_child_nodes
       end
 
       ##
