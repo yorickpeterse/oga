@@ -182,8 +182,9 @@ end
   # Resets the internal state of the parser.
   #
   def reset
-    @lines = []
-    @line  = 1
+    @line = 1
+
+    @lexer.reset
   end
 
   ##
