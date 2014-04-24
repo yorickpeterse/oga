@@ -102,23 +102,16 @@ rule
     | T_ELEM_START T_ELEM_NS T_ELEM_NAME { [val[1], val[2]] }
     ;
 
-  element_start
-    : element_open attributes
+  element
+    : element_open attributes expressions T_ELEM_END
       {
-        Element.new(
+        element = Element.new(
           :namespace  => val[0][0],
           :name       => val[0][1],
           :attributes => val[1]
         )
-      }
-    ;
 
-  element
-    : element_start expressions T_ELEM_END
-      {
-        element = val[0]
-
-        element.children = val[1].flatten
+        element.children = val[2].flatten
 
         link_children(element)
 
@@ -133,7 +126,7 @@ rule
       {
         attrs = {}
 
-        val[0].flatten.each do |pair|
+        val[0].each do |pair|
           attrs = attrs.merge(pair)
         end
 
@@ -143,22 +136,16 @@ rule
     ;
 
   attributes_
-    : attributes_ attribute { val }
+    : attributes_ attribute { val.flatten }
     | attribute             { val }
     ;
 
   attribute
     # foo
-    : T_ATTR
-      {
-        {val[0] => nil}
-      }
+    : T_ATTR { {val[0] => nil} }
 
     # foo="bar"
-    | T_ATTR T_STRING
-      {
-        {val[0] => val[1]}
-      }
+    | T_ATTR T_STRING { {val[0] => val[1]} }
     ;
 
   # XML declarations
