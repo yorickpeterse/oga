@@ -1,5 +1,5 @@
 ##
-# Low level AST parser that supports both XML and HTML.
+# DOM parser for both XML and HTML.
 #
 # Note that this parser itself does not deal with special HTML void elements.
 # It requires every tag to have a closing tag. As such you'll need to enable
