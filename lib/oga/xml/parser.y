@@ -20,8 +20,8 @@ options no_result_var
 
 rule
   document
-    : expressions { create_document(val[0]) }
-    | /* none */  { create_document }
+    : expressions { on_document(val[0]) }
+    | /* none */  { on_document }
     ;
 
   expressions
@@ -45,30 +45,25 @@ rule
     # <!DOCTYPE html>
     : T_DOCTYPE_START T_DOCTYPE_NAME T_DOCTYPE_END
       {
-        Doctype.new(:name => val[1])
+        on_doctype(val[1])
       }
 
     # <!DOCTYPE html PUBLIC>
     | T_DOCTYPE_START T_DOCTYPE_NAME T_DOCTYPE_TYPE T_DOCTYPE_END
       {
-        Doctype.new(:name => val[1], :type => val[2])
+        on_doctype(val[1], val[2])
       }
 
     # <!DOCTYPE html PUBLIC "foo">
     | T_DOCTYPE_START T_DOCTYPE_NAME T_DOCTYPE_TYPE T_STRING T_DOCTYPE_END
       {
-        Doctype.new(:name => val[1], :type => val[2], :public_id => val[3])
+        on_doctype(val[1], val[2], val[3])
       }
 
     # <!DOCTYPE html PUBLIC "foo" "bar">
     | T_DOCTYPE_START T_DOCTYPE_NAME T_DOCTYPE_TYPE T_STRING T_STRING T_DOCTYPE_END
       {
-        Doctype.new(
-          :name      => val[1],
-          :type      => val[2],
-          :public_id => val[3],
-          :system_id => val[4]
-        )
+        on_doctype(val[1], val[2], val[3], val[4])
       }
     ;
 
@@ -76,20 +71,20 @@ rule
 
   cdata
     # <![CDATA[]]>
-    : T_CDATA_START T_CDATA_END { Cdata.new }
+    : T_CDATA_START T_CDATA_END { on_cdata }
 
     # <![CDATA[foo]]>
-    | T_CDATA_START T_TEXT T_CDATA_END { Cdata.new(:text => val[1]) }
+    | T_CDATA_START T_TEXT T_CDATA_END { on_cdata(val[1]) }
     ;
 
   # Comments
 
   comment
     # <!---->
-    : T_COMMENT_START T_COMMENT_END { Comment.new }
+    : T_COMMENT_START T_COMMENT_END { on_comment }
 
     # <!-- foo -->
-    | T_COMMENT_START T_TEXT T_COMMENT_END { Comment.new(:text => val[1]) }
+    | T_COMMENT_START T_TEXT T_COMMENT_END { on_comment(val[1]) }
     ;
 
   # Elements
@@ -105,33 +100,14 @@ rule
   element
     : element_open attributes expressions T_ELEM_END
       {
-        element = Element.new(
-          :namespace  => val[0][0],
-          :name       => val[0][1],
-          :attributes => val[1]
-        )
-
-        element.children = val[2].flatten
-
-        link_children(element)
-
-        element
+        on_element(val[0][0], val[0][1], val[1], val[2].flatten)
       }
     ;
 
   # Attributes
 
   attributes
-    : attributes_
-      {
-        attrs = {}
-
-        val[0].each do |pair|
-          attrs = attrs.merge(pair)
-        end
-
-        attrs
-      }
+    : attributes_ { on_attributes(val[0]) }
     | /* none */  { {} }
     ;
 
@@ -150,19 +126,13 @@ rule
 
   # XML declarations
   xmldecl
-    : T_XML_DECL_START T_XML_DECL_END
-      {
-        XmlDeclaration.new
-      }
-    | T_XML_DECL_START attributes T_XML_DECL_END
-      {
-        XmlDeclaration.new(val[1])
-      }
+    : T_XML_DECL_START T_XML_DECL_END            { on_xml_decl }
+    | T_XML_DECL_START attributes T_XML_DECL_END { on_xml_decl(val[1]) }
 
   # Plain text
 
   text
-    : T_TEXT { Text.new(:text => val[0]) }
+    : T_TEXT { on_text(val[0]) }
     ;
 end
 
@@ -260,15 +230,11 @@ Unexpected #{name} with value #{value.inspect} on line #{@line}:
     return ast
   end
 
-  private
-
   ##
-  # Creates a new {Oga;:XML::Document} node with the specified child elements.
-  #
   # @param [Array] children
   # @return [Oga::XML::Document]
   #
-  def create_document(children = [])
+  def on_document(children = [])
     if children.is_a?(Array)
       children = children.flatten
     else
@@ -293,6 +259,89 @@ Unexpected #{name} with value #{value.inspect} on line #{@line}:
 
     return document
   end
+
+  ##
+  # @param [String] name
+  # @param [String] type
+  # @param [String] public_id
+  # @param [String] system_id
+  #
+  def on_doctype(name, type = nil, public_id = nil, system_id = nil)
+    return Doctype.new(
+      :name      => name,
+      :type      => type,
+      :public_id => public_id,
+      :system_id => system_id
+    )
+  end
+
+  ##
+  # @param [String] text
+  # @return [Oga::XML::Cdata]
+  #
+  def on_cdata(text = nil)
+    return Cdata.new(:text => text)
+  end
+
+  ##
+  # @param [String] text
+  # @return [Oga::XML::Comment]
+  #
+  def on_comment(text = nil)
+    return Comment.new(:text => text)
+  end
+
+  ##
+  # @param [Hash] attributes
+  # @return [Oga::XML::XmlDeclaration]
+  #
+  def on_xml_decl(attributes = {})
+    return XmlDeclaration.new(attributes)
+  end
+
+  ##
+  # @param [String] text
+  # @return [Oga::XML::Text]
+  #
+  def on_text(text)
+    return Text.new(:text => text)
+  end
+
+  ##
+  # @param [String] namespace
+  # @param [String] name
+  # @param [Hash] attributes
+  # @param [Array] children
+  # @return [Oga::XML::Element]
+  #
+  def on_element(namespace, name, attributes = {}, children = [])
+    element = Element.new(
+      :namespace  => namespace,
+      :name       => name,
+      :attributes => attributes,
+      :children   => children
+    )
+
+    link_children(element)
+
+    return element
+  end
+
+  ##
+  # @param [Array] pairs
+  # @return [Hash]
+  #
+  def on_attributes(pairs)
+    attrs = {}
+
+    pairs.each do |pair|
+      attrs = attrs.merge(pair)
+    end
+
+    return attrs
+  end
+
+  private
 
   ##
   # Links the child nodes together by setting attributes such as the
