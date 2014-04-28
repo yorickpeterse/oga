@@ -103,7 +103,11 @@ rule
   element
     : element_start expressions T_ELEM_END
       {
-        on_element_children(val[0], val[1] ? val[1].flatten : [])
+        if val[0]
+          on_element_children(val[0], val[1] ? val[1].flatten : [])
+        end
+
+        after_element(val[0])
       }
     ;
 
@@ -149,6 +153,8 @@ end
   def initialize(data, options = {})
     @data  = data
     @lexer = Lexer.new(data, options)
+
+    reset
   end
 
   ##
@@ -338,6 +344,14 @@ Unexpected #{name} with value #{value.inspect} on line #{@line}:
 
     link_children(element)
 
+    return element
+  end
+
+  ##
+  # @param [Oga::XML::Element]
+  # @return [Oga::XML::Element]
+  #
+  def after_element(element)
     return element
   end
 

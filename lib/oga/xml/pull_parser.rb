@@ -19,7 +19,13 @@ module Oga
     # This parses yields proper XML instances such as {Oga::XML::Element}.
     # Doctypes and XML declarations are ignored by this parser.
     #
+    # @!attribute [r] nesting
+    #  Array containing the names of the currently nested elements.
+    #  @return [Array]
+    #
     class PullParser < Parser
+      attr_reader :nesting
+
       ##
       # @return [Array]
       #
@@ -36,8 +42,7 @@ module Oga
       BLOCK_CALLBACKS = [
         :on_cdata,
         :on_comment,
-        :on_text,
-        :on_element
+        :on_text
       ]
 
       ##
@@ -46,7 +51,8 @@ module Oga
       def reset
         super
 
-        @block = nil
+        @block   = nil
+        @nesting = []
       end
 
       ##
@@ -68,7 +74,7 @@ module Oga
       # JRuby.
       DISABLED_CALLBACKS.each do |method|
         eval <<-EOF, nil, __FILE__, __LINE__ + 1
-        def #{method}(*_)
+        def #{method}(*args)
           return
         end
         EOF
@@ -78,8 +84,31 @@ module Oga
         eval <<-EOF, nil, __FILE__, __LINE__ + 1
         def #{method}(*args)
           @block.call(super)
+          return
         end
         EOF
+      end
+
+      ##
+      # @see Oga::XML::Parser#on_element
+      #
+      def on_element(*args)
+        element = super
+
+        nesting << element.name
+
+        @block.call(element)
+
+        return
+      end
+
+      ##
+      # @see Oga::XML::Parser#on_element_children
+      #
+      def after_element(*args)
+        nesting.pop
+
+        return
       end
     end # PullParser
   end # XML
