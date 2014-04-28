@@ -2,6 +2,8 @@ require 'set'
 
 require_relative 'oga/xml/lexer'
 require_relative 'oga/xml/parser'
+require_relative 'oga/xml/pull_parser'
+
 require_relative 'oga/xml/node'
 require_relative 'oga/xml/element'
 require_relative 'oga/xml/document'
