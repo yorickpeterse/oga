@@ -97,10 +97,18 @@ rule
     | T_ELEM_START T_ELEM_NS T_ELEM_NAME { [val[1], val[2]] }
     ;
 
+  element_start
+    : element_open attributes { on_element(val[0][0], val[0][1], val[1]) }
+
   element
-    : element_open attributes expressions T_ELEM_END
+    : element_start expressions T_ELEM_END
       {
-        on_element(val[0][0], val[0][1], val[1], val[2].flatten)
+        element          = val[0]
+        element.children = val[1] ? val[1].flatten : []
+
+        link_children(element)
+
+        element
       }
     ;
 
@@ -321,8 +329,6 @@ Unexpected #{name} with value #{value.inspect} on line #{@line}:
       :attributes => attributes,
       :children   => children
     )
-
-    link_children(element)
 
     return element
   end
