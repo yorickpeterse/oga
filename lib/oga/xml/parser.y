@@ -103,12 +103,7 @@ rule
   element
     : element_start expressions T_ELEM_END
       {
-        element          = val[0]
-        element.children = val[1] ? val[1].flatten : []
-
-        link_children(element)
-
-        element
+        on_element_children(val[0], val[1] ? val[1].flatten : [])
       }
     ;
 
@@ -329,6 +324,19 @@ Unexpected #{name} with value #{value.inspect} on line #{@line}:
       :attributes => attributes,
       :children   => children
     )
+
+    return element
+  end
+
+  ##
+  # @param [Oga::XML::Element] element
+  # @param [Array] children
+  # @return [Oga::XML::Element]
+  #
+  def on_element_children(element, children = [])
+    element.children = children
+
+    link_children(element)
 
     return element
   end
