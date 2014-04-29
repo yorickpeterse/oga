@@ -19,12 +19,16 @@ module Oga
     # This parses yields proper XML instances such as {Oga::XML::Element}.
     # Doctypes and XML declarations are ignored by this parser.
     #
+    # @!attribute [r] node
+    #  The current node.
+    #  @return [Oga::XML::Node]
+    #
     # @!attribute [r] nesting
     #  Array containing the names of the currently nested elements.
     #  @return [Array]
     #
     class PullParser < Parser
-      attr_reader :nesting
+      attr_reader :node, :nesting
 
       ##
       # @return [Array]
@@ -53,6 +57,7 @@ module Oga
 
         @block   = nil
         @nesting = []
+        @node    = nil
       end
 
       ##
@@ -83,7 +88,8 @@ module Oga
       BLOCK_CALLBACKS.each do |method|
         eval <<-EOF, nil, __FILE__, __LINE__ + 1
         def #{method}(*args)
-          @block.call(super)
+          @node = super
+          @block.call(@node)
           return
         end
         EOF
@@ -93,11 +99,11 @@ module Oga
       # @see Oga::XML::Parser#on_element
       #
       def on_element(*args)
-        element = super
+        @node = super
 
-        nesting << element.name
+        nesting << @node.name
 
-        @block.call(element)
+        @block.call(@node)
 
         return
       end
