@@ -23,7 +23,8 @@ FILE_LIST = FileList.new(
   'LICENSE',
   'MANIFEST',
   '*.gemspec',
-  'README.md'
+  'README.md',
+  '.yardopts'
 )
 
 Dir['./task/*.rake'].each do |task|
