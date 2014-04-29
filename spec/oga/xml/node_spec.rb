@@ -13,4 +13,10 @@ describe Oga::XML::Node do
       described_class.new.children.should == []
     end
   end
+
+  context '#type' do
+    example 'return the type of the node' do
+      described_class.new.node_type.should == :node
+    end
+  end
 end

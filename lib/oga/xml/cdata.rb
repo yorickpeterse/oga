@@ -12,6 +12,13 @@ module Oga
       def to_xml
         return "<![CDATA[#{text}]]>"
       end
+
+      ##
+      # @return [Symbol]
+      #
+      def node_type
+        return :cdata
+      end
     end # Cdata
   end # XML
 end # Oga

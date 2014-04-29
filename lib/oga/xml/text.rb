@@ -24,6 +24,13 @@ module Oga
       def extra_inspect_data(indent)
         return "text: #{text.inspect}"
       end
+
+      ##
+      # @return [Symbol]
+      #
+      def node_type
+        return :text
+      end
     end # Text
   end # XML
 end # Oga

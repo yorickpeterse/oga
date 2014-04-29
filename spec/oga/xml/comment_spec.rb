@@ -33,4 +33,10 @@ describe Oga::XML::Comment do
       @instance.inspect.should == 'Comment(text: "foo")'
     end
   end
+
+  context '#type' do
+    example 'return the type of the node' do
+      described_class.new.node_type.should == :comment
+    end
+  end
 end

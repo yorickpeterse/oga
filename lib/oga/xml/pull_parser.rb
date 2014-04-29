@@ -75,6 +75,50 @@ module Oga
         return
       end
 
+      ##
+      # Calls the supplied block if the current node type and optionally the
+      # nesting match. This method allows you to write this:
+      #
+      #     parser.parse do |node|
+      #       parser.on(:text, %w{people person name}) do
+      #         puts node.text
+      #       end
+      #     end
+      #
+      # Instead of this:
+      #
+      #     parser.parse do |node|
+      #       if node.node_type == :text \
+      #       and parser.nesting == %w{people person name}
+      #         puts node.text
+      #       end
+      #     end
+      #
+      # When calling this method you can specify the following node types:
+      #
+      # * `:cdata`
+      # * `:comment`
+      # * `:element`
+      # * `:text`
+      #
+      # @example
+      #  parser.on(:element, %w{people person name}) do
+      #
+      #  end
+      #
+      # @param [Symbol] type The type of node to act upon. This is a symbol as
+      #  returned by {Oga::XML::Node#node_type}.
+      #
+      # @param [Array] nesting The element name nesting to act upon.
+      #
+      def on(type, nesting = [])
+        if node.node_type == type
+          if nesting.empty? or nesting == self.nesting
+            yield
+          end
+        end
+      end
+
       # eval is a heck of a lot faster than define_method on both Rubinius and
       # JRuby.
       DISABLED_CALLBACKS.each do |method|

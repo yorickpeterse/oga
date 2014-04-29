@@ -33,4 +33,10 @@ describe Oga::XML::Text do
       @instance.inspect.should == 'Text(text: "foo")'
     end
   end
+
+  context '#type' do
+    example 'return the type of the node' do
+      described_class.new.node_type.should == :text
+    end
+  end
 end

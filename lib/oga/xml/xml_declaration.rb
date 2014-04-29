@@ -67,6 +67,13 @@ module Oga
 #{spacing})
         EOF
       end
+
+      ##
+      # @return [Symbol]
+      #
+      def node_type
+        return :xml_decl
+      end
     end # XmlDeclaration
   end # XML
 end # Oga

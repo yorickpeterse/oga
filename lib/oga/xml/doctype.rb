@@ -73,6 +73,13 @@ module Oga
 #{spacing})
         EOF
       end
+
+      ##
+      # @return [Symbol]
+      #
+      def node_type
+        return :doctype
+      end
     end # Doctype
   end # XML
 end # Oga

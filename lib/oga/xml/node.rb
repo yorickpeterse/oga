@@ -58,6 +58,13 @@ module Oga
       # @return [String]
       #
       def extra_inspect_data; end
+
+      ##
+      # @return [Symbol]
+      #
+      def node_type
+        return :node
+      end
     end # Element
   end # XML
 end # Oga

@@ -80,4 +80,10 @@ Element(
       EOF
     end
   end
+
+  context '#type' do
+    example 'return the type of the node' do
+      described_class.new.node_type.should == :element
+    end
+  end
 end
