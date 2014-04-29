@@ -9,4 +9,4 @@ lib/oga/xml/parser.rb
 benchmark/fixtures/big.xml
 
 profile/samples/*.txt
-profile/samples/lexer/*.txt
+profile/samples/*/*.txt
