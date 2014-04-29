@@ -8,17 +8,23 @@ GEMSPEC = Gem::Specification.load('oga.gemspec')
 LEXER_OUTPUT  = 'lib/oga/xml/lexer.rb'
 PARSER_OUTPUT = 'lib/oga/xml/parser.rb'
 
-GENERATED_FILES = [
+CLEAN.include(
   'coverage',
   'yardoc',
   LEXER_OUTPUT,
   PARSER_OUTPUT,
   'benchmark/fixtures/big.xml'
-]
+)
 
-GENERATED_FILES.each do |file|
-  CLEAN << file if File.exist?(file)
-end
+FILE_LIST = FileList.new(
+  'checkum/**/*.*',
+  'doc/**/*.*',
+  'lib/**/*.*',
+  'LICENSE',
+  'MANIFEST',
+  '*.gemspec',
+  'README.md'
+)
 
 Dir['./task/*.rake'].each do |task|
   import(task)
