@@ -7,7 +7,7 @@ set ylabel "Memory (MB)"
 
 set yrange [0:*]
 
-set term qt persist
+set term qt persist size 900,600
 set grid
 
 set style line 1 lc rgb "#0060ad" lt 1 lw 2 pt 7 ps 1
