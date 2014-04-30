@@ -6,6 +6,6 @@ lexer = Oga::XML::Lexer.new(xml)
 
 Benchmark.bmbm(10) do |bench|
   bench.report '10MB of XML' do
-    lexer.advance { |tok| }
+    Oga::XML::Lexer.new(xml).advance { |tok| }
   end
 end
