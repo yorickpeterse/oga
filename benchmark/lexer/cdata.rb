@@ -1,5 +1,4 @@
-require_relative '../../lib/oga'
-require 'benchmark/ips'
+require_relative '../benchmark_helper'
 
 string = 'Hello, how are you doing today?'
 small  = "<![CDATA[#{string}]]>"

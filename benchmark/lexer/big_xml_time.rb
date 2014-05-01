@@ -1,7 +1,6 @@
-require_relative '../../lib/oga'
-require 'benchmark'
+require_relative '../benchmark_helper'
 
-xml = File.read(File.expand_path('../../fixtures/big.xml', __FILE__))
+xml = read_big_xml
 
 Benchmark.bmbm(10) do |bench|
   bench.report '10MB of XML' do

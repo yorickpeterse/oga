@@ -1,7 +1,6 @@
-require_relative '../../lib/oga'
-require 'benchmark'
+require_relative '../benchmark_helper'
 
-xml     = File.read(File.expand_path('../../fixtures/big.xml', __FILE__))
+xml     = read_big_xml
 amount  = 10
 timings = []
 

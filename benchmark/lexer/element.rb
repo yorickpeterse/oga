@@ -1,5 +1,4 @@
-require_relative '../../lib/oga'
-require 'benchmark/ips'
+require_relative '../benchmark_helper'
 
 simple     = '<p>Hello world</p>'
 attributes = '<p class="foo">Hello world</p>'

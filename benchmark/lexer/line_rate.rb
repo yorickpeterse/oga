@@ -1,14 +1,6 @@
-require_relative '../../lib/oga'
-require 'benchmark'
+require_relative '../benchmark_helper'
 
-fixture = File.expand_path('../../fixtures/big.xml', __FILE__)
-
-unless File.file?(fixture)
-  system('rake fixtures')
-  puts
-end
-
-xml     = File.read(fixture)
+xml     = read_big_xml
 lines   = xml.lines.count
 lexer   = Oga::XML::Lexer.new(xml)
 timings = Benchmark.bm(20) do |bench|

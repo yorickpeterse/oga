@@ -1,7 +1,6 @@
-require_relative '../../lib/oga'
-require 'benchmark/ips'
+require_relative '../benchmark_helper'
 
-html = File.read(File.expand_path('../../fixtures/gist.html', __FILE__))
+html = read_html
 
 Benchmark.ips do |bench|
   bench.report 'parse HTML' do

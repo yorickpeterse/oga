@@ -1,7 +1,6 @@
-require_relative '../../lib/oga'
-require 'benchmark'
+require_relative '../benchmark_helper'
 
-html = File.read(File.expand_path('../../fixtures/gist.html', __FILE__))
+html = read_html
 
 Benchmark.bmbm(20) do |bench|
   bench.report 'lex HTML' do
