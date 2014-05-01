@@ -9,6 +9,11 @@ then
     exit 1
 fi
 
+if [[ -z "$plot_script" ]]
+then
+    plot_script="profile/gnuplot/memory_time.gpi"
+fi
+
 if [[ ! -f "$plot_script" ]]
 then
     echo "The gnuplot script ${plot_script} does not exist"
