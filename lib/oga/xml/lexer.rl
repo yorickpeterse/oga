@@ -216,15 +216,6 @@ module Oga
       end
 
       ##
-      # Returns `true` if we're currently buffering.
-      #
-      # @return [TrueClass|FalseClass]
-      #
-      def buffering?
-        return !!@buffer_start_position
-      end
-
-      ##
       # Emits the current buffer if we have any. The current line number is
       # advanced based on the amount of newlines in the buffer.
       #
@@ -538,7 +529,7 @@ module Oga
           # will otherwise take precedence over the other rules.
           any => {
             # First character, start buffering (unless we already are buffering).
-            start_buffer(ts) unless buffering?
+            start_buffer(ts) unless @buffer_start_position
 
             # EOF, emit the text buffer.
             if te == eof
