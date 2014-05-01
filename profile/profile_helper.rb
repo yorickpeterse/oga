@@ -1,5 +1,4 @@
 require 'timeout'
-require 'time'
 
 require_relative '../lib/oga'
 
@@ -41,15 +40,16 @@ def profile_memory(name, duration = 30)
     path        = File.expand_path("../samples/#{name}.txt", __FILE__)
     handle      = File.open(path, 'w')
     handle.sync = true
+    start_time  = Time.now
 
     while monitor
       usage    = memory_usage
       usage_mb = (usage / 1024 / 1024).round(2)
-      time     = Time.now.strftime('%Y-%m-%dT%H:%M:%S')
+      runtime  = Time.now - start_time
 
-      handle.write("#{time} #{usage}\n")
+      handle.write("#{runtime} #{usage}\n")
 
-      puts "#{time}: #{usage_mb} MB"
+      puts "#{usage_mb} MB"
 
       sleep(rand)
     end
