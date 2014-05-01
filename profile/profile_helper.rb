@@ -30,7 +30,7 @@ end
 # @param [String] name The name of the samples file.
 # @param [String] duration The amount of seconds to run.
 #
-def profile_memory(name, duration = 30)
+def profile_memory(name, duration = 60)
   monitor = true
   threads = []
 

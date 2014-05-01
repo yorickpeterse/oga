@@ -5,9 +5,9 @@ set title sample_file
 set xlabel "Runtime (seconds)"
 set ylabel "Memory (MB)"
 
-set xtics 1
+set xtics 2
 
-set term wx persist size 900,600
+set term wx persist size 1024,760
 set grid
 
 set style line 1 lc rgb "#0060ad" lt 1 lw 2 pt 7 ps 1
