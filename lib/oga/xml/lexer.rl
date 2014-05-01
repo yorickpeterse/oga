@@ -73,16 +73,7 @@ module Oga
       #
       def reset
         @line     = 1
-        @ts       = nil
-        @te       = nil
-        @stack    = []
-        @top      = 0
-        @cs       = self.class.lexer_start
-        @act      = 0
         @elements = []
-        @eof      = @data.bytesize
-        @p        = 0
-        @pe       = @eof
 
         @buffer_start_position = nil
       end
@@ -131,6 +122,17 @@ module Oga
       def advance(&block)
         @block = block
 
+        data  = @data
+        ts    = nil
+        te    = nil
+        stack = []
+        top   = 0
+        cs    = self.class.lexer_start
+        act   = 0
+        eof   = @data.bytesize
+        p     = 0
+        pe    = eof
+
         _lexer_eof_trans          = self.class.send(:_lexer_eof_trans)
         _lexer_from_state_actions = self.class.send(:_lexer_from_state_actions)
         _lexer_index_offsets      = self.class.send(:_lexer_index_offsets)
@@ -174,7 +176,7 @@ module Oga
       # @see #text
       # @see #add_token
       #
-      def emit(type, start = @ts, stop = @te)
+      def emit(type, start, stop)
         value = text(start, stop)
 
         add_token(type, value)
@@ -184,13 +186,11 @@ module Oga
       # Returns the text of the current buffer based on the supplied start and
       # stop position.
       #
-      # By default `@ts` and `@te` are used as the start/stop position.
-      #
       # @param [Fixnum] start
       # @param [Fixnum] stop
       # @return [String]
       #
-      def text(start = @ts, stop = @te)
+      def text(start, stop)
         return @data.byteslice(start, stop - start)
       end
 
@@ -209,10 +209,9 @@ module Oga
       ##
       # Enables buffering starting at the given position.
       #
-      # @param [Fixnum] position The start position of the buffer, set to `@te`
-      #  by default.
+      # @param [Fixnum] position The start position of the buffer.
       #
-      def start_buffer(position = @te)
+      def start_buffer(position)
         @buffer_start_position = position
       end
 
@@ -229,12 +228,10 @@ module Oga
       # Emits the current buffer if we have any. The current line number is
       # advanced based on the amount of newlines in the buffer.
       #
-      # @param [Fixnum] position The end position of the buffer, set to `@ts`
-      #  by default.
-      #
+      # @param [Fixnum] position The end position of the buffer.
       # @param [Symbol] type The type of node to emit.
       #
-      def emit_buffer(position = @ts, type = :T_TEXT)
+      def emit_buffer(position, type = :T_TEXT)
         return unless @buffer_start_position
 
         content = text(@buffer_start_position, position)
@@ -260,12 +257,7 @@ module Oga
       end
 
       %%{
-        # Use instance variables for `ts` and friends.
-        access @;
-        getkey (@data.getbyte(@p) || 0);
-        variable p @p;
-        variable pe @pe;
-        variable eof @eof;
+        getkey (data.getbyte(p) || 0);
 
         newline    = '\n' | '\r\n';
         whitespace = [ \t];
@@ -280,13 +272,13 @@ module Oga
         squote = "'";
 
         action start_string_dquote {
-          start_buffer
+          start_buffer(te)
 
           fcall string_dquote;
         }
 
         action start_string_squote {
-          start_buffer
+          start_buffer(te)
 
           fcall string_squote;
         }
@@ -294,7 +286,7 @@ module Oga
         # Machine for processing double quoted strings.
         string_dquote := |*
           dquote => {
-            emit_buffer(@ts, :T_STRING)
+            emit_buffer(ts, :T_STRING)
             fret;
           };
 
@@ -304,7 +296,7 @@ module Oga
         # Machine for processing single quoted strings.
         string_squote := |*
           squote => {
-            emit_buffer(@ts, :T_STRING)
+            emit_buffer(ts, :T_STRING)
             fret;
           };
 
@@ -324,7 +316,7 @@ module Oga
         doctype_start = '<!DOCTYPE'i whitespace+;
 
         action start_doctype {
-          emit_buffer
+          emit_buffer(ts)
           add_token(:T_DOCTYPE_START)
           fcall doctype;
         }
@@ -332,7 +324,7 @@ module Oga
         # Machine for processing doctypes. Doctype values such as the public
         # and system IDs are treated as T_STRING tokens.
         doctype := |*
-          'PUBLIC' | 'SYSTEM' => { emit(:T_DOCTYPE_TYPE) };
+          'PUBLIC' | 'SYSTEM' => { emit(:T_DOCTYPE_TYPE, ts, te) };
 
           # Lex the public/system IDs as regular strings.
           dquote => start_string_dquote;
@@ -342,7 +334,7 @@ module Oga
           # including it.
           whitespace;
 
-          identifier => { emit(:T_DOCTYPE_NAME) };
+          identifier => { emit(:T_DOCTYPE_NAME, ts, te) };
 
           '>' => {
             add_token(:T_DOCTYPE_END)
@@ -364,10 +356,10 @@ module Oga
         cdata_end   = ']]>';
 
         action start_cdata {
-          emit_buffer
+          emit_buffer(ts)
           add_token(:T_CDATA_START)
 
-          start_buffer
+          start_buffer(te)
 
           fcall cdata;
         }
@@ -376,7 +368,7 @@ module Oga
         # inside a CDATA tag is treated as plain text.
         cdata := |*
           cdata_end => {
-            emit_buffer
+            emit_buffer(ts)
             add_token(:T_CDATA_END)
 
             fret;
@@ -400,10 +392,10 @@ module Oga
         comment_end   = '-->';
 
         action start_comment {
-          emit_buffer
+          emit_buffer(ts)
           add_token(:T_COMMENT_START)
 
-          start_buffer
+          start_buffer(te)
 
           fcall comment;
         }
@@ -412,7 +404,7 @@ module Oga
         # inside a comment is treated as plain text (similar to CDATA tags).
         comment := |*
           comment_end => {
-            emit_buffer
+            emit_buffer(ts)
             add_token(:T_COMMENT_END)
 
             fret;
@@ -429,10 +421,10 @@ module Oga
         xml_decl_end   = '?>';
 
         action start_xml_decl {
-          emit_buffer
+          emit_buffer(ts)
           add_token(:T_XML_DECL_START)
 
-          start_buffer
+          start_buffer(te)
 
           fcall xml_decl;
         }
@@ -440,14 +432,14 @@ module Oga
         # Machine that processes the contents of an XML declaration tag.
         xml_decl := |*
           xml_decl_end => {
-            emit_buffer
+            emit_buffer(ts)
             add_token(:T_XML_DECL_END)
 
             fret;
           };
 
           # Attributes and their values (e.g. version="1.0").
-          identifier => { emit(:T_ATTR) };
+          identifier => { emit(:T_ATTR, ts, te) };
 
           dquote => start_string_dquote;
           squote => start_string_squote;
@@ -464,12 +456,12 @@ module Oga
         # namespace (if any). Remaining work is delegated to a dedicated
         # machine.
         action start_element {
-          emit_buffer
+          emit_buffer(ts)
           add_token(:T_ELEM_START)
 
           # Add the element name. If the name includes a namespace we'll break
           # the name up into two separate tokens.
-          name = text(@ts + 1)
+          name = text(ts + 1, te)
 
           if name.include?(':')
             ns, name = name.split(':')
@@ -498,7 +490,7 @@ module Oga
           newline => { advance_line };
 
           # Attribute names.
-          identifier => { emit(:T_ATTR) };
+          identifier => { emit(:T_ATTR, ts, te) };
 
           # Attribute values.
           dquote => start_string_dquote;
@@ -529,7 +521,7 @@ module Oga
 
           # Regular closing tags.
           '</' identifier '>' => {
-            emit_buffer
+            emit_buffer(ts)
             add_token(:T_ELEM_END, nil)
 
             @elements.pop if html?
@@ -546,11 +538,11 @@ module Oga
           # will otherwise take precedence over the other rules.
           any => {
             # First character, start buffering (unless we already are buffering).
-            start_buffer(@ts) unless buffering?
+            start_buffer(ts) unless buffering?
 
             # EOF, emit the text buffer.
-            if @te == @eof
-              emit_buffer(@te)
+            if te == eof
+              emit_buffer(te)
             end
           };
         *|;
