@@ -13,7 +13,8 @@ CLEAN.include(
   'yardoc',
   LEXER_OUTPUT,
   PARSER_OUTPUT,
-  'benchmark/fixtures/big.xml'
+  'benchmark/fixtures/big.xml',
+  'profile/samples/**/*.txt'
 )
 
 FILE_LIST = FileList.new(
