@@ -1,21 +1,7 @@
 require_relative '../benchmark_helper'
 
-xml     = read_big_xml
-amount  = 10
-timings = []
+xml = read_big_xml
 
-amount.times do |i|
-  timing = Benchmark.measure do
-    Oga::XML::Lexer.new(xml).advance { }
-  end
-
-  puts "Iteration #{i + 1}: #{timing.real.round(3)}"
-
-  timings << timing.real
+measure_average do
+  Oga::XML::Lexer.new(xml).advance { }
 end
-
-average = timings.inject(:+) / amount
-
-puts
-puts "Iterations: #{amount}"
-puts "Average:    #{average.round(3)} sec"
