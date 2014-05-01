@@ -1,0 +1,21 @@
+# The `sample_file` variable should contain the path to the variable to plot.
+
+set title sample_file
+
+set xlabel "Time"
+set ylabel "Memory (MB)"
+
+set xdata time
+set timefmt "%Y-%m-%dT%H:%M:%S"
+
+set yrange [0:*]
+
+set term qt persist size 900,600
+set grid
+
+set style line 1 lc rgb "#0060ad" lt 1 lw 2 pt 7 ps 1
+
+plot sample_file \
+    using 1:($2 / 1024 ** 2) \
+    with linespoints ls 1 \
+    title "Memory"

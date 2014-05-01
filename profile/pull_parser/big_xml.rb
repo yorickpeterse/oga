@@ -1,8 +1,8 @@
 require_relative '../profile_helper'
 
-xml    = read_big_xml
-parser = Oga::XML::PullParser.new(xml)
+xml = read_big_xml
 
-profile_memory('pull_parser/big_xml')
+profile_memory('pull_parser/big_xml') do
+  Oga::XML::PullParser.new(xml).parse { }
+end
 
-parser.parse { |node| }

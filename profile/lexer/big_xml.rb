@@ -1,8 +1,7 @@
 require_relative '../profile_helper'
 
-xml   = read_big_xml
-lexer = Oga::XML::Lexer.new(xml)
+xml = read_big_xml
 
-profile_memory('lexer/big_xml')
-
-lexer.advance { |tok| }
+profile_memory('lexer/big_xml') do
+  Oga::XML::Lexer.new(xml).advance { }
+end

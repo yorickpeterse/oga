@@ -1,4 +1,9 @@
+require 'timeout'
+require 'time'
+
 require_relative '../lib/oga'
+
+Thread.abort_on_exception = true
 
 ##
 # Returns memory usage in bytes. This relies on the /proc filesystem, it won't
@@ -20,22 +25,52 @@ def read_big_xml
 end
 
 ##
-# Writes memory samples to a file until the thread is killed.
+# Runs the specified block for at least N seconds while profiling memory usage
+# at semi random intervals.
 #
 # @param [String] name The name of the samples file.
-# @param [Fixnum] interval The sample interval. The default is 200 ms.
-# @return [Thread]
+# @param [String] duration The amount of seconds to run.
 #
-def profile_memory(name, interval = 0.2)
-  return Thread.new do
+def profile_memory(name, duration = 30)
+  monitor = true
+  threads = []
+
+  threads << Thread.new do
+    puts 'Starting sampler...'
+
     path        = File.expand_path("../samples/#{name}.txt", __FILE__)
     handle      = File.open(path, 'w')
     handle.sync = true
 
-    loop do
-      handle.write("#{memory_usage}\n")
+    while monitor
+      usage    = memory_usage
+      usage_mb = (usage / 1024 / 1024).round(2)
+      time     = Time.now.strftime('%Y-%m-%dT%H:%M:%S')
 
-      sleep(interval)
+      handle.write("#{time} #{usage}\n")
+
+      puts "#{time}: #{usage_mb} MB"
+
+      sleep(rand)
+    end
+
+    puts 'Stopping sampler...'
+
+    handle.close
+  end
+
+  threads << Thread.new do
+    start = Time.now
+
+    begin
+      Timeout.timeout(duration) { loop { yield} }
+    rescue Timeout::Error
+      diff    = Time.now - start
+      monitor = false
+
+      puts "Finished running after #{diff.round(3)} seconds"
     end
   end
+
+  threads.each(&:join)
 end
