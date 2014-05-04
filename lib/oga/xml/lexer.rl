@@ -259,11 +259,11 @@ module Oga
 
         # Machine for processing double quoted strings.
         string_dquote := |*
-           ^dquote+ => {
-             emit(:T_STRING, ts, te)
-           };
+          ^dquote+ => {
+            emit(:T_STRING, ts, te)
+          };
 
-           dquote => { fret; };
+          dquote => { fret; };
         *|;
 
         # Machine for processing single quoted strings.
