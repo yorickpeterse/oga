@@ -1,32 +1,37 @@
 require 'bundler/gem_tasks'
 require 'digest/sha2'
 require 'rake/clean'
+require 'rake/extensiontask'
 require 'cliver'
 
 GEMSPEC = Gem::Specification.load('oga.gemspec')
 
-LEXER_OUTPUT  = 'lib/oga/xml/lexer.rb'
 PARSER_OUTPUT = 'lib/oga/xml/parser.rb'
 
 CLEAN.include(
   'coverage',
   'yardoc',
-  LEXER_OUTPUT,
   PARSER_OUTPUT,
   'benchmark/fixtures/big.xml',
-  'profile/samples/**/*.txt'
+  'profile/samples/**/*.txt',
+  'lib/liboga.*',
+  'tmp',
+  'ext/liboga/lexer.c'
 )
 
 FILE_LIST = FileList.new(
   'checkum/**/*.*',
   'doc/**/*.*',
-  'lib/**/*.*',
+  'lib/**/*.rb',
   'LICENSE',
   'MANIFEST',
   '*.gemspec',
   'README.md',
-  '.yardopts'
+  '.yardopts',
+  'ext/**/*.*'
 )
+
+Rake::ExtensionTask.new('liboga', GEMSPEC)
 
 Dir['./task/*.rake'].each do |task|
   import(task)

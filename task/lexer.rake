@@ -18,5 +18,11 @@ rule '.rb' => '.rl' do |task|
   end
 end
 
-desc 'Generates the lexer'
-task :lexer => [LEXER_OUTPUT]
+rule '.c' => '.rl' do |task|
+  Cliver.assert('ragel', '~> 6.7')
+
+  sh "ragel -C -G2 #{task.source} -o #{task.name}"
+end
+
+desc 'Generates the lexers'
+task :lexer => ['ext/liboga/lexer.c']

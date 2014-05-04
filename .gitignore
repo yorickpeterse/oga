@@ -3,10 +3,14 @@ coverage
 pkg
 Gemfile.lock
 
-lib/oga/xml/lexer.rb
 lib/oga/xml/parser.rb
+lib/liboga.*
 
 benchmark/fixtures/big.xml
 
 profile/samples/*.txt
 profile/samples/*/*.txt
+*.so
+tmp
+
+ext/liboga/lexer.c

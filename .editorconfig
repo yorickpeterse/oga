@@ -7,3 +7,6 @@ trim_trailing_whitespace = true
 
 [*.{y,rb,rl}]
 indent_size = 2
+
+[*.{h,h},ext/oga/xml/*.rl]
+indent_size = 2

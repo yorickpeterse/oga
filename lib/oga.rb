@@ -1,5 +1,7 @@
 require 'set'
 
+require_relative 'liboga'
+
 require_relative 'oga/xml/lexer'
 require_relative 'oga/xml/parser'
 require_relative 'oga/xml/pull_parser'
