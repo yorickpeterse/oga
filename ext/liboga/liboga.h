@@ -3,7 +3,6 @@
 
 #include <ruby.h>
 #include <ruby/encoding.h>
-#include <string.h>
 #include <malloc.h>
 #include <stdio.h>
 

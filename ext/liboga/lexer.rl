@@ -13,7 +13,7 @@ void oga_xml_lexer_callback(
 )
 {
   int length   = te - ts;
-  VALUE value  = rb_enc_str_new_cstr(strndup(ts, length), encoding);
+  VALUE value  = rb_enc_str_new(ts, length, encoding);
   VALUE method = rb_intern(name);
 
   rb_funcall(self, method, 1, value);
