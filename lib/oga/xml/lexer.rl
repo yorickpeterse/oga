@@ -216,26 +216,21 @@ module Oga
       end
 
       ##
-      # Emits the current buffer if we have any. The current line number is
-      # advanced based on the amount of newlines in the buffer.
+      # Emits a text token.
       #
-      # @param [Fixnum] position The end position of the buffer.
-      # @param [Symbol] type The type of node to emit.
+      # @param [Fixnum] start
+      # @param [Fixnum] stop
       #
-      def emit_buffer(position, type = :T_TEXT)
-        return unless @buffer_start_position
-
-        content = text(@buffer_start_position, position)
+      def emit_text(start, stop)
+        content = text(start, stop)
 
         unless content.empty?
-          add_token(type, content)
+          add_token(:T_TEXT, content)
 
           lines = content.count("\n")
 
           advance_line(lines) if lines > 0
         end
-
-        @buffer_start_position = nil
       end
 
       ##
@@ -262,36 +257,22 @@ module Oga
         dquote = '"';
         squote = "'";
 
-        action start_string_dquote {
-          start_buffer(te)
-
-          fcall string_dquote;
-        }
-
-        action start_string_squote {
-          start_buffer(te)
-
-          fcall string_squote;
-        }
-
         # Machine for processing double quoted strings.
         string_dquote := |*
-          dquote => {
-            emit_buffer(ts, :T_STRING)
-            fret;
-          };
+           ^dquote+ => {
+             emit(:T_STRING, ts, te)
+           };
 
-          any;
+           dquote => { fret; };
         *|;
 
         # Machine for processing single quoted strings.
         string_squote := |*
-          squote => {
-            emit_buffer(ts, :T_STRING)
-            fret;
+          ^squote+ => {
+            emit(:T_STRING, ts, te)
           };
 
-          any;
+          squote => { fret; };
         *|;
 
         # DOCTYPES
@@ -307,7 +288,6 @@ module Oga
         doctype_start = '<!DOCTYPE'i whitespace+;
 
         action start_doctype {
-          emit_buffer(ts)
           add_token(:T_DOCTYPE_START)
           fcall doctype;
         }
@@ -318,8 +298,8 @@ module Oga
           'PUBLIC' | 'SYSTEM' => { emit(:T_DOCTYPE_TYPE, ts, te) };
 
           # Lex the public/system IDs as regular strings.
-          dquote => start_string_dquote;
-          squote => start_string_squote;
+          dquote => { fcall string_dquote; };
+          squote => { fcall string_squote; };
 
           # Whitespace inside doctypes is ignored since there's no point in
           # including it.
@@ -347,10 +327,7 @@ module Oga
         cdata_end   = ']]>';
 
         action start_cdata {
-          emit_buffer(ts)
           add_token(:T_CDATA_START)
-
-          start_buffer(te)
 
           fcall cdata;
         }
@@ -358,14 +335,12 @@ module Oga
         # Machine that for processing the contents of CDATA tags. Everything
         # inside a CDATA tag is treated as plain text.
         cdata := |*
-          cdata_end => {
-            emit_buffer(ts)
+          any* cdata_end => {
+            emit_text(ts, te - 3)
             add_token(:T_CDATA_END)
 
             fret;
           };
-
-          any;
         *|;
 
         # Comments
@@ -383,10 +358,7 @@ module Oga
         comment_end   = '-->';
 
         action start_comment {
-          emit_buffer(ts)
           add_token(:T_COMMENT_START)
-
-          start_buffer(te)
 
           fcall comment;
         }
@@ -394,14 +366,12 @@ module Oga
         # Machine used for processing the contents of a comment. Everything
         # inside a comment is treated as plain text (similar to CDATA tags).
         comment := |*
-          comment_end => {
-            emit_buffer(ts)
+          any* comment_end => {
+            emit_text(ts, te - 3)
             add_token(:T_COMMENT_END)
 
             fret;
           };
-
-          any;
         *|;
 
         # XML declaration tags
@@ -412,10 +382,7 @@ module Oga
         xml_decl_end   = '?>';
 
         action start_xml_decl {
-          emit_buffer(ts)
           add_token(:T_XML_DECL_START)
-
-          start_buffer(te)
 
           fcall xml_decl;
         }
@@ -423,7 +390,6 @@ module Oga
         # Machine that processes the contents of an XML declaration tag.
         xml_decl := |*
           xml_decl_end => {
-            emit_buffer(ts)
             add_token(:T_XML_DECL_END)
 
             fret;
@@ -432,8 +398,8 @@ module Oga
           # Attributes and their values (e.g. version="1.0").
           identifier => { emit(:T_ATTR, ts, te) };
 
-          dquote => start_string_dquote;
-          squote => start_string_squote;
+          dquote => { fcall string_dquote; };
+          squote => { fcall string_squote; };
 
           any;
         *|;
@@ -447,7 +413,6 @@ module Oga
         # namespace (if any). Remaining work is delegated to a dedicated
         # machine.
         action start_element {
-          emit_buffer(ts)
           add_token(:T_ELEM_START)
 
           # Add the element name. If the name includes a namespace we'll break
@@ -484,8 +449,8 @@ module Oga
           identifier => { emit(:T_ATTR, ts, te) };
 
           # Attribute values.
-          dquote => start_string_dquote;
-          squote => start_string_squote;
+          dquote => { fcall string_dquote; };
+          squote => { fcall string_squote; };
 
           # The closing character of the open tag.
           ('>' | '/') => {
@@ -512,7 +477,6 @@ module Oga
 
           # Regular closing tags.
           '</' identifier '>' => {
-            emit_buffer(ts)
             add_token(:T_ELEM_END, nil)
 
             @elements.pop if html?
@@ -527,14 +491,8 @@ module Oga
 
           # Note that this rule should be declared at the very bottom as it
           # will otherwise take precedence over the other rules.
-          any => {
-            # First character, start buffering (unless we already are buffering).
-            start_buffer(ts) unless @buffer_start_position
-
-            # EOF, emit the text buffer.
-            if te == eof
-              emit_buffer(te)
-            end
+          ^('<' | '>')+ => {
+            emit_text(ts, te)
           };
         *|;
       }%%
