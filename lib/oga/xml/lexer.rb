@@ -10,9 +10,6 @@ module Oga
     # @!attribute [r] html
     #  @return [TrueClass|FalseClass]
     #
-    # @!attribute [r] tokens
-    #  @return [Array]
-    #
     class Lexer
       attr_reader :html
 
