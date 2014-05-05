@@ -25,4 +25,4 @@ rule '.c' => '.rl' do |task|
 end
 
 desc 'Generates the lexers'
-task :lexer => ['ext/liboga/lexer.c']
+task :lexer => ['ext/c/liboga/lexer.c']
