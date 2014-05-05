@@ -4,6 +4,15 @@ VALUE oga_cLexer;
 
 %%machine lexer;
 
+/**
+ * Calls a method defined in the Ruby side of the lexer. The String value is
+ * created based on the values of `ts` and `te` and uses the encoding specified
+ * in `encoding`.
+ *
+ * @example
+ *  rb_encoding *encoding = rb_enc_get(...);
+ *  oga_xml_lexer_callback(self, "on_string", encoding, ts, te);
+ */
 void oga_xml_lexer_callback(
   VALUE self,
   const char *name,
@@ -12,13 +21,19 @@ void oga_xml_lexer_callback(
   const char *te
 )
 {
-  int length   = te - ts;
-  VALUE value  = rb_enc_str_new(ts, length, encoding);
+  VALUE value  = rb_enc_str_new(ts, te - ts, encoding);
   VALUE method = rb_intern(name);
 
   rb_funcall(self, method, 1, value);
 }
 
+/**
+ * Calls a method defined in the Ruby side of the lexer without passing it any
+ * arguments.
+ *
+ * @example
+ *  oga_xml_lexer_callback_simple(self, "on_cdata_start");
+ */
 void oga_xml_lexer_callback_simple(VALUE self, const char *name)
 {
   VALUE method = rb_intern(name);
@@ -28,6 +43,16 @@ void oga_xml_lexer_callback_simple(VALUE self, const char *name)
 
 %% write data;
 
+/**
+ * Lexes the input String specified in the instance variable `@data`. Lexed
+ * values have the same encoding as the input value. This instance variable
+ * is set in the Ruby layer of the lexer.
+ *
+ * The Ragel loop dispatches method calls back to Ruby land to make it easier
+ * to implement complex actions without having to fiddle around with C. This
+ * introduces a small performance overhead compared to a pure C implementation.
+ * However, this is worth the overhead due to it being much easier to maintain.
+ */
 VALUE oga_xml_lexer_advance(VALUE self)
 {
   /* Pull the data in from Ruby land. */
@@ -46,6 +71,11 @@ VALUE oga_xml_lexer_advance(VALUE self)
   int act = 0;
   int cs  = 0;
   int top = 0;
+
+  /*
+  Fixed stack size is enough since the lexer doesn't use that many nested
+  fcalls.
+  */
   int stack[8];
 
   %% write init;
