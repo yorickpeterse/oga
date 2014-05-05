@@ -156,50 +156,94 @@ module Oga
         return @elements.last
       end
 
+      ##
+      # Called when processing single/double quoted strings.
+      #
+      # @param [String] value The data between the quotes.
+      #
       def on_string(value)
         add_token(:T_STRING, value)
       end
 
+      ##
+      # Called when a doctype starts.
+      #
       def on_start_doctype
         add_token(:T_DOCTYPE_START)
       end
 
+      ##
+      # Called on the identifier specifying the type of the doctype.
+      #
+      # @param [String] value
+      #
       def on_doctype_type(value)
         add_token(:T_DOCTYPE_TYPE, value)
       end
 
+      ##
+      # Called on the identifier specifying the name of the doctype.
+      #
+      # @param [String] value
+      #
       def on_doctype_name(value)
         add_token(:T_DOCTYPE_NAME, value)
       end
 
+      ##
+      # Called on the end of a doctype.
+      #
       def on_doctype_end
         add_token(:T_DOCTYPE_END)
       end
 
+      ##
+      # Called on the start of a CDATA tag.
+      #
       def on_cdata_start
         add_token(:T_CDATA_START)
       end
 
+      ##
+      # Called on the end of a CDATA tag.
+      #
       def on_cdata_end
         add_token(:T_CDATA_END)
       end
 
+      ##
+      # Called on the start of a comment.
+      #
       def on_comment_start
         add_token(:T_COMMENT_START)
       end
 
+      ##
+      # Called on the end of a comment.
+      #
       def on_comment_end
         add_token(:T_COMMENT_END)
       end
 
+      ##
+      # Called on the start of an XML declaration tag.
+      #
       def on_xml_decl_start
         add_token(:T_XML_DECL_START)
       end
 
+      ##
+      # Called on the end of an XML declaration tag.
+      #
       def on_xml_decl_end
         add_token(:T_XML_DECL_END)
       end
 
+      ##
+      # Called on the start of an element.
+      #
+      # @param [String] name The name of the element, including namespace.
+      #
       def on_element_start(name)
         add_token(:T_ELEM_START)
 
@@ -214,6 +258,9 @@ module Oga
         add_token(:T_ELEM_NAME, name)
       end
 
+      ##
+      # Called on the closing `>` of the open tag of an element.
+      #
       def on_element_open_end
         if html? and HTML_VOID_ELEMENTS.include?(current_element)
           add_token(:T_ELEM_END)
@@ -221,12 +268,20 @@ module Oga
         end
       end
 
+      ##
+      # Called on the closing tag of an element.
+      #
       def on_element_end
         add_token(:T_ELEM_END)
 
         @elements.pop if html?
       end
 
+      ##
+      # Called on regular text values.
+      #
+      # @param [String] text
+      #
       def on_text(value)
         unless value.empty?
           add_token(:T_TEXT, value)
@@ -237,10 +292,18 @@ module Oga
         end
       end
 
+      ##
+      # Called on tag attributes.
+      #
+      # @param [String] value
+      #
       def on_attribute(value)
         add_token(:T_ATTR, value)
       end
 
+      ##
+      # Gee, I wonder when this gets called.
+      #
       def on_newline
         @line += 1
       end
