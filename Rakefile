@@ -7,11 +7,15 @@ GEMSPEC = Gem::Specification.load('oga.gemspec')
 if RUBY_PLATFORM == 'java'
   require 'rake/javaextensiontask'
 
-  Rake::JavaExtensionTask.new('liboga', GEMSPEC)
+  Rake::JavaExtensionTask.new('liboga', GEMSPEC) do |task|
+    task.ext_dir = 'ext/java'
+  end
 else
   require 'rake/extensiontask'
 
-  Rake::ExtensionTask.new('liboga', GEMSPEC)
+  Rake::ExtensionTask.new('liboga', GEMSPEC) do |task|
+    task.ext_dir = 'ext/c'
+  end
 end
 
 PARSER_OUTPUT = 'lib/oga/xml/parser.rb'
@@ -24,8 +28,8 @@ CLEAN.include(
   'profile/samples/**/*.txt',
   'lib/liboga.*',
   'tmp',
-  'ext/liboga/lexer.c',
-  'ext/liboga/org/liboga/xml/Lexer.java'
+  'ext/c/lexer.c',
+  'ext/java/org/liboga/xml/Lexer.java'
 )
 
 FILE_LIST = FileList.new(

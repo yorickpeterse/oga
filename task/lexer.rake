@@ -26,6 +26,6 @@ end
 
 desc 'Generates the lexers'
 multitask :lexer => [
-  'ext/liboga/lexer.c',
-  'ext/liboga/org/liboga/xml/Lexer.java'
+  'ext/c/lexer.c',
+  'ext/java/org/liboga/xml/Lexer.java'
 ]

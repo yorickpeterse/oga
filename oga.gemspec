@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
 
     s.platform = 'java'
   else
-    s.extensions = ['ext/liboga/extconf.rb']
+    s.extensions = ['ext/c/extconf.rb']
   end
 
   s.has_rdoc              = 'yard'
