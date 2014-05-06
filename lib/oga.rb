@@ -1,16 +1,19 @@
 require 'set'
 
+# Load these first so that the native extensions don't have to define the
+# Oga::XML namespace.
 require_relative 'oga/xml/lexer'
 require_relative 'oga/xml/parser'
 require_relative 'oga/xml/pull_parser'
 
-require_relative 'liboga'
-
-# FIXME: it looks like this should not be needed but stuff doesn't load without
-# it.
-if RUBY_ENGINE == 'jruby'
-  org.liboga.LibogaService.new.basicLoad(JRuby.runtime)
+# JRuby is dumb as a brick and can only load .jar files using require() when
+# ./lib is in the LOAD_PATH. require_relative, or any other form that uses
+# absolute paths, does not work.
+unless $:.include?(File.expand_path('../', __FILE__))
+  $:.unshift(File.expand_path('../', __FILE__))
 end
+
+require 'liboga'
 
 require_relative 'oga/xml/node'
 require_relative 'oga/xml/element'

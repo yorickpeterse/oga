@@ -12,8 +12,6 @@ public class LibogaService implements BasicLibraryService
 {
     public boolean basicLoad(final Ruby runtime) throws IOException
     {
-        // <jruby> Calling getModule on an instance of RubyModule? Nah fuck
-        // that, that would be too easy.
         RubyModule xml = (RubyModule) runtime.getModule("Oga")
             .getConstant("XML");
 
