@@ -25,7 +25,8 @@ CLEAN.include(
   'profile/samples/**/*.txt',
   'lib/liboga.*',
   'tmp',
-  'ext/liboga/lexer.c'
+  'ext/liboga/lexer.c',
+  'ext/liboga/org/liboga/xml/Lexer.java'
 )
 
 FILE_LIST = FileList.new(
