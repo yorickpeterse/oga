@@ -1,10 +1,16 @@
 require 'set'
 
-require_relative 'liboga'
-
 require_relative 'oga/xml/lexer'
 require_relative 'oga/xml/parser'
 require_relative 'oga/xml/pull_parser'
+
+require_relative 'liboga'
+
+# FIXME: it looks like this should not be needed but stuff doesn't load without
+# it.
+if RUBY_ENGINE == 'jruby'
+  org.liboga.LibogaService.new.basicLoad(JRuby.runtime)
+end
 
 require_relative 'oga/xml/node'
 require_relative 'oga/xml/element'

@@ -26,6 +26,18 @@ public class Lexer extends RubyObject
     @JRubyMethod
     public IRubyObject advance_native(ThreadContext context)
     {
+        int act = 0;
+        int cs  = 0;
+        int ts  = 0;
+        int te  = 0;
+        int p   = 0;
+        int pe  = 0;
+        int eof = 0;
+        int top = 0;
+
+        int[] data  = {};
+        int[] stack = {};
+
         %% write init;
         %% write exec;
 
