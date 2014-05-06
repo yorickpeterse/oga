@@ -1,5 +1,3 @@
-package org.liboga;
-
 import java.io.IOException;
 
 import org.jruby.Ruby;
