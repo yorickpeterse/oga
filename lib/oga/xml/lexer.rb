@@ -165,7 +165,7 @@ module Oga
       ##
       # Called when a doctype starts.
       #
-      def on_start_doctype
+      def on_doctype_start
         add_token(:T_DOCTYPE_START)
       end
 

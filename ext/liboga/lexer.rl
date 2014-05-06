@@ -128,7 +128,7 @@ VALUE oga_xml_lexer_advance(VALUE self)
     doctype_start = '<!DOCTYPE'i whitespace+;
 
     action start_doctype {
-        liboga_xml_lexer_callback_simple(self, "on_start_doctype");
+        liboga_xml_lexer_callback_simple(self, "on_doctype_start");
         fcall doctype;
     }
 
