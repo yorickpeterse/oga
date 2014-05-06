@@ -14,3 +14,4 @@ profile/samples/*/*.txt
 tmp
 
 ext/liboga/lexer.c
+ext/liboga/org/liboga/xml/Lexer.java
