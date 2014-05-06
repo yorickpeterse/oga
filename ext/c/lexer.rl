@@ -1,5 +1,21 @@
 #include "lexer.h"
 
+/*
+The following two macros allow the Ragel grammar to use generic function calls
+without relying on the setup of the C or Java lexer. Using these macros we can
+also pass along `self` to the callback functions without having to hard-code
+this in to the Ragel grammar.
+
+In the C lexer we don't need the `data` variable (since this is pulled in based
+on `ts` and `te`) so the macro ignores this argument.
+*/
+
+#define callback(name, data, encoding, start, stop) \
+    liboga_xml_lexer_callback(self, name, encoding, start, stop);
+
+#define callback_simple(name) \
+    liboga_xml_lexer_callback_simple(self, name);
+
 VALUE oga_cLexer;
 
 %%machine c_lexer;
