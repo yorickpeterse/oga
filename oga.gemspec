@@ -12,7 +12,13 @@ Gem::Specification.new do |s|
 
   s.files = File.read(File.expand_path('../MANIFEST', __FILE__)).split("\n")
 
-  s.extensions = ['ext/liboga/extconf.rb']
+  if RUBY_PLATFORM == 'java'
+    s.files << 'lib/liboga.jar'
+
+    s.platform = 'java'
+  else
+    s.extensions = ['ext/c/liboga/extconf.rb']
+  end
 
   s.has_rdoc              = 'yard'
   s.required_ruby_version = '>= 1.9.3'

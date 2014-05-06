@@ -11,9 +11,9 @@ VALUE oga_cLexer;
  *
  * @example
  *  rb_encoding *encoding = rb_enc_get(...);
- *  oga_xml_lexer_callback(self, "on_string", encoding, ts, te);
+ *  liboga_xml_lexer_callback(self, "on_string", encoding, ts, te);
  */
-void oga_xml_lexer_callback(
+void liboga_xml_lexer_callback(
   VALUE self,
   const char *name,
   rb_encoding *encoding,
@@ -32,9 +32,9 @@ void oga_xml_lexer_callback(
  * arguments.
  *
  * @example
- *  oga_xml_lexer_callback_simple(self, "on_cdata_start");
+ *  liboga_xml_lexer_callback_simple(self, "on_cdata_start");
  */
-void oga_xml_lexer_callback_simple(VALUE self, const char *name)
+void liboga_xml_lexer_callback_simple(VALUE self, const char *name)
 {
   VALUE method = rb_intern(name);
 
@@ -100,7 +100,7 @@ VALUE oga_xml_lexer_advance(VALUE self)
     # Machine for processing double quoted strings.
     string_dquote := |*
       ^dquote+ => {
-        oga_xml_lexer_callback(self, "on_string", encoding, ts, te);
+        liboga_xml_lexer_callback(self, "on_string", encoding, ts, te);
       };
 
       dquote => { fret; };
@@ -109,7 +109,7 @@ VALUE oga_xml_lexer_advance(VALUE self)
     # Machine for processing single quoted strings.
     string_squote := |*
       ^squote+ => {
-        oga_xml_lexer_callback(self, "on_string", encoding, ts, te);
+        liboga_xml_lexer_callback(self, "on_string", encoding, ts, te);
       };
 
       squote => { fret; };
@@ -128,7 +128,7 @@ VALUE oga_xml_lexer_advance(VALUE self)
     doctype_start = '<!DOCTYPE'i whitespace+;
 
     action start_doctype {
-      oga_xml_lexer_callback_simple(self, "on_start_doctype");
+      liboga_xml_lexer_callback_simple(self, "on_start_doctype");
       fcall doctype;
     }
 
@@ -136,7 +136,7 @@ VALUE oga_xml_lexer_advance(VALUE self)
     # and system IDs are treated as T_STRING tokens.
     doctype := |*
       'PUBLIC' | 'SYSTEM' => {
-        oga_xml_lexer_callback(self, "on_doctype_type", encoding, ts, te);
+        liboga_xml_lexer_callback(self, "on_doctype_type", encoding, ts, te);
       };
 
       # Lex the public/system IDs as regular strings.
@@ -148,11 +148,11 @@ VALUE oga_xml_lexer_advance(VALUE self)
       whitespace;
 
       identifier => {
-        oga_xml_lexer_callback(self, "on_doctype_name", encoding, ts, te);
+        liboga_xml_lexer_callback(self, "on_doctype_name", encoding, ts, te);
       };
 
       '>' => {
-        oga_xml_lexer_callback_simple(self, "on_doctype_end");
+        liboga_xml_lexer_callback_simple(self, "on_doctype_end");
         fret;
       };
     *|;
@@ -171,7 +171,7 @@ VALUE oga_xml_lexer_advance(VALUE self)
     cdata_end   = ']]>';
 
     action start_cdata {
-      oga_xml_lexer_callback_simple(self, "on_cdata_start");
+      liboga_xml_lexer_callback_simple(self, "on_cdata_start");
       fcall cdata;
     }
 
@@ -179,8 +179,8 @@ VALUE oga_xml_lexer_advance(VALUE self)
     # inside a CDATA tag is treated as plain text.
     cdata := |*
       any* cdata_end => {
-        oga_xml_lexer_callback(self, "on_text", encoding, ts, te - 3);
-        oga_xml_lexer_callback_simple(self, "on_cdata_end");
+        liboga_xml_lexer_callback(self, "on_text", encoding, ts, te - 3);
+        liboga_xml_lexer_callback_simple(self, "on_cdata_end");
         fret;
       };
     *|;
@@ -200,7 +200,7 @@ VALUE oga_xml_lexer_advance(VALUE self)
     comment_end   = '-->';
 
     action start_comment {
-      oga_xml_lexer_callback_simple(self, "on_comment_start");
+      liboga_xml_lexer_callback_simple(self, "on_comment_start");
       fcall comment;
     }
 
@@ -208,8 +208,8 @@ VALUE oga_xml_lexer_advance(VALUE self)
     # inside a comment is treated as plain text (similar to CDATA tags).
     comment := |*
       any* comment_end => {
-        oga_xml_lexer_callback(self, "on_text", encoding, ts, te - 3);
-        oga_xml_lexer_callback_simple(self, "on_comment_end");
+        liboga_xml_lexer_callback(self, "on_text", encoding, ts, te - 3);
+        liboga_xml_lexer_callback_simple(self, "on_comment_end");
         fret;
       };
     *|;
@@ -222,20 +222,20 @@ VALUE oga_xml_lexer_advance(VALUE self)
     xml_decl_end   = '?>';
 
     action start_xml_decl {
-      oga_xml_lexer_callback_simple(self, "on_xml_decl_start");
+      liboga_xml_lexer_callback_simple(self, "on_xml_decl_start");
       fcall xml_decl;
     }
 
     # Machine that processes the contents of an XML declaration tag.
     xml_decl := |*
       xml_decl_end => {
-        oga_xml_lexer_callback_simple(self, "on_xml_decl_end");
+        liboga_xml_lexer_callback_simple(self, "on_xml_decl_end");
         fret;
       };
 
       # Attributes and their values (e.g. version="1.0").
       identifier => {
-        oga_xml_lexer_callback(self, "on_attribute", encoding, ts, te);
+        liboga_xml_lexer_callback(self, "on_attribute", encoding, ts, te);
       };
 
       dquote => { fcall string_dquote; };
@@ -253,7 +253,7 @@ VALUE oga_xml_lexer_advance(VALUE self)
     # namespace (if any). Remaining work is delegated to a dedicated
     # machine.
     action start_element {
-      oga_xml_lexer_callback(self, "on_element_start", encoding, ts + 1, te);
+      liboga_xml_lexer_callback(self, "on_element_start", encoding, ts + 1, te);
 
       fcall element_head;
     }
@@ -270,12 +270,12 @@ VALUE oga_xml_lexer_advance(VALUE self)
       whitespace | '=';
 
       newline => {
-        oga_xml_lexer_callback_simple(self, "on_newline");
+        liboga_xml_lexer_callback_simple(self, "on_newline");
       };
 
       # Attribute names.
       identifier => {
-        oga_xml_lexer_callback(self, "on_attribute", encoding, ts, te);
+        liboga_xml_lexer_callback(self, "on_attribute", encoding, ts, te);
       };
 
       # Attribute values.
@@ -299,23 +299,23 @@ VALUE oga_xml_lexer_advance(VALUE self)
       # Enter the body of the tag. If HTML mode is enabled and the current
       # element is a void element we'll close it and bail out.
       '>' => {
-        oga_xml_lexer_callback_simple(self, "on_element_open_end");
+        liboga_xml_lexer_callback_simple(self, "on_element_open_end");
       };
 
       # Regular closing tags.
       '</' identifier '>' => {
-        oga_xml_lexer_callback_simple(self, "on_element_end");
+        liboga_xml_lexer_callback_simple(self, "on_element_end");
       };
 
       # Self closing elements that are not handled by the HTML mode.
       '/>' => {
-        oga_xml_lexer_callback_simple(self, "on_element_end");
+        liboga_xml_lexer_callback_simple(self, "on_element_end");
       };
 
       # Note that this rule should be declared at the very bottom as it
       # will otherwise take precedence over the other rules.
       ^('<' | '>')+ => {
-        oga_xml_lexer_callback(self, "on_text", encoding, ts, te);
+        liboga_xml_lexer_callback(self, "on_text", encoding, ts, te);
       };
     *|;
 }%%
