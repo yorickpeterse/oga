@@ -11,8 +11,8 @@ indent_size = 2
 [*.{h,c,java}]
 indent_size = 4
 
-[ext/liboga/*.rl]
+[ext/c/*.rl]
 indent_size = 4
 
-[ext/liboga/org/liboga/xml/*.rl]
+[ext/java/org/liboga/xml/*.rl]
 indent_size = 4
