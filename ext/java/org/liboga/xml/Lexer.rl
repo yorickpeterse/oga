@@ -1,6 +1,6 @@
 package org.liboga.xml;
 
-%%machine lexer;
+%%machine java_lexer;
 
 import java.io.IOException;
 
@@ -67,17 +67,25 @@ public class Lexer extends RubyObject
         int eof = 0;
         int top = 0;
 
-        int[] stack = {};
+        int[] stack = new int[8];
 
         %% write init;
         %% write exec;
 
         return context.nil;
     }
+
+    public void callback(String name, byte[] data, Encoding enc, int ts, int te)
+    {
+
+    }
+
+    public void callback_simple(String name)
+    {
+
+    }
 }
 
 %%{
-    main := |*
-        any;
-    *|;
+    include base_lexer "base_lexer.rl";
 }%%
