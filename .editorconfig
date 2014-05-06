@@ -8,5 +8,11 @@ trim_trailing_whitespace = true
 [*.{y,rb,rl}]
 indent_size = 2
 
-[*.{h,h},ext/oga/xml/*.rl]
-indent_size = 2
+[*.{h,c,java}]
+indent_size = 4
+
+[ext/liboga/*.rl]
+indent_size = 4
+
+[ext/liboga/org/liboga/xml/*.rl]
+indent_size = 4
