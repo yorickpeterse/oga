@@ -20,5 +20,12 @@ rule '.c' => '.rl' do |task|
   sh "ragel -C -G2 #{task.source} -o #{task.name}"
 end
 
+rule '.java' => '.rl' do |task|
+  sh "ragel -J #{task.source} -o #{task.name}"
+end
+
 desc 'Generates the lexers'
-task :lexer => ['ext/liboga/lexer.c']
+multitask :lexer => [
+  'ext/liboga/lexer.c',
+  'ext/liboga/org/liboga/xml/Lexer.java'
+]
