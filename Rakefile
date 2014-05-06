@@ -1,7 +1,6 @@
 require 'bundler/gem_tasks'
 require 'digest/sha2'
 require 'rake/clean'
-require 'cliver'
 
 GEMSPEC = Gem::Specification.load('oga.gemspec')
 
