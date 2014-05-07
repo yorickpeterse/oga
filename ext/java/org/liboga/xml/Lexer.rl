@@ -18,13 +18,27 @@ import org.jruby.runtime.ThreadContext;
 import org.jruby.runtime.ObjectAllocator;
 import org.jruby.runtime.builtin.IRubyObject;
 
+/**
+ * Lexer support class for JRuby.
+ *
+ * The Lexer class contains the raw Ragel loop and calls back in to Ruby land
+ * whenever a Ragel action is needed similar to the C extension setup.
+ *
+ * This class requires Ruby land to first define the `Oga::XML` namespace.
+ */
 @JRubyClass(name="Oga::XML::Lexer", parent="Object")
 public class Lexer extends RubyObject
 {
+    /**
+     * The current Ruby runtime.
+     */
     private Ruby runtime;
 
     %% write data;
 
+    /**
+     * Sets up the current class in the Ruby runtime.
+     */
     public static void load(Ruby runtime)
     {
         RubyModule xml = (RubyModule) runtime.getModule("Oga")
@@ -54,6 +68,16 @@ public class Lexer extends RubyObject
         this.runtime = runtime;
     }
 
+    /**
+     * Runs the bulk of the Ragel loop and calls back in to Ruby.
+     *
+     * This method pulls its data in from the instance variable `@data`. The
+     * Ruby side of the Lexer class should set this variable to a String in its
+     * constructor method. Encodings are passed along to make sure that token
+     * values share the same encoding as the input.
+     *
+     * This method always returns nil.
+     */
     @JRubyMethod
     public IRubyObject advance_native(ThreadContext context)
     {
@@ -72,6 +96,7 @@ public class Lexer extends RubyObject
         int eof = data.length;
         int top = 0;
 
+        // Fixed stack size of 8 should be more than enough.
         int[] stack = new int[8];
 
         %% write init;
@@ -80,6 +105,13 @@ public class Lexer extends RubyObject
         return context.nil;
     }
 
+    /**
+     * Calls back in to Ruby land passing the current token value along.
+     *
+     * This method calls back in to Ruby land based on the method name
+     * specified in `name`. The Ruby callback should take one argument. This
+     * argument will be a String containing the value of the current token.
+     */
     public void callback(String name, byte[] data, Encoding enc, int ts, int te)
     {
         ByteList bytelist = new ByteList(data, ts, te - ts, enc, true);
@@ -91,6 +123,9 @@ public class Lexer extends RubyObject
         this.callMethod(context, name, value);
     }
 
+    /**
+     * Calls back in to Ruby land without passing any arguments.
+     */
     public void callback_simple(String name)
     {
         ThreadContext context = this.runtime.getCurrentContext();
