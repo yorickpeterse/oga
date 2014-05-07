@@ -6,14 +6,14 @@ require_relative 'oga/xml/lexer'
 require_relative 'oga/xml/parser'
 require_relative 'oga/xml/pull_parser'
 
-# JRuby is dumb as a brick and can only load .jar files using require() when
-# ./lib is in the LOAD_PATH. require_relative, or any other form that uses
-# absolute paths, does not work.
-unless $:.include?(File.expand_path('../', __FILE__))
-  $:.unshift(File.expand_path('../', __FILE__))
+# Load native ext for lexer
+case RUBY_PLATFORM
+when 'java'
+  require 'liboga.jar'
+  org.liboga.xml.Lexer.load(JRuby.runtime);
+else
+  require 'liboga'
 end
-
-require 'liboga'
 
 require_relative 'oga/xml/node'
 require_relative 'oga/xml/element'
