@@ -11,6 +11,7 @@ import org.jruby.RubyModule;
 import org.jruby.RubyClass;
 import org.jruby.RubyObject;
 import org.jruby.RubyString;
+import org.jruby.util.ByteList;
 import org.jruby.anno.JRubyClass;
 import org.jruby.anno.JRubyMethod;
 import org.jruby.runtime.ThreadContext;
@@ -20,6 +21,8 @@ import org.jruby.runtime.builtin.IRubyObject;
 @JRubyClass(name="Oga::XML::Lexer", parent="Object")
 public class Lexer extends RubyObject
 {
+    private Ruby runtime;
+
     %% write data;
 
     public static void load(Ruby runtime)
@@ -47,6 +50,8 @@ public class Lexer extends RubyObject
     public Lexer(Ruby runtime, RubyClass klass)
     {
         super(runtime, klass);
+
+        this.runtime = runtime;
     }
 
     @JRubyMethod
@@ -64,7 +69,7 @@ public class Lexer extends RubyObject
         int te  = 0;
         int p   = 0;
         int pe  = data.length;
-        int eof = 0;
+        int eof = data.length;
         int top = 0;
 
         int[] stack = new int[8];
@@ -77,12 +82,20 @@ public class Lexer extends RubyObject
 
     public void callback(String name, byte[] data, Encoding enc, int ts, int te)
     {
+        ByteList bytelist = new ByteList(data, ts, te - ts, enc, true);
 
+        RubyString value = this.runtime.newString(bytelist);
+
+        ThreadContext context = this.runtime.getCurrentContext();
+
+        this.callMethod(context, name, value);
     }
 
     public void callback_simple(String name)
     {
+        ThreadContext context = this.runtime.getCurrentContext();
 
+        this.callMethod(context, name);
     }
 }
 
