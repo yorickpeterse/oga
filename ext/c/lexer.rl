@@ -16,8 +16,6 @@ on `ts` and `te`) so the macro ignores this argument.
 #define callback_simple(name) \
     liboga_xml_lexer_callback_simple(self, name);
 
-VALUE oga_cLexer;
-
 %%machine c_lexer;
 
 /**
@@ -106,7 +104,9 @@ VALUE oga_xml_lexer_advance(VALUE self)
 
 void Init_liboga_xml_lexer()
 {
-    oga_cLexer = rb_define_class_under(oga_mXML, "Lexer", rb_cObject);
+    VALUE mOga   = rb_const_get(rb_cObject, rb_intern("Oga"));
+    VALUE mXML   = rb_const_get(mOga, rb_intern("XML"));
+    VALUE cLexer = rb_define_class_under(mXML, "Lexer", rb_cObject);
 
-    rb_define_method(oga_cLexer, "advance_native", oga_xml_lexer_advance, 0);
+    rb_define_method(cLexer, "advance_native", oga_xml_lexer_advance, 0);
 }

@@ -11,8 +11,6 @@ ext/c/lexer.h
 ext/c/lexer.rl
 ext/c/liboga.c
 ext/c/liboga.h
-ext/c/xml.c
-ext/c/xml.h
 ext/java/LibogaService.java
 ext/java/org/liboga/xml/Lexer.java
 ext/java/org/liboga/xml/Lexer.rl
