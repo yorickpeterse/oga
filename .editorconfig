@@ -16,3 +16,6 @@ indent_size = 4
 
 [ext/java/org/liboga/xml/*.rl]
 indent_size = 4
+
+[ext/ragel/*.rl]
+indent_size = 4
