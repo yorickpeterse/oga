@@ -1,6 +1,33 @@
 %%machine base_lexer;
 
 %%{
+    ##
+    # Base grammar for the XML lexer.
+    #
+    # This grammar is shared between the C and Java extensions. As a result of
+    # this you should **not** include language specific code in Ragel
+    # actions/callbacks.
+    #
+    # To call back in to Ruby you can use one of the following two functions:
+    #
+    # * callback
+    # * callback_simple
+    #
+    # The first function takes 5 arguments:
+    #
+    # * The name of the Ruby method to call.
+    # * The input data.
+    # * The encoding of the input data.
+    # * The start of the current buffer.
+    # * The end of the current buffer.
+    #
+    # The function callback_simple only takes one argument: the name of the
+    # method to call. This function should be used for callbacks that don't
+    # require any values.
+    #
+    # When you call a method in Ruby make sure that said method is defined as
+    # an instance method in the `Oga::XML::Lexer` class.
+
     newline    = '\n' | '\r\n';
     whitespace = [ \t];
     identifier = [a-zA-Z0-9\-_:]+;
