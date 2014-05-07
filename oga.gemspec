@@ -10,7 +10,17 @@ Gem::Specification.new do |s|
   s.description = s.summary
   s.license     = 'MIT'
 
-  s.files = File.read(File.expand_path('../MANIFEST', __FILE__)).split("\n")
+  s.files = Dir.glob([
+    'checkum/**/*.*',
+    'doc/**/*.*',
+    'lib/**/*.rb',
+    'ext/**/*.*',
+    'README.md',
+    'LICENSE',
+    'MANIFEST',
+    'oga.gemspec',
+    '.yardopts'
+  ])
 
   if RUBY_PLATFORM == 'java'
     s.files << 'lib/liboga.jar'

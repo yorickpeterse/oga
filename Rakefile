@@ -32,18 +32,6 @@ CLEAN.include(
   'ext/java/org/liboga/xml/Lexer.java'
 )
 
-FILE_LIST = FileList.new(
-  'checkum/**/*.*',
-  'doc/**/*.*',
-  'lib/**/*.rb',
-  'LICENSE',
-  'MANIFEST',
-  '*.gemspec',
-  'README.md',
-  '.yardopts',
-  'ext/**/*.*'
-)
-
 Dir['./task/*.rake'].each do |task|
   import(task)
 end
