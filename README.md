@@ -1,11 +1,12 @@
 # Oga
 
-Oga is (or will be) a pure Ruby, thread-safe HTML (and XML in the future)
-parser that doesn't trigger segmentation faults on Ruby implementations other
-than MRI. Oga will initially **not** focus on performance but instead will
-focus on proper handling of encodings, stability and a sane API. More
-importantly it will be pure Ruby **only**. No C extensions, no Java, no x86 64
-assembly, just Ruby.
+Oga is an XML/HTML parser written in Ruby. Oga aims to provide an easy to use
+and high performance API for all your XML/HTML parsing needs. Oga requires
+nothing other than Ruby, it does not depend on libxml and the likes.
+
+To achieve high performance Oga uses a C or Java extension depending on your
+Ruby platform. Pure Ruby is sadly not fast enough to process large amounts of
+text in reasonable time.
 
 From [Wikipedia][oga-wikipedia]:
 
@@ -13,49 +14,38 @@ From [Wikipedia][oga-wikipedia]:
 > power saws. One person stood on a raised platform, with the board below him,
 > and the other person stood underneath them.
 
-## Planned Features
-
-* Full support for HTML(5)
-* Full support for XML, DTDs will probably be ignored.
-* Support for xpath and CSS selector based queries
-* SAX/pull parsing APIs that don't make you want to cut yourself
-
 ## Features
 
-* A README
+* Support for parsing XML and HTML(5)
+  * DOM parsing
+  * Stream/pull parsing
+* High performance and low memory usage (depending on the parsing API)
+* Support for XPath 1.0 (planned)
+* CSS selectors support (planned)
 
 ## Requirements
 
-* Ruby
+Oga runs on MRI 1.9.3 or newer, Rubinius 2.2 or newer and JRuby 1.7 or newer.
+Ruby 1.8.7 is not supported. Maglev, Topaz and mruby are currently not
+supported.
 
-Development requirements:
+To install Oga on MRI or Rubinius you'll need to have a working compiler such
+as gcc or clang. Oga's C extension can be compiled with any capable C compiler.
 
-* Ragel
-* Racc
-* Other stuff
+## Native Extension Setup
 
-## Usage
+The native extensions can be found in `ext/` and are divided into a C and Java
+extension. These extensions are only used for the XML lexer built using Ragel.
+The grammar for this lexer is shared between C and Java and can be found in
+`ext/ragel/base_lexer.rl`.
 
-Basic DOM parsing example:
+The extensions delegate most of their work back to Ruby code. As a result of
+this maintenance of this codebase is much easier. If one wants to change the
+grammar they only have to do so in one place and they don't have to worry about
+C and/or Java specific details.
 
-    require 'oga'
-
-    parser   = Oga::Parser::DOM.new
-    document = parser.parse('<p>Hello</p>')
-
-    puts document.css('p').first.text # => "Hello"
-
-Pull parsing:
-
-    require 'oga'
-
-    parser = Oga::Parser::Pull.new('<p>Hello</p>')
-
-    parser.each do |node|
-      puts node.text
-    end
-
-These examples will probably change once I actually start writing some code.
+For more details on calling Ruby methods from Ragel see the source
+documentation in `ext/ragel/base_lexer.rl`.
 
 ## Why Another HTML/XML parser?
 
