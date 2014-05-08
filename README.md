@@ -55,7 +55,7 @@ Currently there are a few existing parser out there, the most famous one being
 
 The sad truth is that these existing libraries are problematic in their own
 ways. Nokogiri for example is extremely unstable on Rubinius. On MRI it works
-because of the non conccurent nature of MRI, on Jruby it works because it's
+because of the non conccurent nature of MRI, on JRuby it works because it's
 implemented as Java. Nokogiri also uses libxml2 which is a massive beast of a
 library, is not thread-safe and problematic to install on certain platforms
 (apparently). I don't want to compile libxml2 every time I install Nokogiri
@@ -84,15 +84,6 @@ of a pain (at least for me).
 I just want an HTML parser that I can rely on stability wise and that is
 written in Ruby so I can actually debug it. In theory it should also make it
 easier for other Ruby developers to contribute.
-
-Oga is an attempt at solving this problem. By writing it in pure Ruby the
-initial performance will probably not be as great. However, I feel this is a
-problem with individual Ruby implementations, not the language itself. Also, by
-writing it in Ruby we don't have to deal with all the crazy things of C/C++ or
-even Java.
-
-In theory it should also allow it to run on every Ruby implementation, be it
-JRuby, Rubinius, Topaz or even mruby.
 
 ## License
 
