@@ -23,6 +23,6 @@ notifications:
       - yorickpeterse@gmail.com
     email:
       on_success: change
-      on_failure: always
+      on_failure: change
 
 cache: bundler
