@@ -16,11 +16,11 @@ rule '.rb' => '.rl' do |task|
   end
 end
 
-rule '.c' => '.rl' do |task|
+rule '.c' => ['.rl', 'ext/ragel/base_lexer.rl'] do |task|
   sh "ragel -I ext/ragel -C -G2 #{task.source} -o #{task.name}"
 end
 
-rule '.java' => '.rl' do |task|
+rule '.java' => ['.rl', 'ext/ragel/base_lexer.rl'] do |task|
   sh "ragel -I ext/ragel -J #{task.source} -o #{task.name}"
 end
 
