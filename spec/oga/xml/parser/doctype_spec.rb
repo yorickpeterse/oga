@@ -80,4 +80,18 @@ describe Oga::XML::Parser do
       @document.doctype.system_id.should == 'bar'
     end
   end
+
+  context 'doctypes with inline rules' do
+    before :all do
+      @document = parse('<!DOCTYPE html [<!ELEMENT foo>]>')
+    end
+
+    example 'return a Doctype instance' do
+      @document.doctype.is_a?(Oga::XML::Doctype).should == true
+    end
+
+    example 'set the inline doctype rules' do
+      @document.doctype.inline_rules.should == '<!ELEMENT foo>'
+    end
+  end
 end

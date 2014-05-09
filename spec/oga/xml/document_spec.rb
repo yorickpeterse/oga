@@ -99,6 +99,7 @@ Document(
     type: nil
     public_id: nil
     system_id: nil
+    inline_rules: nil
   )
   xml_declaration: XmlDeclaration(
     version: "1.0"

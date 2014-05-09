@@ -45,11 +45,24 @@ describe Oga::XML::Doctype do
 
       instance.to_xml.should == '<!DOCTYPE html PUBLIC "foo" "bar">'
     end
+
+    example 'include the inline rules if present' do
+      instance = described_class.new(
+        :name         => 'html',
+        :inline_rules => '<!ELEMENT foo>'
+      )
+
+      instance.to_xml.should == '<!DOCTYPE html [<!ELEMENT foo>]>'
+    end
   end
 
   context '#inspect' do
     before do
-      @instance = described_class.new(:name => 'html', :type => 'PUBLIC')
+      @instance = described_class.new(
+        :name         => 'html',
+        :type         => 'PUBLIC',
+        :inline_rules => '<!ELEMENT foo>'
+      )
     end
 
     example 'pretty-print the node' do
@@ -59,6 +72,7 @@ Doctype(
   type: "PUBLIC"
   public_id: nil
   system_id: nil
+  inline_rules: "<!ELEMENT foo>"
 )
       EOF
     end

@@ -19,8 +19,12 @@ module Oga
     #  The system ID of the doctype.
     #  @return [String]
     #
+    # @!attribute [rw] inline_rules
+    #  The inline doctype rules.
+    #  @return [String]
+    #
     class Doctype
-      attr_accessor :name, :type, :public_id, :system_id
+      attr_accessor :name, :type, :public_id, :system_id, :inline_rules
 
       ##
       # @example
@@ -50,6 +54,7 @@ module Oga
         segments << " #{type}" if type
         segments << %Q{ "#{public_id}"} if public_id
         segments << %Q{ "#{system_id}"} if system_id
+        segments << " [#{inline_rules}]" if inline_rules
 
         return segments + '>'
       end
@@ -70,6 +75,7 @@ module Oga
 #{spacing}  type: #{type.inspect}
 #{spacing}  public_id: #{public_id.inspect}
 #{spacing}  system_id: #{system_id.inspect}
+#{spacing}  inline_rules: #{inline_rules.inspect}
 #{spacing})
         EOF
       end

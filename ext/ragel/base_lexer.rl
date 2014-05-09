@@ -82,6 +82,12 @@
             callback("on_doctype_type", data, encoding, ts, te);
         };
 
+        # Consumes everything between the [ and ]. Due to the use of :> the ]
+        # is not consumed by any+.
+        '[' any+ :> ']' => {
+            callback("on_doctype_inline", data, encoding, ts + 1, te - 1);
+        };
+
         # Lex the public/system IDs as regular strings.
         dquote => { fcall string_dquote; };
         squote => { fcall string_squote; };

@@ -31,5 +31,26 @@ describe Oga::XML::Lexer do
         [:T_DOCTYPE_END, nil, 1]
       ]
     end
+
+    example 'lex an inline doctype' do
+      lex('<!DOCTYPE html [<!ELEMENT foo>]>').should == [
+        [:T_DOCTYPE_START, nil, 1],
+        [:T_DOCTYPE_NAME, 'html', 1],
+        [:T_DOCTYPE_INLINE, '<!ELEMENT foo>', 1],
+        [:T_DOCTYPE_END, nil, 1]
+      ]
+    end
+
+    # Technically not valid, put in place to make sure that the Ragel rules are
+    # not too greedy.
+    example 'lex an inline doftype followed by a system ID' do
+      lex('<!DOCTYPE html [<!ELEMENT foo>] "foo">').should == [
+        [:T_DOCTYPE_START, nil, 1],
+        [:T_DOCTYPE_NAME, 'html', 1],
+        [:T_DOCTYPE_INLINE, '<!ELEMENT foo>', 1],
+        [:T_STRING, 'foo', 1],
+        [:T_DOCTYPE_END, nil, 1]
+      ]
+    end
   end
 end

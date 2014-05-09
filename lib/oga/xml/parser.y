@@ -11,6 +11,7 @@ class Oga::XML::Parser
 
 token T_STRING T_TEXT
 token T_DOCTYPE_START T_DOCTYPE_END T_DOCTYPE_TYPE T_DOCTYPE_NAME
+token T_DOCTYPE_INLINE
 token T_CDATA_START T_CDATA_END
 token T_COMMENT_START T_COMMENT_END
 token T_ELEM_START T_ELEM_NAME T_ELEM_NS T_ELEM_END T_ATTR
@@ -45,25 +46,36 @@ rule
     # <!DOCTYPE html>
     : T_DOCTYPE_START T_DOCTYPE_NAME T_DOCTYPE_END
       {
-        on_doctype(val[1])
+        on_doctype(:name => val[1])
       }
 
     # <!DOCTYPE html PUBLIC>
     | T_DOCTYPE_START T_DOCTYPE_NAME T_DOCTYPE_TYPE T_DOCTYPE_END
       {
-        on_doctype(val[1], val[2])
+        on_doctype(:name => val[1], :type => val[2])
       }
 
     # <!DOCTYPE html PUBLIC "foo">
     | T_DOCTYPE_START T_DOCTYPE_NAME T_DOCTYPE_TYPE T_STRING T_DOCTYPE_END
       {
-        on_doctype(val[1], val[2], val[3])
+        on_doctype(:name => val[1], :type => val[2], :public_id => val[3])
       }
 
     # <!DOCTYPE html PUBLIC "foo" "bar">
     | T_DOCTYPE_START T_DOCTYPE_NAME T_DOCTYPE_TYPE T_STRING T_STRING T_DOCTYPE_END
       {
-        on_doctype(val[1], val[2], val[3], val[4])
+        on_doctype(
+          :name      => val[1],
+          :type      => val[2],
+          :public_id => val[3],
+          :system_id => val[4]
+        )
+      }
+
+    # <!DOCTYPE html [ ... ]>
+    | T_DOCTYPE_START T_DOCTYPE_NAME T_DOCTYPE_INLINE T_DOCTYPE_END
+      {
+        on_doctype(:name => val[1], :inline_rules => val[2])
       }
     ;
 
@@ -270,18 +282,10 @@ Unexpected #{name} with value #{value.inspect} on line #{@line}:
   end
 
   ##
-  # @param [String] name
-  # @param [String] type
-  # @param [String] public_id
-  # @param [String] system_id
+  # @param [Hash] options
   #
-  def on_doctype(name, type = nil, public_id = nil, system_id = nil)
-    return Doctype.new(
-      :name      => name,
-      :type      => type,
-      :public_id => public_id,
-      :system_id => system_id
-    )
+  def on_doctype(options = {})
+    return Doctype.new(options)
   end
 
   ##

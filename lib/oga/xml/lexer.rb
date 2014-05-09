@@ -195,6 +195,15 @@ module Oga
       end
 
       ##
+      # Called on an inline doctype block.
+      #
+      # @param [String] value
+      #
+      def on_doctype_inline(value)
+        add_token(:T_DOCTYPE_INLINE, value)
+      end
+
+      ##
       # Called on the start of a CDATA tag.
       #
       def on_cdata_start
