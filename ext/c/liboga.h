@@ -3,7 +3,6 @@
 
 #include <ruby.h>
 #include <ruby/encoding.h>
-#include <stdio.h>
 
 #include "lexer.h"
 
