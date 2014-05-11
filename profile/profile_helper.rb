@@ -5,13 +5,19 @@ require_relative '../lib/oga'
 Thread.abort_on_exception = true
 
 ##
-# Returns memory usage in bytes. This relies on the /proc filesystem, it won't
-# work without it.
+# Returns memory usage in bytes. If /proc exists it is used, otherwise it falls
+# back to `ps`.
 #
 # @return [Fixnum]
 #
 def memory_usage
-  return File.read('/proc/self/status').match(/VmRSS:\s+(\d+)/)[1].to_i * 1024
+  if File.exists?('/proc')
+    kb = File.read('/proc/self/status').match(/VmRSS:\s+(\d+)/)[1].to_i
+  else
+    kb = `ps -o rss= #{Process.pid}`.strip.to_i
+  end
+
+  return kb * 1024
 end
 
 ##
