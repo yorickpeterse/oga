@@ -19,8 +19,19 @@ module Oga
     class Element < Node
       attr_accessor :name, :namespace, :attributes
 
-      def after_initialize
-        @attributes ||= {}
+      ##
+      # @param [Hash] options
+      #
+      # @option options [String] :name The name of the element.
+      # @option options [String] :namespace The namespace of the element.
+      # @option options [Hash] :attributes The attributes of the element.
+      #
+      def initialize(options = {})
+        super
+
+        @name       = options[:name]
+        @namespace  = options[:namespace]
+        @attributes = options[:attributes] || {}
       end
 
       ##

@@ -38,9 +38,11 @@ module Oga
       # @option options [String] :system_id
       #
       def initialize(options = {})
-        options.each do |key, value|
-          instance_variable_set("@#{key}", value) if respond_to?(key)
-        end
+        @name         = options[:name]
+        @type         = options[:type]
+        @public_id    = options[:public_id]
+        @system_id    = options[:system_id]
+        @inline_rules = options[:inline_rules]
       end
 
       ##

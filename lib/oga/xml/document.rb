@@ -27,11 +27,9 @@ module Oga
       # @option options [Oga::XML::XmlDeclaration] :xml_declaration
       #
       def initialize(options = {})
-        options.each do |key, value|
-          instance_variable_set("@#{key}", value) if respond_to?(key)
-        end
-
-        @children ||= []
+        @children        = options[:children] || []
+        @doctype         = options[:doctype]
+        @xml_declaration = options[:xml_declaration]
       end
 
       ##

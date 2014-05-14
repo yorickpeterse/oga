@@ -11,6 +11,17 @@ module Oga
       attr_accessor :text
 
       ##
+      # @param [Hash] options
+      #
+      # @option options [String] :text The text of the node.
+      #
+      def initialize(options = {})
+        super
+
+        @text = options[:text]
+      end
+
+      ##
       # @return [String]
       #
       def to_xml

@@ -30,13 +30,10 @@ module Oga
       # @option options [Oga::XML::Node] :previous The previous node.
       #
       def initialize(options = {})
-        options.each do |key, value|
-          instance_variable_set("@#{key}", value) if respond_to?(key)
-        end
-
-        @children ||= []
-
-        after_initialize if respond_to?(:after_initialize)
+        @parent   = options[:parent]
+        @children = options[:children] || []
+        @next     = options[:next]
+        @previous = options[:previous]
       end
 
       ##

@@ -26,12 +26,9 @@ module Oga
       # @option options [String] :standalone
       #
       def initialize(options = {})
-        options.each do |key, value|
-          instance_variable_set("@#{key}", value) if respond_to?(key)
-        end
-
-        @version  ||= '1.0'
-        @encoding ||= 'UTF-8'
+        @version    = options[:version] || '1.0'
+        @encoding   = options[:encoding] || 'UTF-8'
+        @standalone = options[:standalone]
       end
 
       ##
