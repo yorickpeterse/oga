@@ -4,6 +4,8 @@ pkg
 Gemfile.lock
 
 lib/oga/xml/parser.rb
+lib/oga/xpath/lexer.rb
+
 lib/liboga.*
 
 benchmark/fixtures/big.xml

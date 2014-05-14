@@ -22,3 +22,5 @@ require_relative 'oga/xml/xml_declaration'
 require_relative 'oga/xml/doctype'
 
 require_relative 'oga/html/parser'
+
+require_relative 'oga/xpath/lexer'

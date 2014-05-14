@@ -24,6 +24,7 @@ CLEAN.include(
   'coverage',
   'yardoc',
   PARSER_OUTPUT,
+  'lib/oga/xpath/lexer.rb',
   'benchmark/fixtures/big.xml',
   'profile/samples/**/*.txt',
   'lib/liboga.*',
