@@ -39,7 +39,7 @@ describe Oga::XML::Parser do
     end
 
     example 'set the attributes' do
-      @node.attributes.should == {'href' => 'foo'}
+      @node.attributes.should == {:href => 'foo'}
     end
   end
 end

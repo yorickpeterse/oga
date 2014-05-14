@@ -137,10 +137,10 @@ rule
 
   attribute
     # foo
-    : T_ATTR { {val[0] => nil} }
+    : T_ATTR { {val[0].to_sym => nil} }
 
     # foo="bar"
-    | T_ATTR T_STRING { {val[0] => val[1]} }
+    | T_ATTR T_STRING { {val[0].to_sym => val[1]} }
     ;
 
   # XML declarations

@@ -20,7 +20,7 @@ describe Oga::XML::Element do
 
   context '#attribute' do
     before do
-      @instance = described_class.new(:attributes => {'key' => 'value'})
+      @instance = described_class.new(:attributes => {:key => 'value'})
     end
 
     example 'return an attribute' do
@@ -42,7 +42,7 @@ describe Oga::XML::Element do
     example 'include the attributes if present' do
       instance = described_class.new(
         :name       => 'p',
-        :attributes => {'key' => 'value'}
+        :attributes => {:key => 'value'}
       )
 
       instance.to_xml.should == '<p key="value"></p>'

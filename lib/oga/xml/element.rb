@@ -41,7 +41,7 @@ module Oga
       # @return [String]
       #
       def attribute(name)
-        return attributes[name]
+        return attributes[name.to_sym]
       end
 
       alias_method :attr, :attribute

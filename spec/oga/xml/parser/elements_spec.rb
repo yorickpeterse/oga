@@ -43,7 +43,7 @@ describe Oga::XML::Parser do
     end
 
     example 'set the attributes of the element' do
-      @element.attributes.should == {'bar' => 'baz'}
+      @element.attributes.should == {:bar => 'baz'}
     end
   end
 
