@@ -248,20 +248,28 @@ module Oga
       ##
       # Called on the start of an element.
       #
+      def on_element_start
+        add_token(:T_ELEM_START)
+      end
+
+      ##
+      # Called on the name of an element.
+      #
       # @param [String] name The name of the element, including namespace.
       #
-      def on_element_start(name)
-        add_token(:T_ELEM_START)
-
-        if name.include?(':')
-          ns, name = name.split(':')
-
-          add_token(:T_ELEM_NS, ns)
-        end
-
+      def on_element_name(name)
         @elements << name if html?
 
         add_token(:T_ELEM_NAME, name)
+      end
+
+      ##
+      # Called on the element namespace.
+      #
+      # @param [String] namespace
+      #
+      def on_element_ns(namespace)
+        add_token(:T_ELEM_NS, namespace)
       end
 
       ##

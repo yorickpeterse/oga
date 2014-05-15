@@ -30,7 +30,8 @@
 
     newline    = '\n' | '\r\n';
     whitespace = [ \t];
-    identifier = [a-zA-Z0-9\-_:]+;
+    identifier = [a-zA-Z0-9\-_]+;
+    attribute  = [a-zA-Z0-9\-_:]+;
 
     # Strings
     #
@@ -183,7 +184,7 @@
         };
 
         # Attributes and their values (e.g. version="1.0").
-        identifier => {
+        attribute => {
             callback("on_attribute", data, encoding, ts, te);
         };
 
@@ -202,12 +203,21 @@
     # namespace (if any). Remaining work is delegated to a dedicated
     # machine.
     action start_element {
-        callback("on_element_start", data, encoding, ts + 1, te);
-
+        fhold;
         fcall element_head;
     }
 
-    element_start = '<' identifier;
+    # Machine used for lexing the name/namespace of an element.
+    element_name := |*
+        identifier ':' => {
+            callback("on_element_ns", data, encoding, ts, te - 1);
+        };
+
+        identifier => {
+            callback("on_element_name", data, encoding, ts, te);
+            fret;
+        };
+    *|;
 
     # Machine used for processing the characters inside a element head. An
     # element head is everything between `<NAME` (where NAME is the element
@@ -218,12 +228,17 @@
     element_head := |*
         whitespace | '=';
 
+        '<' => {
+            callback_simple("on_element_start");
+            fcall element_name;
+        };
+
         newline => {
             callback_simple("on_newline");
         };
 
         # Attribute names.
-        identifier => {
+        attribute => {
             callback("on_attribute", data, encoding, ts, te);
         };
 
@@ -239,7 +254,7 @@
     *|;
 
     main := |*
-        element_start  => start_element;
+        '<'            => start_element;
         doctype_start  => start_doctype;
         cdata_start    => start_cdata;
         comment_start  => start_comment;
