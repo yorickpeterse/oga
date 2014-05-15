@@ -48,11 +48,8 @@ module Oga
       # HTML void elements such as `<link href="">`.
       #
       def initialize(data, options = {})
-        options.each do |key, value|
-          instance_variable_set("@#{key}", value) if respond_to?(key)
-        end
-
         @data = data
+        @html = options[:html]
 
         reset
       end
