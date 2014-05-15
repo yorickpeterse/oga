@@ -79,7 +79,7 @@ module Oga
         p     = 0
         pe    = eof
 
-        #_xpath_lexer_eof_trans          = self.class.send(:_xpath_lexer_eof_trans)
+        _xpath_lexer_eof_trans          = self.class.send(:_xpath_lexer_eof_trans)
         _xpath_lexer_from_state_actions = self.class.send(:_xpath_lexer_from_state_actions)
         _xpath_lexer_index_offsets      = self.class.send(:_xpath_lexer_index_offsets)
         _xpath_lexer_indicies           = self.class.send(:_xpath_lexer_indicies)
@@ -99,7 +99,8 @@ module Oga
       private
 
       ##
-      # Emits a token who's value is based on the supplied start/stop position.
+      # Emits a token of which the value is based on the supplied start/stop
+      # position.
       #
       # @param [Symbol] type The token type.
       # @param [Fixnum] start
@@ -109,20 +110,19 @@ module Oga
       # @see #add_token
       #
       def emit(type, start, stop)
-        value = text(start, stop)
+        value = slice_input(start, stop)
 
         add_token(type, value)
       end
 
       ##
-      # Returns the text of the current buffer based on the supplied start and
-      # stop position.
+      # Returns the text between the specified start and stop position.
       #
       # @param [Fixnum] start
       # @param [Fixnum] stop
       # @return [String]
       #
-      def text(start, stop)
+      def slice_input(start, stop)
         return @data.byteslice(start, stop - start)
       end
 
@@ -133,9 +133,7 @@ module Oga
       # @param [String] value The token value.
       #
       def add_token(type, value = nil)
-        token = [type, value, @line]
-
-        @block.call(token)
+        @block.call(type, value)
       end
 
       %%{
