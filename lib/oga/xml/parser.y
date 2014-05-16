@@ -184,7 +184,7 @@ end
   # @yieldparam [Array]
   #
   def yield_next_token
-    @lexer.advance do |(type, value, line)|
+    @lexer.advance do |type, value, line|
       @line = line if line
 
       yield [type, value]

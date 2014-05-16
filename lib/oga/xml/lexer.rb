@@ -77,8 +77,8 @@ module Oga
       def lex
         tokens = []
 
-        advance do |token|
-          tokens << token
+        advance do |type, value, line|
+          tokens << [type, value, line]
         end
 
         reset
@@ -130,15 +130,17 @@ module Oga
       end
 
       ##
-      # Adds a token with the given type and value to the list.
+      # Calls the supplied block with the information of the current token.
       #
       # @param [Symbol] type The token type.
       # @param [String] value The token value.
       #
+      # @yieldparam [String] type
+      # @yieldparam [String] value
+      # @yieldparam [Fixnum] line
+      #
       def add_token(type, value = nil)
-        token = [type, value, @line]
-
-        @block.call(token)
+        @block.call(type, value, @line)
       end
 
       ##
