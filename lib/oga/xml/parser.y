@@ -26,7 +26,7 @@ rule
     ;
 
   expressions
-    : expressions expression { val.compact }
+    : expressions expression { val[0] << val[1] }
     | expression             { val }
     | /* none */             { [] }
     ;
@@ -116,7 +116,7 @@ rule
     : element_start expressions T_ELEM_END
       {
         if val[0]
-          on_element_children(val[0], val[1] ? val[1].flatten : [])
+          on_element_children(val[0], val[1])
         end
 
         after_element(val[0])
@@ -131,7 +131,7 @@ rule
     ;
 
   attributes_
-    : attributes_ attribute { val.flatten }
+    : attributes_ attribute { val[0] << val[1] }
     | attribute             { val }
     ;
 
@@ -256,12 +256,6 @@ Unexpected #{name} with value #{value.inspect} on line #{@line}:
   # @return [Oga::XML::Document]
   #
   def on_document(children = [])
-    if children.is_a?(Array)
-      children = children.flatten
-    else
-      children = [children]
-    end
-
     document = Document.new
 
     children.each do |child|
@@ -327,12 +321,11 @@ Unexpected #{name} with value #{value.inspect} on line #{@line}:
   # @param [Array] children
   # @return [Oga::XML::Element]
   #
-  def on_element(namespace, name, attributes = {}, children = [])
+  def on_element(namespace, name, attributes = {})
     element = Element.new(
       :namespace  => namespace,
       :name       => name,
-      :attributes => attributes,
-      :children   => children
+      :attributes => attributes
     )
 
     return element
