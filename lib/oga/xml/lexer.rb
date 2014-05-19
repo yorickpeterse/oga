@@ -217,17 +217,12 @@ module Oga
       end
 
       ##
-      # Called on the start of a comment.
+      # Called on a comment.
       #
-      def on_comment_start
-        add_token(:T_COMMENT_START)
-      end
-
-      ##
-      # Called on the end of a comment.
+      # @param [String] value
       #
-      def on_comment_end
-        add_token(:T_COMMENT_END)
+      def on_comment(value)
+        add_token(:T_COMMENT, value)
       end
 
       ##

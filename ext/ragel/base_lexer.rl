@@ -149,21 +149,6 @@
     comment_start = '<!--';
     comment_end   = '-->';
 
-    action start_comment {
-        callback_simple("on_comment_start");
-        fcall comment;
-    }
-
-    # Machine used for processing the contents of a comment. Everything
-    # inside a comment is treated as plain text (similar to CDATA tags).
-    comment := |*
-        any* comment_end => {
-            callback("on_text", data, encoding, ts, te - 3);
-            callback_simple("on_comment_end");
-            fret;
-        };
-    *|;
-
     # XML declaration tags
     #
     # http://www.w3.org/TR/REC-xml/#sec-prolog-dtd
@@ -257,8 +242,11 @@
         '<'            => start_element;
         doctype_start  => start_doctype;
         cdata_start    => start_cdata;
-        comment_start  => start_comment;
         xml_decl_start => start_xml_decl;
+
+        comment_start any* comment_end => {
+            callback("on_comment", data, encoding, ts + 4, te - 3);
+        };
 
         # Enter the body of the tag. If HTML mode is enabled and the current
         # element is a void element we'll close it and bail out.
