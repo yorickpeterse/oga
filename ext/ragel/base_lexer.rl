@@ -120,21 +120,6 @@
     cdata_start = '<![CDATA[';
     cdata_end   = ']]>';
 
-    action start_cdata {
-        callback_simple("on_cdata_start");
-        fcall cdata;
-    }
-
-    # Machine that for processing the contents of CDATA tags. Everything
-    # inside a CDATA tag is treated as plain text.
-    cdata := |*
-        any* cdata_end => {
-            callback("on_text", data, encoding, ts, te - 3);
-            callback_simple("on_cdata_end");
-            fret;
-        };
-    *|;
-
     # Comments
     #
     # http://www.w3.org/TR/html-markup/syntax.html#comments
@@ -246,6 +231,10 @@
 
         comment_start any* comment_end => {
             callback("on_comment", data, encoding, ts + 4, te - 3);
+        };
+
+        cdata_start any* cdata_end => {
+            callback("on_cdata", data, encoding, ts + 9, te - 3);
         };
 
         # Enter the body of the tag. If HTML mode is enabled and the current

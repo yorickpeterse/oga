@@ -203,17 +203,10 @@ module Oga
       end
 
       ##
-      # Called on the start of a CDATA tag.
+      # Called on a CDATA tag.
       #
-      def on_cdata_start
-        add_token(:T_CDATA_START)
-      end
-
-      ##
-      # Called on the end of a CDATA tag.
-      #
-      def on_cdata_end
-        add_token(:T_CDATA_END)
+      def on_cdata(value)
+        add_token(:T_CDATA, value)
       end
 
       ##

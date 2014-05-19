@@ -12,7 +12,7 @@ class Oga::XML::Parser
 token T_STRING T_TEXT
 token T_DOCTYPE_START T_DOCTYPE_END T_DOCTYPE_TYPE T_DOCTYPE_NAME
 token T_DOCTYPE_INLINE
-token T_CDATA_START T_CDATA_END T_COMMENT
+token T_CDATA T_COMMENT
 token T_ELEM_START T_ELEM_NAME T_ELEM_NS T_ELEM_END T_ATTR
 token T_XML_DECL_START T_XML_DECL_END
 
@@ -81,11 +81,8 @@ rule
   # CDATA tags
 
   cdata
-    # <![CDATA[]]>
-    : T_CDATA_START T_CDATA_END { on_cdata }
-
     # <![CDATA[foo]]>
-    | T_CDATA_START T_TEXT T_CDATA_END { on_cdata(val[1]) }
+    | T_CDATA { on_cdata(val[0]) }
     ;
 
   # Comments
