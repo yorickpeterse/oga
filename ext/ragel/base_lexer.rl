@@ -47,23 +47,14 @@
     dquote = '"';
     squote = "'";
 
-    # Machine for processing double quoted strings.
-    string_dquote := |*
-        ^dquote+ => {
-            callback("on_string", data, encoding, ts, te);
-        };
+    string_dquote = (dquote ^dquote+ dquote);
+    string_squote = (squote ^squote+ squote);
 
-        dquote => { fret; };
-    *|;
+    string = string_dquote | string_squote;
 
-    # Machine for processing single quoted strings.
-    string_squote := |*
-        ^squote+ => {
-            callback("on_string", data, encoding, ts, te);
-        };
-
-        squote => { fret; };
-    *|;
+    action emit_string {
+        callback("on_string", data, encoding, ts + 1, te - 1);
+    }
 
     # DOCTYPES
     #
@@ -96,8 +87,7 @@
         };
 
         # Lex the public/system IDs as regular strings.
-        dquote => { fcall string_dquote; };
-        squote => { fcall string_squote; };
+        string => emit_string;
 
         # Whitespace inside doctypes is ignored since there's no point in
         # including it.
@@ -137,8 +127,7 @@
             callback("on_attribute", data, encoding, ts, te);
         };
 
-        dquote => { fcall string_dquote; };
-        squote => { fcall string_squote; };
+        string => emit_string;
 
         any;
     *|;
@@ -192,8 +181,7 @@
         };
 
         # Attribute values.
-        dquote => { fcall string_dquote; };
-        squote => { fcall string_squote; };
+        string => emit_string;
 
         # The closing character of the open tag.
         ('>' | '/') => {
