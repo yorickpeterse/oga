@@ -33,6 +33,12 @@
     identifier = [a-zA-Z0-9\-_]+;
     attribute  = [a-zA-Z0-9\-_:]+;
 
+    cdata_start = '<![CDATA[';
+    cdata_end   = ']]>';
+
+    comment_start = '<!--';
+    comment_end   = '-->';
+
     # Strings
     #
     # Strings in HTML can either be single or double quoted. If a string
@@ -106,33 +112,6 @@
             fret;
         };
     *|;
-
-    # CDATA
-    #
-    # http://www.w3.org/TR/html-markup/syntax.html#cdata-sections
-    #
-    # CDATA tags are broken up into 3 parts: the start, the content and the
-    # end tag.
-    #
-    # In HTML CDATA tags have no meaning/are not supported. Oga does
-    # support them but treats their contents as plain text.
-    #
-    cdata_start = '<![CDATA[';
-    cdata_end   = ']]>';
-
-    # Comments
-    #
-    # http://www.w3.org/TR/html-markup/syntax.html#comments
-    #
-    # Comments are lexed into 3 parts: the start tag, the content and the
-    # end tag.
-    #
-    # Unlike the W3 specification these rules *do* allow character
-    # sequences such as `--` and `->`. Putting extra checks in for these
-    # sequences would actually make the rules/actions more complex.
-    #
-    comment_start = '<!--';
-    comment_end   = '-->';
 
     # XML declaration tags
     #
@@ -226,13 +205,27 @@
     main := |*
         '<'            => start_element;
         doctype_start  => start_doctype;
-        cdata_start    => start_cdata;
         xml_decl_start => start_xml_decl;
 
+        # Comments
+        #
+        # http://www.w3.org/TR/html-markup/syntax.html#comments
+        #
+        # Unlike the W3 specification these rules *do* allow character
+        # sequences such as `--` and `->`. Putting extra checks in for these
+        # sequences would actually make the rules/actions more complex.
+        #
         comment_start any* comment_end => {
             callback("on_comment", data, encoding, ts + 4, te - 3);
         };
 
+        # CDATA
+        #
+        # http://www.w3.org/TR/html-markup/syntax.html#cdata-sections
+        #
+        # In HTML CDATA tags have no meaning/are not supported. Oga does
+        # support them but treats their contents as plain text.
+        #
         cdata_start any* cdata_end => {
             callback("on_cdata", data, encoding, ts + 9, te - 3);
         };
