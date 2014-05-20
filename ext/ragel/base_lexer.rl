@@ -27,23 +27,44 @@
     #
     # When you call a method in Ruby make sure that said method is defined as
     # an instance method in the `Oga::XML::Lexer` class.
+    #
+    # ## Machine Transitions
+    #
+    # To transition from one machine to another always use `fnext` instead of
+    # `fcall` and `fret`. This removes the need for the code to keep track of a
+    # stack.
+    #
 
     newline    = '\n' | '\r\n';
     whitespace = [ \t];
     identifier = [a-zA-Z0-9\-_]+;
     attribute  = [a-zA-Z0-9\-_:]+;
 
-    cdata_start = '<![CDATA[';
-    cdata_end   = ']]>';
+    # Comments
+    #
+    # http://www.w3.org/TR/html-markup/syntax.html#comments
+    #
+    # Unlike the W3 specification these rules *do* allow character sequences
+    # such as `--` and `->`. Putting extra checks in for these sequences would
+    # actually make the rules/actions more complex.
+    #
+    comment = '<!--' any* '-->';
 
-    comment_start = '<!--';
-    comment_end   = '-->';
+    # CDATA
+    #
+    # http://www.w3.org/TR/html-markup/syntax.html#cdata-sections
+    #
+    # In HTML CDATA tags have no meaning/are not supported. Oga does
+    # support them but treats their contents as plain text.
+    #
+    cdata = '<![CDATA[' any* ']]>';
 
     # Strings
     #
     # Strings in HTML can either be single or double quoted. If a string
     # starts with one of these quotes it must be closed with the same type
     # of quote.
+    #
     dquote = '"';
     squote = "'";
 
@@ -136,10 +157,10 @@
     #
     # http://www.w3.org/TR/html-markup/syntax.html#syntax-elements
     #
-
-    # Action that creates the tokens for the opening tag, name and
-    # namespace (if any). Remaining work is delegated to a dedicated
-    # machine.
+    # Lexing of elements is broken up into different machines that handle the
+    # name/namespace, contents of the open tag and the body of an element. The
+    # body of an element is lexed using the `main` machine.
+    #
     action start_element {
         callback_simple("on_element_start");
         fnext element_name;
@@ -157,12 +178,8 @@
         };
     *|;
 
-    # Machine used for processing the characters inside a element head. An
-    # element head is everything between `<NAME` (where NAME is the element
-    # name) and `>`.
-    #
-    # For example, in `<p foo="bar">` the element head is ` foo="bar"`.
-    #
+    # Machine used for processing the contents of an element's starting tag.
+    # This includes the name, namespace and attributes.
     element_head := |*
         whitespace | '=';
 
@@ -191,30 +208,16 @@
         };
     *|;
 
+    # The main machine aka the entry point of Ragel.
     main := |*
         doctype_start  => start_doctype;
         xml_decl_start => start_xml_decl;
 
-        # Comments
-        #
-        # http://www.w3.org/TR/html-markup/syntax.html#comments
-        #
-        # Unlike the W3 specification these rules *do* allow character
-        # sequences such as `--` and `->`. Putting extra checks in for these
-        # sequences would actually make the rules/actions more complex.
-        #
-        comment_start any* comment_end => {
+        comment => {
             callback("on_comment", data, encoding, ts + 4, te - 3);
         };
 
-        # CDATA
-        #
-        # http://www.w3.org/TR/html-markup/syntax.html#cdata-sections
-        #
-        # In HTML CDATA tags have no meaning/are not supported. Oga does
-        # support them but treats their contents as plain text.
-        #
-        cdata_start any* cdata_end => {
+        cdata => {
             callback("on_cdata", data, encoding, ts + 9, te - 3);
         };
 
