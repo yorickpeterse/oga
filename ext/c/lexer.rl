@@ -70,12 +70,12 @@ void liboga_xml_lexer_callback_simple(VALUE self, const char *name)
 VALUE oga_xml_lexer_advance(VALUE self)
 {
     /* Pull the data in from Ruby land. */
-    VALUE data_ivar = rb_ivar_get(self, rb_intern("@data"));
+    VALUE data_block = rb_funcall(self, rb_intern("read_data"), 0);
 
     /* Make sure that all data passed back to Ruby has the proper encoding. */
-    rb_encoding *encoding = rb_enc_get(data_ivar);
+    rb_encoding *encoding = rb_enc_get(data_block);
 
-    char *data_str_val = StringValuePtr(data_ivar);
+    char *data_str_val = StringValuePtr(data_block);
 
     const char *p   = data_str_val;
     const char *pe  = data_str_val + strlen(data_str_val);

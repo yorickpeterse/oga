@@ -82,7 +82,7 @@ public class Lexer extends RubyObject
     public IRubyObject advance_native(ThreadContext context)
     {
         // Pull the data in from Ruby land.
-        RubyString rb_str = (RubyString) this.getInstanceVariable("@data");
+        RubyString rb_str = (RubyString) this.callMethod(context, "read_data");
         Encoding encoding = rb_str.getEncoding();
 
         byte[] data = rb_str.getBytes();

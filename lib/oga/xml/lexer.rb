@@ -65,6 +65,15 @@ module Oga
       end
 
       ##
+      # Returns the next block of data to lex.
+      #
+      # @return [String]
+      #
+      def read_data
+        return @data
+      end
+
+      ##
       # Gathers all the tokens for the input and returns them as an Array.
       #
       # This method resets the internal state of the lexer after consuming the
