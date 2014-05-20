@@ -183,15 +183,20 @@
         # Attribute values.
         string => emit_string;
 
-        # The closing character of the open tag.
-        ('>' | '/') => {
-            fhold;
+        # We're done with the open tag of the element.
+        '>' => {
+            callback_simple("on_element_open_end");
+            fret;
+        };
+
+        # Self closing tags.
+        '/>' => {
+            callback_simple("on_element_end");
             fret;
         };
     *|;
 
     main := |*
-        '<'            => start_element;
         doctype_start  => start_doctype;
         xml_decl_start => start_xml_decl;
 
@@ -218,25 +223,17 @@
             callback("on_cdata", data, encoding, ts + 9, te - 3);
         };
 
-        # Enter the body of the tag. If HTML mode is enabled and the current
-        # element is a void element we'll close it and bail out.
-        '>' => {
-            callback_simple("on_element_open_end");
-        };
+        # The start of an element.
+        '<' => start_element;
 
         # Regular closing tags.
         '</' identifier '>' => {
             callback_simple("on_element_end");
         };
 
-        # Self closing elements that are not handled by the HTML mode.
-        '/>' => {
-            callback_simple("on_element_end");
-        };
-
-        # Note that this rule should be declared at the very bottom as it
-        # will otherwise take precedence over the other rules.
-        ^('<' | '>')+ => {
+        # Treat everything else, except for "<", as regular text. The "<" sign
+        # is used for tags so we can't emit text nodes for these characters.
+        ^'<'+ => {
             callback("on_text", data, encoding, ts, te);
         };
     *|;

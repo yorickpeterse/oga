@@ -15,9 +15,11 @@ describe Oga::XML::Lexer do
     end
 
     example 'lex text followed by a newline' do
-      lex("foo\n").should == [
-        [:T_TEXT, "foo\n", 1]
-      ]
+      lex("foo\n").should == [[:T_TEXT, "foo\n", 1]]
+    end
+
+    example 'lex a > as regular text' do
+      lex('>').should == [[:T_TEXT, '>', 1]]
     end
   end
 end
