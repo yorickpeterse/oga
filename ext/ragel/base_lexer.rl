@@ -141,8 +141,8 @@
     # namespace (if any). Remaining work is delegated to a dedicated
     # machine.
     action start_element {
-        fhold;
-        fnext element_head;
+        callback_simple("on_element_start");
+        fnext element_name;
     }
 
     # Machine used for lexing the name/namespace of an element.
@@ -165,11 +165,6 @@
     #
     element_head := |*
         whitespace | '=';
-
-        '<' => {
-            callback_simple("on_element_start");
-            fnext element_name;
-        };
 
         newline => {
             callback_simple("on_newline");
