@@ -94,10 +94,6 @@ public class Lexer extends RubyObject
         int p   = 0;
         int pe  = data.length;
         int eof = data.length;
-        int top = 0;
-
-        // Fixed stack size of 8 should be more than enough.
-        int[] stack = new int[8];
 
         %% write init;
         %% write exec;

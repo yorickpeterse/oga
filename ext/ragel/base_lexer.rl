@@ -70,7 +70,7 @@
 
     action start_doctype {
         callback_simple("on_doctype_start");
-        fcall doctype;
+        fnext doctype;
     }
 
     # Machine for processing doctypes. Doctype values such as the public
@@ -99,7 +99,7 @@
 
         '>' => {
             callback_simple("on_doctype_end");
-            fret;
+            fnext main;
         };
     *|;
 
@@ -112,14 +112,14 @@
 
     action start_xml_decl {
         callback_simple("on_xml_decl_start");
-        fcall xml_decl;
+        fnext xml_decl;
     }
 
     # Machine that processes the contents of an XML declaration tag.
     xml_decl := |*
         xml_decl_end => {
             callback_simple("on_xml_decl_end");
-            fret;
+            fnext main;
         };
 
         # Attributes and their values (e.g. version="1.0").
@@ -142,7 +142,7 @@
     # machine.
     action start_element {
         fhold;
-        fcall element_head;
+        fnext element_head;
     }
 
     # Machine used for lexing the name/namespace of an element.
@@ -153,7 +153,7 @@
 
         identifier => {
             callback("on_element_name", data, encoding, ts, te);
-            fret;
+            fnext element_head;
         };
     *|;
 
@@ -168,7 +168,7 @@
 
         '<' => {
             callback_simple("on_element_start");
-            fcall element_name;
+            fnext element_name;
         };
 
         newline => {
@@ -186,13 +186,13 @@
         # We're done with the open tag of the element.
         '>' => {
             callback_simple("on_element_open_end");
-            fret;
+            fnext main;
         };
 
         # Self closing tags.
         '/>' => {
             callback_simple("on_element_end");
-            fret;
+            fnext main;
         };
     *|;
 

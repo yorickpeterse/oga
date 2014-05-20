@@ -84,13 +84,6 @@ VALUE oga_xml_lexer_advance(VALUE self)
 
     int act = 0;
     int cs  = 0;
-    int top = 0;
-
-    /*
-    Fixed stack size is enough since the lexer doesn't use that many nested
-    fcalls.
-    */
-    int stack[8];
 
     %% write init;
     %% write exec;
