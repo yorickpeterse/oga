@@ -1,4 +1,5 @@
 require 'timeout'
+require 'stringio'
 
 require_relative '../lib/oga'
 
@@ -21,12 +22,23 @@ def memory_usage
 end
 
 ##
+# Returns a File instance pointing to the sample XML file.
+#
+# @return [File]
+#
+def big_xml_file
+  path = File.expand_path('../../benchmark/fixtures/big.xml', __FILE__)
+
+  return File.open(path, 'r')
+end
+
+##
 # Reads a big XML file and returns it as a String.
 #
 # @return [String]
 #
 def read_big_xml
-  return File.read(File.expand_path('../../benchmark/fixtures/big.xml', __FILE__))
+  return big_xml_file.read
 end
 
 ##

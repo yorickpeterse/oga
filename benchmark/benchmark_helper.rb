@@ -1,7 +1,17 @@
+require 'stringio'
 require 'benchmark'
 require 'benchmark/ips'
 
 require_relative '../lib/oga'
+
+##
+# Returns a File instance pointing to the sample XML file.
+#
+# @return [File]
+#
+def big_xml_file
+  return File.open(File.expand_path('../fixtures/big.xml', __FILE__), 'r')
+end
 
 ##
 # Reads a big XML file and returns it as a String.
@@ -9,7 +19,7 @@ require_relative '../lib/oga'
 # @return [String]
 #
 def read_big_xml
-  return File.read(File.expand_path('../fixtures/big.xml', __FILE__))
+  return big_xml_file.read
 end
 
 ##
