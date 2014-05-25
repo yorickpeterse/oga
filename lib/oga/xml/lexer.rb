@@ -91,6 +91,8 @@ module Oga
         @line     = 1
         @elements = []
 
+        @data.rewind if io_input?
+
         reset_native
       end
 

@@ -15,5 +15,12 @@ describe Oga::XML::Lexer do
         [:T_ELEM_END, nil, 2]
       ]
     end
+
+    example 'rewind input when resetting the lexer' do
+      lexer = described_class.new(StringIO.new(('<a>foo</a>')))
+
+      lexer.lex.empty?.should == false
+      lexer.lex.empty?.should == false
+    end
   end
 end
