@@ -11,6 +11,7 @@ import org.jruby.RubyModule;
 import org.jruby.RubyClass;
 import org.jruby.RubyObject;
 import org.jruby.RubyString;
+import org.jruby.RubyFixnum;
 import org.jruby.util.ByteList;
 import org.jruby.anno.JRubyClass;
 import org.jruby.anno.JRubyMethod;
@@ -35,6 +36,10 @@ public class Lexer extends RubyObject
     private Ruby runtime;
 
     %% write data;
+
+    /* Used by Ragel to keep track of the current state. */
+    int act;
+    int cs;
 
     /**
      * Sets up the current class in the Ruby runtime.
@@ -79,24 +84,31 @@ public class Lexer extends RubyObject
      * This method always returns nil.
      */
     @JRubyMethod
-    public IRubyObject advance_native(ThreadContext context)
+    public IRubyObject advance_native(ThreadContext context, RubyString rb_str)
     {
-        // Pull the data in from Ruby land.
-        RubyString rb_str = (RubyString) this.callMethod(context, "read_data");
         Encoding encoding = rb_str.getEncoding();
 
         byte[] data = rb_str.getBytes();
 
-        int act = 0;
-        int cs  = 0;
         int ts  = 0;
         int te  = 0;
         int p   = 0;
         int pe  = data.length;
         int eof = data.length;
 
-        %% write init;
         %% write exec;
+
+        return context.nil;
+    }
+
+    /**
+     * Resets the internal state of the lexer.
+     */
+    @JRubyMethod
+    public IRubyObject reset_native(ThreadContext context)
+    {
+        this.act = 0;
+        this.cs  = java_lexer_start;
 
         return context.nil;
     }
@@ -131,5 +143,8 @@ public class Lexer extends RubyObject
 }
 
 %%{
+    variable act this.act;
+    variable cs this.cs;
+
     include base_lexer "base_lexer.rl";
 }%%

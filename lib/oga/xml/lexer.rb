@@ -7,6 +7,33 @@ module Oga
     #
     #     lexer = Oga::XML::Lexer.new(:html => true)
     #
+    # This lexer can process both String and IO instances. IO instances are
+    # processed on a line by line basis. This can greatly reduce memory usage
+    # in exchange for a slightly slower runtime.
+    #
+    # ## Thread Safety
+    #
+    # Since this class keeps track of an internal state you can not use the
+    # same instance between multiple threads at the same time. For example, the
+    # following will not work reliably:
+    #
+    #     # Don't do this!
+    #     lexer   = Oga::XML::Lexer.new('....')
+    #     threads = []
+    #
+    #     2.times do
+    #       threads << Thread.new do
+    #         lexer.advance do |*args|
+    #           p args
+    #         end
+    #       end
+    #     end
+    #
+    #     threads.each(&:join)
+    #
+    # However, it is perfectly save to use different instances per thread.
+    # There is no _global_ state used by this lexer.
+    #
     # @!attribute [r] html
     #  @return [TrueClass|FalseClass]
     #
@@ -39,13 +66,14 @@ module Oga
       ])
 
       ##
-      # @param [String] data The data to lex.
+      # @param [String|IO] data The data to lex. This can either be a String or
+      #  an IO instance.
       #
       # @param [Hash] options
       #
       # @option options [Symbol] :html When set to `true` the lexer will treat
-      # the input as HTML instead of SGML/XML. This makes it possible to lex
-      # HTML void elements such as `<link href="">`.
+      #  the input as HTML instead of SGML/XML. This makes it possible to lex
+      #  HTML void elements such as `<link href="">`.
       #
       def initialize(data, options = {})
         @data = data
@@ -62,15 +90,36 @@ module Oga
       def reset
         @line     = 1
         @elements = []
+
+        reset_native
       end
 
       ##
-      # Returns the next block of data to lex.
+      # Yields the data to lex to the supplied block.
       #
       # @return [String]
+      # @yieldparam [String]
       #
       def read_data
-        return @data
+        # We can't check for #each_line since String also defines that. Using
+        # String#each_line has no benefit over just lexing the String in one
+        # go.
+        if io_input?
+          @data.each_line do |line|
+            yield line
+          end
+        else
+          yield @data
+        end
+      end
+
+      ##
+      # Returns `true` if the input is an IO like object, false otherwise.
+      #
+      # @return [TrueClass|FalseClass]
+      #
+      def io_input?
+        return @data.is_a?(IO) || @data.is_a?(StringIO)
       end
 
       ##
@@ -79,9 +128,8 @@ module Oga
       # This method resets the internal state of the lexer after consuming the
       # input.
       #
-      # @param [String] data The string to consume.
-      # @return [Array]
       # @see #advance
+      # @return [Array]
       #
       def lex
         tokens = []
@@ -110,14 +158,16 @@ module Oga
       #
       # This method does *not* reset the internal state of the lexer.
       #
-      #
-      # @param [String] data The String to consume.
-      # @return [Array]
+      # @yieldparam [Symbol] type
+      # @yieldparam [String] value
+      # @yieldparam [Fixnum] line
       #
       def advance(&block)
         @block = block
 
-        advance_native
+        read_data do |chunk|
+          advance_native(chunk)
+        end
       ensure
         @block = nil
       end

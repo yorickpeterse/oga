@@ -1,4 +1,5 @@
 require 'rspec'
+require 'stringio'
 
 if ENV['COVERAGE']
   require_relative 'support/simplecov'

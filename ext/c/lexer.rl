@@ -16,6 +16,12 @@ on `ts` and `te`) so the macro ignores this argument.
 #define callback_simple(name) \
     liboga_xml_lexer_callback_simple(self, name);
 
+#define oga_ivar_get(owner, name) \
+    rb_ivar_get(owner, rb_intern(name))
+
+#define oga_ivar_set(owner, name, value) \
+    rb_ivar_set(owner, rb_intern(name), value)
+
 %%machine c_lexer;
 
 /**
@@ -58,20 +64,14 @@ void liboga_xml_lexer_callback_simple(VALUE self, const char *name)
 %% write data;
 
 /**
- * Lexes the input String specified in the instance variable `@data`. Lexed
- * values have the same encoding as the input value. This instance variable
- * is set in the Ruby layer of the lexer.
+ * Lexes the String specifies as the method argument. Token values have the
+ * same encoding as the input value.
  *
- * The Ragel loop dispatches method calls back to Ruby land to make it easier
- * to implement complex actions without having to fiddle around with C. This
- * introduces a small performance overhead compared to a pure C implementation.
- * However, this is worth the overhead due to it being much easier to maintain.
+ * This method keeps track of an internal state using the instance variables
+ * `@act` and `@cs`.
  */
-VALUE oga_xml_lexer_advance(VALUE self)
+VALUE oga_xml_lexer_advance(VALUE self, VALUE data_block)
 {
-    /* Pull the data in from Ruby land. */
-    VALUE data_block = rb_funcall(self, rb_intern("read_data"), 0);
-
     /* Make sure that all data passed back to Ruby has the proper encoding. */
     rb_encoding *encoding = rb_enc_get(data_block);
 
@@ -80,13 +80,27 @@ VALUE oga_xml_lexer_advance(VALUE self)
     const char *p   = data_str_val;
     const char *pe  = data_str_val + strlen(data_str_val);
     const char *eof = pe;
-    const char *ts, *te;
+    const char *ts  = 0;
+    const char *te  = 0;
 
-    int act = 0;
-    int cs  = 0;
+    int act = NUM2INT(oga_ivar_get(self, "@act"));
+    int cs  = NUM2INT(oga_ivar_get(self, "@cs"));
 
-    %% write init;
     %% write exec;
+
+    oga_ivar_set(self, "@act", INT2NUM(act));
+    oga_ivar_set(self, "@cs", INT2NUM(cs));
+
+    return Qnil;
+}
+
+/**
+ * Resets the internal state of the lexer.
+ */
+VALUE oga_xml_lexer_reset(VALUE self)
+{
+    oga_ivar_set(self, "@act", INT2NUM(0));
+    oga_ivar_set(self, "@cs", INT2NUM(c_lexer_start));
 
     return Qnil;
 }
@@ -101,5 +115,6 @@ void Init_liboga_xml_lexer()
     VALUE mXML   = rb_const_get(mOga, rb_intern("XML"));
     VALUE cLexer = rb_define_class_under(mXML, "Lexer", rb_cObject);
 
-    rb_define_method(cLexer, "advance_native", oga_xml_lexer_advance, 0);
+    rb_define_method(cLexer, "advance_native", oga_xml_lexer_advance, 1);
+    rb_define_method(cLexer, "reset_native", oga_xml_lexer_reset, 0);
 }
