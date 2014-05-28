@@ -21,13 +21,16 @@ options no_result_var
 rule
   document
     : expressions { on_document(val[0]) }
-    | /* none */  { on_document }
     ;
 
   expressions
-    : expressions expression { val[0] << val[1] }
-    | expression             { val }
-    | /* none */             { [] }
+    : expressions_ { val[0] }
+    | /* none */   { [] }
+    ;
+
+  expressions_
+    : expressions_ expression { val[0] << val[1] }
+    | expression              { val }
     ;
 
   expression
@@ -138,8 +141,8 @@ rule
 
   # XML declarations
   xmldecl
-    : T_XML_DECL_START T_XML_DECL_END            { on_xml_decl }
-    | T_XML_DECL_START attributes T_XML_DECL_END { on_xml_decl(val[1]) }
+    : T_XML_DECL_START attributes T_XML_DECL_END { on_xml_decl(val[1]) }
+    ;
 
   # Plain text
 
