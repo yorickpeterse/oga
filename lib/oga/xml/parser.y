@@ -82,14 +82,14 @@ rule
 
   cdata
     # <![CDATA[foo]]>
-    | T_CDATA { on_cdata(val[0]) }
+    : T_CDATA { on_cdata(val[0]) }
     ;
 
   # Comments
 
   comment
     # <!-- foo -->
-    | T_COMMENT { on_comment(val[0]) }
+    : T_COMMENT { on_comment(val[0]) }
     ;
 
   # Elements
