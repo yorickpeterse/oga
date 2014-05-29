@@ -362,13 +362,6 @@ module Oga
       def on_attribute(value)
         add_token(:T_ATTR, value)
       end
-
-      ##
-      # Gee, I wonder when this gets called.
-      #
-      def on_newline
-        @line += 1
-      end
     end # Lexer
   end # XML
 end # Oga

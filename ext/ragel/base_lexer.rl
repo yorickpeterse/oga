@@ -184,7 +184,7 @@
         whitespace | '=';
 
         newline => {
-            callback_simple("on_newline");
+            callback_simple("advance_line");
         };
 
         # Attribute names.
