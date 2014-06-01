@@ -1,3 +1,4 @@
+require 'ast'
 require 'set'
 
 # Load these first so that the native extensions don't have to define the
@@ -23,4 +24,6 @@ require_relative 'oga/xml/doctype'
 
 require_relative 'oga/html/parser'
 
+require_relative 'oga/xpath/node'
 require_relative 'oga/xpath/lexer'
+require_relative 'oga/xpath/parser'

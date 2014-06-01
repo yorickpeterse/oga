@@ -18,13 +18,12 @@ else
   end
 end
 
-PARSER_OUTPUT = 'lib/oga/xml/parser.rb'
-
 CLEAN.include(
   'coverage',
   'yardoc',
-  PARSER_OUTPUT,
+  'lib/oga/xml/parser.rb',
   'lib/oga/xpath/lexer.rb',
+  'lib/oga/xpath/parser.rb',
   'benchmark/fixtures/big.xml',
   'profile/samples/**/*.txt',
   'lib/liboga.*',
