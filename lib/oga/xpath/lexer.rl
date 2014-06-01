@@ -10,6 +10,13 @@ module Oga
 
       # % fix highlight
 
+      AXIS_MAPPING = {
+        '@'  => 'attribute',
+        '//' => 'descendant-or-self',
+        '..' => 'parent',
+        '.'  => 'self'
+      }
+
       ##
       # @param [String] data The data to lex.
       #
@@ -38,8 +45,8 @@ module Oga
       def lex
         tokens = []
 
-        advance do |token|
-          tokens << token
+        advance do |type, value|
+          tokens << [type, value]
         end
 
         reset
@@ -139,8 +146,155 @@ module Oga
       %%{
         getkey (data.getbyte(p) || 0);
 
+        whitespace = [\n\t ];
+
+        slash  = '/' @{ add_token(:T_SLASH) };
+        lparen = '(' @{ add_token(:T_LPAREN) };
+        rparen = ')' @{ add_token(:T_RPAREN) };
+        comma  = ',' @{ add_token(:T_COMMA) };
+        colon  = ':' @{ add_token(:T_COLON) };
+
+        # Identifiers
+        #
+        # Identifiers are used for element names, namespaces, attribute names,
+        # etc. Identifiers have to start with a letter.
+
+        identifier = [a-zA-Z]+ [a-zA-Z\-_0-9]*;
+
+        action emit_identifier {
+          emit(:T_IDENT, ts, te)
+        }
+
+        # Numbers
+        #
+        # XPath expressions can contain both integers and floats. The W3
+        # specification treats these both as the same type of number. Oga
+        # instead lexes them separately so that we can convert the values to
+        # the corresponding Ruby types (Fixnum and Float).
+
+        integer = digit+;
+        float   = digit+ ('.' digit+)*;
+
+        action emit_integer {
+          value = slice_input(ts, te).to_i
+
+          add_token(:T_INT, value)
+        }
+
+        action emit_float {
+          value = slice_input(ts, te).to_f
+
+          add_token(:T_FLOAT, value)
+        }
+
+        # Strings
+        #
+        # Strings can be single or double quoted. They are mainly used for
+        # attribute values.
+        #
+        dquote = '"';
+        squote = "'";
+
+        string_dquote = (dquote ^dquote+ dquote);
+        string_squote = (squote ^squote+ squote);
+
+        string = string_dquote | string_squote;
+
+        action emit_string {
+          emit(:T_STRING, ts + 1, te - 1)
+        }
+
+        # Full Axes
+        #
+        # XPath axes in their full syntax.
+        #
+        axis_full = ('ancestor'
+          | 'ancestor-or-self'
+          | 'attribute'
+          | 'child'
+          | 'descendant'
+          | 'descendant-or-self'
+          | 'following'
+          | 'following-sibling'
+          | 'namespace'
+          | 'parent'
+          | 'preceding'
+          | 'preceding-sibling'
+          | 'self') '::';
+
+        action emit_axis_full {
+          emit(:T_AXIS, ts, te - 2)
+        }
+
+        # Short Axes
+        #
+        # XPath axes in their abbreviated form. When lexing these are mapped to
+        # their full forms so that the parser doesn't have to take care of
+        # this.
+        #
+        axis_short = '@' | '//' | '..' | '.';
+
+        action emit_axis_short {
+          value = AXIS_MAPPING[slice_input(ts, te)]
+
+          add_token(:T_AXIS, value)
+        }
+
+        # Operators
+        #
+        # Operators can only be used inside predicates due to "div" and "mod"
+        # conflicting with the patterns used for matching identifiers (=
+        # element names and the likes).
+
+        operator = '|'
+          | 'and'
+          | 'or'
+          | '+'
+          | '-'
+          | '*'
+          | 'div'
+          | 'mod'
+          | '='
+          | '!='
+          | '<'
+          | '>'
+          | '<='
+          | '>=';
+
+        action emit_operator {
+          emit(:T_OP, ts, te)
+        }
+
+        # Machine that handles the lexing of data inside an XPath predicate.
+        # When bumping into a "]" the lexer jumps back to the `main` machine.
+        predicate := |*
+          whitespace | slash | lparen | rparen | comma | colon;
+
+          string     => emit_string;
+          integer    => emit_integer;
+          float      => emit_float;
+          axis_full  => emit_axis_full;
+          axis_short => emit_axis_short;
+          operator   => emit_operator;
+          identifier => emit_identifier;
+
+          ']' => {
+            add_token(:T_RBRACK)
+            fnext main;
+          };
+        *|;
+
         main := |*
-          any => { };
+          whitespace | slash | lparen | rparen | comma | colon;
+
+          '[' => {
+            add_token(:T_LBRACK)
+            fnext predicate;
+          };
+
+          axis_full  => emit_axis_full;
+          axis_short => emit_axis_short;
+          identifier => emit_identifier;
         *|;
       }%%
     end # Lexer

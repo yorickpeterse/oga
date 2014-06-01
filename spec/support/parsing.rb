@@ -23,6 +23,16 @@ module Oga
     end
 
     ##
+    # Lexes an XPath expression.
+    #
+    # @param [String] input
+    # @return [Array]
+    #
+    def lex_xpath(input)
+      return Oga::XPath::Lexer.new(input).lex
+    end
+
+    ##
     # Parses the given XML and returns an AST.
     #
     # @param [String] input
