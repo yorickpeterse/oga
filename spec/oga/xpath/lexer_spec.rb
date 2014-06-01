@@ -110,4 +110,59 @@ describe Oga::XPath::Lexer do
       [:T_IDENT, 'bar']
     ]
   end
+
+  example 'lex a predicate expression using an operator' do
+    lex_xpath('/div[@number=4 div 2]').should == [
+      [:T_SLASH, nil],
+      [:T_IDENT, 'div'],
+      [:T_LBRACK, nil],
+      [:T_AXIS, 'attribute'],
+      [:T_IDENT, 'number'],
+      [:T_OP, '='],
+      [:T_INT, 4],
+      [:T_OP, 'div'],
+      [:T_INT, 2],
+      [:T_RBRACK, nil]
+    ]
+  end
+
+  # The following are a bunch of examples taken from Wikipedia and the W3 spec
+  # to see how the lexer handles them.
+
+  example 'lex an descendant-or-self expression' do
+    lex_xpath('/wikimedia//editions').should == [
+      [:T_SLASH, nil],
+      [:T_IDENT, 'wikimedia'],
+      [:T_SLASH, nil],
+      [:T_AXIS, 'descendant-or-self'],
+      [:T_IDENT, 'editions']
+    ]
+  end
+
+  example 'lex a complex expression using predicates and function calls' do
+    path = '/wikimedia/projects/project[@name="Wikipedia"]/editions/edition/text()'
+
+    lex_xpath(path).should == [
+      [:T_SLASH, nil],
+      [:T_IDENT, 'wikimedia'],
+      [:T_SLASH, nil],
+      [:T_IDENT, 'projects'],
+      [:T_SLASH, nil],
+      [:T_IDENT, 'project'],
+      [:T_LBRACK, nil],
+      [:T_AXIS, 'attribute'],
+      [:T_IDENT, 'name'],
+      [:T_OP, '='],
+      [:T_STRING, 'Wikipedia'],
+      [:T_RBRACK, nil],
+      [:T_SLASH, nil],
+      [:T_IDENT, 'editions'],
+      [:T_SLASH, nil],
+      [:T_IDENT, 'edition'],
+      [:T_SLASH, nil],
+      [:T_IDENT, 'text'],
+      [:T_LPAREN, nil],
+      [:T_RPAREN, nil]
+    ]
+  end
 end
