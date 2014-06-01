@@ -126,6 +126,19 @@ describe Oga::XPath::Lexer do
     ]
   end
 
+  example 'lex a predicate expression using axes' do
+    lex_xpath('/div[/foo/bar]').should == [
+      [:T_SLASH, nil],
+      [:T_IDENT, 'div'],
+      [:T_LBRACK, nil],
+      [:T_SLASH, nil],
+      [:T_IDENT, 'foo'],
+      [:T_SLASH, nil],
+      [:T_IDENT, 'bar'],
+      [:T_RBRACK, nil]
+    ]
+  end
+
   # The following are a bunch of examples taken from Wikipedia and the W3 spec
   # to see how the lexer handles them.
 
