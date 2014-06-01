@@ -111,7 +111,20 @@ describe Oga::XPath::Lexer do
     ]
   end
 
-  example 'lex a predicate expression using an operator' do
+  example 'lex a whildcard node test' do
+    lex_xpath('/*').should == [[:T_SLASH, nil], [:T_STAR, nil]]
+  end
+
+  example 'lex a wildcard node test for a namespace' do
+    lex_xpath('/*:foo').should == [
+      [:T_SLASH, nil],
+      [:T_STAR, nil],
+      [:T_COLON, nil],
+      [:T_IDENT, 'foo']
+    ]
+  end
+
+  example 'lex a predicate expression using the div operator' do
     lex_xpath('/div[@number=4 div 2]').should == [
       [:T_SLASH, nil],
       [:T_IDENT, 'div'],
@@ -126,6 +139,21 @@ describe Oga::XPath::Lexer do
     ]
   end
 
+  example 'lex a predicate expression using the * operator' do
+    lex_xpath('/div[@number=4 * 2]').should == [
+      [:T_SLASH, nil],
+      [:T_IDENT, 'div'],
+      [:T_LBRACK, nil],
+      [:T_AXIS, 'attribute'],
+      [:T_IDENT, 'number'],
+      [:T_OP, '='],
+      [:T_INT, 4],
+      [:T_OP, '*'],
+      [:T_INT, 2],
+      [:T_RBRACK, nil]
+    ]
+  end
+
   example 'lex a predicate expression using axes' do
     lex_xpath('/div[/foo/bar]').should == [
       [:T_SLASH, nil],
@@ -135,6 +163,19 @@ describe Oga::XPath::Lexer do
       [:T_IDENT, 'foo'],
       [:T_SLASH, nil],
       [:T_IDENT, 'bar'],
+      [:T_RBRACK, nil]
+    ]
+  end
+
+  example 'lex a predicate expression using a wildcard' do
+    lex_xpath('/div[/foo/*]').should == [
+      [:T_SLASH, nil],
+      [:T_IDENT, 'div'],
+      [:T_LBRACK, nil],
+      [:T_SLASH, nil],
+      [:T_IDENT, 'foo'],
+      [:T_SLASH, nil],
+      [:T_STAR, nil],
       [:T_RBRACK, nil]
     ]
   end

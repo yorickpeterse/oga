@@ -3,13 +3,19 @@
 module Oga
   module XPath
     ##
-    # Ragel lexer for lexing XPath queries.
+    # Ragel lexer for lexing XPath expressions.
     #
     class Lexer
       %% write data;
 
       # % fix highlight
 
+      ##
+      # Maps certain XPath axes written in their short form to their long form
+      # equivalents.
+      #
+      # @return [Hash]
+      #
       AXIS_MAPPING = {
         '@'  => 'attribute',
         '//' => 'descendant-or-self',
@@ -22,22 +28,10 @@ module Oga
       #
       def initialize(data)
         @data = data
-
-        reset
-      end
-
-      ##
-      # Resets the internal state of the lexer.
-      #
-      def reset
-
       end
 
       ##
       # Gathers all the tokens for the input and returns them as an Array.
-      #
-      # This method resets the internal state of the lexer after consuming the
-      # input.
       #
       # @see [#advance]
       # @return [Array]
@@ -48,8 +42,6 @@ module Oga
         advance do |type, value|
           tokens << [type, value]
         end
-
-        reset
 
         return tokens
       end
@@ -66,8 +58,6 @@ module Oga
       #
       # This method stores the supplied block in `@block` and resets it after
       # the lexer loop has finished.
-      #
-      # This method does *not* reset the internal state of the lexer.
       #
       # @param [String] data The String to consume.
       # @return [Array]
@@ -153,6 +143,7 @@ module Oga
         rparen = ')' @{ add_token(:T_RPAREN) };
         comma  = ',' @{ add_token(:T_COMMA) };
         colon  = ':' @{ add_token(:T_COLON) };
+        star   = '*' @{ add_token(:T_STAR) };
 
         # Identifiers
         #
@@ -250,8 +241,6 @@ module Oga
           | 'and'
           | 'or'
           | '+'
-          | '-'
-          | '*'
           | 'div'
           | 'mod'
           | '='
@@ -261,21 +250,36 @@ module Oga
           | '<='
           | '>=';
 
+        # These operators require whitespace around them in order to be lexed
+        # as operators. This is due to "-" being allowed in node names and "*"
+        # also being used as a whildcard.
+        #
+        # THINK: relying on whitespace is a rather fragile solution, even
+        # though the W3 actually recommends this for the "-" operator. Perhaps
+        # there's a better way of doing this.
+        space_operator = space ('*' | '-') space;
+
         action emit_operator {
           emit(:T_OP, ts, te)
+        }
+
+        action emit_space_operator {
+          emit(:T_OP, ts + 1, te - 1)
         }
 
         # Machine that handles the lexing of data inside an XPath predicate.
         # When bumping into a "]" the lexer jumps back to the `main` machine.
         predicate := |*
-          whitespace | slash | lparen | rparen | comma | colon;
+          whitespace | slash | lparen | rparen | comma | colon | star;
+
+          operator       => emit_operator;
+          space_operator => emit_space_operator;
 
           string     => emit_string;
           integer    => emit_integer;
           float      => emit_float;
           axis_full  => emit_axis_full;
           axis_short => emit_axis_short;
-          operator   => emit_operator;
           identifier => emit_identifier;
 
           ']' => {
@@ -285,7 +289,7 @@ module Oga
         *|;
 
         main := |*
-          whitespace | slash | lparen | rparen | comma | colon;
+          whitespace | slash | lparen | rparen | comma | colon | star;
 
           '[' => {
             add_token(:T_LBRACK)
