@@ -11,16 +11,16 @@ Gem::Specification.new do |s|
   s.license     = 'MIT'
 
   s.files = Dir.glob([
-    'checkum/**/*.*',
-    'doc/**/*.*',
+    'checkum/**/*',
+    'doc/**/*',
     'lib/**/*.rb',
-    'ext/**/*.*',
+    'ext/**/*',
     'README.md',
     'LICENSE',
     'MANIFEST',
     'oga.gemspec',
     '.yardopts'
-  ])
+  ]).select { |path| File.file?(path) }
 
   if RUBY_PLATFORM == 'java'
     s.files << 'lib/liboga.jar'
@@ -34,6 +34,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 1.9.3'
 
   s.add_dependency 'racc'
+  s.add_dependency 'ast'
 
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec'
