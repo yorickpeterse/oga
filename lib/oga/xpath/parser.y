@@ -3,7 +3,7 @@
 #
 class Oga::XPath::Parser
 
-token T_AXIS T_COLON T_COMMA T_FLOAT T_INT T_IDENT T_OP
+token T_AXIS T_COLON T_COMMA T_FLOAT T_INT T_IDENT T_OP T_STAR
 token T_LBRACK T_RBRACK T_LPAREN T_RPAREN T_SLASH T_STRING
 
 options no_result_var
