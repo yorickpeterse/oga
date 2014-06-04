@@ -59,8 +59,7 @@ module Oga
       # This method stores the supplied block in `@block` and resets it after
       # the lexer loop has finished.
       #
-      # @param [String] data The String to consume.
-      # @return [Array]
+      # @see [#add_token]
       #
       def advance(&block)
         @block = block
@@ -103,8 +102,8 @@ module Oga
       # @param [Fixnum] start
       # @param [Fixnum] stop
       #
-      # @see #text
-      # @see #add_token
+      # @see [#text]
+      # @see [#add_token]
       #
       def emit(type, start, stop)
         value = slice_input(start, stop)
@@ -124,10 +123,13 @@ module Oga
       end
 
       ##
-      # Adds a token with the given type and value to the list.
+      # Yields a new token to the supplied block.
       #
       # @param [Symbol] type The token type.
       # @param [String] value The token value.
+      #
+      # @yieldparam [Symbol] type
+      # @yieldparam [String|NilClass] value
       #
       def add_token(type, value = nil)
         @block.call(type, value)
