@@ -239,18 +239,14 @@ module Oga
         # conflicting with the patterns used for matching identifiers (=
         # element names and the likes).
 
-        operator = '|'
-          | 'and'
-          | 'or'
-          | '+'
-          | 'div'
-          | 'mod'
-          | '='
-          | '!='
-          | '<'
-          | '>'
-          | '<='
-          | '>=';
+        op_pipe = '|'  %{ add_token(:T_PIPE) };
+        op_plus = '+'  %{ add_token(:T_ADD) };
+        op_eq   = '='  %{ add_token(:T_EQ) };
+        op_neq  = '!=' %{ add_token(:T_NEQ) };
+        op_lt   = '<'  %{ add_token(:T_LT) };
+        op_gt   = '>'  %{ add_token(:T_GT) };
+        op_lte  = '<=' %{ add_token(:T_LTE) };
+        op_gte  = '>=' %{ add_token(:T_GTE) };
 
         # These operators require whitespace around them in order to be lexed
         # as operators. This is due to "-" being allowed in node names and "*"
@@ -259,23 +255,35 @@ module Oga
         # THINK: relying on whitespace is a rather fragile solution, even
         # though the W3 actually recommends this for the "-" operator. Perhaps
         # there's a better way of doing this.
-        space_operator = space ('*' | '-') space;
 
-        action emit_operator {
-          emit(:T_OP, ts, te)
-        }
+        op_and = ' and ' %{ add_token(:T_AND) };
+        op_or  = ' or '  %{ add_token(:T_OR) };
+        op_div = ' div ' %{ add_token(:T_DIV) };
+        op_mod = ' mod ' %{ add_token(:T_MOD) };
+        op_mul = ' * '   %{ add_token(:T_MUL) };
+        op_sub = ' - '   %{ add_token(:T_SUB) };
 
-        action emit_space_operator {
-          emit(:T_OP, ts + 1, te - 1)
-        }
+        operator = op_pipe
+          | op_and
+          | op_or
+          | op_plus
+          | op_div
+          | op_mod
+          | op_eq
+          | op_neq
+          | op_lt
+          | op_gt
+          | op_lte
+          | op_gte
+          | op_mul
+          | op_sub
+          ;
 
         # Machine that handles the lexing of data inside an XPath predicate.
         # When bumping into a "]" the lexer jumps back to the `main` machine.
         predicate := |*
+          operator;
           whitespace | slash | lparen | rparen | comma | colon | star;
-
-          operator       => emit_operator;
-          space_operator => emit_space_operator;
 
           string     => emit_string;
           integer    => emit_integer;
@@ -291,6 +299,7 @@ module Oga
         *|;
 
         main := |*
+          operator;
           whitespace | slash | lparen | rparen | comma | colon | star;
 
           '[' => {
