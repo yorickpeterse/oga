@@ -5,10 +5,11 @@ module Oga
     #
     # @param [Symbol] type
     # @param [Array] cihldren
-    # @return [Oga::AST::Node]
+    # @return [AST::Node]
     #
     def s(type, *children)
-      return Oga::AST::Node.new(type, children)
+      # TODO: add support for CSS AST nodes.
+      return Oga::XPath::Node.new(type, children)
     end
 
     ##
@@ -30,6 +31,16 @@ module Oga
     #
     def lex_xpath(input)
       return Oga::XPath::Lexer.new(input).lex
+    end
+
+    ##
+    # Parses an XPath expression.
+    #
+    # @param [String] input
+    # @return [Oga::XPath::Node]
+    #
+    def parse_xpath(input)
+      return Oga::XPath::Parser.new(input).parse
     end
 
     ##

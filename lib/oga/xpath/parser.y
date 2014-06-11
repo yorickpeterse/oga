@@ -3,30 +3,74 @@
 #
 class Oga::XPath::Parser
 
-token T_AXIS T_COLON T_COMMA T_FLOAT T_INT T_IDENT T_OP T_STAR
+token T_AXIS T_COLON T_COMMA T_FLOAT T_INT T_IDENT T_STAR
 token T_LBRACK T_RBRACK T_LPAREN T_RPAREN T_SLASH T_STRING
+token T_PIPE T_AND T_OR T_ADD T_DIV T_MOD T_EQ T_NEQ T_LT T_GT T_LTE T_GTE
 
 options no_result_var
 
+prechigh
+  left  T_EQ
+  right T_OR
+preclow
+
 rule
-  expressions
-    : expressions_ { s(:xpath, *val[0]) }
-    | /* none */   { s(:xpath) }
+  xpath
+    : expressions { s(:xpath, *val[0]) }
+    | /* none */  { s(:xpath) }
     ;
 
-  expressions_
-    : expressions_ expression { val[0] << val[1] }
-    | expression              { val }
+  expressions
+    : expressions expression { val[0] << val[1] }
+    | expression             { val }
     ;
 
   expression
-    : node_test
+    : path
+    | node_test
+    | operator
+    | axis
+    | string
+    | number
+    ;
+
+  path
+    : T_SLASH node_test { s(:path, val[1]) }
     ;
 
   node_test
-    : T_IDENT                  { s(:node, nil, val[0]) }
-    | T_IDENT T_COLON T_IDENT  { s(:node, val[0], val[2]) }
+    : node_name           { s(:node_test, val[0]) }
+    | node_name predicate { s(:node_test, val[0], *val[1]) }
     ;
+
+  node_name
+    # foo
+    : T_IDENT { s(:name, nil, val[0]) }
+
+    # foo:bar
+    | T_IDENT T_COLON T_IDENT { s(:name, val[0], val[1]) }
+    ;
+
+  predicate
+    : T_LBRACK expressions T_RBRACK { val[1] }
+    ;
+
+  operator
+    : expression T_EQ expression { s(:eq, val[0], val[2]) }
+    | expression T_OR expression { s(:or, val[0], val[2]) }
+    ;
+
+  axis
+    : T_AXIS T_IDENT { s(:axis, val[0], val[1]) }
+    ;
+
+  string
+    : T_STRING { s(:string, val[0]) }
+    ;
+
+  number
+    : T_INT   { s(:int, val[0]) }
+    | T_FLOAT { s(:float, val[0]) }
 end
 
 ---- inner
