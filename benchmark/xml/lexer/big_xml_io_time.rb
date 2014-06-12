@@ -1,4 +1,4 @@
-require_relative '../benchmark_helper'
+require_relative '../../benchmark_helper'
 
 Benchmark.bmbm(10) do |bench|
   bench.report '10MB of XML using IO' do

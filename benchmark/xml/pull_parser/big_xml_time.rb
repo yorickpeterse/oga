@@ -1,4 +1,4 @@
-require_relative '../benchmark_helper'
+require_relative '../../benchmark_helper'
 
 xml    = read_big_xml
 parser = Oga::XML::PullParser.new(xml)

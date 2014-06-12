@@ -1,4 +1,4 @@
-require_relative '../benchmark_helper'
+require_relative '../../benchmark_helper'
 
 string = 'Hello, how are you doing today?'
 small  = "<![CDATA[#{string}]]>"
