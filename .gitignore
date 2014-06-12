@@ -11,8 +11,8 @@ lib/liboga.*
 
 benchmark/fixtures/big.xml
 
-profile/samples/*.txt
-profile/samples/*/*.txt
+profile/samples/xml/*.txt
+profile/samples/xml/*/*.txt
 *.so
 tmp
 
