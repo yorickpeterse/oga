@@ -10,7 +10,11 @@ describe Oga::XPath::Parser do
           s(
             :node_test,
             s(:name, nil, 'foo'),
-            s(:eq, s(:axis, 'attribute', 'class'), s(:string, 'bar'))
+            s(
+              :eq,
+              s(:axis, 'attribute', s(:name, nil, 'class')),
+              s(:string, 'bar')
+            )
           )
         )
       )
@@ -26,8 +30,16 @@ describe Oga::XPath::Parser do
             s(:name, nil, 'foo'),
             s(
               :or,
-              s(:eq, s(:axis, 'attribute', 'class'), s(:string, 'bar')),
-              s(:eq, s(:axis, 'attribute', 'class'), s(:string, 'baz'))
+              s(
+                :eq,
+                s(:axis, 'attribute', s(:name, nil, 'class')),
+                s(:string, 'bar')
+              ),
+              s(
+                :eq,
+                s(:axis, 'attribute', s(:name, nil, 'class')),
+                s(:string, 'baz')
+              )
             )
           )
         )
