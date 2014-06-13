@@ -58,7 +58,7 @@ describe Oga::XPath::Lexer do
       ]
     end
 
-    example 'lex the follow-sibling axis' do
+    example 'lex the following-sibling axis' do
       lex_xpath('/following-sibling::A').should == [
         [:T_SLASH, nil],
         [:T_AXIS, 'following-sibling'],
