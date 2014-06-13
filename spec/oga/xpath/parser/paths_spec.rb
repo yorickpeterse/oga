@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Oga::XPath::Parser do
-  context 'axes' do
+  context 'paths' do
     example 'parse an absolute path' do
       parse_xpath('/foo').should == s(
         :xpath,
