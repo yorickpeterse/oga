@@ -16,31 +16,27 @@ preclow
 
 rule
   xpath
-    : expressions { s(:xpath, *val[0]) }
-    | /* none */  { s(:xpath) }
-    ;
-
-  expressions
-    : expressions expression { val[0] << val[1] }
-    | expression             { val }
+    : T_SLASH expression { s(:absolute, val[1]) }
+    | expression         { val[0] }
+    | /* none */         { nil }
     ;
 
   expression
-    : path
-    | node_test
+    : node_tests
     | operator
     | axis
     | string
     | number
     ;
 
-  path
-    : T_SLASH node_test { s(:path, val[1]) }
+  node_tests
+    : node_test                    { val[0] }
+    | node_test T_SLASH node_tests { val[0].append(val[2]) }
     ;
 
   node_test
-    : node_name           { s(:node_test, val[0]) }
-    | node_name predicate { s(:node_test, val[0], *val[1]) }
+    : node_name           { s(:test, val[0]) }
+    | node_name predicate { s(:test, val[0], val[1]) }
     ;
 
   node_name
@@ -52,7 +48,7 @@ rule
     ;
 
   predicate
-    : T_LBRACK expressions T_RBRACK { val[1] }
+    : T_LBRACK xpath T_RBRACK { s(:predicate, val[1]) }
     ;
 
   operator
@@ -61,7 +57,7 @@ rule
     ;
 
   axis
-    : T_AXIS T_IDENT { s(:axis, val[0], val[1]) }
+    : T_AXIS node_name { s(:axis, val[0], val[1]) }
     ;
 
   string

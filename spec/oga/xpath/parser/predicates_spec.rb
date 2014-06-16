@@ -4,12 +4,12 @@ describe Oga::XPath::Parser do
   context 'predicates' do
     example 'parse a single predicate' do
       parse_xpath('/foo[@class="bar"]').should == s(
-        :xpath,
+        :absolute,
         s(
-          :path,
+          :test,
+          s(:name, nil, 'foo'),
           s(
-            :node_test,
-            s(:name, nil, 'foo'),
+            :predicate,
             s(
               :eq,
               s(:axis, 'attribute', s(:name, nil, 'class')),
@@ -22,12 +22,12 @@ describe Oga::XPath::Parser do
 
     example 'parse a predicate using the or operator' do
       parse_xpath('/foo[@class="bar" or @class="baz"]').should == s(
-        :xpath,
+        :absolute,
         s(
-          :path,
+          :test,
+          s(:name, nil, 'foo'),
           s(
-            :node_test,
-            s(:name, nil, 'foo'),
+            :predicate,
             s(
               :or,
               s(
