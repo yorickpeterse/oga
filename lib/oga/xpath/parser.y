@@ -16,9 +16,13 @@ preclow
 
 rule
   xpath
+    : paths      { val[0] }
+    | /* none */ { nil }
+    ;
+
+  paths
     : T_SLASH path { s(:absolute, val[1]) }
     | path         { val[0] }
-    | /* none */   { nil }
     ;
 
   path
@@ -49,7 +53,7 @@ rule
     ;
 
   predicate
-    : T_LBRACK xpath T_RBRACK { val[1] }
+    : T_LBRACK paths T_RBRACK { val[1] }
     ;
 
   operator
@@ -68,8 +72,8 @@ rule
     ;
 
   call_args
-    : xpath                   { val }
-    | xpath T_COMMA call_args { [val[0], *val[2]] }
+    : paths                   { val }
+    | paths T_COMMA call_args { [val[0], *val[2]] }
     ;
 
   string
