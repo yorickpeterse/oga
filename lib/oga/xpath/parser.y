@@ -73,7 +73,7 @@ rule
 
   call_args
     : paths                   { val }
-    | paths T_COMMA call_args { [val[0], *val[2]] }
+    | paths T_COMMA call_args { val[2].unshift(val[0]) }
     ;
 
   string
