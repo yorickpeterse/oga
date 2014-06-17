@@ -10,45 +10,45 @@ token T_PIPE T_AND T_OR T_ADD T_DIV T_MOD T_EQ T_NEQ T_LT T_GT T_LTE T_GTE
 options no_result_var
 
 prechigh
-  left  T_EQ
+  left  T_EQ T_AXIS
   right T_OR
 preclow
 
 rule
   xpath
-    : T_SLASH expression { s(:absolute, val[1]) }
-    | expression         { val[0] }
-    | /* none */         { nil }
+    : T_SLASH path { s(:absolute, val[1]) }
+    | path         { val[0] }
+    | /* none */   { nil }
+    ;
+
+  path
+    : expression              { s(:path, val[0]) }
+    | expression T_SLASH path { s(:path, val[0], val[2]) }
     ;
 
   expression
-    : node_tests
+    : node_test
     | operator
     | axis
     | string
     | number
     ;
 
-  node_tests
-    : node_test                    { val[0] }
-    | node_test T_SLASH node_tests { val[0].append(val[2]) }
-    ;
-
   node_test
-    : node_name           { s(:test, val[0]) }
-    | node_name predicate { s(:test, val[0], val[1]) }
+    : node_name           { s(:test, *val[0]) }
+    | node_name predicate { s(:test, *val[0], val[1]) }
     ;
 
   node_name
     # foo
-    : T_IDENT { s(:name, nil, val[0]) }
+    : T_IDENT { [nil, val[0]] }
 
     # foo:bar
-    | T_IDENT T_COLON T_IDENT { s(:name, val[0], val[1]) }
+    | T_IDENT T_COLON T_IDENT { [val[0], val[2]] }
     ;
 
   predicate
-    : T_LBRACK xpath T_RBRACK { s(:predicate, val[1]) }
+    : T_LBRACK xpath T_RBRACK { val[1] }
     ;
 
   operator
@@ -57,7 +57,8 @@ rule
     ;
 
   axis
-    : T_AXIS node_name { s(:axis, val[0], val[1]) }
+    : T_AXIS expression { s(:axis, val[0], val[1]) }
+    | T_AXIS            { s(:axis, val[0]) }
     ;
 
   string

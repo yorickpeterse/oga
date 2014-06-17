@@ -6,14 +6,18 @@ describe Oga::XPath::Parser do
       parse_xpath('/foo[@class="bar"]').should == s(
         :absolute,
         s(
-          :test,
-          s(:name, nil, 'foo'),
+          :path,
           s(
-            :predicate,
+            :test,
+            nil,
+            'foo',
             s(
-              :eq,
-              s(:axis, 'attribute', s(:name, nil, 'class')),
-              s(:string, 'bar')
+              :path,
+              s(
+                :eq,
+                s(:axis, 'attribute', s(:test, nil, 'class')),
+                s(:string, 'bar')
+              )
             )
           )
         )
@@ -24,21 +28,25 @@ describe Oga::XPath::Parser do
       parse_xpath('/foo[@class="bar" or @class="baz"]').should == s(
         :absolute,
         s(
-          :test,
-          s(:name, nil, 'foo'),
+          :path,
           s(
-            :predicate,
+            :test,
+            nil,
+            'foo',
             s(
-              :or,
+              :path,
               s(
-                :eq,
-                s(:axis, 'attribute', s(:name, nil, 'class')),
-                s(:string, 'bar')
-              ),
-              s(
-                :eq,
-                s(:axis, 'attribute', s(:name, nil, 'class')),
-                s(:string, 'baz')
+                :or,
+                s(
+                  :eq,
+                  s(:axis, 'attribute', s(:test, nil, 'class')),
+                  s(:string, 'bar')
+                ),
+                s(
+                  :eq,
+                  s(:axis, 'attribute', s(:test, nil, 'class')),
+                  s(:string, 'baz')
+                )
               )
             )
           )
