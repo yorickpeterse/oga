@@ -279,34 +279,16 @@ module Oga
           | op_sub
           ;
 
-        # Machine that handles the lexing of data inside an XPath predicate.
-        # When bumping into a "]" the lexer jumps back to the `main` machine.
-        predicate := |*
-          operator;
-          whitespace | slash | lparen | rparen | comma | colon | star;
-
-          string     => emit_string;
-          integer    => emit_integer;
-          float      => emit_float;
-          axis_full  => emit_axis_full;
-          axis_short => emit_axis_short;
-          identifier => emit_identifier;
-
-          ']' => {
-            add_token(:T_RBRACK)
-            fnext main;
-          };
-        *|;
-
         main := |*
           operator;
           whitespace | slash | lparen | rparen | comma | colon | star;
 
-          '[' => {
-            add_token(:T_LBRACK)
-            fnext predicate;
-          };
+          '[' => { add_token(:T_LBRACK) };
+          ']' => { add_token(:T_RBRACK) };
 
+          string     => emit_string;
+          integer    => emit_integer;
+          float      => emit_float;
           axis_full  => emit_axis_full;
           axis_short => emit_axis_short;
           identifier => emit_identifier;
