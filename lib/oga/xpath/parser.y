@@ -32,6 +32,7 @@ rule
     | axis
     | string
     | number
+    | call
     ;
 
   node_test
@@ -59,6 +60,16 @@ rule
   axis
     : T_AXIS expression { s(:axis, val[0], val[1]) }
     | T_AXIS            { s(:axis, val[0]) }
+    ;
+
+  call
+    : T_IDENT T_LPAREN T_RPAREN           { s(:call, val[0]) }
+    | T_IDENT T_LPAREN call_args T_RPAREN { s(:call, val[0], *val[2]) }
+    ;
+
+  call_args
+    : xpath                   { val }
+    | xpath T_COMMA call_args { [val[0], *val[2]] }
     ;
 
   string
