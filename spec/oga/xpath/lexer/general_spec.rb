@@ -16,13 +16,13 @@ describe Oga::XPath::Lexer do
     end
 
     example 'lex a whildcard node test' do
-      lex_xpath('/*').should == [[:T_SLASH, nil], [:T_STAR, nil]]
+      lex_xpath('/*').should == [[:T_SLASH, nil], [:T_IDENT, '*']]
     end
 
     example 'lex a wildcard node test for a namespace' do
       lex_xpath('/*:foo').should == [
         [:T_SLASH, nil],
-        [:T_STAR, nil],
+        [:T_IDENT, '*'],
         [:T_COLON, nil],
         [:T_IDENT, 'foo']
       ]

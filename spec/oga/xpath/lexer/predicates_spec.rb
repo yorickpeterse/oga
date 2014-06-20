@@ -108,7 +108,7 @@ describe Oga::XPath::Lexer do
         [:T_SLASH, nil],
         [:T_IDENT, 'foo'],
         [:T_SLASH, nil],
-        [:T_STAR, nil],
+        [:T_IDENT, '*'],
         [:T_RBRACK, nil]
       ]
     end

@@ -145,14 +145,13 @@ module Oga
         rparen = ')' @{ add_token(:T_RPAREN) };
         comma  = ',' @{ add_token(:T_COMMA) };
         colon  = ':' @{ add_token(:T_COLON) };
-        star   = '*' @{ add_token(:T_STAR) };
 
         # Identifiers
         #
         # Identifiers are used for element names, namespaces, attribute names,
         # etc. Identifiers have to start with a letter.
 
-        identifier = [a-zA-Z]+ [a-zA-Z\-_0-9]*;
+        identifier = [a-zA-Z*]+ [a-zA-Z\-_0-9]*;
 
         action emit_identifier {
           emit(:T_IDENT, ts, te)
@@ -281,7 +280,7 @@ module Oga
 
         main := |*
           operator;
-          whitespace | slash | lparen | rparen | comma | colon | star;
+          whitespace | slash | lparen | rparen | comma | colon;
 
           '[' => { add_token(:T_LBRACK) };
           ']' => { add_token(:T_RBRACK) };
