@@ -105,9 +105,9 @@ describe Oga::XPath::Parser do
       parse_xpath('A and B = C').should == s(
         :path,
         s(
-          :eq,
-          s(:and, s(:test, nil, 'A'), s(:test, nil, 'B')),
-          s(:test, nil, 'C')
+          :and,
+          s(:test, nil, 'A'),
+          s(:eq, s(:test, nil, 'B'), s(:test, nil, 'C'))
         )
       )
     end

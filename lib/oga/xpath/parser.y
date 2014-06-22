@@ -12,7 +12,8 @@ options no_result_var
 
 prechigh
   left T_PIPE T_MOD T_DIV T_MUL T_SUB T_ADD
-  left T_GT T_GTE T_LT T_LTE T_NEQ T_EQ T_AND T_OR
+  left T_GT T_GTE T_LT T_LTE T_NEQ T_EQ
+  left T_AND T_OR
 preclow
 
 rule
