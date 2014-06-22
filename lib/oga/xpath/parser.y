@@ -6,12 +6,13 @@ class Oga::XPath::Parser
 token T_AXIS T_COLON T_COMMA T_FLOAT T_INT T_IDENT
 token T_LBRACK T_RBRACK T_LPAREN T_RPAREN T_SLASH T_STRING
 token T_PIPE T_AND T_OR T_ADD T_DIV T_MOD T_EQ T_NEQ T_LT T_GT T_LTE T_GTE
+token T_SUB T_MUL
 
 options no_result_var
 
 prechigh
-  left  T_EQ T_AXIS
-  right T_OR
+  left T_PIPE T_MOD T_DIV T_MUL T_SUB T_ADD
+  left T_GT T_GTE T_LT T_LTE T_NEQ T_EQ T_AND T_OR
 preclow
 
 rule
@@ -57,13 +58,30 @@ rule
     ;
 
   operator
-    : expression T_EQ expression { s(:eq, val[0], val[2]) }
-    | expression T_OR expression { s(:or, val[0], val[2]) }
+    : expression T_PIPE expression { s(:pipe, val[0], val[2]) }
+    | expression T_AND  expression { s(:and, val[0], val[2]) }
+    | expression T_OR   expression { s(:or, val[0], val[2]) }
+    | expression T_ADD  expression { s(:add, val[0], val[2]) }
+    | expression T_DIV  expression { s(:div, val[0], val[2]) }
+    | expression T_MOD  expression { s(:mod, val[0], val[2]) }
+    | expression T_EQ   expression { s(:eq, val[0], val[2]) }
+    | expression T_NEQ  expression { s(:neq, val[0], val[2]) }
+    | expression T_LT   expression { s(:lt, val[0], val[2]) }
+    | expression T_GT   expression { s(:gt, val[0], val[2]) }
+    | expression T_LTE  expression { s(:lte, val[0], val[2]) }
+    | expression T_GTE  expression { s(:gte, val[0], val[2]) }
+    | expression T_MUL  expression { s(:mul, val[0], val[2]) }
+    | expression T_SUB  expression { s(:sub, val[0], val[2]) }
     ;
 
   axis
-    : T_AXIS expression { s(:axis, val[0], val[1]) }
+    : T_AXIS axis_value { s(:axis, val[0], val[1]) }
     | T_AXIS            { s(:axis, val[0]) }
+    ;
+
+  axis_value
+    : node_test
+    | call
     ;
 
   call

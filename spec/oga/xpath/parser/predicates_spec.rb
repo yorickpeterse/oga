@@ -3,21 +3,18 @@ require 'spec_helper'
 describe Oga::XPath::Parser do
   context 'predicates' do
     example 'parse a single predicate' do
-      parse_xpath('/foo[@class="bar"]').should == s(
-        :absolute,
+      parse_xpath('foo[@class="bar"]').should == s(
+        :path,
         s(
-          :path,
+          :test,
+          nil,
+          'foo',
           s(
-            :test,
-            nil,
-            'foo',
+            :path,
             s(
-              :path,
-              s(
-                :eq,
-                s(:axis, 'attribute', s(:test, nil, 'class')),
-                s(:string, 'bar')
-              )
+              :eq,
+              s(:axis, 'attribute', s(:test, nil, 'class')),
+              s(:string, 'bar')
             )
           )
         )
@@ -25,28 +22,25 @@ describe Oga::XPath::Parser do
     end
 
     example 'parse a predicate using the or operator' do
-      parse_xpath('/foo[@class="bar" or @class="baz"]').should == s(
-        :absolute,
+      parse_xpath('foo[@class="bar" or @class="baz"]').should == s(
+        :path,
         s(
-          :path,
+          :test,
+          nil,
+          'foo',
           s(
-            :test,
-            nil,
-            'foo',
+            :path,
             s(
-              :path,
+              :or,
               s(
-                :or,
-                s(
-                  :eq,
-                  s(:axis, 'attribute', s(:test, nil, 'class')),
-                  s(:string, 'bar')
-                ),
-                s(
-                  :eq,
-                  s(:axis, 'attribute', s(:test, nil, 'class')),
-                  s(:string, 'baz')
-                )
+                :eq,
+                s(:axis, 'attribute', s(:test, nil, 'class')),
+                s(:string, 'bar')
+              ),
+              s(
+                :eq,
+                s(:axis, 'attribute', s(:test, nil, 'class')),
+                s(:string, 'baz')
               )
             )
           )
