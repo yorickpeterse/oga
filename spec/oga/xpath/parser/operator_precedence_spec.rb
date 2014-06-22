@@ -94,9 +94,9 @@ describe Oga::XPath::Parser do
       parse_xpath('A or B and C').should == s(
         :path,
         s(
-          :and,
-          s(:or, s(:test, nil, 'A'), s(:test, nil, 'B')),
-          s(:test, nil, 'C')
+          :or,
+          s(:test, nil, 'A'),
+          s(:and, s(:test, nil, 'B'), s(:test, nil, 'C'))
         )
       )
     end
@@ -116,9 +116,9 @@ describe Oga::XPath::Parser do
       parse_xpath('A = B < C').should == s(
         :path,
         s(
-          :lt,
-          s(:eq, s(:test, nil, 'A'), s(:test, nil, 'B')),
-          s(:test, nil, 'C')
+          :eq,
+          s(:test, nil, 'A'),
+          s(:lt, s(:test, nil, 'B'), s(:test, nil, 'C'))
         )
       )
     end
