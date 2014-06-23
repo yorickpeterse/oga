@@ -94,4 +94,3 @@ in the root directory of this repository.
 [nokogiri]: https://github.com/sparklemotion/nokogiri
 [oga-wikipedia]: https://en.wikipedia.org/wiki/Japanese_saw#Other_Japanese_saws
 [ox]: https://github.com/ohler55/ox
-[dogecoin]: http://dogecoin.com/
