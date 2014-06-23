@@ -7,6 +7,10 @@ SimpleCov.configure do
 
   add_filter 'spec'
   add_filter 'lib/oga/version'
+
+  add_group 'XML', 'lib/oga/xml'
+  add_group 'HTML', 'lib/oga/html'
+  add_group 'XPath', 'lib/oga/xpath'
 end
 
 SimpleCov.start
