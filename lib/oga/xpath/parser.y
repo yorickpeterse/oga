@@ -10,6 +10,15 @@ token T_SUB T_MUL
 
 options no_result_var
 
+# Token precedence according to the XPath 1.0 specification. The precedence of
+# tokens such as T_PIPE and T_MOD is not mentioned in the official
+# specification. Instead this precedence was based on an online excerpt of the
+# book "XSLT 1.0".
+#
+# Each `left` or `right` line adds a new precedence rule in descending order.
+# In other words, the tokens at the top have a higher precedence than those at
+# the bottom.
+#
 prechigh
   left T_PIPE T_MOD T_DIV T_MUL T_SUB T_ADD
   left T_LT T_LTE T_GT T_GTE
