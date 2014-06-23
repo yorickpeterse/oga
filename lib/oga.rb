@@ -9,9 +9,11 @@ require_relative 'oga/xml/pull_parser'
 
 require_relative 'liboga'
 
+#:nocov:
 if RUBY_PLATFORM == 'java'
   org.liboga.Liboga.load(JRuby.runtime)
 end
+#:nocov:
 
 require_relative 'oga/xml/node'
 require_relative 'oga/xml/element'
