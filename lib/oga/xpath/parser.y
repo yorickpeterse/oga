@@ -157,7 +157,7 @@ end
   #  parser = Oga::XPath::Parser.new('//foo')
   #  ast    = parser.parse
   #
-  # @return [Oga::AST::Node]
+  # @return [Oga::XPath::Node]
   #
   def parse
     ast = yyparse(self, :yield_next_token)
