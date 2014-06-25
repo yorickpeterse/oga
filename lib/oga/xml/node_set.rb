@@ -9,8 +9,6 @@ module Oga
 
       def initialize(nodes = [])
         @nodes = nodes
-
-        associate_nodes
       end
 
       def each
@@ -23,9 +21,12 @@ module Oga
 
       alias_method :size, :length
 
+      def index(node)
+        return @nodes.index(node)
+      end
+
       def push(node)
         node.node_set = self
-        node.index    = node.length
 
         @nodes << node
       end
@@ -38,8 +39,8 @@ module Oga
 
       def remove
         @nodes.each do |node|
-          # Remove references to the node from the parent node, if any.
-          node.parent.children.delete!(node) if node.parent
+          node.node_set.delete!(node)
+          node.node_set = nil
         end
       end
 
@@ -63,7 +64,6 @@ module Oga
       def associate_nodes
         @nodes.each_with_index do |node, index|
           node.node_set = self
-          node.index    = index
         end
       end
     end # NodeSet
