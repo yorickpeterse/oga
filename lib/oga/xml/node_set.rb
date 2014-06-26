@@ -31,13 +31,21 @@ module Oga
 
       alias_method :<<, :push
 
-      def attr(name)
-        return @nodes.map { |node| node.attr(name) }
+      def unshift(node)
+        @nodes.unshift(node)
+      end
+
+      def shift
+        return @noes.shift
+      end
+
+      def pop
+        return @nodes.pop
       end
 
       def remove
         @nodes.each do |node|
-          node.node_set.delete!(node)
+          node.node_set.delete(node)
           node.node_set = nil
         end
       end
@@ -45,9 +53,23 @@ module Oga
       ##
       # Removes a node from the current set only.
       #
-      def delete!(node)
+      def delete(node)
         @nodes.delete(node)
       end
+
+      def attribute(name)
+        values = []
+
+        @nodes.each do |node|
+          if node.node_type == :element
+            values << node.attribute(name)
+          end
+        end
+
+        return values
+      end
+
+      alias_method :attr, :attribute
 
       def text
         text = ''
@@ -59,7 +81,7 @@ module Oga
         return text
       end
 
-      def associate_nodes
+      def associate_nodes!
         @nodes.each_with_index do |node, index|
           node.node_set = self
         end
