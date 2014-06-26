@@ -16,8 +16,11 @@ module Oga
     # @!attribute [rw] previous
     #  @return [Oga::XML::Node]
     #
+    # @!attribute [rw] node_set
+    #  @return [Oga::XML::NodeSet]
+    #
     class Node
-      attr_accessor :parent, :children, :next, :previous
+      attr_accessor :parent, :children, :next, :previous, :node_set
 
       ##
       # @param [Hash] options

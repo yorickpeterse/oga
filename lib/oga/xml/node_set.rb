@@ -15,10 +15,19 @@ module Oga
         @nodes.each { |node| yield node }
       end
 
+      def last
+        return @nodes[-1]
+      end
+
+      def empty?
+        return @nodes.empty?
+      end
+
       def length
         return @nodes.length
       end
 
+      alias_method :count, :length
       alias_method :size, :length
 
       def index(node)
@@ -36,7 +45,7 @@ module Oga
       end
 
       def shift
-        return @noes.shift
+        return @nodes.shift
       end
 
       def pop
@@ -61,7 +70,7 @@ module Oga
         values = []
 
         @nodes.each do |node|
-          if node.node_type == :element
+          if node.respond_to?(:attribute)
             values << node.attribute(name)
           end
         end
@@ -75,14 +84,16 @@ module Oga
         text = ''
 
         @nodes.each do |node|
-          text << node.text
+          if node.respond_to?(:text)
+            text << node.text
+          end
         end
 
         return text
       end
 
       def associate_nodes!
-        @nodes.each_with_index do |node, index|
+        @nodes.each do |node|
           node.node_set = self
         end
       end

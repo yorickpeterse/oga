@@ -47,6 +47,15 @@ module Oga
       alias_method :attr, :attribute
 
       ##
+      # Returns the text of all child nodes joined together.
+      #
+      # @return [String]
+      #
+      def text
+        return children.text
+      end
+
+      ##
       # Converts the element and its child elements to XML.
       #
       # @return [String]
