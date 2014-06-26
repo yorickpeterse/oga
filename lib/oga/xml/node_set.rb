@@ -26,8 +26,6 @@ module Oga
       end
 
       def push(node)
-        node.node_set = self
-
         @nodes << node
       end
 
