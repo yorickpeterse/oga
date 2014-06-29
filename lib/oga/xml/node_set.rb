@@ -104,6 +104,16 @@ module Oga
       end
 
       ##
+      # Returns the node for the given index.
+      #
+      # @param [Fixnum] index
+      # @return [Oga::XML::Node]
+      #
+      def [](index)
+        return @nodes[index]
+      end
+
+      ##
       # Removes the current nodes from their owning set. The nodes are *not*
       # removed from the current set.
       #

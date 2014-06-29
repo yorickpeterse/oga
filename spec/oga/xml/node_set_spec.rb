@@ -128,6 +128,17 @@ describe Oga::XML::NodeSet do
     end
   end
 
+  context '#[]' do
+    before do
+      @n1  = Oga::XML::Element.new(:name => 'a')
+      @set = described_class.new([@n1])
+    end
+
+    example 'return a node from a given index' do
+      @set[0].should == @n1
+    end
+  end
+
   context '#remove' do
     before do
       @n1  = Oga::XML::Element.new(:name => 'a')
