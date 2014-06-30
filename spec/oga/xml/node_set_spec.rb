@@ -11,6 +11,20 @@ describe Oga::XML::NodeSet do
 
       described_class.new([node]).length.should == 1
     end
+
+    example 'set the owner of a set' do
+      node = Oga::XML::Element.new
+      set  = described_class.new([], node)
+
+      set.owner.should == node
+    end
+
+    example 'take ownership of the nodes when the set has an owner' do
+      node = Oga::XML::Element.new
+      set  = described_class.new([node], node)
+
+      node.node_set.should == set
+    end
   end
 
   context '#each' do
@@ -79,6 +93,15 @@ describe Oga::XML::NodeSet do
 
       @set.length.should == 1
     end
+
+    example 'take ownership of a node if the set has an owner' do
+      child      = Oga::XML::Element.new
+      @set.owner = Oga::XML::Element.new
+
+      @set.push(child)
+
+      child.node_set.should == @set
+    end
   end
 
   context '#unshift' do
@@ -88,18 +111,28 @@ describe Oga::XML::NodeSet do
     end
 
     example 'push a node at the beginning of the set' do
-      n2 = Oga::XML::Element.new(:name => 'b')
+      n2  = Oga::XML::Element.new(:name => 'b')
 
       @set.unshift(n2)
 
       @set.first.should == n2
     end
+
+    example 'take ownership of a node if the set has an owner' do
+      child      = Oga::XML::Element.new
+      @set.owner = Oga::XML::Element.new
+
+      @set.unshift(child)
+
+      child.node_set.should == @set
+    end
   end
 
   context '#shift' do
     before do
-      @n1  = Oga::XML::Element.new(:name => 'a')
-      @set = described_class.new([@n1])
+      owner = Oga::XML::Element.new
+      @n1   = Oga::XML::Element.new
+      @set  = described_class.new([@n1], owner)
     end
 
     example 'remove the node from the set' do
@@ -110,12 +143,19 @@ describe Oga::XML::NodeSet do
     example 'return the node when shifting it' do
       @set.shift.should == @n1
     end
+
+    example 'remove ownership if the node belongs to a node set' do
+      @set.shift
+
+      @n1.node_set.nil?.should == true
+    end
   end
 
   context '#pop' do
     before do
-      @n1  = Oga::XML::Element.new(:name => 'a')
-      @set = described_class.new([@n1])
+      owner = Oga::XML::Element.new
+      @n1   = Oga::XML::Element.new
+      @set  = described_class.new([@n1], owner)
     end
 
     example 'remove the node from the set' do
@@ -125,6 +165,12 @@ describe Oga::XML::NodeSet do
 
     example 'return the node when popping it' do
       @set.pop.should == @n1
+    end
+
+    example 'remove ownership if the node belongs to a node set' do
+      @set.pop
+
+      @n1.node_set.nil?.should == true
     end
   end
 
@@ -141,13 +187,12 @@ describe Oga::XML::NodeSet do
 
   context '#remove' do
     before do
-      @n1  = Oga::XML::Element.new(:name => 'a')
-      @n2  = Oga::XML::Element.new(:name => 'b')
+      owner = Oga::XML::Element.new
+      @n1   = Oga::XML::Element.new
+      @n2   = Oga::XML::Element.new
 
-      @doc_set   = described_class.new([@n1, @n2])
+      @doc_set   = described_class.new([@n1, @n2], owner)
       @query_set = described_class.new([@n1, @n2])
-
-      @doc_set.associate_nodes!
     end
 
     example 'do not remove the nodes from the current set' do
@@ -214,19 +259,6 @@ describe Oga::XML::NodeSet do
 
     example 'return the text of all nodes' do
       @set.text.should == "foo\nbar"
-    end
-  end
-
-  context '#associate_nodes!' do
-    before do
-      @n1  = Oga::XML::Element.new(:name => 'a')
-      @set = described_class.new([@n1])
-    end
-
-    example 'associate a node with a set' do
-      @set.associate_nodes!
-
-      @n1.node_set.should == @set
     end
   end
 end

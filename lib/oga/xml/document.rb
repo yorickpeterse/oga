@@ -4,10 +4,6 @@ module Oga
     # Class used for storing information about an entire XML document. This
     # includes the doctype, XML declaration, child nodes and more.
     #
-    # @!attribute [rw] children
-    #  The child nodes of the document.
-    #  @return [Array]
-    #
     # @!attribute [rw] doctype
     #  The doctype of the document.
     #  @return [Oga::XML::Doctype]
@@ -17,19 +13,40 @@ module Oga
     #  @return [Oga::XML::XmlDeclaration]
     #
     class Document
-      attr_accessor :children, :doctype, :xml_declaration
+      attr_accessor :doctype, :xml_declaration
 
       ##
       # @param [Hash] options
       #
-      # @option options [Array] :children
+      # @option options [Oga::XML::NodeSet] :children
       # @option options [Oga::XML::Doctype] :doctype
       # @option options [Oga::XML::XmlDeclaration] :xml_declaration
       #
       def initialize(options = {})
-        @children        = options[:children] || []
         @doctype         = options[:doctype]
         @xml_declaration = options[:xml_declaration]
+
+        self.children = options[:children] if options[:children]
+      end
+
+      ##
+      # @return [Oga::XML::NodeSet]
+      #
+      def children
+        return @children ||= NodeSet.new([], self)
+      end
+
+      ##
+      # Sets the child nodes of the document.
+      #
+      # @param [Oga::XML::NodeSet|Array] nodes
+      #
+      def children=(nodes)
+        if nodes.is_a?(NodeSet)
+          @children = nodes
+        else
+          @children = NodeSet.new(nodes, self)
+        end
       end
 
       ##

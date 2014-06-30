@@ -6,14 +6,48 @@ module Oga
     # of a node (besides just containing it). This allows the nodes to query
     # their previous and next elements.
     #
+    # There are two types of sets:
+    #
+    # 1. Regular node sets
+    # 2. Owned node sets
+    #
+    # Both behave similar to Ruby's Array class. The difference between an
+    # owned and regular node set is that an owned set modifies nodes that are
+    # added or removed by certain operations. For example, when a node is added
+    # to an owned set the `node_set` attribute of said node points to the set
+    # it was just added to.
+    #
+    # Owned node sets are used when building a DOM tree with
+    # {Oga::XML::Parser}. By taking ownership of nodes in a set Oga makes it
+    # possible to use these sets as following:
+    #
+    #     document = Oga::XML::Document.new
+    #     element  = Oga::XML::Element.new
+    #
+    #     document.children << element
+    #
+    #     element.node_set == document.children # => true
+    #
+    # If ownership was not handled then you'd have to manually set the
+    # `element` variable's `node_set` attribute after pushing it into a set.
+    #
+    # @!attribute [rw] owner
+    #  @return [Oga::XML::Node]
+    #
     class NodeSet
       include Enumerable
 
+      attr_accessor :owner
+
       ##
       # @param [Array] nodes The nodes to add to the set.
+      # @param [Oga::XML::NodeSet] owner The owner of the set.
       #
-      def initialize(nodes = [])
+      def initialize(nodes = [], owner = nil)
         @nodes = nodes
+        @owner = owner
+
+        @nodes.each { |node| take_ownership(node) }
       end
 
       ##
@@ -72,6 +106,8 @@ module Oga
       #
       def push(node)
         @nodes << node
+
+        take_ownership(node)
       end
 
       alias_method :<<, :push
@@ -83,6 +119,8 @@ module Oga
       #
       def unshift(node)
         @nodes.unshift(node)
+
+        take_ownership(node)
       end
 
       ##
@@ -91,7 +129,11 @@ module Oga
       # @return [Oga::XML::Node]
       #
       def shift
-        return @nodes.shift
+        node = @nodes.shift
+
+        remove_ownership(node)
+
+        return node
       end
 
       ##
@@ -100,7 +142,11 @@ module Oga
       # @return [Oga::XML::Node]
       #
       def pop
-        return @nodes.pop
+        node = @nodes.pop
+
+        remove_ownership(node)
+
+        return node
       end
 
       ##
@@ -170,13 +216,25 @@ module Oga
         return text
       end
 
+      private
+
       ##
-      # Takes ownership of all the nodes in the current set.
+      # Takes ownership of the given node. This only occurs when the current
+      # set has an owner.
       #
-      def associate_nodes!
-        @nodes.each do |node|
-          node.node_set = self
-        end
+      # @param [Oga::XML::Node] node
+      #
+      def take_ownership(node)
+        node.node_set = self if owner
+      end
+
+      ##
+      # Removes ownership of the node if it belongs to the current set.
+      #
+      # @param [Oga::XML::Node] node
+      #
+      def remove_ownership(node)
+        node.node_set = nil if node.node_set == self
       end
     end # NodeSet
   end # XML

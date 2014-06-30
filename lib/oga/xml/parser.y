@@ -266,8 +266,6 @@ Unexpected #{name} with value #{value.inspect} on line #{@line}:
       end
     end
 
-    link_children(document)
-
     return document
   end
 
@@ -335,8 +333,6 @@ Unexpected #{name} with value #{value.inspect} on line #{@line}:
   def on_element_children(element, children = [])
     element.children = children
 
-    link_children(element)
-
     return element
   end
 
@@ -360,33 +356,6 @@ Unexpected #{name} with value #{value.inspect} on line #{@line}:
     end
 
     return attrs
-  end
-
-  private
-
-  ##
-  # Links the child nodes together by setting attributes such as the
-  # previous, next and parent node.
-  #
-  # @param [Oga::XML::Node] node
-  #
-  def link_children(node)
-    amount = node.children.length
-
-    node.children.each_with_index do |child, index|
-      prev_index = index - 1
-      next_index = index + 1
-
-      if index > 0
-        child.previous = node.children[prev_index]
-      end
-
-      if next_index <= amount
-        child.next = node.children[next_index]
-      end
-
-      child.parent = node
-    end
   end
 
 # vim: set ft=racc:

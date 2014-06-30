@@ -3,19 +3,19 @@ require 'spec_helper'
 describe Oga::XML::Document do
   context 'setting attributes' do
     example 'set the child nodes via the constructor' do
-      children = [Oga::XML::Comment.new(:text => 'foo')]
-      document = described_class.new(:children => children)
+      child    = Oga::XML::Comment.new(:text => 'foo')
+      document = described_class.new(:children => [child])
 
-      document.children.should == children
+      document.children[0].should == child
     end
 
     example 'set the child nodes via a setter' do
-      children = [Oga::XML::Comment.new(:text => 'foo')]
+      child    = Oga::XML::Comment.new(:text => 'foo')
       document = described_class.new
 
-      document.children = children
+      document.children = [child]
 
-      document.children.should == children
+      document.children[0].should == child
     end
   end
 

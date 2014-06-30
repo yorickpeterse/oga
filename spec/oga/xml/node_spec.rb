@@ -2,15 +2,11 @@ require 'spec_helper'
 
 describe Oga::XML::Node do
   context '#initialize' do
-    example 'set the parent node' do
-      parent = described_class.new
-      child  = described_class.new(:parent => parent)
+    example 'set the node set' do
+      set  = Oga::XML::NodeSet.new
+      node = described_class.new(:node_set => set)
 
-      child.parent.should == parent
-    end
-
-    example 'set the default child nodes' do
-      described_class.new.children.should == []
+      node.node_set.should == set
     end
   end
 
