@@ -213,6 +213,12 @@ describe Oga::XML::NodeSet do
       @n1.node_set.nil?.should == true
       @n2.node_set.nil?.should == true
     end
+
+    example 'remove all nodes from the owned set' do
+      @doc_set.remove
+
+      @doc_set.empty?.should == true
+    end
   end
 
   context '#delete' do

@@ -166,9 +166,21 @@ module Oga
       # This method is intended to remove nodes from an XML document/node.
       #
       def remove
+        sets = []
+
+        # First we gather all the sets to remove nodse from, then we remove the
+        # actual nodes. This is done as you can not reliably remove elements
+        # from an Array while iterating on that same Array.
         @nodes.each do |node|
-          node.node_set.delete(node)
-          node.node_set = nil
+          if node.node_set
+            sets << node.node_set
+
+            node.node_set = nil
+          end
+        end
+
+        sets.each do |set|
+          @nodes.each { |node| set.delete(node) }
         end
       end
 
