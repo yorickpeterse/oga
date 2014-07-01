@@ -1,8 +1,9 @@
 module Oga
   module XML
     ##
-    # A single, generic XML node that can have a parent, next, previous and
-    # child nodes.
+    # A generic XML node. Instances of this class can belong to a
+    # {Oga::XML::NodeSet} and can be used to query surrounding and parent
+    # nodes.
     #
     # @!attribute [rw] node_set
     #  @return [Oga::XML::NodeSet]
