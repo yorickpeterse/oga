@@ -1,5 +1,6 @@
 require 'ast'
 require 'set'
+require 'stringio'
 
 # Load these first so that the native extensions don't have to define the
 # Oga::XML namespace.
