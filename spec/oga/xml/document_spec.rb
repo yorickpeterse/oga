@@ -8,12 +8,23 @@ describe Oga::XML::Document do
 
       document.children[0].should == child
     end
+  end
 
-    example 'set the child nodes via a setter' do
+  context '#children=' do
+    example 'set the child nodes using an Array' do
       child    = Oga::XML::Comment.new(:text => 'foo')
       document = described_class.new
 
       document.children = [child]
+
+      document.children[0].should == child
+    end
+
+    example 'set the child nodes using a NodeSet' do
+      child    = Oga::XML::Comment.new(:text => 'foo')
+      document = described_class.new
+
+      document.children = Oga::XML::NodeSet.new([child])
 
       document.children[0].should == child
     end
