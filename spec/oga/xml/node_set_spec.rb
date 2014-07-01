@@ -223,8 +223,9 @@ describe Oga::XML::NodeSet do
 
   context '#delete' do
     before do
-      @n1  = Oga::XML::Element.new(:name => 'a')
-      @set = described_class.new([@n1])
+      owner = Oga::XML::Element.new
+      @n1   = Oga::XML::Element.new
+      @set  = described_class.new([@n1], owner)
     end
 
     example 'return the node when deleting it' do
@@ -235,6 +236,12 @@ describe Oga::XML::NodeSet do
       @set.delete(@n1)
 
       @set.empty?.should == true
+    end
+
+    example 'remove ownership of the removed node' do
+      @set.delete(@n1)
+
+      @n1.node_set.nil?.should == true
     end
   end
 

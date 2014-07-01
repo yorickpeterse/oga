@@ -188,7 +188,11 @@ module Oga
       # Removes a node from the current set only.
       #
       def delete(node)
-        @nodes.delete(node)
+        removed = @nodes.delete(node)
+
+        remove_ownership(removed) if removed
+
+        return removed
       end
 
       ##
