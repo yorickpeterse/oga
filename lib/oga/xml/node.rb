@@ -81,6 +81,26 @@ module Oga
       end
 
       ##
+      # Returns the root document/node of the current node. The node is
+      # retrieved by traversing upwards in the DOM tree from the current node.
+      #
+      # @return [Oga::XML::Document|Oga::XML::Node]
+      #
+      def root_node
+        node = self
+
+        loop do
+          if !node.is_a?(Document) and node.node_set
+            node = node.node_set.owner
+          else
+            break
+          end
+        end
+
+        return node
+      end
+
+      ##
       # Generates the inspect value for the current node. Sub classes can
       # overwrite the {#extra_inspect_data} method to customize the output
       # format.
