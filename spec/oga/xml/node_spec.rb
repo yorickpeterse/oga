@@ -154,4 +154,24 @@ describe Oga::XML::Node do
       @n4.root_node.should == @n3
     end
   end
+
+  context '#remove' do
+    before do
+      owner = described_class.new
+      @n1   = described_class.new
+      @set  = Oga::XML::NodeSet.new([@n1], owner)
+    end
+
+    example 'return a node from the node set' do
+      @n1.remove
+
+      @set.empty?.should == true
+    end
+
+    example 'remove the reference to the set' do
+      @n1.remove
+
+      @n1.node_set.nil?.should == true
+    end
+  end
 end

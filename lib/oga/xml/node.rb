@@ -131,6 +131,15 @@ module Oga
       end
 
       ##
+      # Removes the current node from the owning node set.
+      #
+      # @return [Oga::XML::Node]
+      #
+      def remove
+        return node_set.delete(self) if node_set
+      end
+
+      ##
       # Generates the inspect value for the current node. Sub classes can
       # overwrite the {#extra_inspect_data} method to customize the output
       # format.
