@@ -29,16 +29,6 @@ describe Oga::XML::Node do
     end
   end
 
-  context '#parent' do
-    example 'return the parent of the node' do
-      owner = described_class.new
-      set   = Oga::XML::NodeSet.new([], owner)
-      node  = described_class.new(:node_set => set)
-
-      node.parent.should == owner
-    end
-  end
-
   context '#children=' do
     example 'set the child nodes using an Array' do
       child = described_class.new
@@ -56,6 +46,16 @@ describe Oga::XML::Node do
       node.children = Oga::XML::NodeSet.new([child])
 
       node.children[0].should == child
+    end
+  end
+
+  context '#parent' do
+    example 'return the parent of the node' do
+      owner = described_class.new
+      set   = Oga::XML::NodeSet.new([], owner)
+      node  = described_class.new(:node_set => set)
+
+      node.parent.should == owner
     end
   end
 
@@ -90,6 +90,50 @@ describe Oga::XML::Node do
 
     example 'return nil if there is no previous node' do
       @n2.next.nil?.should == true
+    end
+  end
+
+  context '#previous_element' do
+    before do
+      owner = described_class.new
+      @n1   = Oga::XML::Element.new
+      @n2   = Oga::XML::Text.new
+      @n3   = described_class.new
+      @set  = Oga::XML::NodeSet.new([@n1, @n2, @n3], owner)
+    end
+
+    example 'return the previous element of a generic node' do
+      @n3.previous_element.should == @n1
+    end
+
+    example 'return the previous element of a text node' do
+      @n2.previous_element.should == @n1
+    end
+
+    example 'return nil if there is no previous element' do
+      @n1.previous_element.nil?.should == true
+    end
+  end
+
+  context '#next_element' do
+    before do
+      owner = described_class.new
+      @n1   = described_class.new
+      @n2   = Oga::XML::Text.new
+      @n3   = Oga::XML::Element.new
+      @set  = Oga::XML::NodeSet.new([@n1, @n2, @n3], owner)
+    end
+
+    example 'return the next element of a generic node' do
+      @n1.next_element.should == @n3
+    end
+
+    example 'return the next element of a text node' do
+      @n2.next_element.should == @n3
+    end
+
+    example 'return nil if there is no next element' do
+      @n3.next_element.nil?.should == true
     end
   end
 

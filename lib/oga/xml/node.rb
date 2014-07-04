@@ -81,6 +81,36 @@ module Oga
       end
 
       ##
+      # Returns the previous element node or nil if there is none.
+      #
+      # @return [Oga::XML::Element]
+      #
+      def previous_element
+        node = self
+
+        while node = node.previous
+          return node if node.is_a?(Element)
+        end
+
+        return
+      end
+
+      ##
+      # Returns the next element node or nil if there is none.
+      #
+      # @return [Oga::XML::Element]
+      #
+      def next_element
+        node = self
+
+        while node = node.next
+          return node if node.is_a?(Element)
+        end
+
+        return
+      end
+
+      ##
       # Returns the root document/node of the current node. The node is
       # retrieved by traversing upwards in the DOM tree from the current node.
       #
