@@ -28,6 +28,24 @@ describe Oga::XML::Element do
     end
   end
 
+  context '#text' do
+    before do
+      t1 = Oga::XML::Text.new(:text => 'Foo')
+      t2 = Oga::XML::Text.new(:text => 'Bar')
+
+      @n1 = described_class.new(:children => [t1])
+      @n2 = described_class.new(:children => [@n1, t2])
+    end
+
+    example 'return the text of the parent node and its child nodes' do
+      @n2.text.should == 'FooBar'
+    end
+
+    example 'return the text of the child node' do
+      @n1.text.should == 'Foo'
+    end
+  end
+
   context '#to_xml' do
     example 'generate the corresponding XML' do
       described_class.new(:name => 'p').to_xml.should == '<p></p>'
