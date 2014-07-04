@@ -56,6 +56,21 @@ module Oga
       end
 
       ##
+      # Returns the text of the current element only.
+      #
+      # @return [String]
+      #
+      def inner_text
+        text = ''
+
+        children.each do |child|
+          text << child.text if child.is_a?(Text)
+        end
+
+        return text
+      end
+
+      ##
       # Converts the element and its child elements to XML.
       #
       # @return [String]

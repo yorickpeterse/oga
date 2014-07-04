@@ -46,6 +46,24 @@ describe Oga::XML::Element do
     end
   end
 
+  context '#inner_text' do
+    before do
+      t1 = Oga::XML::Text.new(:text => 'Foo')
+      t2 = Oga::XML::Text.new(:text => 'Bar')
+
+      @n1 = described_class.new(:children => [t1])
+      @n2 = described_class.new(:children => [@n1, t2])
+    end
+
+    example 'return the inner text of the parent node' do
+      @n2.inner_text.should == 'Bar'
+    end
+
+    example 'return the inner text of the child node' do
+      @n1.inner_text.should == 'Foo'
+    end
+  end
+
   context '#to_xml' do
     example 'generate the corresponding XML' do
       described_class.new(:name => 'p').to_xml.should == '<p></p>'
