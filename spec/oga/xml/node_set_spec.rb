@@ -185,6 +185,30 @@ describe Oga::XML::NodeSet do
     end
   end
 
+  context '#to_a' do
+    before do
+      @n1  = Oga::XML::Element.new(:name => 'a')
+      @set = described_class.new([@n1])
+    end
+
+    example 'convert a set to an Array' do
+      @set.to_a.should == [@n1]
+    end
+  end
+
+  context '#+' do
+    before do
+      @n1   = Oga::XML::Element.new(:name => 'a')
+      @n2   = Oga::XML::Element.new(:name => 'b')
+      @set1 = described_class.new([@n1])
+      @set2 = described_class.new([@n2])
+    end
+
+    example 'merge two sets together' do
+      (@set1 + @set2).to_a.should == [@n1, @n2]
+    end
+  end
+
   context '#remove' do
     before do
       owner = Oga::XML::Element.new

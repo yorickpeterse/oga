@@ -160,6 +160,26 @@ module Oga
       end
 
       ##
+      # Converts the current set to an Array.
+      #
+      # @return [Array]
+      #
+      def to_a
+        return @nodes
+      end
+
+      ##
+      # Creates a new set based on the current and the specified set. The newly
+      # created set does not inherit ownership rules of the current set.
+      #
+      # @param [Oga::XML::NodeSet] other
+      # @return [Oga::XML::NodeSet]
+      #
+      def +(other)
+        return self.class.new(to_a + other.to_a)
+      end
+
+      ##
       # Removes the current nodes from their owning set. The nodes are *not*
       # removed from the current set.
       #
