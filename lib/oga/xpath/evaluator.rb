@@ -71,7 +71,19 @@ module Oga
         @context.each do |xml_node|
           next unless xml_node.is_a?(XML::Element)
 
-          if xml_node.name == name and xml_node.namespace == ns
+          name_matches = xml_node.name == name || name == '*'
+          ns_matches   = false
+
+          if ns and (xml_node.namespace == ns or ns == '*')
+            ns_matches = true
+
+          # If there's no namespace given but the name matches we'll also mark
+          # the namespace as matching.
+          elsif name_matches
+            ns_matches = true
+          end
+
+          if name_matches and ns_matches
             @stack << xml_node
           end
         end
