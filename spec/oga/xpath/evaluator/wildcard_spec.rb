@@ -65,4 +65,26 @@ describe Oga::XPath::Evaluator do
       @set[0].namespace.should == 'ns1'
     end
   end
+
+  context 'name and namespace wildcards' do
+    before do
+      @set = @evaluator.evaluate('a/*:*')
+    end
+
+    example 'return the right amount of rows' do
+      @set.length.should == 3
+    end
+
+    example 'include the first <b> node' do
+      @set[0].name.should == 'b'
+    end
+
+    example 'include the second <b> node' do
+      @set[1].name.should == 'b'
+    end
+
+    example 'include the <c> node' do
+      @set[2].name.should == 'c'
+    end
+  end
 end
