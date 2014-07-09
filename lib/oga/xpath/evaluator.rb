@@ -74,8 +74,8 @@ module Oga
           name_matches = xml_node.name == name || name == '*'
           ns_matches   = false
 
-          if ns and (xml_node.namespace == ns or ns == '*')
-            ns_matches = true
+          if ns
+            ns_matches = xml_node.namespace == ns || ns == '*'
 
           # If there's no namespace given but the name matches we'll also mark
           # the namespace as matching.
