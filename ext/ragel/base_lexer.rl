@@ -225,7 +225,7 @@
         '<' => start_element;
 
         # Regular closing tags.
-        '</' identifier '>' => {
+        '</' identifier (':' identifier)* '>' => {
             callback_simple("on_element_end");
         };
 

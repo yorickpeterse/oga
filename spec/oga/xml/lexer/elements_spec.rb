@@ -141,5 +141,14 @@ describe Oga::XML::Lexer do
         [:T_ELEM_END, nil, 1]
       ]
     end
+
+    example 'lex an element with a start and end namespace' do
+      lex('<foo:p></foo:p>').should == [
+        [:T_ELEM_START, nil, 1],
+        [:T_ELEM_NS, 'foo', 1],
+        [:T_ELEM_NAME, 'p', 1],
+        [:T_ELEM_END, nil, 1]
+      ]
+    end
   end
 end
