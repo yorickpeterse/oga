@@ -39,6 +39,20 @@ module Oga
         end
       end
 
+      def process_all(nodes)
+        nodes.each do |node|
+          process(node)
+        end
+      end
+
+      def on_absolute(node)
+        if @document.respond_to?(:root_node)
+          @context = XML::NodeSet.new([@document.root_node])
+        end
+
+        process_all(node.children)
+      end
+
       def on_path(node)
         test, children = *node
 
