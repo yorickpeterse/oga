@@ -39,8 +39,12 @@ rule
     ;
 
   path
-    : expression              { s(:path, val[0]) }
-    | expression T_SLASH path { s(:path, val[0], val[2]) }
+    : expressions { s(:path, *val[0]) }
+    ;
+
+  expressions
+    : expression                     { val }
+    | expression T_SLASH expressions { [val[0], *val[2]] }
     ;
 
   expression
@@ -70,20 +74,20 @@ rule
     ;
 
   operator
-    : expression T_PIPE expression { s(:pipe, val[0], val[2]) }
-    | expression T_AND  expression { s(:and, val[0], val[2]) }
-    | expression T_OR   expression { s(:or, val[0], val[2]) }
-    | expression T_ADD  expression { s(:add, val[0], val[2]) }
-    | expression T_DIV  expression { s(:div, val[0], val[2]) }
-    | expression T_MOD  expression { s(:mod, val[0], val[2]) }
-    | expression T_EQ   expression { s(:eq, val[0], val[2]) }
-    | expression T_NEQ  expression { s(:neq, val[0], val[2]) }
-    | expression T_LT   expression { s(:lt, val[0], val[2]) }
-    | expression T_GT   expression { s(:gt, val[0], val[2]) }
-    | expression T_LTE  expression { s(:lte, val[0], val[2]) }
-    | expression T_GTE  expression { s(:gte, val[0], val[2]) }
-    | expression T_MUL  expression { s(:mul, val[0], val[2]) }
-    | expression T_SUB  expression { s(:sub, val[0], val[2]) }
+    : paths T_PIPE paths { s(:pipe, val[0], val[2]) }
+    | paths T_AND  paths { s(:and, val[0], val[2]) }
+    | paths T_OR   paths { s(:or, val[0], val[2]) }
+    | paths T_ADD  paths { s(:add, val[0], val[2]) }
+    | paths T_DIV  paths { s(:div, val[0], val[2]) }
+    | paths T_MOD  paths { s(:mod, val[0], val[2]) }
+    | paths T_EQ   paths { s(:eq, val[0], val[2]) }
+    | paths T_NEQ  paths { s(:neq, val[0], val[2]) }
+    | paths T_LT   paths { s(:lt, val[0], val[2]) }
+    | paths T_GT   paths { s(:gt, val[0], val[2]) }
+    | paths T_LTE  paths { s(:lte, val[0], val[2]) }
+    | paths T_GTE  paths { s(:gte, val[0], val[2]) }
+    | paths T_MUL  paths { s(:mul, val[0], val[2]) }
+    | paths T_SUB  paths { s(:sub, val[0], val[2]) }
     ;
 
   axis
