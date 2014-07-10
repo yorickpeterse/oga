@@ -11,7 +11,7 @@ describe Oga::XPath::Evaluator do
       @set = @evaluator.evaluate('a/*')
     end
 
-    example 'retunr the right amount of rows' do
+    example 'return the right amount of rows' do
       @set.length.should == 3
     end
 
