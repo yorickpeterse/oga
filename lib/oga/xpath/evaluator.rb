@@ -45,23 +45,23 @@ module Oga
         end
       end
 
-      def on_absolute(node)
+      def on_absolute_path(node)
         if @document.respond_to?(:root_node)
           @context = XML::NodeSet.new([@document.root_node])
         end
 
-        process_all(node.children)
+        on_path(node)
       end
 
       def on_path(node)
-        test, children = *node
+        last_index = node.children.length - 1
 
-        process(test)
+        node.children.each_with_index do |test, index|
+          process(test)
 
-        if children and !@stack.empty?
-          swap_context
-
-          process(children)
+          if index < last_index and !@stack.empty?
+            swap_context
+          end
         end
       end
 
