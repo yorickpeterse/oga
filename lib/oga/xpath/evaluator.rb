@@ -54,12 +54,12 @@ module Oga
       end
 
       def on_path(node)
-        last_index = node.children.length - 1
+        last_node = node.children[-1]
 
-        node.children.each_with_index do |test, index|
+        node.children.each do |test|
           process(test)
 
-          if index < last_index and !@stack.empty?
+          if test != last_node and !@stack.empty?
             swap_context
           end
         end
