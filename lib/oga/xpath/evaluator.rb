@@ -61,6 +61,8 @@ module Oga
 
           if test != last_node and !@stack.empty?
             swap_context
+          elsif @stack.empty?
+            break
           end
         end
       end

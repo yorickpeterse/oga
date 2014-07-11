@@ -24,6 +24,16 @@ describe Oga::XPath::Evaluator do
     end
   end
 
+  context 'invalid absolute paths' do
+    before do
+      @set = @evaluator.evaluate('/x/a')
+    end
+
+    example 'return an empty NodeSet' do
+      @set.empty?.should == true
+    end
+  end
+
   context 'relative paths' do
     before do
       @set = @evaluator.evaluate('a')
@@ -39,6 +49,16 @@ describe Oga::XPath::Evaluator do
 
     example 'return the correct nodes' do
       @set[0].should == @document.children[0]
+    end
+  end
+
+  context 'invalid relative paths' do
+    before do
+      @set = @evaluator.evaluate('x/a')
+    end
+
+    example 'return an empty NodeSet' do
+      @set.empty?.should == true
     end
   end
 
