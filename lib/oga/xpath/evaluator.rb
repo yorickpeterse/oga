@@ -10,67 +10,51 @@ module Oga
       #
       def initialize(document)
         @document = document
-
-        reset
-      end
-
-      def reset
-        @context = @document.children
-        @stack   = XML::NodeSet.new
       end
 
       def evaluate(string)
-        ast = Parser.new(string).parse
+        ast     = Parser.new(string).parse
+        context = @document.children
 
-        process(ast)
+        return process(ast, context)
+      end
 
-        nodes = @stack
+      def process(node, context)
+        handler = "on_#{node.type}"
 
-        reset
+        return send(handler, node, context)
+      end
+
+      def on_absolute_path(node, context)
+        if @document.respond_to?(:root_node)
+          context = XML::NodeSet.new([@document.root_node])
+        end
+
+        return on_path(node, context)
+      end
+
+      def on_path(node, context)
+        last_node = node.children[-1]
+        nodes     = XML::NodeSet.new
+
+        node.children.each do |test|
+          nodes = process(test, context)
+
+          if test != last_node and !nodes.empty?
+            context = child_nodes(context)
+          elsif nodes.empty?
+            break
+          end
+        end
 
         return nodes
       end
 
-      def process(node)
-        handler = "on_#{node.type}"
-
-        if respond_to?(handler)
-          send(handler, node)
-        end
-      end
-
-      def process_all(nodes)
-        nodes.each do |node|
-          process(node)
-        end
-      end
-
-      def on_absolute_path(node)
-        if @document.respond_to?(:root_node)
-          @context = XML::NodeSet.new([@document.root_node])
-        end
-
-        on_path(node)
-      end
-
-      def on_path(node)
-        last_node = node.children[-1]
-
-        node.children.each do |test|
-          process(test)
-
-          if test != last_node and !@stack.empty?
-            swap_context
-          elsif @stack.empty?
-            break
-          end
-        end
-      end
-
-      def on_test(node)
+      def on_test(node, context)
         ns, name = *node
+        nodes    = XML::NodeSet.new
 
-        @context.each do |xml_node|
+        context.each do |xml_node|
           next unless xml_node.is_a?(XML::Element)
 
           name_matches = xml_node.name == name || name == '*'
@@ -86,21 +70,23 @@ module Oga
           end
 
           if name_matches and ns_matches
-            @stack << xml_node
+            nodes << xml_node
           end
         end
+
+        return nodes
       end
 
-      def swap_context
-        @context = XML::NodeSet.new
+      def child_nodes(nodes)
+        children = XML::NodeSet.new
 
-        @stack.each do |xml_node|
+        nodes.each do |xml_node|
           xml_node.children.each do |child|
-            @context << child
+            children << child
           end
         end
 
-        @stack = XML::NodeSet.new
+        return children
       end
     end # Evaluator
   end # XPath
