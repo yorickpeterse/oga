@@ -72,20 +72,39 @@ module Oga
       def on_axis(node, context)
         name, test = *node
 
-        return send("on_axis_#{name}", test, context)
+        handler = name.gsub('-', '_')
+
+        return send("on_axis_#{handler}", test, context)
       end
 
       def on_axis_ancestor(node, context)
         nodes = XML::NodeSet.new
 
         context.each do |xml_node|
-          while xml_node.respond_to?(:parent) and xml_node.parent
+          while has_parent?(xml_node)
             xml_node = xml_node.parent
 
             if node_matches?(xml_node, node)
               nodes << xml_node
               break
             end
+          end
+        end
+
+        return nodes
+      end
+
+      def on_axis_ancestor_or_self(node, context)
+        nodes = XML::NodeSet.new
+
+        context.each do |xml_node|
+          while has_parent?(xml_node)
+            if node_matches?(xml_node, node)
+              nodes << xml_node
+              break
+            end
+
+            xml_node = xml_node.parent
           end
         end
 
@@ -120,6 +139,10 @@ module Oga
         end
 
         return name_matches && ns_matches
+      end
+
+      def has_parent?(node)
+        return node.respond_to?(:parent) && !!node.parent
       end
     end # Evaluator
   end # XPath
