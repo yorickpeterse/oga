@@ -11,9 +11,7 @@ describe Oga::XPath::Evaluator do
       @set = @evaluator.evaluate('a/*')
     end
 
-    example 'return the right amount of rows' do
-      @set.length.should == 3
-    end
+    it_behaves_like :node_set, :length => 3
 
     example 'include the first <b> node' do
       @set[0].name.should == 'b'
@@ -34,9 +32,7 @@ describe Oga::XPath::Evaluator do
       @set = @evaluator.evaluate('a/*:b')
     end
 
-    example 'return the right amount of rows' do
-      @set.length.should == 2
-    end
+    it_behaves_like :node_set, :length => 2
 
     example 'include the first <b> node' do
       @set[0].name.should == 'b'
@@ -56,9 +52,7 @@ describe Oga::XPath::Evaluator do
       @set = @evaluator.evaluate('a/ns1:*')
     end
 
-    example 'return the right amount of rows' do
-      @set.length.should == 1
-    end
+    it_behaves_like :node_set, :length => 1
 
     example 'include the correct <c> node' do
       @set[0].name.should      == 'c'
@@ -71,9 +65,7 @@ describe Oga::XPath::Evaluator do
       @set = @evaluator.evaluate('a/*:*')
     end
 
-    example 'return the right amount of rows' do
-      @set.length.should == 3
-    end
+    it_behaves_like :node_set, :length => 3
 
     example 'include the first <b> node' do
       @set[0].name.should == 'b'

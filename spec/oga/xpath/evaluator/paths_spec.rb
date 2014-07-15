@@ -11,13 +11,7 @@ describe Oga::XPath::Evaluator do
       @set = @evaluator.evaluate('/a')
     end
 
-    example 'return a NodeSet instance' do
-      @set.is_a?(Oga::XML::NodeSet).should == true
-    end
-
-    example 'return the right amount of nodes' do
-      @set.length.should == 1
-    end
+    it_behaves_like :node_set, :length => 1
 
     example 'return the correct nodes' do
       @set[0].should == @document.children[0]
@@ -29,9 +23,7 @@ describe Oga::XPath::Evaluator do
       @set = @evaluator.evaluate('/x/a')
     end
 
-    example 'return an empty NodeSet' do
-      @set.empty?.should == true
-    end
+    it_behaves_like :node_set, :length => 0
   end
 
   context 'relative paths' do
@@ -39,13 +31,7 @@ describe Oga::XPath::Evaluator do
       @set = @evaluator.evaluate('a')
     end
 
-    example 'return a NodeSet instance' do
-      @set.is_a?(Oga::XML::NodeSet).should == true
-    end
-
-    example 'return the right amount of nodes' do
-      @set.length.should == 1
-    end
+    it_behaves_like :node_set, :length => 1
 
     example 'return the correct nodes' do
       @set[0].should == @document.children[0]
@@ -57,9 +43,7 @@ describe Oga::XPath::Evaluator do
       @set = @evaluator.evaluate('x/a')
     end
 
-    example 'return an empty NodeSet' do
-      @set.empty?.should == true
-    end
+    it_behaves_like :node_set, :length => 0
   end
 
   context 'nested paths' do
@@ -67,13 +51,7 @@ describe Oga::XPath::Evaluator do
       @set = @evaluator.evaluate('/a/b')
     end
 
-    example 'return a NodeSet instance' do
-      @set.is_a?(Oga::XML::NodeSet).should == true
-    end
-
-    example 'return the right amount of rows' do
-      @set.length.should == 2
-    end
+    it_behaves_like :node_set, :length => 2
 
     example 'return the correct nodes' do
       a = @document.children[0]
@@ -88,13 +66,7 @@ describe Oga::XPath::Evaluator do
       @set = @evaluator.evaluate('a/ns1:c')
     end
 
-    example 'return a NodeSet instance' do
-      @set.is_a?(Oga::XML::NodeSet).should == true
-    end
-
-    example 'return the right amount of rows' do
-      @set.length.should == 1
-    end
+    it_behaves_like :node_set, :length => 1
 
     example 'return the correct row' do
       a = @document.children[0]
