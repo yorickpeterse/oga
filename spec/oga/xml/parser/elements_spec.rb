@@ -42,8 +42,8 @@ describe Oga::XML::Parser do
       @element.is_a?(Oga::XML::Element).should == true
     end
 
-    example 'set the attributes of the element' do
-      @element.attributes.should == {:bar => 'baz'}
+    example 'set the bar attribute' do
+      @element.attribute('bar').should == 'baz'
     end
   end
 
