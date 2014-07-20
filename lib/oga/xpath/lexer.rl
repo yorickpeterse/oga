@@ -212,11 +212,7 @@ module Oga
           | 'parent'
           | 'preceding'
           | 'preceding-sibling'
-          | 'self') '::';
-
-        action emit_axis_full {
-          emit(:T_AXIS, ts, te - 2)
-        }
+          | 'self');
 
         # Short Axes
         #
@@ -285,10 +281,13 @@ module Oga
           '[' => { add_token(:T_LBRACK) };
           ']' => { add_token(:T_RBRACK) };
 
-          string     => emit_string;
-          integer    => emit_integer;
-          float      => emit_float;
-          axis_full  => emit_axis_full;
+          string  => emit_string;
+          integer => emit_integer;
+          float   => emit_float;
+
+          axis_full      => { emit(:T_AXIS, ts, te) };
+          axis_full '::' => { emit(:T_AXIS, ts, te - 2) };
+
           axis_short => emit_axis_short;
           identifier => emit_identifier;
         *|;
