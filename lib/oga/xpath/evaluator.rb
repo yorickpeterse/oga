@@ -59,11 +59,7 @@ module Oga
         nodes = XML::NodeSet.new
 
         context.each do |xml_node|
-          # TODO: change this when attribute tests are implemented since those
-          # are not XML::Element instances.
-          if xml_node.is_a?(XML::Element) and node_matches?(xml_node, node)
-            nodes << xml_node
-          end
+          nodes << xml_node if node_matches?(xml_node, node)
         end
 
         return nodes
@@ -106,6 +102,18 @@ module Oga
 
             xml_node = xml_node.parent
           end
+        end
+
+        return nodes
+      end
+
+      def on_axis_attribute(node, context)
+        nodes = XML::NodeSet.new
+
+        context.each do |xml_node|
+          next unless xml_node.is_a?(XML::Element)
+
+          nodes += on_test(node, xml_node.attributes)
         end
 
         return nodes
