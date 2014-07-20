@@ -14,17 +14,50 @@ describe Oga::XML::Element do
     end
 
     example 'set the default attributes' do
-      described_class.new.attributes.should == {}
+      described_class.new.attributes.should == []
     end
   end
 
   context '#attribute' do
     before do
-      @instance = described_class.new(:attributes => {:key => 'value'})
+      attributes = [
+        Oga::XML::Attribute.new(:name => 'key', :value => 'value'),
+        Oga::XML::Attribute.new(
+          :name      => 'key',
+          :value     => 'foo',
+          :namespace => 'x'
+        )
+      ]
+
+      @instance = described_class.new(:attributes => attributes)
     end
 
-    example 'return an attribute' do
-      @instance.attribute('key').should == 'value'
+    example 'return an attribute with only a name' do
+      @instance.attribute('key').value.should == 'value'
+    end
+
+    example 'return an attribute with only a name when using a Symbol' do
+      @instance.attribute(:key).value.should == 'value'
+    end
+
+    example 'return an attribute with a name and namespace' do
+      @instance.attribute('x:key').value.should == 'foo'
+    end
+
+    example 'return an attribute with a name and namespace when using a Symbol' do
+      @instance.attribute(:'x:key').value.should == 'foo'
+    end
+
+    example 'return nil when the name matches but the namespace does not' do
+      @instance.attribute('y:key').nil?.should == true
+    end
+
+    example 'return nil when the namespace matches but the name does not' do
+      @instance.attribute('x:foobar').nil?.should == true
+    end
+
+    example 'return nil for a non existing attribute' do
+      @instance.attribute('foobar').nil?.should == true
     end
   end
 

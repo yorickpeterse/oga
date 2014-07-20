@@ -78,7 +78,8 @@ describe Oga::XML::Lexer do
       lex('<p foo:bar="baz"></p>').should == [
         [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'p', 1],
-        [:T_ATTR, 'foo:bar', 1],
+        [:T_ATTR_NS, 'foo', 1],
+        [:T_ATTR, 'bar', 1],
         [:T_STRING, 'baz', 1],
         [:T_ELEM_END, nil, 1]
       ]

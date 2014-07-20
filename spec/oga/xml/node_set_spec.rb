@@ -271,13 +271,14 @@ describe Oga::XML::NodeSet do
 
   context '#attribute' do
     before do
-      @el  = Oga::XML::Element.new(:name => 'a', :attributes => {:a => '1'})
-      @txt = Oga::XML::Text.new(:text => 'foo')
-      @set = described_class.new([@el, @txt])
+      @attr = Oga::XML::Attribute.new(:name => 'a', :value => '1')
+      @el   = Oga::XML::Element.new(:name => 'a', :attributes => [@attr])
+      @txt  = Oga::XML::Text.new(:text => 'foo')
+      @set  = described_class.new([@el, @txt])
     end
 
     example 'return the values of an attribute' do
-      @set.attribute('a').should == ['1']
+      @set.attribute('a').should == [@attr]
     end
   end
 

@@ -13,7 +13,7 @@ token T_STRING T_TEXT
 token T_DOCTYPE_START T_DOCTYPE_END T_DOCTYPE_TYPE T_DOCTYPE_NAME
 token T_DOCTYPE_INLINE
 token T_CDATA T_COMMENT
-token T_ELEM_START T_ELEM_NAME T_ELEM_NS T_ELEM_END T_ATTR
+token T_ELEM_START T_ELEM_NAME T_ELEM_NS T_ELEM_END T_ATTR T_ATTR_NS
 token T_XML_DECL_START T_XML_DECL_END
 
 options no_result_var
@@ -122,8 +122,8 @@ rule
   # Attributes
 
   attributes
-    : attributes_ { on_attributes(val[0]) }
-    | /* none */  { {} }
+    : attributes_ { val[0] }
+    | /* none */  { [] }
     ;
 
   attributes_
@@ -133,10 +133,22 @@ rule
 
   attribute
     # foo
-    : T_ATTR { {val[0].to_sym => nil} }
+    : attribute_name { val[0] }
 
     # foo="bar"
-    | T_ATTR T_STRING { {val[0].to_sym => val[1]} }
+    | attribute_name T_STRING
+      {
+        val[0].value = val[1]
+        val[0]
+      }
+    ;
+
+  attribute_name
+    # foo
+    : T_ATTR { Attribute.new(:name => val[0]) }
+
+    # foo:bar
+    | T_ATTR_NS T_ATTR { Attribute.new(:namespace => val[0], :name => val[1]) }
     ;
 
   # XML declarations
@@ -293,11 +305,17 @@ Unexpected #{name} with value #{value.inspect} on line #{@line}:
   end
 
   ##
-  # @param [Hash] attributes
+  # @param [Array] attributes
   # @return [Oga::XML::XmlDeclaration]
   #
-  def on_xml_decl(attributes = {})
-    return XmlDeclaration.new(attributes)
+  def on_xml_decl(attributes = [])
+    options = {}
+
+    attributes.each do |attr|
+      options[attr.name.to_sym] = attr.value
+    end
+
+    return XmlDeclaration.new(options)
   end
 
   ##
@@ -342,20 +360,6 @@ Unexpected #{name} with value #{value.inspect} on line #{@line}:
   #
   def after_element(element)
     return element
-  end
-
-  ##
-  # @param [Array] pairs
-  # @return [Hash]
-  #
-  def on_attributes(pairs)
-    attrs = {}
-
-    pairs.each do |pair|
-      attrs = attrs.merge(pair)
-    end
-
-    return attrs
   end
 
 # vim: set ft=racc:

@@ -38,7 +38,6 @@
     newline    = '\n' | '\r\n';
     whitespace = [ \t];
     identifier = [a-zA-Z0-9\-_]+;
-    attribute  = [a-zA-Z0-9\-_:]+;
 
     # Comments
     #
@@ -144,7 +143,7 @@
         };
 
         # Attributes and their values (e.g. version="1.0").
-        attribute => {
+        identifier => {
             callback("on_attribute", data, encoding, ts, te);
         };
 
@@ -187,8 +186,12 @@
             callback_simple("advance_line");
         };
 
-        # Attribute names.
-        attribute => {
+        # Attribute names and namespaces.
+        identifier ':' => {
+            callback("on_attribute_ns", data, encoding, ts, te - 1);
+        };
+
+        identifier => {
             callback("on_attribute", data, encoding, ts, te);
         };
 

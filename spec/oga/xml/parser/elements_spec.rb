@@ -43,7 +43,29 @@ describe Oga::XML::Parser do
     end
 
     example 'set the bar attribute' do
-      @element.attribute('bar').should == 'baz'
+      @element.attribute('bar').value.should == 'baz'
+    end
+  end
+
+  context 'elements with namespaced attributes' do
+    before :all do
+      @element = parse('<foo x:bar="baz"></foo>').children[0]
+    end
+
+    example 'return an Element instance' do
+      @element.is_a?(Oga::XML::Element).should == true
+    end
+
+    example 'include the namespace of the attribute' do
+      @element.attribute('x:bar').namespace.should == 'x'
+    end
+
+    example 'include the name of the attribute' do
+      @element.attribute('x:bar').name.should == 'bar'
+    end
+
+    example 'include the value of the attribute' do
+      @element.attribute('x:bar').value.should == 'baz'
     end
   end
 

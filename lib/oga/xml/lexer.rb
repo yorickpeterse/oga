@@ -355,6 +355,15 @@ module Oga
       end
 
       ##
+      # Called on attribute namespaces.
+      #
+      # @param [String] value
+      #
+      def on_attribute_ns(value)
+        add_token(:T_ATTR_NS, value)
+      end
+
+      ##
       # Called on tag attributes.
       #
       # @param [String] value

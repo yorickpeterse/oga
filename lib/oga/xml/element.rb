@@ -14,7 +14,7 @@ module Oga
     #
     # @!attribute [rw] attributes
     #  The attributes of the element.
-    #  @return [Hash]
+    #  @return [Array<Oga::XML::Attribute>]
     #
     class Element < Node
       attr_accessor :name, :namespace, :attributes
@@ -24,24 +24,38 @@ module Oga
       #
       # @option options [String] :name The name of the element.
       # @option options [String] :namespace The namespace of the element.
-      # @option options [Hash] :attributes The attributes of the element.
+      # @option options [Array<Oga::XML::Attribute>] :attributes The attributes
+      #  of the element as an Array.
       #
       def initialize(options = {})
         super
 
         @name       = options[:name]
         @namespace  = options[:namespace]
-        @attributes = options[:attributes] || {}
+        @attributes = options[:attributes] || []
       end
 
       ##
-      # Returns the value of the specified attribute.
+      # Returns the attribute of the given name.
+      #
+      # @example
+      #  # find an attribute that only has the name "foo"
+      #  attribute('foo')
+      #
+      #  # find an attribute with namespace "foo" and name bar"
+      #  attribute('foo:bar')
       #
       # @param [String] name
       # @return [String]
       #
       def attribute(name)
-        return attributes[name.to_sym]
+        name, ns = split_name(name)
+
+        attributes.each do |attr|
+          return attr if attribute_matches?(attr, ns, name)
+        end
+
+        return
       end
 
       alias_method :attr, :attribute
@@ -116,6 +130,38 @@ module Oga
       #
       def node_type
         return :element
+      end
+
+      private
+
+      ##
+      # @param [String] name
+      # @return [Array]
+      #
+      def split_name(name)
+        segments = name.to_s.split(':')
+
+        return segments.pop, segments.pop
+      end
+
+      ##
+      # @param [Oga::XML::Attribute] attr
+      # @param [String] ns
+      # @param [String] name
+      # @return [TrueClass|FalseClass]
+      #
+      def attribute_matches?(attr, ns, name)
+        name_matches = attr.name == name
+        ns_matches   = false
+
+        if ns
+          ns_matches = attr.namespace == ns
+
+        elsif name_matches
+          ns_matches = true
+        end
+
+        return name_matches && ns_matches
       end
     end # Element
   end # XML
