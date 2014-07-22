@@ -44,21 +44,6 @@ describe Oga::XPath::Parser do
       )
     end
 
-    example 'parse the descendant-or-self axis without a test' do
-      parse_xpath('/descendant-or-self').should == s(
-        :absolute_path,
-        s(:axis, 'descendant-or-self')
-      )
-    end
-
-    example 'parse the descendant-or-self axis followed by an attribute axis' do
-      parse_xpath('/descendant-or-self/attribute::foo').should == s(
-        :absolute_path,
-        s(:axis, 'descendant-or-self'),
-        s(:axis, 'attribute', s(:test, nil, 'foo'))
-      )
-    end
-
     example 'parse the following axis' do
       parse_xpath('/following::A').should == s(
         :absolute_path,
