@@ -49,12 +49,13 @@ module Oga
       end
 
       ##
-      # Returns the parent node of the current node.
+      # Returns the parent node of the current node. If there is no parent node
+      # `nil` is returned instead.
       #
       # @return [Oga::XML::Node]
       #
       def parent
-        return node_set.owner
+        return node_set ? node_set.owner : nil
       end
 
       ##

@@ -57,6 +57,10 @@ describe Oga::XML::Node do
 
       node.parent.should == owner
     end
+
+    example 'return nil if there is no parent node' do
+      described_class.new.parent.nil?.should == true
+    end
   end
 
   context '#previous' do
