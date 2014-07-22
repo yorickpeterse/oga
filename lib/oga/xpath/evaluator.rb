@@ -150,7 +150,7 @@ module Oga
           while has_parent?(xml_node)
             xml_node = xml_node.parent
 
-            if node_matches?(xml_node, node)
+            if can_match_node?(xml_node) and node_matches?(xml_node, node)
               nodes << xml_node
               break
             end
@@ -204,6 +204,17 @@ module Oga
         end
 
         return nodes
+      end
+
+      ##
+      # Evaluates the `child` axis. This simply delegates work to {#on_test}.
+      #
+      # @param [Oga::XPath::Node] node
+      # @param [Oga::XML::NodeSet] context
+      # @return [Oga::XML::NodeSet]
+      #
+      def on_axis_child(node, context)
+        return on_test(node, context)
       end
 
       ##
