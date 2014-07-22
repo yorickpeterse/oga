@@ -25,12 +25,23 @@ From [Wikipedia][oga-wikipedia]:
 
 ## Requirements
 
-Oga runs on MRI 1.9.3 or newer, Rubinius 2.2 or newer and JRuby 1.7 or newer.
-Ruby 1.8.7 is not supported. Maglev, Topaz and mruby are currently not
-supported.
+| Ruby     | Required      | Recommended |
+|:---------|:--------------|:------------|
+| MRI      | >= 1.9.3      | >= 2.1.2    |
+| Rubinius | >= 2.2        | >= 2.2.10   |
+| JRuby    | >= 1.7        | >= 1.7.12   |
+| Maglev   | Not supported |             |
+| Topaz    | Not supported |             |
+| mruby    | Not supported |             |
 
-To install Oga on MRI or Rubinius you'll need to have a working compiler such
-as gcc or clang. Oga's C extension can be compiled with any capable C compiler.
+Maglev and Topaz are not supported due to the lack of a C API (that I know of)
+and the lack of active development of these Ruby implementations. mruby is not
+supported because it's a very different implementation all together.
+
+To install Oga on MRI or Rubinius you'll need to have a working compiler such as
+gcc or clang. Oga's C extension can be compiled with both. JRuby does not
+require a compiler as the native extension is compiled during the Gem building
+process and bundled inside the Gem itself.
 
 ## Native Extension Setup
 
