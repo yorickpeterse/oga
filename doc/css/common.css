@@ -20,6 +20,13 @@ pre.code
     overflow:    auto;
 }
 
+blockquote
+{
+    border-left: 5px solid #eee;
+    margin: 0px;
+    padding-left: 15px;
+}
+
 /**
  * YARD uses generic table styles, using a special class means those tables
  * don't get messed up.
