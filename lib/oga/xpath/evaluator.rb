@@ -12,6 +12,17 @@ module Oga
         @document = document
       end
 
+      ##
+      # Evaluates an XPath expression as a String.
+      #
+      # @example
+      #  evaluator = Oga::XPath::Evaluator.new(document)
+      #
+      #  evaluator.evaluate('//a/)')
+      #
+      # @param [String] string An XPath expression as a String.
+      # @return [Oga::XML::Node]
+      #
       def evaluate(string)
         ast = Parser.new(string).parse
 
@@ -24,12 +35,30 @@ module Oga
         return process(ast, context)
       end
 
+      ##
+      # Processes an XPath node by dispatching it and the given context to a
+      # dedicated handler method. Handler methods are called "on_X" where "X" is
+      # the node type.
+      #
+      # @param [Oga::XPath::Node] node The XPath AST node to process.
+      # @param [Oga::XML::NodeSet] context The context (a set of nodes) to
+      #  evaluate an expression in.
+      #
+      # @return [Oga::XML::NodeSet]
+      #
       def process(node, context)
         handler = "on_#{node.type}"
 
         return send(handler, node, context)
       end
 
+      ##
+      # Processes an absolute XPath expression such as `/foo`.
+      #
+      # @param [Oga::XPath::Node] node
+      # @param [Oga::XML::NodeSet] context
+      # @return [Oga::XML::NodeSet]
+      #
       def on_absolute_path(node, context)
         if @document.respond_to?(:root_node)
           context = XML::NodeSet.new([@document.root_node])
@@ -38,6 +67,17 @@ module Oga
         return on_path(node, context)
       end
 
+      ##
+      # Processes a relative XPath expression such as `foo`.
+      #
+      # Paths are evaluated using a "short-circuit" mechanism similar to Ruby's
+      # `&&` / `and` operator. Whenever a path results in an empty node set the
+      # evaluation is aborted immediately.
+      #
+      # @param [Oga::XPath::Node] node
+      # @param [Oga::XML::NodeSet] context
+      # @return [Oga::XML::NodeSet]
+      #
       def on_path(node, context)
         last_node = node.children[-1]
         nodes     = XML::NodeSet.new
@@ -55,6 +95,14 @@ module Oga
         return nodes
       end
 
+      ##
+      # Processes a node test. Nodes are compared using {#node_matches?} so see
+      # that method for more information on that matching logic.
+      #
+      # @param [Oga::XPath::Node] node
+      # @param [Oga::XML::NodeSet] context
+      # @return [Oga::XML::NodeSet]
+      #
       def on_test(node, context)
         nodes = XML::NodeSet.new
 
@@ -65,6 +113,15 @@ module Oga
         return nodes
       end
 
+      ##
+      # Dispatches the processing of axes to dedicated methods. This works
+      # similar to {#process} except the handler names are "on_axis_X" with "X"
+      # being the axis name.
+      #
+      # @param [Oga::XPath::Node] node
+      # @param [Oga::XML::NodeSet] context
+      # @return [Oga::XML::NodeSet]
+      #
       def on_axis(node, context)
         name, test = *node
 
@@ -73,6 +130,17 @@ module Oga
         return send("on_axis_#{handler}", test, context)
       end
 
+      ##
+      # Processes the `ancestor` axis. This axis walks through the entire
+      # ancestor chain until a matching node is found.
+      #
+      # Evaluation happens using a "short-circuit" mechanism. The moment a
+      # matching node is found it is returned immediately.
+      #
+      # @param [Oga::XPath::Node] node
+      # @param [Oga::XML::NodeSet] context
+      # @return [Oga::XML::NodeSet]
+      #
       def on_axis_ancestor(node, context)
         nodes = XML::NodeSet.new
 
@@ -90,6 +158,11 @@ module Oga
         return nodes
       end
 
+      ##
+      # Processes the `ancestor-or-self` axis.
+      #
+      # @see [#on_axis_ancestor]
+      #
       def on_axis_ancestor_or_self(node, context)
         nodes = XML::NodeSet.new
 
@@ -107,6 +180,18 @@ module Oga
         return nodes
       end
 
+      ##
+      # Processes the `attribute` axis. The node test is performed against all
+      # the attributes of the nodes in the current context.
+      #
+      # Evaluation of the nodes continues until the node set has been exhausted
+      # (unlike some other methods which return the moment they find a matching
+      # node).
+      #
+      # @param [Oga::XPath::Node] node
+      # @param [Oga::XML::NodeSet] context
+      # @return [Oga::XML::NodeSet]
+      #
       def on_axis_attribute(node, context)
         nodes = XML::NodeSet.new
 
@@ -119,6 +204,13 @@ module Oga
         return nodes
       end
 
+      ##
+      # Returns a node set containing all the child nodes of the given set of
+      # nodes.
+      #
+      # @param [Oga::XML::NodeSet] nodes
+      # @return [Oga::XML::NodeSet]
+      #
       def child_nodes(nodes)
         children = XML::NodeSet.new
 
@@ -131,6 +223,21 @@ module Oga
         return children
       end
 
+      ##
+      # Checks if a given {Oga::XML::Node} instance matches a {Oga::XPath::Node}
+      # instance.
+      #
+      # Checking if a node matches happens in two steps:
+      #
+      # 1. Match the name
+      # 2. Match the namespace
+      #
+      # In both cases a star (`*`) can be used as a wildcard.
+      #
+      # @param [Oga::XML::Node] xml_node
+      # @param [Oga::XPath::Node] ast_node
+      # @return [Oga::XML::NodeSet]
+      #
       def node_matches?(xml_node, ast_node)
         ns, name = *ast_node
 
@@ -142,6 +249,9 @@ module Oga
 
         # If there's no namespace given but the name matches we'll also mark
         # the namespace as matching.
+        #
+        # THINK: stop automatically matching namespaces if left out?
+        #
         elsif name_matches
           ns_matches = true
         end
@@ -149,6 +259,10 @@ module Oga
         return name_matches && ns_matches
       end
 
+      ##
+      # @param [Oga::XML::Node] node
+      # @return [TrueClass|FalseClass]
+      #
       def has_parent?(node)
         return node.respond_to?(:parent) && !!node.parent
       end
