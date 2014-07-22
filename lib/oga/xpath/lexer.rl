@@ -24,6 +24,13 @@ module Oga
       }
 
       ##
+      # Axes that require a separate `node()` call to be emitted.
+      #
+      # @return [Array]
+      #
+      AXIS_EMIT_NODE = %w{descendant-or-self parent self}
+
+      ##
       # @param [String] data The data to lex.
       #
       def initialize(data)
@@ -226,6 +233,17 @@ module Oga
           value = AXIS_MAPPING[slice_input(ts, te)]
 
           add_token(:T_AXIS, value)
+
+          # Short axes that use node() as their default, implicit test. This is
+          # added on lexer level to make it easier to handle these cases on
+          # parser/evaluator level.
+          if AXIS_EMIT_NODE.include?(value)
+            add_token(:T_IDENT, 'node')
+            add_token(:T_LPAREN)
+            add_token(:T_RPAREN)
+
+            add_token(:T_SLASH) unless te == eof
+          end
         }
 
         # Operators

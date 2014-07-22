@@ -37,6 +37,10 @@ describe Oga::XPath::Lexer do
         [:T_IDENT, 'wikimedia'],
         [:T_SLASH, nil],
         [:T_AXIS, 'descendant-or-self'],
+        [:T_IDENT, 'node'],
+        [:T_LPAREN, nil],
+        [:T_RPAREN, nil],
+        [:T_SLASH, nil],
         [:T_IDENT, 'editions']
       ]
     end
