@@ -64,11 +64,11 @@ either.
 To give an example about the issues with Nokogiri on Rubinius (or any other
 Ruby implementation that is not MRI or JRuby), take a look at these issues:
 
-* https://github.com/rubinius/rubinius/issues/2957
-* https://github.com/rubinius/rubinius/issues/2908
-* https://github.com/rubinius/rubinius/issues/2462
-* https://github.com/sparklemotion/nokogiri/issues/1047
-* https://github.com/sparklemotion/nokogiri/issues/939
+* <https://github.com/rubinius/rubinius/issues/2957>
+* <https://github.com/rubinius/rubinius/issues/2908>
+* <https://github.com/rubinius/rubinius/issues/2462>
+* <https://github.com/sparklemotion/nokogiri/issues/1047>
+* <https://github.com/sparklemotion/nokogiri/issues/939>
 
 Some of these have been fixed, some have not. The core problem remains:
 Nokogiri acts in a way that there can be a large number of places where it
