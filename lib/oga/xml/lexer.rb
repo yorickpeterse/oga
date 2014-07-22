@@ -342,7 +342,7 @@ module Oga
       ##
       # Called on regular text values.
       #
-      # @param [String] text
+      # @param [String] value
       #
       def on_text(value)
         unless value.empty?

@@ -330,7 +330,6 @@ Unexpected #{name} with value #{value.inspect} on line #{@line}:
   # @param [String] namespace
   # @param [String] name
   # @param [Hash] attributes
-  # @param [Array] children
   # @return [Oga::XML::Element]
   #
   def on_element(namespace, name, attributes = {})
@@ -355,7 +354,7 @@ Unexpected #{name} with value #{value.inspect} on line #{@line}:
   end
 
   ##
-  # @param [Oga::XML::Element]
+  # @param [Oga::XML::Element] element
   # @return [Oga::XML::Element]
   #
   def after_element(element)
