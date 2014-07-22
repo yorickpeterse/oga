@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Oga::XPath::Evaluator do
   before do
-    @document  = parse('<a><b></b><b></b><ns1:c></ns1:c></a>')
+    @document  = parse('<a>Foo<b></b><b></b><ns1:c></ns1:c></a>')
     @evaluator = described_class.new(@document)
   end
 
@@ -56,8 +56,8 @@ describe Oga::XPath::Evaluator do
     example 'return the correct nodes' do
       a = @document.children[0]
 
-      @set[0].should == a.children[0]
-      @set[1].should == a.children[1]
+      @set[0].should == a.children[1]
+      @set[1].should == a.children[2]
     end
   end
 

@@ -107,7 +107,9 @@ module Oga
         nodes = XML::NodeSet.new
 
         context.each do |xml_node|
-          nodes << xml_node if node_matches?(xml_node, node)
+          if can_match_node?(xml_node) and node_matches?(xml_node, node)
+            nodes << xml_node
+          end
         end
 
         return nodes
@@ -257,6 +259,16 @@ module Oga
         end
 
         return name_matches && ns_matches
+      end
+
+      ##
+      # Returns `true` if the given XML node can be compared using
+      # {#node_matches?}.
+      #
+      # @param [Oga::XML::Node] node
+      #
+      def can_match_node?(node)
+        return node.respond_to?(:name) && node.respond_to?(:namespace)
       end
 
       ##
