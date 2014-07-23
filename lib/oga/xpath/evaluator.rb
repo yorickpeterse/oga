@@ -18,7 +18,7 @@ module Oga
       # @example
       #  evaluator = Oga::XPath::Evaluator.new(document)
       #
-      #  evaluator.evaluate('//a/)')
+      #  evaluator.evaluate('//a')
       #
       # @param [String] string An XPath expression as a String.
       # @return [Oga::XML::Node]
