@@ -218,6 +218,25 @@ module Oga
       end
 
       ##
+      # Evaluator the `descendant` axis. This method processes child nodes until
+      # the very end of the tree, no "short-circuiting" mechanism is used.
+      #
+      # @param [Oga::XPath::Node] node
+      # @param [Oga::XML::NodeSet] context
+      # @return [Oga::XML::NodeSet]
+      #
+      def on_axis_descendant(node, context)
+        nodes    = on_test(node, context)
+        children = child_nodes(context)
+
+        unless children.empty?
+          nodes += on_axis_descendant(node, children)
+        end
+
+        return nodes
+      end
+
+      ##
       # Returns a node set containing all the child nodes of the given set of
       # nodes.
       #
