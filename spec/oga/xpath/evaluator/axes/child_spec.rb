@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Oga::XPath::Evaluator do
   context 'child axis' do
     before do
-      @document  = parse('<a><b><c></c></b><d></d><a></a></a>')
+      @document  = parse('<a><b></b></a>')
       @evaluator = described_class.new(@document)
     end
 
@@ -31,9 +31,9 @@ describe Oga::XPath::Evaluator do
       end
     end
 
-    context 'invalid children' do
+    context 'non existing children' do
       before do
-        @set = @evaluator.evaluate('child::foobar')
+        @set = @evaluator.evaluate('child::b')
       end
 
       it_behaves_like :empty_node_set

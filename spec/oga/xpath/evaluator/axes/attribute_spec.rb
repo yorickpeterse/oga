@@ -39,7 +39,7 @@ describe Oga::XPath::Evaluator do
       end
     end
 
-    context 'missing attributes' do
+    context 'non existing attributes' do
       before do
         @set = @evaluator.evaluate('attribute::bar')
       end

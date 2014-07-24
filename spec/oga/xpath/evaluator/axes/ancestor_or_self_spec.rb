@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Oga::XPath::Evaluator do
   context 'ancestor-or-self axis' do
     before do
-      @document  = parse('<a><b><c></c></b><d></d><a></a></a>')
+      @document  = parse('<a><b><c></c></b></a>')
       @c_node    = @document.children[0].children[0].children[0]
       @evaluator = described_class.new(@c_node)
     end
@@ -32,7 +32,7 @@ describe Oga::XPath::Evaluator do
       end
     end
 
-    context 'missing ancestors' do
+    context 'ancestors that only match the context nodes' do
       before do
         @set = @evaluator.evaluate('ancestor-or-self::c')
       end

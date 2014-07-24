@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Oga::XPath::Evaluator do
   context 'descendant axis' do
     before do
-      @document  = parse('<a><b><c></c></b><d></d><a></a></a>')
+      @document  = parse('<a><b><c></c></b><a></a></a>')
       @evaluator = described_class.new(@document)
 
       @first_a  = @document.children[0]
@@ -50,7 +50,7 @@ describe Oga::XPath::Evaluator do
       end
     end
 
-    context 'invalid descendants' do
+    context 'non existing descendants' do
       before do
         @set = @evaluator.evaluate('descendant::foobar')
       end
