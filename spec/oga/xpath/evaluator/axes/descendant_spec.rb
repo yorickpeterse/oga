@@ -52,7 +52,8 @@ describe Oga::XPath::Evaluator do
 
     context 'non existing descendants' do
       before do
-        @set = @evaluator.evaluate('descendant::foobar')
+        # This should result in an empty set since <c> has no <c> children.
+        @set = @evaluator.evaluate('a/b/c/descendant::c')
       end
 
       it_behaves_like :empty_node_set
