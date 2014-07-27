@@ -24,13 +24,8 @@ module Oga
       # @return [Oga::XML::Node]
       #
       def evaluate(string)
-        ast = Parser.new(string).parse
-
-        if @document.is_a?(XML::Document)
-          context = @document.children
-        else
-          context = XML::NodeSet.new([@document])
-        end
+        ast     = Parser.new(string).parse
+        context = XML::NodeSet.new([@document])
 
         return process(ast, context)
       end
@@ -79,16 +74,15 @@ module Oga
       # @return [Oga::XML::NodeSet]
       #
       def on_path(node, context)
-        last_node = node.children[-1]
-        nodes     = XML::NodeSet.new
+        nodes = XML::NodeSet.new
 
         node.children.each do |test|
           nodes = process(test, context)
 
-          if test != last_node and !nodes.empty?
-            context = child_nodes(context)
-          elsif nodes.empty?
+          if nodes.empty?
             break
+          else
+            context = nodes
           end
         end
 
@@ -214,7 +208,7 @@ module Oga
       # @return [Oga::XML::NodeSet]
       #
       def on_axis_child(node, context)
-        return on_test(node, context)
+        return on_test(node, child_nodes(context))
       end
 
       ##
@@ -226,11 +220,11 @@ module Oga
       # @return [Oga::XML::NodeSet]
       #
       def on_axis_descendant(node, context)
-        nodes    = XML::NodeSet.new
-        children = child_nodes(context)
+        nodes = XML::NodeSet.new
 
-        unless children.empty?
-          nodes += on_axis_descendant(node, children)
+        context.each do |context_node|
+          nodes += on_test(node, context_node.children)
+          nodes += on_axis_descendant(node, context_node.children)
         end
 
         return nodes
@@ -244,14 +238,7 @@ module Oga
       # @return [Oga::XML::NodeSet]
       #
       def on_axis_descendant_or_self(node, context)
-        nodes    = on_test(node, context)
-        children = child_nodes(context)
-
-        unless children.empty?
-          nodes += on_axis_descendant(node, children)
-        end
-
-        return nodes
+        return on_test(node, context) + on_axis_descendant(node, context)
       end
 
       ##
@@ -265,9 +252,7 @@ module Oga
         children = XML::NodeSet.new
 
         nodes.each do |xml_node|
-          xml_node.children.each do |child|
-            children << child
-          end
+          children += xml_node.children
         end
 
         return children
