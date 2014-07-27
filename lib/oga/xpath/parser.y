@@ -34,7 +34,7 @@ rule
     ;
 
   expression
-    : node_test
+    : node_test_as_axis
     | operator
     | axis
     | string
@@ -45,7 +45,7 @@ rule
     ;
 
   path_member
-    : node_test
+    : node_test_as_axis
     | axis
     | call
     ;
@@ -64,6 +64,13 @@ rule
   absolute_path
     : T_SLASH path_members { s(:absolute_path, *val[1]) }
     | T_SLASH path_member  { s(:absolute_path, val[1]) }
+    ;
+
+  # Whenever a bare test is used (e.g. just "A") this actually means "child::A".
+  # Handling this on lexer level requires a look-behind/look-ahead while solving
+  # this on evaluator level produces inconsistent/confusing code.
+  node_test_as_axis
+    : node_test { s(:axis, 'child', val[0]) }
     ;
 
   node_test

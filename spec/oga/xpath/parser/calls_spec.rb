@@ -10,7 +10,7 @@ describe Oga::XPath::Parser do
       parse_xpath('count(/foo)').should == s(
         :call,
         'count',
-        s(:absolute_path, s(:test, nil, 'foo'))
+        s(:absolute_path, s(:axis, 'child', s(:test, nil, 'foo')))
       )
     end
 
@@ -18,7 +18,7 @@ describe Oga::XPath::Parser do
       parse_xpath('count(/foo, "bar")').should == s(
         :call,
         'count',
-        s(:absolute_path, s(:test, nil, 'foo')),
+        s(:absolute_path, s(:axis, 'child', s(:test, nil, 'foo'))),
         s(:string, 'bar')
       )
     end
@@ -26,7 +26,7 @@ describe Oga::XPath::Parser do
     example 'parse a relative path with a function call' do
       parse_xpath('foo/bar()').should == s(
         :path,
-        s(:test, nil, 'foo'),
+        s(:axis, 'child', s(:test, nil, 'foo')),
         s(:call, 'bar')
       )
     end
@@ -34,7 +34,8 @@ describe Oga::XPath::Parser do
     example 'parse an absolute path with a function call' do
       parse_xpath('/foo/bar()').should == s(
         :absolute_path,
-        s(:test, nil, 'foo'), s(:call, 'bar')
+        s(:axis, 'child', s(:test, nil, 'foo')),
+        s(:call, 'bar')
       )
     end
 
@@ -42,13 +43,17 @@ describe Oga::XPath::Parser do
       parse_xpath('div[@class="foo"]/bar()').should == s(
         :path,
         s(
-          :test,
-          nil,
-          'div',
+          :axis,
+          'child',
           s(
-            :eq,
-            s(:axis, 'attribute', s(:test, nil, 'class')),
-            s(:string, 'foo')
+            :test,
+            nil,
+            'div',
+            s(
+              :eq,
+              s(:axis, 'attribute', s(:test, nil, 'class')),
+              s(:string, 'foo')
+            )
           )
         ),
         s(:call, 'bar')
@@ -58,8 +63,16 @@ describe Oga::XPath::Parser do
     example 'parse two predicates followed by a function call' do
       parse_xpath('A[@x]/B[@x]/bar()').should == s(
         :path,
-        s(:test, nil, 'A', s(:axis, 'attribute', s(:test, nil, 'x'))),
-        s(:test, nil, 'B', s(:axis, 'attribute', s(:test, nil, 'x'))),
+        s(
+          :axis,
+          'child',
+          s(:test, nil, 'A', s(:axis, 'attribute', s(:test, nil, 'x')))
+        ),
+        s(
+          :axis,
+          'child',
+          s(:test, nil, 'B', s(:axis, 'attribute', s(:test, nil, 'x')))
+        ),
         s(:call, 'bar')
       )
     end

@@ -106,7 +106,7 @@ describe Oga::XPath::Parser do
       parse_xpath('//A').should == s(
         :absolute_path,
         s(:axis, 'descendant-or-self', s(:call, 'node')),
-        s(:test, nil, 'A')
+        s(:axis, 'child', s(:test, nil, 'A'))
       )
     end
 
