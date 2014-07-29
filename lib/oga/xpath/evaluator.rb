@@ -254,17 +254,13 @@ module Oga
         context.each do |context_node|
           current = context_node
 
-          while current.respond_to?(:next)
-            next_node = current.next
-
-            if can_match_node?(next_node) and node_matches?(next_node, node)
-              nodes << next_node
-            end
-
-            # When this returns nil the loop automaticall breaks since `nil`
-            # doesn't respond to `next`.
-            current = next_node
-          end
+          # TODO: implement me properly this time.
+          #
+          # Step 1: gather *all* the nodes that come after the current node,
+          # regardless of their nesting.
+          #
+          # Step 2: compare all those nodes with the given test, only return
+          # those that match.
         end
 
         return nodes
