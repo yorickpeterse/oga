@@ -242,6 +242,35 @@ module Oga
       end
 
       ##
+      # Evaluates the `following` axis.
+      #
+      # @param [Oga::XPath::Node] node
+      # @param [Oga::XML::NodeSet] context
+      # @return [Oga::XML::NodeSet]
+      #
+      def on_axis_following(node, context)
+        nodes = XML::NodeSet.new
+
+        context.each do |context_node|
+          current = context_node
+
+          while current.respond_to?(:next)
+            next_node = current.next
+
+            if can_match_node?(next_node) and node_matches?(next_node, node)
+              nodes << next_node
+            end
+
+            # When this returns nil the loop automaticall breaks since `nil`
+            # doesn't respond to `next`.
+            current = next_node
+          end
+        end
+
+        return nodes
+      end
+
+      ##
       # Returns a node set containing all the child nodes of the given set of
       # nodes.
       #
