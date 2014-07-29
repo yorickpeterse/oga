@@ -2,13 +2,25 @@ require 'spec_helper'
 
 describe Oga::XPath::Evaluator do
   before do
-    @document  = parse('<a>Foo<b></b><b></b><ns1:c></ns1:c></a>')
-    @evaluator = described_class.new(@document)
+    @document = parse('<a>Foo<b></b><b></b><ns1:c></ns1:c></a>')
   end
 
   context 'absolute paths' do
     before do
-      @set = @evaluator.evaluate('/a')
+      @set = described_class.new(@document).evaluate('/a')
+    end
+
+    it_behaves_like :node_set, :length => 1
+
+    example 'return the correct nodes' do
+      @set[0].should == @document.children[0]
+    end
+  end
+
+  context 'absolute paths from an element' do
+    before do
+      b_node = @document.children[0].children[0]
+      @set   = described_class.new(b_node).evaluate('/a')
     end
 
     it_behaves_like :node_set, :length => 1
@@ -20,7 +32,7 @@ describe Oga::XPath::Evaluator do
 
   context 'invalid absolute paths' do
     before do
-      @set = @evaluator.evaluate('/x/a')
+      @set = described_class.new(@document).evaluate('/x/a')
     end
 
     it_behaves_like :node_set, :length => 0
@@ -28,7 +40,7 @@ describe Oga::XPath::Evaluator do
 
   context 'relative paths' do
     before do
-      @set = @evaluator.evaluate('a')
+      @set = described_class.new(@document).evaluate('a')
     end
 
     it_behaves_like :node_set, :length => 1
@@ -40,7 +52,7 @@ describe Oga::XPath::Evaluator do
 
   context 'invalid relative paths' do
     before do
-      @set = @evaluator.evaluate('x/a')
+      @set = described_class.new(@document).evaluate('x/a')
     end
 
     it_behaves_like :node_set, :length => 0
@@ -48,7 +60,7 @@ describe Oga::XPath::Evaluator do
 
   context 'nested paths' do
     before do
-      @set = @evaluator.evaluate('/a/b')
+      @set = described_class.new(@document).evaluate('/a/b')
     end
 
     it_behaves_like :node_set, :length => 2
@@ -63,7 +75,7 @@ describe Oga::XPath::Evaluator do
 
   context 'namespaced paths' do
     before do
-      @set = @evaluator.evaluate('a/ns1:c')
+      @set = described_class.new(@document).evaluate('a/ns1:c')
     end
 
     it_behaves_like :node_set, :length => 1
