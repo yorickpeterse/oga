@@ -50,6 +50,34 @@ module Oga
       end
 
       ##
+      # Returns a NodeSet containing *all* the nodes in the current document.
+      # Nodes are inserted in the order they appear in the document.
+      #
+      # @return [Oga::XML::NodeSet]
+      #
+      def all_nodes
+        return gather_child_nodes(self)
+      end
+
+      ##
+      # Recursively retrieves all child nodes of `node` and returns them as a
+      # node set.
+      #
+      # @param [Oga::XML::Document|Oga::XML::Node] node
+      # @return [Oga::XML::NodeSet]
+      #
+      def gather_child_nodes(node)
+        nodes = NodeSet.new
+
+        node.children.each do |child|
+          nodes << child
+          nodes += gather_child_nodes(child)
+        end
+
+        return nodes
+      end
+
+      ##
       # Converts the document and its child nodes to XML.
       #
       # @return [String]
