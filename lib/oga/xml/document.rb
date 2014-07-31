@@ -50,31 +50,33 @@ module Oga
       end
 
       ##
-      # Returns a NodeSet containing *all* the nodes in the current document.
-      # Nodes are inserted in the order they appear in the document.
+      # Traverses through the document and yields every node to the supplied
+      # block.
+      #
+      # @example
+      #  document.each_node do |node, index|
+      #    p node.class
+      #  end
       #
       # This method uses a breadth first search for tree traversal. See
       # http://en.wikipedia.org/wiki/Breadth-first_search for more information.
       #
-      # THINK: Turn into an actual search instead of returning everything?
+      # @yieldparam [Oga::XML::Node] The current node.
+      # @yieldparam [Fixnum] The current node's index.
       #
-      # @return [Oga::XML::NodeSet]
-      #
-      def all_nodes
-        nodes = NodeSet.new
+      def each_node
         visit = children.to_a.dup # copy it since we're using #pop below.
+        index = 0
 
         until visit.empty?
           current = visit.pop
 
-          nodes << current
+          yield current, index
 
-          current.children.each do |child|
-            visit << child
-          end
+          index += 1
+
+          current.children.each { |child| visit << child }
         end
-
-        return nodes
       end
 
       ##
