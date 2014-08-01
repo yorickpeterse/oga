@@ -69,7 +69,7 @@ module Oga
         index = 0
 
         until visit.empty?
-          current = visit.pop
+          current = visit.shift
 
           yield current, index
 
