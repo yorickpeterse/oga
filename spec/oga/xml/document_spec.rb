@@ -34,12 +34,12 @@ describe Oga::XML::Document do
     before do
       @document = parse(<<-EOF.strip.gsub(/\s+/m, ''))
 <books>
-  <book>
-    <title>Foo</title>
-  </book>
-  <book>
-    <title>Bar</title>
-  </book>
+  <book1>
+    <title1>Foo</title1>
+  </book1>
+  <book2>
+    <title2>Bar</title2>
+  </book2>
 </books>
       EOF
     end
@@ -51,7 +51,7 @@ describe Oga::XML::Document do
         names << (node.is_a?(Oga::XML::Element) ? node.name : node.text)
       end
 
-      names.should == %w{books book title Foo book title Bar}
+      names.should == %w{books book1 title1 Foo book2 title2 Bar}
     end
 
     example 'yield the document indexes' do
