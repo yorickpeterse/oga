@@ -58,14 +58,15 @@ module Oga
       #    p node.class
       #  end
       #
-      # This method uses a breadth first search for tree traversal. See
+      # This method uses a combination of breadth-first and depth-first
+      # traversal to traverse the entire XML tree in document order. See
       # http://en.wikipedia.org/wiki/Breadth-first_search for more information.
       #
       # @yieldparam [Oga::XML::Node] The current node.
       # @yieldparam [Fixnum] The current node's index.
       #
       def each_node
-        visit = children.to_a.dup # copy it since we're using #pop below.
+        visit = children.to_a.dup # copy it since we're modifying the array
         index = 0
 
         until visit.empty?
@@ -75,7 +76,7 @@ module Oga
 
           index += 1
 
-          current.children.each { |child| visit << child }
+          visit = current.children.to_a + visit
         end
       end
 
