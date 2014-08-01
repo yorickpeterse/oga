@@ -30,6 +30,39 @@ describe Oga::XML::Document do
     end
   end
 
+  context '#each_node' do
+    before do
+      @document = parse(<<-EOF.strip.gsub(/\s+/m, ''))
+<books>
+  <book>
+    <title>Foo</title>
+  </book>
+  <book>
+    <title>Bar</title>
+  </book>
+</books>
+      EOF
+    end
+
+    example 'yield the nodes in document order' do
+      names = []
+
+      @document.each_node do |node|
+        names << (node.is_a?(Oga::XML::Element) ? node.name : node.text)
+      end
+
+      names.should == %w{books book title Foo book title Bar}
+    end
+
+    example 'yield the document indexes' do
+      indexes = []
+
+      @document.each_node { |_, index| indexes << index }
+
+      indexes.should == [0, 1, 2, 3, 4, 5, 6]
+    end
+  end
+
   context '#to_xml' do
     before do
       child = Oga::XML::Comment.new(:text => 'foo')
