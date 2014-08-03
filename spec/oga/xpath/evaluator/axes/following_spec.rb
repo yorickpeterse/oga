@@ -16,9 +16,9 @@ describe Oga::XPath::Evaluator do
 </root>
       EOF
 
-      @first_baz  = @document.children[0].children[1]
+      @first_baz  = @document.children[0].children[0].children[1]
       @second_baz = @first_baz.children[0]
-      @third_baz  = @document.children[0].children[0].children[1]
+      @third_baz  = @document.children[0].children[1]
       @evaluator  = described_class.new(@document)
     end
 
@@ -39,8 +39,8 @@ describe Oga::XPath::Evaluator do
 
       it_behaves_like :node_set, :length => 1
 
-      example 'return the second <baz> node' do
-        @set[0].should == @first_baz
+      example 'return the third <baz> node' do
+        @set[0].should == @third_baz
       end
     end
 
