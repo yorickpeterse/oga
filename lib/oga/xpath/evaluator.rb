@@ -101,9 +101,7 @@ module Oga
         nodes = XML::NodeSet.new
 
         context.each do |xml_node|
-          if can_match_node?(xml_node) and node_matches?(xml_node, ast_node)
-            nodes << xml_node
-          end
+          nodes << xml_node if node_matches?(xml_node, ast_node)
         end
 
         return nodes
@@ -144,7 +142,7 @@ module Oga
           while has_parent?(xml_node)
             xml_node = xml_node.parent
 
-            if can_match_node?(xml_node) and node_matches?(xml_node, ast_node)
+            if node_matches?(xml_node, ast_node)
               nodes << xml_node
               break
             end
@@ -265,8 +263,43 @@ module Oga
 
             next unless check
 
-            if can_match_node?(doc_node) and node_matches?(doc_node, ast_node)
+            nodes << doc_node if node_matches?(doc_node, ast_node)
+          end
+        end
+
+        return nodes
+      end
+
+      ##
+      # Evaluates the `following-sibling` axis.
+      #
+      # @param [Oga::XPath::Node] ast_node
+      # @param [Oga::XML::NodeSet] context
+      # @return [Oga::XML::NodeSet]
+      #
+      def on_axis_following_sibling(ast_node, context)
+        nodes = XML::NodeSet.new
+
+        context.each do |context_node|
+          check  = false
+          parent = context_node.respond_to?(:parent) ? context_node.parent : nil
+
+          @document.each_node do |doc_node|
+            # Skip child nodes of the current context node, compare all
+            # following nodes.
+            if doc_node == context_node
+              check = true
+              throw :skip_children
+            end
+
+            if !check or parent != doc_node.parent
+              next
+            end
+
+            if node_matches?(doc_node, ast_node)
               nodes << doc_node
+
+              throw :skip_children
             end
           end
         end
@@ -307,6 +340,8 @@ module Oga
       # @return [Oga::XML::NodeSet]
       #
       def node_matches?(xml_node, ast_node)
+        return false unless can_match_node?(xml_node)
+
         ns, name = *ast_node
 
         name_matches = xml_node.name == name || name == '*'

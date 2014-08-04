@@ -61,6 +61,12 @@ describe Oga::XPath::Evaluator do
     example 'return true if a node is matched without having a namespace' do
       @evaluator.node_matches?(@name_node, s(:test, '*', 'a')).should == true
     end
+
+    example 'return false when trying to match an XML::Text instance' do
+      text = Oga::XML::Text.new(:text => 'Foobar')
+
+      @evaluator.node_matches?(text, s(:test, nil, 'a')).should == false
+    end
   end
 
   context '#can_match_node?' do
