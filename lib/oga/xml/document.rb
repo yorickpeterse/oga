@@ -54,7 +54,7 @@ module Oga
       # block.
       #
       # @example
-      #  document.each_node do |node, index|
+      #  document.each_node do |node|
       #    p node.class
       #  end
       #
@@ -63,18 +63,14 @@ module Oga
       # http://en.wikipedia.org/wiki/Breadth-first_search for more information.
       #
       # @yieldparam [Oga::XML::Node] The current node.
-      # @yieldparam [Fixnum] The current node's index.
       #
       def each_node
         visit = children.to_a.dup # copy it since we're modifying the array
-        index = 0
 
         until visit.empty?
           current = visit.shift
 
-          yield current, index
-
-          index += 1
+          yield current
 
           visit = current.children.to_a + visit
         end

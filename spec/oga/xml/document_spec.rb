@@ -53,14 +53,6 @@ describe Oga::XML::Document do
 
       names.should == %w{books book1 title1 Foo book2 title2 Bar}
     end
-
-    example 'yield the document indexes' do
-      indexes = []
-
-      @document.each_node { |_, index| indexes << index }
-
-      indexes.should == [0, 1, 2, 3, 4, 5, 6]
-    end
   end
 
   context '#to_xml' do
