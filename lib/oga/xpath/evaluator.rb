@@ -282,7 +282,7 @@ module Oga
 
         context.each do |context_node|
           check  = false
-          parent = context_node.respond_to?(:parent) ? context_node.parent : nil
+          parent = has_parent?(context_node) ? context_node.parent : nil
 
           @document.each_node do |doc_node|
             # Skip child nodes of the current context node, compare all
