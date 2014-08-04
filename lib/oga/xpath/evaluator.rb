@@ -35,31 +35,31 @@ module Oga
       # dedicated handler method. Handler methods are called "on_X" where "X" is
       # the node type.
       #
-      # @param [Oga::XPath::Node] node The XPath AST node to process.
+      # @param [Oga::XPath::Node] ast_node The XPath AST node to process.
       # @param [Oga::XML::NodeSet] context The context (a set of nodes) to
       #  evaluate an expression in.
       #
       # @return [Oga::XML::NodeSet]
       #
-      def process(node, context)
-        handler = "on_#{node.type}"
+      def process(ast_node, context)
+        handler = "on_#{ast_node.type}"
 
-        return send(handler, node, context)
+        return send(handler, ast_node, context)
       end
 
       ##
       # Processes an absolute XPath expression such as `/foo`.
       #
-      # @param [Oga::XPath::Node] node
+      # @param [Oga::XPath::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
-      def on_absolute_path(node, context)
+      def on_absolute_path(ast_node, context)
         if @document.respond_to?(:root_node)
           context = XML::NodeSet.new([@document.root_node])
         end
 
-        return on_path(node, context)
+        return on_path(ast_node, context)
       end
 
       ##
@@ -69,14 +69,14 @@ module Oga
       # `&&` / `and` operator. Whenever a path results in an empty node set the
       # evaluation is aborted immediately.
       #
-      # @param [Oga::XPath::Node] node
+      # @param [Oga::XPath::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
-      def on_path(node, context)
+      def on_path(ast_node, context)
         nodes = XML::NodeSet.new
 
-        node.children.each do |test|
+        ast_node.children.each do |test|
           nodes = process(test, context)
 
           if nodes.empty?
@@ -93,15 +93,15 @@ module Oga
       # Processes a node test. Nodes are compared using {#node_matches?} so see
       # that method for more information on that matching logic.
       #
-      # @param [Oga::XPath::Node] node
+      # @param [Oga::XPath::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
-      def on_test(node, context)
+      def on_test(ast_node, context)
         nodes = XML::NodeSet.new
 
         context.each do |xml_node|
-          if can_match_node?(xml_node) and node_matches?(xml_node, node)
+          if can_match_node?(xml_node) and node_matches?(xml_node, ast_node)
             nodes << xml_node
           end
         end
@@ -114,12 +114,12 @@ module Oga
       # similar to {#process} except the handler names are "on_axis_X" with "X"
       # being the axis name.
       #
-      # @param [Oga::XPath::Node] node
+      # @param [Oga::XPath::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
-      def on_axis(node, context)
-        name, test = *node
+      def on_axis(ast_node, context)
+        name, test = *ast_node
 
         handler = name.gsub('-', '_')
 
@@ -133,18 +133,18 @@ module Oga
       # Evaluation happens using a "short-circuit" mechanism. The moment a
       # matching node is found it is returned immediately.
       #
-      # @param [Oga::XPath::Node] node
+      # @param [Oga::XPath::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
-      def on_axis_ancestor(node, context)
+      def on_axis_ancestor(ast_node, context)
         nodes = XML::NodeSet.new
 
         context.each do |xml_node|
           while has_parent?(xml_node)
             xml_node = xml_node.parent
 
-            if can_match_node?(xml_node) and node_matches?(xml_node, node)
+            if can_match_node?(xml_node) and node_matches?(xml_node, ast_node)
               nodes << xml_node
               break
             end
@@ -159,12 +159,12 @@ module Oga
       #
       # @see [#on_axis_ancestor]
       #
-      def on_axis_ancestor_or_self(node, context)
+      def on_axis_ancestor_or_self(ast_node, context)
         nodes = XML::NodeSet.new
 
         context.each do |xml_node|
           while has_parent?(xml_node)
-            if node_matches?(xml_node, node)
+            if node_matches?(xml_node, ast_node)
               nodes << xml_node
               break
             end
@@ -184,17 +184,17 @@ module Oga
       # (unlike some other methods which return the moment they find a matching
       # node).
       #
-      # @param [Oga::XPath::Node] node
+      # @param [Oga::XPath::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
-      def on_axis_attribute(node, context)
+      def on_axis_attribute(ast_node, context)
         nodes = XML::NodeSet.new
 
         context.each do |xml_node|
           next unless xml_node.is_a?(XML::Element)
 
-          nodes += on_test(node, xml_node.attributes)
+          nodes += on_test(ast_node, xml_node.attributes)
         end
 
         return nodes
@@ -203,28 +203,28 @@ module Oga
       ##
       # Evaluates the `child` axis. This simply delegates work to {#on_test}.
       #
-      # @param [Oga::XPath::Node] node
+      # @param [Oga::XPath::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
-      def on_axis_child(node, context)
-        return on_test(node, child_nodes(context))
+      def on_axis_child(ast_node, context)
+        return on_test(ast_node, child_nodes(context))
       end
 
       ##
       # Evaluates the `descendant` axis. This method processes child nodes until
       # the very end of the tree, no "short-circuiting" mechanism is used.
       #
-      # @param [Oga::XPath::Node] node
+      # @param [Oga::XPath::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
-      def on_axis_descendant(node, context)
+      def on_axis_descendant(ast_node, context)
         nodes = XML::NodeSet.new
 
         context.each do |context_node|
-          nodes += on_test(node, context_node.children)
-          nodes += on_axis_descendant(node, context_node.children)
+          nodes += on_test(ast_node, context_node.children)
+          nodes += on_axis_descendant(ast_node, context_node.children)
         end
 
         return nodes
@@ -233,22 +233,23 @@ module Oga
       ##
       # Evaluates the `descendant-or-self` axis.
       #
-      # @param [Oga::XPath::Node] node
+      # @param [Oga::XPath::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
-      def on_axis_descendant_or_self(node, context)
-        return on_test(node, context) + on_axis_descendant(node, context)
+      def on_axis_descendant_or_self(ast_node, context)
+        return on_test(ast_node, context) +
+          on_axis_descendant(ast_node, context)
       end
 
       ##
       # Evaluates the `following` axis.
       #
-      # @param [Oga::XPath::Node] node
+      # @param [Oga::XPath::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
-      def on_axis_following(node, context)
+      def on_axis_following(ast_node, context)
         nodes = XML::NodeSet.new
 
         context.each do |context_node|
@@ -264,7 +265,7 @@ module Oga
 
             next unless check
 
-            if can_match_node?(doc_node) and node_matches?(doc_node, node)
+            if can_match_node?(doc_node) and node_matches?(doc_node, ast_node)
               nodes << doc_node
             end
           end
@@ -330,18 +331,18 @@ module Oga
       # Returns `true` if the given XML node can be compared using
       # {#node_matches?}.
       #
-      # @param [Oga::XML::Node] node
+      # @param [Oga::XML::Node] ast_node
       #
-      def can_match_node?(node)
-        return node.respond_to?(:name) && node.respond_to?(:namespace)
+      def can_match_node?(ast_node)
+        return ast_node.respond_to?(:name) && ast_node.respond_to?(:namespace)
       end
 
       ##
-      # @param [Oga::XML::Node] node
+      # @param [Oga::XML::Node] ast_node
       # @return [TrueClass|FalseClass]
       #
-      def has_parent?(node)
-        return node.respond_to?(:parent) && !!node.parent
+      def has_parent?(ast_node)
+        return ast_node.respond_to?(:parent) && !!ast_node.parent
       end
     end # Evaluator
   end # XPath
