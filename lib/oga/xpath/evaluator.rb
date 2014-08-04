@@ -252,15 +252,22 @@ module Oga
         nodes = XML::NodeSet.new
 
         context.each do |context_node|
-          current = context_node
+          check = false
 
-          # TODO: implement me properly this time.
-          #
-          # Step 1: gather *all* the nodes that come after the current node,
-          # regardless of their nesting.
-          #
-          # Step 2: compare all those nodes with the given test, only return
-          # those that match.
+          @document.each_node do |doc_node|
+            # Skip child nodes of the current context node, compare all
+            # following nodes.
+            if doc_node == context_node
+              check = true
+              throw :skip_children
+            end
+
+            next unless check
+
+            if can_match_node?(doc_node) and node_matches?(doc_node, node)
+              nodes << doc_node
+            end
+          end
         end
 
         return nodes
