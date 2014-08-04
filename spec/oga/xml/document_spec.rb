@@ -53,6 +53,22 @@ describe Oga::XML::Document do
 
       names.should == %w{books book1 title1 Foo book2 title2 Bar}
     end
+
+    example 'skip child nodes when skip_children is thrown' do
+      names = []
+
+      @document.each_node do |node|
+        if node.is_a?(Oga::XML::Element)
+          if node.name == 'book1'
+            throw :skip_children
+          else
+            names << node.name
+          end
+        end
+      end
+
+      names.should == %w{books book2 title2}
+    end
   end
 
   context '#to_xml' do
