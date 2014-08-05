@@ -382,6 +382,23 @@ module Oga
       end
 
       ##
+      # Evaluates the `self` axis.
+      #
+      # @param [Oga::XPath::Node] ast_node
+      # @param [Oga::XML::NodeSet] context
+      # @return [Oga::XML::NodeSet]
+      #
+      def on_axis_self(ast_node, context)
+        nodes = XML::NodeSet.new
+
+        context.each do |context_node|
+          nodes << context_node if node_matches?(context_node, ast_node)
+        end
+
+        return nodes
+      end
+
+      ##
       # Returns a node set containing all the child nodes of the given set of
       # nodes.
       #
