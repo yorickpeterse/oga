@@ -27,9 +27,9 @@ describe Oga::XPath::Evaluator do
       end
     end
 
-    context 'matching nodes with parents using the short axis form' do
+    context 'matching nodes with parents using the short form' do
       before do
-        @set = @evaluator.evaluate('a/b/parent::node()')
+        @set = @evaluator.evaluate('a/b/..')
       end
 
       it_behaves_like :node_set, :length => 1
