@@ -94,8 +94,8 @@ module Oga
         body  = children.map(&:to_xml).join('')
         attrs = ''
 
-        attributes.each do |key, value|
-          attrs << "#{key}=#{value.inspect}"
+        attributes.each do |attr|
+          attrs << attr.to_xml
         end
 
         attrs = " #{attrs}" unless attrs.empty?

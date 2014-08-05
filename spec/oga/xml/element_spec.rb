@@ -111,7 +111,9 @@ describe Oga::XML::Element do
     example 'include the attributes if present' do
       instance = described_class.new(
         :name       => 'p',
-        :attributes => {:key => 'value'}
+        :attributes => [
+          Oga::XML::Attribute.new(:name => 'key', :value => 'value')
+        ]
       )
 
       instance.to_xml.should == '<p key="value"></p>'

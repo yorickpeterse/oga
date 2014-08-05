@@ -41,6 +41,13 @@ module Oga
       ##
       # @return [String]
       #
+      def to_xml
+        return %Q(#{name}="#{value}")
+      end
+
+      ##
+      # @return [String]
+      #
       def inspect
         segments = []
 

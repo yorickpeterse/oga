@@ -25,6 +25,14 @@ describe Oga::XML::Attribute do
     end
   end
 
+  context '#to_xml' do
+    example 'return a key/value pair for an XML document' do
+      attr = described_class.new(:name => 'foo', :value => 'bar')
+
+      attr.to_xml.should == 'foo="bar"'
+    end
+  end
+
   context '#inspect' do
     example 'return the inspect value' do
       obj = described_class.new(:name => 'a', :namespace => 'b', :value => 'c')
