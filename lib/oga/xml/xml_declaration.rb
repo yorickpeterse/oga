@@ -49,20 +49,20 @@ module Oga
       end
 
       ##
-      # @param [Fixnum] indent
       # @return [String]
       #
-      def inspect(indent = 0)
-        class_name = self.class.to_s.split('::').last
-        spacing    = ' ' * indent
+      def inspect
+        segments = []
 
-        return <<-EOF.strip
-#{class_name}(
-#{spacing}  version: #{version.inspect}
-#{spacing}  encoding: #{encoding.inspect}
-#{spacing}  standalone: #{standalone.inspect}
-#{spacing})
-        EOF
+        [:version, :encoding, :standalone].each do |attr|
+          value = send(attr)
+
+          if value and !value.empty?
+            segments << "#{attr}: #{value.inspect}"
+          end
+        end
+
+        return "XmlDeclaration(#{segments.join(' ')})"
       end
 
       ##

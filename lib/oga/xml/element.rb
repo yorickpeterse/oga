@@ -114,11 +114,19 @@ module Oga
         child_lines = children.map { |child| child.inspect(indent + 4) }
           .join("\n")
 
+        segments = []
+
+        [:name, :namespace, :attributes].each do |attr|
+          value = send(attr)
+
+          if value and !value.empty?
+            segments << "#{attr}: #{value.inspect}"
+          end
+        end
+
         return <<-EOF.chomp
 
-#{spacing}  name: #{name.inspect}
-#{spacing}  namespace: #{namespace.inspect}
-#{spacing}  attributes: #{attributes.inspect}
+#{spacing}  #{segments.join("\n#{spacing}  ")}
 #{spacing}  children: [
 #{child_lines}
 #{spacing}]

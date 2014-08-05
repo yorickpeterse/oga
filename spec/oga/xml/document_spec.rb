@@ -146,18 +146,8 @@ describe Oga::XML::Document do
     example 'pretty-print the node' do
       @instance.inspect.should == <<-EOF.strip
 Document(
-  doctype: Doctype(
-    name: "html"
-    type: nil
-    public_id: nil
-    system_id: nil
-    inline_rules: nil
-  )
-  xml_declaration: XmlDeclaration(
-    version: "1.0"
-    encoding: "UTF-8"
-    standalone: nil
-  )
+  doctype: Doctype(name: "html")
+  xml_declaration: XmlDeclaration(version: "1.0" encoding: "UTF-8")
   children: [
     Comment(text: "foo")
 ])
@@ -167,8 +157,6 @@ Document(
     example 'pretty-print a document without a doctype and XML declaration' do
       described_class.new.inspect.should == <<-EOF.strip
 Document(
-  doctype: nil
-  xml_declaration: nil
   children: [
 
 ])

@@ -115,29 +115,20 @@ module Oga
       # @return [String]
       #
       def inspect
-        class_name  = self.class.to_s.split('::').last
+        segments    = []
         child_lines = children.map { |child| child.inspect(4) }.join("\n")
 
-        if doctype
-          dtd = doctype.inspect(2)
-        else
-          dtd = doctype.inspect
+        [:doctype, :xml_declaration].each do |attr|
+          value = send(attr)
+
+          if value
+            segments << "#{attr}: #{value.inspect}"
+          end
         end
 
-        if xml_declaration
-          decl = xml_declaration.inspect(2)
-        else
-          decl = xml_declaration.inspect
-        end
+        segments << "children: [\n#{child_lines}\n]"
 
-        return <<-EOF.strip
-#{class_name}(
-  doctype: #{dtd}
-  xml_declaration: #{decl}
-  children: [
-#{child_lines}
-])
-        EOF
+        return "Document(\n  #{segments.join("\n  ")})"
       end
     end # Document
   end # XML

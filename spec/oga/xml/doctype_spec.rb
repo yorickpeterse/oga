@@ -67,13 +67,7 @@ describe Oga::XML::Doctype do
 
     example 'pretty-print the node' do
       @instance.inspect.should == <<-EOF.strip
-Doctype(
-  name: "html"
-  type: "PUBLIC"
-  public_id: nil
-  system_id: nil
-  inline_rules: "<!ELEMENT foo>"
-)
+Doctype(name: "html" type: "PUBLIC" inline_rules: "<!ELEMENT foo>")
       EOF
     end
   end

@@ -64,22 +64,20 @@ module Oga
       ##
       # Inspects the doctype.
       #
-      # @param [Fixnum] indent The indentation level for each line.
       # @return [String]
       #
-      def inspect(indent = 0)
-        class_name = self.class.to_s.split('::').last
-        spacing    = ' ' * indent
+      def inspect
+        segments = []
 
-        return <<-EOF.strip
-#{class_name}(
-#{spacing}  name: #{name.inspect}
-#{spacing}  type: #{type.inspect}
-#{spacing}  public_id: #{public_id.inspect}
-#{spacing}  system_id: #{system_id.inspect}
-#{spacing}  inline_rules: #{inline_rules.inspect}
-#{spacing})
-        EOF
+        [:name, :type, :public_id, :system_id, :inline_rules].each do |attr|
+          value = send(attr)
+
+          if value and !value.empty?
+            segments << "#{attr}: #{value.inspect}"
+          end
+        end
+
+        return "Doctype(#{segments.join(' ')})"
       end
 
       ##

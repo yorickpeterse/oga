@@ -141,7 +141,6 @@ describe Oga::XML::Element do
       @instance.inspect.should == <<-EOF.strip
 Element(
   name: "p"
-  namespace: nil
   attributes: {"class"=>"foo"}
   children: [
     Comment(text: "foo")

@@ -42,8 +42,17 @@ module Oga
       # @return [String]
       #
       def inspect
-        return "Attribute(name: #{name.inspect} " \
-          "namespace: #{namespace.inspect} value: #{value.inspect})"
+        segments = []
+
+        [:name, :namespace, :value].each do |attr|
+          value = send(attr)
+
+          if value and !value.empty?
+            segments << "#{attr}: #{value.inspect}"
+          end
+        end
+
+        return "Attribute(#{segments.join(' ')})"
       end
     end # Attribute
   end # XML

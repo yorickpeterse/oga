@@ -50,11 +50,7 @@ describe Oga::XML::XmlDeclaration do
 
     example 'pretty-print the node' do
       @instance.inspect.should == <<-EOF.strip
-XmlDeclaration(
-  version: "1.0"
-  encoding: "UTF-8"
-  standalone: nil
-)
+XmlDeclaration(version: "1.0" encoding: "UTF-8")
       EOF
     end
   end
