@@ -308,6 +308,27 @@ module Oga
       end
 
       ##
+      # Evaluates the `parent` axis.
+      #
+      # @param [Oga::XPath::Node] ast_node
+      # @param [Oga::XML::NodeSet] context
+      # @return [Oga::XML::NodeSet]
+      #
+      def on_axis_parent(ast_node, context)
+        nodes = XML::NodeSet.new
+
+        context.each do |context_node|
+          next unless has_parent?(context_node)
+
+          parent = context_node.parent
+
+          nodes << parent if node_matches?(parent, ast_node)
+        end
+
+        return nodes
+      end
+
+      ##
       # Returns a node set containing all the child nodes of the given set of
       # nodes.
       #
