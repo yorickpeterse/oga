@@ -44,7 +44,7 @@ describe Oga::XPath::Evaluator do
       end
     end
 
-    context 'matching nodes in other contexts' do
+    context 'matching nodes in a deeper context' do
       before do
         @set = @evaluator.evaluate('root/foo/bar/following-sibling::baz')
       end
