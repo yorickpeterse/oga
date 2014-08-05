@@ -329,6 +329,32 @@ module Oga
       end
 
       ##
+      # Evaluates the `preceding` axis.
+      #
+      # @param [Oga::XPath::Node] ast_node
+      # @param [Oga::XML::NodeSet] context
+      # @return [Oga::XML::NodeSet]
+      #
+      def on_axis_preceding(ast_node, context)
+        nodes = XML::NodeSet.new
+
+        context.each do |context_node|
+          check = true
+
+          @document.each_node do |doc_node|
+            # Test everything *until* we hit the current context node.
+            if doc_node == context_node
+              break
+            elsif node_matches?(doc_node, ast_node)
+              nodes << doc_node
+            end
+          end
+        end
+
+        return nodes
+      end
+
+      ##
       # Returns a node set containing all the child nodes of the given set of
       # nodes.
       #
