@@ -15,7 +15,7 @@ describe Oga::XML::Parser do
     end
 
     example 'do not set a namespace' do
-      @element.namespace.nil?.should == true
+      @element.namespace.should be_nil
     end
   end
 
@@ -48,6 +48,10 @@ describe Oga::XML::Parser do
 
     example 'set the bar attribute' do
       @element.attribute('bar').value.should == 'baz'
+    end
+
+    example 'do not set the attribute namespace' do
+      @element.attribute('bar').namespace.should be_nil
     end
   end
 
