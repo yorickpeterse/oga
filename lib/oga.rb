@@ -25,6 +25,7 @@ require_relative 'oga/xml/cdata'
 require_relative 'oga/xml/xml_declaration'
 require_relative 'oga/xml/doctype'
 require_relative 'oga/xml/attribute'
+require_relative 'oga/xml/namespace'
 require_relative 'oga/xml/node_set'
 
 require_relative 'oga/html/parser'

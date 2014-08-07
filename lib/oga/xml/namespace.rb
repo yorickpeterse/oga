@@ -24,6 +24,13 @@ module Oga
       def to_s
         return name.to_s
       end
+
+      ##
+      # @return [String]
+      #
+      def inspect
+        return "Namespace(name: #{name.inspect})"
+      end
     end # Namespace
   end # XML
 end # Oga
