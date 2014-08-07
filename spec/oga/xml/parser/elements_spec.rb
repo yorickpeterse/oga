@@ -13,6 +13,10 @@ describe Oga::XML::Parser do
     example 'set the name of the element' do
       @element.name.should == 'p'
     end
+
+    example 'do not set a namespace' do
+      @element.namespace.nil?.should == true
+    end
   end
 
   context 'elements with namespaces' do
