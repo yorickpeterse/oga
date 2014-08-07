@@ -17,7 +17,6 @@ end
 #:nocov:
 
 require_relative 'oga/xml/node'
-require_relative 'oga/xml/element'
 require_relative 'oga/xml/document'
 require_relative 'oga/xml/text'
 require_relative 'oga/xml/comment'
@@ -26,6 +25,7 @@ require_relative 'oga/xml/xml_declaration'
 require_relative 'oga/xml/doctype'
 require_relative 'oga/xml/attribute'
 require_relative 'oga/xml/namespace'
+require_relative 'oga/xml/element'
 require_relative 'oga/xml/node_set'
 
 require_relative 'oga/html/parser'

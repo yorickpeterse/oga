@@ -6,8 +6,14 @@ describe Oga::XML::Element do
       described_class.new(:name => 'p').name.should == 'p'
     end
 
-    example 'raise TypeError when the namespace is a String' do
+    example 'raise TypeError when the namespace is not a Namespace' do
       block = lambda { described_class.new(:namespace => 'x') }
+
+      block.should raise_error(TypeError)
+    end
+
+    example 'raise TypeError when the attributes are not an Array' do
+      block = lambda { described_class.new(:attributes => 'foo') }
 
       block.should raise_error(TypeError)
     end

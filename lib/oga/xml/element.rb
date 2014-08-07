@@ -20,6 +20,17 @@ module Oga
       attr_accessor :name, :namespace, :attributes
 
       ##
+      # List of options that can be passed to the constructor and the required
+      # types of their values.
+      #
+      # @return [Hash]
+      #
+      OPTION_TYPES = {
+        :namespace  => Namespace,
+        :attributes => Array
+      }
+
+      ##
       # @param [Hash] options
       #
       # @option options [String] :name The name of the element.
@@ -31,12 +42,7 @@ module Oga
       #  of the element as an Array.
       #
       def initialize(options = {})
-        if options[:namespace] and !options[:namespace].is_a?(Namespace)
-          raise(
-            TypeError,
-            ':namespace must be an instance of Oga::XML::Namespace'
-          )
-        end
+        validate_option_types!(options)
 
         super
 
@@ -140,6 +146,21 @@ module Oga
       end
 
       private
+
+      ##
+      # @param [Hash] options
+      # @raise [TypeError]
+      #
+      def validate_option_types!(options)
+        OPTION_TYPES.each do |key, type|
+          if options[key] and !options[key].is_a?(type)
+            raise(
+              TypeError,
+              "#{key.inspect} must be an instance of #{type}"
+            )
+          end
+        end
+      end
 
       ##
       # @param [String] name
