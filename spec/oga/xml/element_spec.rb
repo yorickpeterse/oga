@@ -142,30 +142,18 @@ describe Oga::XML::Element do
     example 'inspect a node with a name' do
       node = described_class.new(:name => 'a')
 
-      node.inspect.should == <<-EOF.strip
-Element(
-  name: "a"
-  children: [
-
-])
-      EOF
+      node.inspect.should == 'Element(name: "a")'
     end
 
     example 'inspect a node with attributes and children' do
       node = described_class.new(
         :name       => 'p',
         :children   => [Oga::XML::Comment.new(:text => 'foo')],
-        :attributes => {'class' => 'foo'}
+        :attributes => [Oga::XML::Attribute.new(:name => 'x', :value => 'y')]
       )
 
-      node.inspect.should == <<-EOF.strip
-Element(
-  name: "p"
-  attributes: {"class"=>"foo"}
-  children: [
-    Comment(text: "foo")
-])
-      EOF
+      node.inspect.should == 'Element(name: "p" attributes: ' \
+        '[Attribute(name: "x" value: "y")] children: NodeSet(Comment("foo")))'
     end
 
     example 'inspect a node with a namespace' do
@@ -174,14 +162,7 @@ Element(
         :namespace => Oga::XML::Namespace.new(:name => 'x')
       )
 
-      node.inspect.should == <<-EOF.strip
-Element(
-  name: "p"
-  namespace: Namespace(name: "x")
-  children: [
-
-])
-      EOF
+      node.inspect.should == 'Element(name: "p" namespace: Namespace(name: "x"))'
     end
   end
 

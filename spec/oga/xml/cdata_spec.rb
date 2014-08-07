@@ -29,8 +29,8 @@ describe Oga::XML::Cdata do
       @instance = described_class.new(:text => 'foo')
     end
 
-    example 'pretty-print the node' do
-      @instance.inspect.should == 'Cdata(text: "foo")'
+    example 'return the inspect value' do
+      @instance.inspect.should == 'Cdata("foo")'
     end
   end
 

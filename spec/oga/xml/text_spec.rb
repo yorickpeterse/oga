@@ -29,8 +29,8 @@ describe Oga::XML::Text do
       @instance = described_class.new(:text => 'foo')
     end
 
-    example 'pretty-print the node' do
-      @instance.inspect.should == 'Text(text: "foo")'
+    example 'return the inspect value' do
+      @instance.inspect.should == 'Text("foo")'
     end
   end
 

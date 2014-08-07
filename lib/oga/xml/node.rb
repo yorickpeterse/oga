@@ -141,26 +141,6 @@ module Oga
       end
 
       ##
-      # Generates the inspect value for the current node. Sub classes can
-      # overwrite the {#extra_inspect_data} method to customize the output
-      # format.
-      #
-      # @param [Fixnum] indent
-      # @return [String]
-      #
-      def inspect(indent = 0)
-        class_name = self.class.to_s.split('::').last
-        spacing    = ' ' * indent
-
-        return "#{spacing}#{class_name}(#{extra_inspect_data(indent)})"
-      end
-
-      ##
-      # @return [String]
-      #
-      def extra_inspect_data; end
-
-      ##
       # @return [Symbol]
       #
       def node_type

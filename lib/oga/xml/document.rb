@@ -115,10 +115,9 @@ module Oga
       # @return [String]
       #
       def inspect
-        segments    = []
-        child_lines = children.map { |child| child.inspect(4) }.join("\n")
+        segments = []
 
-        [:doctype, :xml_declaration].each do |attr|
+        [:doctype, :xml_declaration, :children].each do |attr|
           value = send(attr)
 
           if value
@@ -126,9 +125,11 @@ module Oga
           end
         end
 
-        segments << "children: [\n#{child_lines}\n]"
-
-        return "Document(\n  #{segments.join("\n  ")})"
+        return <<-EOF.strip
+Document(
+  #{segments.join("\n  ")}
+)
+        EOF
       end
     end # Document
   end # XML

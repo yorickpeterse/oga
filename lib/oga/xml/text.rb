@@ -29,11 +29,10 @@ module Oga
       end
 
       ##
-      # @param [Fixnum] indent
       # @return [String]
       #
-      def extra_inspect_data(indent)
-        return "text: #{text.inspect}"
+      def inspect
+        return "#{self.class.to_s.split('::').last}(#{text.inspect})"
       end
 
       ##

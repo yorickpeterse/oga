@@ -114,19 +114,12 @@ module Oga
       end
 
       ##
-      # Returns extra data to use when calling {#inspect} on an element.
-      #
-      # @param [Fixnum] indent
       # @return [String]
       #
-      def extra_inspect_data(indent)
-        spacing     = ' ' * indent
-        child_lines = children.map { |child| child.inspect(indent + 4) }
-          .join("\n")
-
+      def inspect
         segments = []
 
-        [:name, :namespace, :attributes].each do |attr|
+        [:name, :namespace, :attributes, :children].each do |attr|
           value = send(attr)
 
           if !value or (value.respond_to?(:empty?) and value.empty?)
@@ -136,13 +129,7 @@ module Oga
           segments << "#{attr}: #{value.inspect}"
         end
 
-        return <<-EOF.chomp
-
-#{spacing}  #{segments.join("\n#{spacing}  ")}
-#{spacing}  children: [
-#{child_lines}
-#{spacing}]
-        EOF
+        return "Element(#{segments.join(' ')})"
       end
 
       ##

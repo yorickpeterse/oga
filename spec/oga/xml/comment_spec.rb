@@ -29,8 +29,8 @@ describe Oga::XML::Comment do
       @instance = described_class.new(:text => 'foo')
     end
 
-    example 'pretty-print the node' do
-      @instance.inspect.should == 'Comment(text: "foo")'
+    example 'return the inspect value' do
+      @instance.inspect.should == 'Comment("foo")'
     end
   end
 

@@ -143,23 +143,21 @@ describe Oga::XML::Document do
       )
     end
 
-    example 'pretty-print the node' do
+    example 'return the inspect value' do
       @instance.inspect.should == <<-EOF.strip
 Document(
   doctype: Doctype(name: "html")
   xml_declaration: XmlDeclaration(version: "1.0" encoding: "UTF-8")
-  children: [
-    Comment(text: "foo")
-])
+  children: NodeSet(Comment("foo"))
+)
       EOF
     end
 
-    example 'pretty-print a document without a doctype and XML declaration' do
+    example 'return the inspect value of an empty document' do
       described_class.new.inspect.should == <<-EOF.strip
 Document(
-  children: [
-
-])
+  children: NodeSet()
+)
       EOF
     end
   end

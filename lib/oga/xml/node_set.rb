@@ -252,6 +252,15 @@ module Oga
         return text
       end
 
+      ##
+      # @return [String]
+      #
+      def inspect
+        values = @nodes.map(&:inspect).join(', ')
+
+        return "NodeSet(#{values})"
+      end
+
       private
 
       ##
