@@ -6,6 +6,12 @@ describe Oga::XML::Element do
       described_class.new(:name => 'p').name.should == 'p'
     end
 
+    example 'raise TypeError when the namespace is a String' do
+      block = lambda { described_class.new(:namespace => 'x') }
+
+      block.should raise_error(TypeError)
+    end
+
     example 'set the name via a setter' do
       instance = described_class.new
       instance.name = 'p'
@@ -25,7 +31,7 @@ describe Oga::XML::Element do
         Oga::XML::Attribute.new(
           :name      => 'key',
           :value     => 'foo',
-          :namespace => 'x'
+          :namespace => Oga::XML::Namespace.new(:name => 'x')
         )
       ]
 
@@ -103,9 +109,12 @@ describe Oga::XML::Element do
     end
 
     example 'include the namespace if present' do
-      instance = described_class.new(:name => 'p', :namespace => 'foo')
+      instance = described_class.new(
+        :name      => 'p',
+        :namespace => Oga::XML::Namespace.new(:name => 'foo')
+      )
 
-      instance.to_xml.should == '<foo:p></p>'
+      instance.to_xml.should == '<foo:p></foo:p>'
     end
 
     example 'include the attributes if present' do
@@ -130,22 +139,47 @@ describe Oga::XML::Element do
   end
 
   context '#inspect' do
-    before do
-      children  = [Oga::XML::Comment.new(:text => 'foo')]
-      @instance = described_class.new(
-        :name       => 'p',
-        :children   => children,
-        :attributes => {'class' => 'foo'}
-      )
+    example 'inspect a node with a name' do
+      node = described_class.new(:name => 'a')
+
+      node.inspect.should == <<-EOF.strip
+Element(
+  name: "a"
+  children: [
+
+])
+      EOF
     end
 
-    example 'pretty-print the node' do
-      @instance.inspect.should == <<-EOF.strip
+    example 'inspect a node with attributes and children' do
+      node = described_class.new(
+        :name       => 'p',
+        :children   => [Oga::XML::Comment.new(:text => 'foo')],
+        :attributes => {'class' => 'foo'}
+      )
+
+      node.inspect.should == <<-EOF.strip
 Element(
   name: "p"
   attributes: {"class"=>"foo"}
   children: [
     Comment(text: "foo")
+])
+      EOF
+    end
+
+    example 'inspect a node with a namespace' do
+      node = described_class.new(
+        :name      => 'p',
+        :namespace => Oga::XML::Namespace.new(:name => 'x')
+      )
+
+      node.inspect.should == <<-EOF.strip
+Element(
+  name: "p"
+  namespace: Namespace(name: "x")
+  children: [
+
 ])
       EOF
     end

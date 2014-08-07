@@ -439,7 +439,7 @@ module Oga
         ns_matches   = false
 
         if ns
-          ns_matches = xml_node.namespace == ns || ns == '*'
+          ns_matches = xml_node.namespace.to_s == ns || ns == '*'
 
         # If there's no namespace given but the name matches we'll also mark
         # the namespace as matching.

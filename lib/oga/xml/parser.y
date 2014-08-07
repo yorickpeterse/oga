@@ -148,7 +148,12 @@ rule
     : T_ATTR { Attribute.new(:name => val[0]) }
 
     # foo:bar
-    | T_ATTR_NS T_ATTR { Attribute.new(:namespace => val[0], :name => val[1]) }
+    | T_ATTR_NS T_ATTR
+      {
+        ns = Namespace.new(:name => val[0])
+
+        Attribute.new(:namespace => ns, :name => val[1])
+      }
     ;
 
   # XML declarations
@@ -334,7 +339,7 @@ Unexpected #{name} with value #{value.inspect} on line #{@line}:
   #
   def on_element(namespace, name, attributes = {})
     element = Element.new(
-      :namespace  => namespace,
+      :namespace  => Namespace.new(:name => namespace),
       :name       => name,
       :attributes => attributes
     )

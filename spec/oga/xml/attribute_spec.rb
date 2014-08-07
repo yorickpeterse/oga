@@ -7,7 +7,16 @@ describe Oga::XML::Attribute do
     end
 
     example 'set the namespace' do
-      described_class.new(:namespace => 'a').namespace.should == 'a'
+      ns   = Oga::XML::Namespace.new(:name => 'foo')
+      attr = described_class.new(:namespace => ns)
+
+      attr.namespace.should == ns
+    end
+
+    example 'raise TypeError when using a String for the namespace' do
+      block = lambda { described_class.new(:namespace => 'x') }
+
+      block.should raise_error(TypeError)
     end
 
     example 'set the value' do
@@ -35,9 +44,15 @@ describe Oga::XML::Attribute do
 
   context '#inspect' do
     example 'return the inspect value' do
-      obj = described_class.new(:name => 'a', :namespace => 'b', :value => 'c')
+      obj = described_class.new(
+        :name      => 'a',
+        :namespace => Oga::XML::Namespace.new(:name => 'b'),
+        :value     => 'c'
+      )
 
-      obj.inspect.should == 'Attribute(name: "a" namespace: "b" value: "c")'
+      obj.inspect.should == <<-EOF.strip
+Attribute(name: "a" namespace: Namespace(name: "b") value: "c")
+EOF
     end
   end
 end

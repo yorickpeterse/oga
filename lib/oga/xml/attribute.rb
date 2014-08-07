@@ -9,7 +9,7 @@ module Oga
     #
     # @!attribute [rw] namespace
     #  The namespace of the attribute.
-    #  @return [String]
+    #  @return [Oga::XML::Namespace]
     #
     # @!attribute [rw] value
     #  The value of the attribute.
@@ -22,10 +22,17 @@ module Oga
       # @param [Hash] options
       #
       # @option options [String] :name
-      # @option options [String] :namespace
+      # @option options [Oga::XML::Namespace] :namespace
       # @option options [String] :value
       #
       def initialize(options = {})
+        if options[:namespace] and !options[:namespace].is_a?(Namespace)
+          raise(
+            TypeError,
+            ':namespace must be an instance of Oga::XML::Namespace'
+          )
+        end
+
         @name      = options[:name]
         @namespace = options[:namespace]
         @value     = options[:value]
@@ -54,7 +61,7 @@ module Oga
         [:name, :namespace, :value].each do |attr|
           value = send(attr)
 
-          if value and !value.empty?
+          if value
             segments << "#{attr}: #{value.inspect}"
           end
         end

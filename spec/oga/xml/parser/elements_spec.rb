@@ -17,7 +17,7 @@ describe Oga::XML::Parser do
 
   context 'elements with namespaces' do
     before :all do
-      @element = parse('<foo:p></p>').children[0]
+      @element = parse('<foo:p></foo:p>').children[0]
     end
 
     example 'return an Element instance' do
@@ -29,7 +29,7 @@ describe Oga::XML::Parser do
     end
 
     example 'set the namespace of the element' do
-      @element.namespace.should == 'foo'
+      @element.namespace.name.should == 'foo'
     end
   end
 
@@ -57,7 +57,7 @@ describe Oga::XML::Parser do
     end
 
     example 'include the namespace of the attribute' do
-      @element.attribute('x:bar').namespace.should == 'x'
+      @element.attribute('x:bar').namespace.name.should == 'x'
     end
 
     example 'include the name of the attribute' do

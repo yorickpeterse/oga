@@ -10,7 +10,7 @@ module Oga
     #
     # @!attribute [rw] namespace
     #  The namespace of the element, if any.
-    #  @return [String]
+    #  @return [Oga::XML::Namespace]
     #
     # @!attribute [rw] attributes
     #  The attributes of the element.
@@ -23,11 +23,21 @@ module Oga
       # @param [Hash] options
       #
       # @option options [String] :name The name of the element.
-      # @option options [String] :namespace The namespace of the element.
+      #
+      # @option options [Oga::XML::Namespace] :namespace The namespace of the
+      #  element.
+      #
       # @option options [Array<Oga::XML::Attribute>] :attributes The attributes
       #  of the element as an Array.
       #
       def initialize(options = {})
+        if options[:namespace] and !options[:namespace].is_a?(Namespace)
+          raise(
+            TypeError,
+            ':namespace must be an instance of Oga::XML::Namespace'
+          )
+        end
+
         super
 
         @name       = options[:name]
@@ -100,7 +110,7 @@ module Oga
 
         attrs = " #{attrs}" unless attrs.empty?
 
-        return "<#{ns}#{name}#{attrs}>#{body}</#{name}>"
+        return "<#{ns}#{name}#{attrs}>#{body}</#{ns}#{name}>"
       end
 
       ##
@@ -119,9 +129,11 @@ module Oga
         [:name, :namespace, :attributes].each do |attr|
           value = send(attr)
 
-          if value and !value.empty?
-            segments << "#{attr}: #{value.inspect}"
+          if !value or (value.respond_to?(:empty?) and value.empty?)
+            next
           end
+
+          segments << "#{attr}: #{value.inspect}"
         end
 
         return <<-EOF.chomp
@@ -163,7 +175,7 @@ module Oga
         ns_matches   = false
 
         if ns
-          ns_matches = attr.namespace == ns
+          ns_matches = attr.namespace.to_s == ns
 
         elsif name_matches
           ns_matches = true

@@ -22,8 +22,8 @@ describe Oga::XPath::Evaluator do
     end
 
     example 'include the <ns1:c> node' do
-      @set[2].name.should      == 'c'
-      @set[2].namespace.should == 'ns1'
+      @set[2].name.should           == 'c'
+      @set[2].namespace.name.should == 'ns1'
     end
   end
 
@@ -55,8 +55,8 @@ describe Oga::XPath::Evaluator do
     it_behaves_like :node_set, :length => 1
 
     example 'include the correct <c> node' do
-      @set[0].name.should      == 'c'
-      @set[0].namespace.should == 'ns1'
+      @set[0].name.should           == 'c'
+      @set[0].namespace.name.should == 'ns1'
     end
   end
 
