@@ -5,17 +5,15 @@ module Oga
     # name and URI.
     #
     class Namespace
-      attr_accessor :name, :uri
+      attr_accessor :name
 
       ##
       # @param [Hash] options
       #
       # @option options [String] :name
-      # @option options [String] :uri
       #
       def initialize(options = {})
         @name = options[:name]
-        @uri  = options[:uri]
       end
 
       ##
