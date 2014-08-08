@@ -399,6 +399,24 @@ module Oga
       end
 
       ##
+      # Evaluates the `namespace` axis.
+      #
+      # @param [Oga::XPath::Node] ast_node
+      # @param [Oga::XML::NodeSet] context
+      # @return [Oga::XML::NodeSet]
+      #
+      def on_axis_namespace(ast_node, context)
+        nodes = XML::NodeSet.new
+        name  = ast_node.children[1]
+
+        context.each do |context_node|
+
+        end
+
+        return nodes
+      end
+
+      ##
       # Returns a node set containing all the child nodes of the given set of
       # nodes.
       #
@@ -431,15 +449,13 @@ module Oga
       # @return [Oga::XML::NodeSet]
       #
       def node_matches?(xml_node, ast_node)
-        return false unless can_match_node?(xml_node)
-
         ns, name = *ast_node
 
-        name_matches = xml_node.name == name || name == '*'
+        name_matches = name_matches?(xml_node, name)
         ns_matches   = false
 
         if ns
-          ns_matches = xml_node.namespace.to_s == ns || ns == '*'
+          ns_matches = namespace_matches?(xml_node, ns)
 
         # If there's no namespace given but the name matches we'll also mark
         # the namespace as matching.
@@ -454,13 +470,29 @@ module Oga
       end
 
       ##
-      # Returns `true` if the given XML node can be compared using
-      # {#node_matches?}.
+      # Returns `true` if the name of the XML node matches the given name *or*
+      # matches a wildcard.
       #
-      # @param [Oga::XML::Node] ast_node
+      # @param [Oga::XML::Node] xml_node
+      # @param [String] name
       #
-      def can_match_node?(ast_node)
-        return ast_node.respond_to?(:name) && ast_node.respond_to?(:namespace)
+      def name_matches?(xml_node, name)
+        return false unless xml_node.respond_to?(:name)
+
+        return xml_node.name == name || name == '*'
+      end
+
+      ##
+      # Returns `true` if the namespace of the XML node matches the given
+      # namespace *or* matches a wildcard.
+      #
+      # @param [Oga::XML::Node] xml_node
+      # @param [String] ns
+      #
+      def namespace_matches?(xml_node, ns)
+        return false unless xml_node.respond_to?(:namespace)
+
+        return xml_node.namespace.to_s == ns || ns == '*'
       end
 
       ##

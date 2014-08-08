@@ -145,6 +145,27 @@ module Oga
         return :element
       end
 
+      ##
+      # Returns a node set of all the namespaces that are available to the
+      # current node. This includes the namespaces registered on the current
+      # node.
+      #
+      # @return [Oga::XML::NodeSet]
+      #
+      def available_namespaces
+
+      end
+
+      ##
+      # Returns a node set of all the namespaces registered with the current
+      # node.
+      #
+      # @return [Oga::XML::NodeSet]
+      #
+      def namespaces
+
+      end
+
       private
 
       ##

@@ -71,20 +71,6 @@ describe Oga::XPath::Evaluator do
     end
   end
 
-  context '#can_match_node?' do
-    example 'return true for an XML::Element instance' do
-      @evaluator.can_match_node?(Oga::XML::Element.new).should == true
-    end
-
-    example 'return true for an XML::Attribute instance' do
-      @evaluator.can_match_node?(Oga::XML::Attribute.new).should == true
-    end
-
-    example 'return false for an XML::Text instance' do
-      @evaluator.can_match_node?(Oga::XML::Text.new).should == false
-    end
-  end
-
   context '#has_parent?' do
     before do
       @parent = Oga::XML::Element.new

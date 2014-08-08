@@ -177,4 +177,8 @@ describe Oga::XML::Element do
       described_class.new.node_type.should == :element
     end
   end
+
+  context '#available_namespaces' do
+    # TODO: write me
+  end
 end
