@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Oga::XPath::Evaluator do
   before do
-    @document = parse('<a>Foo<b></b><b></b><ns1:c></ns1:c></a>')
+    @document = parse('<a xmlns:ns1="x">Foo<b></b><b></b><ns1:c></ns1:c></a>')
   end
 
   context 'absolute paths' do

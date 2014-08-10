@@ -26,10 +26,10 @@ describe Oga::XPath::Evaluator do
 
   context '#node_matches?' do
     before do
-      ns = Oga::XML::Namespace.new(:name => 'x')
-
       @name_node    = Oga::XML::Element.new(:name => 'a')
-      @name_ns_node = Oga::XML::Element.new(:name => 'b', :namespace => ns)
+      @name_ns_node = Oga::XML::Element.new(:name => 'b', :namespace_name => 'x')
+
+      @name_ns_node.register_namespace('x', 'y')
     end
 
     example 'return true if a node is matched by its name' do
