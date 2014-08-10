@@ -6,21 +6,28 @@ describe Oga::XML::Attribute do
       described_class.new(:name => 'a').name.should == 'a'
     end
 
-    example 'set the namespace' do
-      ns   = Oga::XML::Namespace.new(:name => 'foo')
-      attr = described_class.new(:namespace => ns)
-
-      attr.namespace.should == ns
-    end
-
-    example 'raise TypeError when using a String for the namespace' do
-      block = lambda { described_class.new(:namespace => 'x') }
-
-      block.should raise_error(TypeError)
-    end
-
     example 'set the value' do
       described_class.new(:value => 'a').value.should == 'a'
+    end
+  end
+
+  context '#namespace' do
+    before do
+      @namespace = Oga::XML::Namespace.new(:name => 'b')
+
+      element = Oga::XML::Element.new(
+        :namespaces => {'b' => @namespace}
+      )
+
+      @attribute = described_class.new(
+        :namespace_name => 'b',
+        :name           => 'a',
+        :element        => element
+      )
+    end
+
+    example 'return a Namespace instance' do
+      @attribute.namespace.should == @namespace
     end
   end
 
@@ -44,14 +51,19 @@ describe Oga::XML::Attribute do
 
   context '#inspect' do
     example 'return the inspect value' do
+      element = Oga::XML::Element.new(
+        :namespaces => {'b' => Oga::XML::Namespace.new(:name => 'b')}
+      )
+
       obj = described_class.new(
-        :name      => 'a',
-        :namespace => Oga::XML::Namespace.new(:name => 'b'),
-        :value     => 'c'
+        :namespace_name => 'b',
+        :name           => 'a',
+        :value          => 'c',
+        :element        => element
       )
 
       obj.inspect.should == <<-EOF.strip
-Attribute(name: "a" namespace: Namespace(name: "b") value: "c")
+Attribute(name: "a" namespace: Namespace(name: "b" uri: nil) value: "c")
 EOF
     end
   end

@@ -150,9 +150,7 @@ rule
     # foo:bar
     | T_ATTR_NS T_ATTR
       {
-        ns = Namespace.new(:name => val[0])
-
-        Attribute.new(:namespace => ns, :name => val[1])
+        Attribute.new(:namespace_name => val[0], :name => val[1])
       }
     ;
 

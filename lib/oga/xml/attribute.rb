@@ -7,35 +7,44 @@ module Oga
     #  The name of the attribute.
     #  @return [String]
     #
-    # @!attribute [rw] namespace
-    #  The namespace of the attribute.
-    #  @return [Oga::XML::Namespace]
+    # @!attribute [rw] namespace_name
+    #  @return [String]
     #
     # @!attribute [rw] value
     #  The value of the attribute.
     #  @return [String]
     #
+    # @!attribute [r] element
+    #  The element this attribute belongs to.
+    #  @return [Oga::XML::Element]
+    #
     class Attribute
-      attr_accessor :name, :namespace, :value
+      attr_accessor :name, :namespace_name, :element, :value
 
       ##
       # @param [Hash] options
       #
       # @option options [String] :name
-      # @option options [Oga::XML::Namespace] :namespace
+      # @option options [String] :namespace_name
       # @option options [String] :value
+      # @option options [Oga::XML::Element] :element
       #
       def initialize(options = {})
-        if options[:namespace] and !options[:namespace].is_a?(Namespace)
-          raise(
-            TypeError,
-            ':namespace must be an instance of Oga::XML::Namespace'
-          )
-        end
+        @name    = options[:name]
+        @value   = options[:value]
+        @element = options[:element]
 
-        @name      = options[:name]
-        @namespace = options[:namespace]
-        @value     = options[:value]
+        @namespace_name = options[:namespace_name]
+      end
+
+      ##
+      # Returns the {Oga::XML::Namespace} instance for the current namespace
+      # name.
+      #
+      # @return [Oga::XML::Namespace]
+      #
+      def namespace
+        return @namespace ||= element.available_namespaces[namespace_name]
       end
 
       ##
