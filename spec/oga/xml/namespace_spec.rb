@@ -15,9 +15,9 @@ describe Oga::XML::Namespace do
 
   context '#inspect' do
     example 'return the inspect value' do
-      ns = described_class.new(:name => 'x')
+      ns = described_class.new(:name => 'x', :uri => 'y')
 
-      ns.inspect.should == 'Namespace(name: "x")'
+      ns.inspect.should == 'Namespace(name: "x" uri: "y")'
     end
   end
 end

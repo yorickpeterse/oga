@@ -21,7 +21,7 @@ describe Oga::XML::Parser do
 
   context 'elements with namespaces' do
     before :all do
-      @element = parse('<foo:p></foo:p>').children[0]
+      @element = parse('<foo:p xmlns:foo="bar"></foo:p>').children[0]
     end
 
     example 'return an Element instance' do
@@ -57,7 +57,7 @@ describe Oga::XML::Parser do
 
   context 'elements with namespaced attributes' do
     before :all do
-      @element = parse('<foo x:bar="baz"></foo>').children[0]
+      @element = parse('<foo xmlns:x="x" x:bar="baz"></foo>').children[0]
     end
 
     example 'return an Element instance' do
@@ -106,6 +106,34 @@ describe Oga::XML::Parser do
 
     example 'include the text node of the inner element' do
       @element.children[1].children[0].is_a?(Oga::XML::Text).should == true
+    end
+  end
+
+  context 'elements with namespace registrations' do
+    before :all do
+      document = parse('<root xmlns:a="1"><foo xmlns:b="2"></foo></root>')
+
+      @root = document.children[0]
+      @foo  = @root.children[0]
+    end
+
+    example 'return the namespaces of the <root> node' do
+      @root.namespaces['a'].name.should == 'a'
+      @root.namespaces['a'].uri.should  == '1'
+    end
+
+    example 'return the namespaces of the <foo> node' do
+      @foo.namespaces['b'].name.should == 'b'
+      @foo.namespaces['b'].uri.should  == '2'
+    end
+
+    example 'return the available namespaces of the <root> node' do
+      @root.available_namespaces['a'].name.should == 'a'
+    end
+
+    example 'return the available namespaces of the <foo> node' do
+      @foo.available_namespaces['a'].name.should == 'a'
+      @foo.available_namespaces['b'].name.should == 'b'
     end
   end
 end

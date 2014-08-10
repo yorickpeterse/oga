@@ -336,14 +336,10 @@ Unexpected #{name} with value #{value.inspect} on line #{@line}:
   # @return [Oga::XML::Element]
   #
   def on_element(namespace, name, attributes = {})
-    if namespace
-      namespace = Namespace.new(:name => namespace)
-    end
-
     element = Element.new(
-      :namespace  => namespace,
-      :name       => name,
-      :attributes => attributes
+      :namespace_name => namespace,
+      :name           => name,
+      :attributes     => attributes
     )
 
     return element

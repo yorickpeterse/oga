@@ -6,18 +6,6 @@ describe Oga::XML::Element do
       described_class.new(:name => 'p').name.should == 'p'
     end
 
-    example 'raise TypeError when the namespace is not a Namespace' do
-      block = lambda { described_class.new(:namespace => 'x') }
-
-      block.should raise_error(TypeError)
-    end
-
-    example 'raise TypeError when the attributes are not an Array' do
-      block = lambda { described_class.new(:attributes => 'foo') }
-
-      block.should raise_error(TypeError)
-    end
-
     example 'set the name via a setter' do
       instance = described_class.new
       instance.name = 'p'
@@ -30,18 +18,42 @@ describe Oga::XML::Element do
     end
   end
 
+  context 'setting namespaces via attributes' do
+    before do
+      attr = Oga::XML::Attribute.new(:name => 'foo', :namespace_name => 'xmlns')
+
+      @element = described_class.new(:attributes => [attr])
+    end
+
+    example 'register the "foo" namespace' do
+      @element.namespaces['foo'].is_a?(Oga::XML::Namespace).should == true
+    end
+
+    example 'remove the namespace attribute from the list of attributes' do
+      @element.attributes.empty?.should == true
+    end
+  end
+
   context '#attribute' do
     before do
       attributes = [
         Oga::XML::Attribute.new(:name => 'key', :value => 'value'),
         Oga::XML::Attribute.new(
-          :name      => 'key',
-          :value     => 'foo',
-          :namespace => Oga::XML::Namespace.new(:name => 'x')
+          :name           => 'bar',
+          :value          => 'baz',
+          :namespace_name => 'x'
+        ),
+        Oga::XML::Attribute.new(
+          :name           => 'key',
+          :value          => 'foo',
+          :namespace_name => 'x'
         )
       ]
 
-      @instance = described_class.new(:attributes => attributes)
+      @instance = described_class.new(
+        :attributes => attributes,
+        :namespaces => {'x' => Oga::XML::Namespace.new(:name => 'x')}
+      )
     end
 
     example 'return an attribute with only a name' do
@@ -70,6 +82,24 @@ describe Oga::XML::Element do
 
     example 'return nil for a non existing attribute' do
       @instance.attribute('foobar').nil?.should == true
+    end
+
+    example 'return nil if an attribute has a namespace that is not given' do
+      @instance.attribute('bar').nil?.should == true
+    end
+  end
+
+  context '#namespace' do
+    before do
+      @namespace = Oga::XML::Namespace.new(:name => 'x')
+      @element   = described_class.new(
+        :namespace_name => 'x',
+        :namespaces     => {'x' => @namespace}
+      )
+    end
+
+    example 'return the namespace' do
+      @element.namespace.should == @namespace
     end
   end
 
@@ -116,8 +146,9 @@ describe Oga::XML::Element do
 
     example 'include the namespace if present' do
       instance = described_class.new(
-        :name      => 'p',
-        :namespace => Oga::XML::Namespace.new(:name => 'foo')
+        :name           => 'p',
+        :namespace_name => 'foo',
+        :namespaces     => {'foo' => Oga::XML::Namespace.new(:name => 'foo')}
       )
 
       instance.to_xml.should == '<foo:p></foo:p>'
@@ -164,11 +195,13 @@ describe Oga::XML::Element do
 
     example 'inspect a node with a namespace' do
       node = described_class.new(
-        :name      => 'p',
-        :namespace => Oga::XML::Namespace.new(:name => 'x')
+        :name           => 'p',
+        :namespace_name => 'x',
+        :namespaces     => {'x' => Oga::XML::Namespace.new(:name => 'x')}
       )
 
-      node.inspect.should == 'Element(name: "p" namespace: Namespace(name: "x"))'
+      node.inspect.should == 'Element(name: "p" ' \
+        'namespace: Namespace(name: "x" uri: nil))'
     end
   end
 
@@ -178,7 +211,53 @@ describe Oga::XML::Element do
     end
   end
 
+  context '#register_namespace' do
+    before do
+      @element = described_class.new
+
+      @element.register_namespace('foo', 'http://example.com')
+    end
+
+    example 'return a Namespace instance' do
+      @element.namespaces['foo'].is_a?(Oga::XML::Namespace).should == true
+    end
+
+    example 'set the name of the namespace' do
+      @element.namespaces['foo'].name.should == 'foo'
+    end
+
+    example 'set the URI of the namespace' do
+      @element.namespaces['foo'].uri.should == 'http://example.com'
+    end
+
+    example 'raise ArgumentError if the namespace already exists' do
+      block = lambda { @element.register_namespace('foo', 'bar') }
+
+      block.should raise_error(ArgumentError)
+    end
+  end
+
   context '#available_namespaces' do
-    # TODO: write me
+    before do
+      @parent = described_class.new
+      @child  = described_class.new
+
+      @child.node_set = Oga::XML::NodeSet.new([@child], @parent)
+
+      @parent.register_namespace('foo', 'bar')
+      @child.register_namespace('baz', 'xxx')
+
+      @parent_ns = @parent.available_namespaces
+      @child_ns  = @child.available_namespaces
+    end
+
+    example 'return the available namespaces of the child node' do
+      @child_ns['foo'].is_a?(Oga::XML::Namespace).should == true
+      @child_ns['baz'].is_a?(Oga::XML::Namespace).should == true
+    end
+
+    example 'return the available namespaces of the parent node' do
+      @parent_ns['foo'].is_a?(Oga::XML::Namespace).should == true
+    end
   end
 end

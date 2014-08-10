@@ -8,47 +8,48 @@ module Oga
     #  The name of the element.
     #  @return [String]
     #
-    # @!attribute [rw] namespace
-    #  The namespace of the element, if any.
-    #  @return [Oga::XML::Namespace]
+    # @!attribute [ww] namespace_name
+    #  The name of the namespace.
+    #  @return [String]
     #
     # @!attribute [rw] attributes
     #  The attributes of the element.
     #  @return [Array<Oga::XML::Attribute>]
     #
+    # @!attribute [rw] namespaces
+    #  The registered namespaces.
+    #  @return [Hash]
+    #
     class Element < Node
-      attr_accessor :name, :namespace, :attributes
+      attr_accessor :name, :namespace_name, :attributes, :namespaces
 
       ##
-      # List of options that can be passed to the constructor and the required
-      # types of their values.
+      # The attribute prefix/namespace used for registering element namespaces.
       #
-      # @return [Hash]
+      # @return [String]
       #
-      OPTION_TYPES = {
-        :namespace  => Namespace,
-        :attributes => Array
-      }
+      XMLNS_PREFIX = 'xmlns'.freeze
 
       ##
       # @param [Hash] options
       #
       # @option options [String] :name The name of the element.
       #
-      # @option options [Oga::XML::Namespace] :namespace The namespace of the
-      #  element.
+      # @option options [String] :namespace_name The name of the namespace.
       #
       # @option options [Array<Oga::XML::Attribute>] :attributes The attributes
       #  of the element as an Array.
       #
       def initialize(options = {})
-        validate_option_types!(options)
-
         super
 
-        @name       = options[:name]
-        @namespace  = options[:namespace]
-        @attributes = options[:attributes] || []
+        @name           = options[:name]
+        @namespace_name = options[:namespace_name]
+        @attributes     = options[:attributes] || []
+        @namespaces     = options[:namespaces] || {}
+
+        link_attributes
+        register_namespaces_from_attributes
       end
 
       ##
@@ -75,6 +76,15 @@ module Oga
       end
 
       alias_method :attr, :attribute
+
+      ##
+      # Returns the namespace of the element.
+      #
+      # @return [Oga::XML::Namespace]
+      #
+      def namespace
+        return @namespace ||= available_namespaces[namespace_name]
+      end
 
       ##
       # Returns the text of all child nodes joined together.
@@ -146,40 +156,63 @@ module Oga
       end
 
       ##
-      # Returns a node set of all the namespaces that are available to the
-      # current node. This includes the namespaces registered on the current
-      # node.
+      # Registers a new namespace for the current element and its child
+      # elements.
       #
-      # @return [Oga::XML::NodeSet]
+      # @param [String] name
+      # @param [String] uri
+      # @see [Oga::XML::Namespace#initialize]
       #
-      def available_namespaces
+      def register_namespace(name, uri)
+        if namespaces[name]
+          raise ArgumentError, "The namespace #{name.inspect} already exists"
+        end
 
+        namespaces[name] = Namespace.new(:name => name, :uri => uri)
       end
 
       ##
-      # Returns a node set of all the namespaces registered with the current
-      # node.
+      # Returns a Hash containing all the namespaces available to the current
+      # element.
       #
-      # @return [Oga::XML::NodeSet]
+      # @return [Hash]
       #
-      def namespaces
+      def available_namespaces
+        merged = namespaces
+        node   = parent
 
+        while node && node.respond_to?(:namespaces)
+          merged = merged.merge(node.namespaces)
+          node   = node.parent
+        end
+
+        return merged
       end
 
       private
 
       ##
-      # @param [Hash] options
-      # @raise [TypeError]
+      # Registers namespaces based on any "xmlns" attributes. Once a namespace
+      # has been registered the corresponding attribute is removed.
       #
-      def validate_option_types!(options)
-        OPTION_TYPES.each do |key, type|
-          if options[key] and !options[key].is_a?(type)
-            raise(
-              TypeError,
-              "#{key.inspect} must be an instance of #{type}"
-            )
-          end
+      def register_namespaces_from_attributes
+        self.attributes = attributes.reject do |attr|
+          # We're using `namespace_name` opposed to `namespace.name` as "xmlns"
+          # is not a registered namespace.
+          remove = attr.namespace_name && attr.namespace_name == XMLNS_PREFIX
+
+          register_namespace(attr.name, attr.value) if remove
+
+          remove
+        end
+      end
+
+      ##
+      # Links all attributes to the current element.
+      #
+      def link_attributes
+        attributes.each do |attr|
+          attr.element = self
         end
       end
 
@@ -206,7 +239,7 @@ module Oga
         if ns
           ns_matches = attr.namespace.to_s == ns
 
-        elsif name_matches
+        elsif name_matches and !attr.namespace
           ns_matches = true
         end
 
