@@ -12,6 +12,14 @@ describe Oga::XPath::Evaluator do
       @evaluator = described_class.new(@document)
     end
 
+    context 'matching namespaces in the entire document' do
+      before do
+        @set = @evaluator.evaluate('namespace::*')
+      end
+
+      it_behaves_like :empty_node_set
+    end
+
     context 'matching namespaces in the root element' do
       before do
         @set = @evaluator.evaluate('root/namespace::x')
@@ -30,17 +38,17 @@ describe Oga::XPath::Evaluator do
 
     context 'matching namespaces in a nested element' do
       before do
-        @set = @evaluator.evaluate('root/namespace::x')
+        @set = @evaluator.evaluate('root/foo/namespace::*')
       end
 
       it_behaves_like :node_set, :length => 2
 
-      example 'return the "x" namespace' do
-        @set[0].name.should == 'x'
+      example 'return the "y" namespace' do
+        @set[0].name.should == 'y'
       end
 
-      example 'return the "y" namespace' do
-        @set[1].name.should == 'y'
+      example 'return the "x" namespace' do
+        @set[1].name.should == 'x'
       end
     end
 
