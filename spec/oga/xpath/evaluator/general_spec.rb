@@ -69,6 +69,14 @@ describe Oga::XPath::Evaluator do
 
       @evaluator.node_matches?(text, s(:test, nil, 'a')).should == false
     end
+
+    example 'return false when the node has a namespace that is not given' do
+      @evaluator.node_matches?(@name_ns_node, s(:test, nil, 'b')).should == false
+    end
+
+    example 'return true if a node with a namespace is matched using a wildcard' do
+      @evaluator.node_matches?(@name_ns_node, s(:test, nil, '*')).should == true
+    end
   end
 
   context '#has_parent?' do

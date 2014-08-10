@@ -451,18 +451,19 @@ module Oga
       def node_matches?(xml_node, ast_node)
         ns, name = *ast_node
 
+        # If only the name is given and is a wildcard then we'll also want to
+        # match the namespace as a wildcard.
+        if !ns and name == '*'
+          ns = '*'
+        end
+
         name_matches = name_matches?(xml_node, name)
         ns_matches   = false
 
         if ns
           ns_matches = namespace_matches?(xml_node, ns)
 
-        # If there's no namespace given but the name matches we'll also mark
-        # the namespace as matching.
-        #
-        # THINK: stop automatically matching namespaces if left out?
-        #
-        elsif name_matches
+        elsif name_matches and !xml_node.namespace
           ns_matches = true
         end
 
