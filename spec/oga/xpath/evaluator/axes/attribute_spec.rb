@@ -7,7 +7,7 @@ describe Oga::XPath::Evaluator do
       @evaluator = described_class.new(document.children[0])
     end
 
-    context 'element attributes' do
+    context 'matching existing attributes' do
       before do
         @set = @evaluator.evaluate('attribute::foo')
       end
@@ -18,17 +18,29 @@ describe Oga::XPath::Evaluator do
         @set[0].is_a?(Oga::XML::Attribute).should == true
       end
 
-      example 'return the correct attribute' do
+      example 'return the "foo" attribute' do
         @set[0].name.should == 'foo'
       end
     end
 
-    context 'non existing attributes' do
+    context 'matching non existing attributes' do
       before do
         @set = @evaluator.evaluate('attribute::bar')
       end
 
       it_behaves_like :empty_node_set
+    end
+
+    context 'matching attributes using the short form' do
+      before do
+        @set = @evaluator.evaluate('@foo')
+      end
+
+      it_behaves_like :node_set, :length => 1
+
+      example 'return the "foo" attribute' do
+        @set[0].name.should == 'foo'
+      end
     end
   end
 end
