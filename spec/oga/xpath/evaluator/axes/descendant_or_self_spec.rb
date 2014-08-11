@@ -87,5 +87,33 @@ describe Oga::XPath::Evaluator do
 
       it_behaves_like :empty_node_set
     end
+
+    context 'direct descendants using the short form' do
+      before do
+        @set = @evaluator.evaluate('//b')
+      end
+
+      it_behaves_like :node_set, :length => 2
+
+      example 'return the first <b> node' do
+        @set[0].should == @first_b
+      end
+
+      example 'return the second <b> node' do
+        @set[1].should == @second_b
+      end
+    end
+
+    context 'nested descendants using the short form' do
+      before do
+        @set = @evaluator.evaluate('//c')
+      end
+
+      it_behaves_like :node_set, :length => 1
+
+      example 'return the <c> node' do
+        @set[0].should == @first_c
+      end
+    end
   end
 end
