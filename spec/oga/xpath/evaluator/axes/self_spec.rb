@@ -26,5 +26,17 @@ describe Oga::XPath::Evaluator do
 
       it_behaves_like :empty_node_set
     end
+
+    context 'matching the context node itself using the short form' do
+      before do
+        @set = @evaluator.evaluate('a/.')
+      end
+
+      it_behaves_like :node_set, :length => 1
+
+      example 'return the <a> node' do
+        @set[0].should == @document.children[0]
+      end
+    end
   end
 end
