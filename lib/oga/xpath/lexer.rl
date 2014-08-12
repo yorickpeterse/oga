@@ -31,6 +31,13 @@ module Oga
       AXIS_EMIT_NODE = %w{descendant-or-self parent self}
 
       ##
+      # Axes that require an extra T_SLASH token to be emitted.
+      #
+      # @return [Array]
+      #
+      AXIS_EMIT_EXTRA_SLASH = %w{descendant-or-self}
+
+      ##
       # @param [String] data The data to lex.
       #
       def initialize(data)
@@ -246,7 +253,9 @@ module Oga
             add_token(:T_LPAREN)
             add_token(:T_RPAREN)
 
-            add_token(:T_SLASH) unless te == eof
+            if AXIS_EMIT_EXTRA_SLASH.include?(value) and te != eof
+              add_token(:T_SLASH)
+            end
           end
         }
 
