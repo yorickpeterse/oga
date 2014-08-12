@@ -147,5 +147,16 @@ describe Oga::XPath::Lexer do
         [:T_RPAREN, nil],
       ]
     end
+
+    example 'lex the . axis followed by a path' do
+      lex_xpath('./foo').should == [
+        [:T_AXIS, 'self'],
+        [:T_IDENT, 'node'],
+        [:T_LPAREN, nil],
+        [:T_RPAREN, nil],
+        [:T_SLASH, nil],
+        [:T_IDENT, 'foo']
+      ]
+    end
   end
 end
