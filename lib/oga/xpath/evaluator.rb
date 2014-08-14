@@ -421,6 +421,59 @@ module Oga
       end
 
       ##
+      # Dispatches function calls to specific handlers.
+      #
+      # @param [Oga::XPath::Node] ast_node
+      # @param [Oga::XML::NodeSet] context
+      # @return [Oga::XML::NodeSet]
+      #
+      def on_call(ast_node, context)
+        name, test = *ast_node
+
+        handler = name.gsub('-', '_')
+
+        return send("on_call_#{handler}", test, context)
+      end
+
+      ##
+      # Processes the `node` function call. The W3 was apparently too lazy to
+      # properly document this function in their official specification. From
+      # Wikipedia:
+      #
+      #     node()
+      #         finds any node at all.
+      #
+      # Based on trial and error this function appears to match the following:
+      #
+      # * elements
+      # * text nodes
+      # * comments
+      # * CDATA nodes
+      #
+      # In Oga this translates to the following two classes:
+      #
+      # * {Oga::XML::Element}
+      # * {Oga::XML::Text}
+      #
+      # @param [Oga::XPath::Node] ast_node
+      # @param [Oga::XML::NodeSet] context
+      # @return [Oga::XML::NodeSet]
+      #
+      def on_call_node(ast_node, context)
+        nodes = XML::NodeSet.new
+
+        context.each do |context_node|
+          context_node.children.each do |child|
+            if child.is_a?(XML::Element) or child.is_a?(XML::Text)
+              nodes << child
+            end
+          end
+        end
+
+        return nodes
+      end
+
+      ##
       # Returns a node set containing all the child nodes of the given set of
       # nodes.
       #
