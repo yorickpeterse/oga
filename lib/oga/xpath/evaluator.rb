@@ -199,14 +199,15 @@ module Oga
       end
 
       ##
-      # Evaluates the `child` axis. This simply delegates work to {#on_test}.
+      # Evaluates the `child` axis. This simply delegates work to {#on_test}
+      # or {#on_node_type}.
       #
       # @param [Oga::XPath::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
       def on_axis_child(ast_node, context)
-        return on_test(ast_node, child_nodes(context))
+        return process(ast_node, child_nodes(context))
       end
 
       ##
@@ -421,52 +422,34 @@ module Oga
       end
 
       ##
-      # Dispatches function calls to specific handlers.
+      # Dispatches node type matching to dedicated handlers.
       #
       # @param [Oga::XPath::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
-      def on_call(ast_node, context)
+      def on_node_type(ast_node, context)
         name, test = *ast_node
 
         handler = name.gsub('-', '_')
 
-        return send("on_call_#{handler}", test, context)
+        return send("on_node_type_#{handler}", test, context)
       end
 
       ##
-      # Processes the `node` function call. The W3 was apparently too lazy to
-      # properly document this function in their official specification. From
-      # Wikipedia:
-      #
-      #     node()
-      #         finds any node at all.
-      #
-      # Based on trial and error this function appears to match the following:
-      #
-      # * elements
-      # * text nodes
-      # * comments
-      # * CDATA nodes
-      #
-      # In Oga this translates to the following two classes:
-      #
-      # * {Oga::XML::Element}
-      # * {Oga::XML::Text}
+      # Processes the `node()` node type. This type matcher can be used to match
+      # all node types (text, comment, etc).
       #
       # @param [Oga::XPath::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
-      def on_call_node(ast_node, context)
+      def on_node_type_node(ast_node, context)
         nodes = XML::NodeSet.new
 
-        context.each do |context_node|
-          context_node.children.each do |child|
-            if child.is_a?(XML::Element) or child.is_a?(XML::Text)
-              nodes << child
-            end
+        context.each do |node|
+          if node.is_a?(XML::Element) or node.is_a?(XML::Text)
+            nodes << node
           end
         end
 

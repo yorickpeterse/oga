@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Oga::XPath::Evaluator do
-  context 'node function' do
+  context 'node() tests' do
     before do
       @document  = parse('<a><b>foo</b></a>')
       @evaluator = described_class.new(@document)
