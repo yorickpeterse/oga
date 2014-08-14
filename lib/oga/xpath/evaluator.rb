@@ -476,12 +476,19 @@ module Oga
       # Checks if a given {Oga::XML::Node} instance matches a {Oga::XPath::Node}
       # instance.
       #
-      # Checking if a node matches happens in two steps:
+      # This method can use both "test" and "type-test" nodes. In case of
+      # "type-test" nodes the procedure is as following:
+      #
+      # 1. Evaluate the expression
+      # 2. If the return value is non empty return `true`, otherwise return
+      #    `false`
+      #
+      # For "test" nodes the procedure is as following instead:
       #
       # 1. Match the name
       # 2. Match the namespace
       #
-      # In both cases a star (`*`) can be used as a wildcard.
+      # For both the name and namespace a wildcard (`*`) can be used.
       #
       # @param [Oga::XML::Node] xml_node
       # @param [Oga::XPath::Node] ast_node
@@ -489,6 +496,10 @@ module Oga
       #
       def node_matches?(xml_node, ast_node)
         ns, name = *ast_node
+
+        if ast_node.type == :type_test
+          return type_matches?(xml_node, ast_node)
+        end
 
         # If only the name is given and is a wildcard then we'll also want to
         # match the namespace as a wildcard.
@@ -507,6 +518,17 @@ module Oga
         end
 
         return name_matches && ns_matches
+      end
+
+      ##
+      # @param [Oga::XML::Node] xml_node
+      # @param [Oga::XPath::Node] ast_node
+      # @return [TrueClass|FalseClass]
+      #
+      def type_matches?(xml_node, ast_node)
+        context = XML::NodeSet.new([xml_node])
+
+        return process(ast_node, context).length > 0
       end
 
       ##

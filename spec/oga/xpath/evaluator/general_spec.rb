@@ -77,6 +77,25 @@ describe Oga::XPath::Evaluator do
     example 'return true if a node with a namespace is matched using a wildcard' do
       @evaluator.node_matches?(@name_ns_node, s(:test, nil, '*')).should == true
     end
+
+    example 'return true if the node type matches' do
+      @evaluator.node_matches?(@name_node, s(:type_test, 'node')).should == true
+    end
+  end
+
+  context '#type_matches?' do
+    before do
+      @element = Oga::XML::Element.new(:name => 'a')
+      @ns      = Oga::XML::Namespace.new(:name => 'a')
+    end
+
+    example 'return true if the type matches' do
+      @evaluator.type_matches?(@element, s(:type_test, 'node')).should == true
+    end
+
+    example 'return false if the type does not match' do
+      @evaluator.type_matches?(@ns, s(:type_test, 'node')).should == false
+    end
   end
 
   context '#has_parent?' do
