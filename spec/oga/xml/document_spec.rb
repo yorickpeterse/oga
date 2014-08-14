@@ -71,20 +71,6 @@ describe Oga::XML::Document do
     end
   end
 
-  context '#available_namespaces' do
-    example 'return an empty Hash by default' do
-      described_class.new.available_namespaces.should be_empty
-    end
-
-    example 'return the namespaces of the first element' do
-      namespace = Oga::XML::Namespace.new(:name => 'x')
-      element   = Oga::XML::Element.new(:namespaces => {'x' => namespace})
-      document  = described_class.new(:children => [element])
-
-      document.available_namespaces['x'].should == namespace
-    end
-  end
-
   context '#to_xml' do
     before do
       child = Oga::XML::Comment.new(:text => 'foo')

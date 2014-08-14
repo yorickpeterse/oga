@@ -90,23 +90,6 @@ module Oga
       end
 
       ##
-      # Returns the available namespaces. These namespaces are retrieved from
-      # the first element in the document.
-      #
-      # @see [Oga::XML::Element#available_namespaces]
-      #
-      def available_namespaces
-        children.each do |child|
-          # There's no guarantee that the first node is *always* an element
-          # node.
-          return child.available_namespaces if child.is_a?(Element)
-        end
-
-        # In case the document is empty.
-        return {}
-      end
-
-      ##
       # Converts the document and its child nodes to XML.
       #
       # @return [String]

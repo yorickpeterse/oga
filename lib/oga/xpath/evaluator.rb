@@ -411,6 +411,8 @@ module Oga
         name  = ast_node.children[1]
 
         context.each do |context_node|
+          next unless context_node.respond_to?(:available_namespaces)
+
           context_node.available_namespaces.each do |_, namespace|
             if namespace.name == name or name == '*'
               nodes << namespace
