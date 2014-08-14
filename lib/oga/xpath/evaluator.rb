@@ -428,23 +428,22 @@ module Oga
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
-      def on_node_type(ast_node, context)
+      def on_type_test(ast_node, context)
         name, test = *ast_node
 
         handler = name.gsub('-', '_')
 
-        return send("on_node_type_#{handler}", test, context)
+        return send("on_type_test_#{handler}", test, context)
       end
 
       ##
-      # Processes the `node()` node type. This type matcher can be used to match
-      # all node types (text, comment, etc).
+      # Processes the `node` type matcher. This matcher matches all node types.
       #
       # @param [Oga::XPath::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
-      def on_node_type_node(ast_node, context)
+      def on_type_test_node(ast_node, context)
         nodes = XML::NodeSet.new
 
         context.each do |node|

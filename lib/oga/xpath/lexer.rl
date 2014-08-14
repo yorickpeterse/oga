@@ -249,7 +249,7 @@ module Oga
           # added on lexer level to make it easier to handle these cases on
           # parser/evaluator level.
           if AXIS_EMIT_NODE.include?(value)
-            add_token(:T_NODE_TYPE, 'node')
+            add_token(:T_TYPE_TEST, 'node')
 
             if AXIS_EMIT_EXTRA_SLASH.include?(value) and te != eof
               add_token(:T_SLASH)
@@ -303,24 +303,24 @@ module Oga
           | op_sub
           ;
 
-        # Node types
+        # Node type tests
         #
-        # While these look like functions they are actually node tests. For
+        # While these look like functions they are actually node type tests. For
         # example, comment() matches all comment nodes.
         #
         # See http://www.w3.org/TR/xpath/#NT-NodeType for more information.
 
-        node_type = 'comment' | 'text' | 'processing-instruction' | 'node';
+        type_test = 'comment' | 'text' | 'processing-instruction' | 'node';
 
-        action emit_node_type {
-          emit(:T_NODE_TYPE, ts, te - 2)
+        action emit_type_test {
+          emit(:T_TYPE_TEST, ts, te - 2)
         }
 
         main := |*
           operator;
           whitespace | slash | lparen | rparen | comma | colon;
 
-          node_type '()' => emit_node_type;
+          type_test '()' => emit_type_test;
 
           '[' => { add_token(:T_LBRACK) };
           ']' => { add_token(:T_RBRACK) };

@@ -3,7 +3,7 @@
 #
 class Oga::XPath::Parser
 
-token T_AXIS T_COLON T_COMMA T_FLOAT T_INT T_IDENT T_NODE_TYPE
+token T_AXIS T_COLON T_COMMA T_FLOAT T_INT T_IDENT T_TYPE_TEST
 token T_LBRACK T_RBRACK T_LPAREN T_RPAREN T_SLASH T_STRING
 token T_PIPE T_AND T_OR T_ADD T_DIV T_MOD T_EQ T_NEQ T_LT T_GT T_LTE T_GTE
 token T_SUB T_MUL
@@ -76,11 +76,11 @@ rule
   node_test
     : node_name           { s(:test, *val[0]) }
     | node_name predicate { s(:test, *val[0], val[1]) }
-    | node_type           { val[0] }
+    | type_test           { val[0] }
     ;
 
-  node_type
-    : T_NODE_TYPE { s(:node_type, val[0]) }
+  type_test
+    : T_TYPE_TEST { s(:type_test, val[0]) }
     ;
 
   node_name

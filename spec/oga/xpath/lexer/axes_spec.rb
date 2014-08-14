@@ -120,7 +120,7 @@ describe Oga::XPath::Lexer do
       lex_xpath('//A').should == [
         [:T_SLASH, nil],
         [:T_AXIS, 'descendant-or-self'],
-        [:T_NODE_TYPE, 'node'],
+        [:T_TYPE_TEST, 'node'],
         [:T_SLASH, nil],
         [:T_IDENT, 'A']
       ]
@@ -130,7 +130,7 @@ describe Oga::XPath::Lexer do
       lex_xpath('/..').should == [
         [:T_SLASH, nil],
         [:T_AXIS, 'parent'],
-        [:T_NODE_TYPE, 'node']
+        [:T_TYPE_TEST, 'node']
       ]
     end
 
@@ -138,14 +138,14 @@ describe Oga::XPath::Lexer do
       lex_xpath('/.').should == [
         [:T_SLASH, nil],
         [:T_AXIS, 'self'],
-        [:T_NODE_TYPE, 'node']
+        [:T_TYPE_TEST, 'node']
       ]
     end
 
     example 'lex the . axis followed by a path' do
       lex_xpath('./foo').should == [
         [:T_AXIS, 'self'],
-        [:T_NODE_TYPE, 'node'],
+        [:T_TYPE_TEST, 'node'],
         [:T_SLASH, nil],
         [:T_IDENT, 'foo']
       ]
