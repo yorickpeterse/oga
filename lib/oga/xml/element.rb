@@ -103,11 +103,27 @@ module Oga
       def inner_text
         text = ''
 
-        children.each do |child|
-          text << child.text if child.is_a?(Text)
+        text_nodes.each do |node|
+          text << node.text
         end
 
         return text
+      end
+
+      ##
+      # Returns any {Oga::XML::Text} nodes that are a direct child of this
+      # element.
+      #
+      # @return [Oga::XML::NodeSet]
+      #
+      def text_nodes
+        nodes = NodeSet.new
+
+        children.each do |child|
+          nodes << child if child.is_a?(Text)
+        end
+
+        return nodes
       end
 
       ##

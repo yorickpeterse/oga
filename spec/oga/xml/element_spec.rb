@@ -139,6 +139,26 @@ describe Oga::XML::Element do
     end
   end
 
+  context '#text_nodes' do
+    before do
+      @t1     = Oga::XML::Text.new(:text => 'Foo')
+      @t2     = Oga::XML::Text.new(:text => 'Bar')
+      element = described_class.new(:children => [@t1, @t2])
+
+      @set = element.text_nodes
+    end
+
+    it_behaves_like :node_set, :length => 2
+
+    example 'return the first Text node' do
+      @set[0].should == @t1
+    end
+
+    example 'return the second Text node' do
+      @set[1].should == @t2
+    end
+  end
+
   context '#to_xml' do
     example 'generate the corresponding XML' do
       described_class.new(:name => 'p').to_xml.should == '<p></p>'
