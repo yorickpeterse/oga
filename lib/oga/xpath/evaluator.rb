@@ -475,6 +475,23 @@ module Oga
       end
 
       ##
+      # Processes the `comment()` type test. This matches only comment nodes.
+      #
+      # @param [Oga::XPath::Node] ast_node
+      # @param [Oga::XML::NodeSet] context
+      # @return [Oga::XML::NodeSet]
+      #
+      def on_type_test_comment(ast_node, context)
+        nodes = XML::NodeSet.new
+
+        context.each do |node|
+          nodes << node if node.is_a?(XML::Comment)
+        end
+
+        return nodes
+      end
+
+      ##
       # Returns a node set containing all the child nodes of the given set of
       # nodes.
       #
