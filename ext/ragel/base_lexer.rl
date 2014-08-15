@@ -76,7 +76,27 @@
     # In HTML CDATA tags have no meaning/are not supported. Oga does
     # support them but treats their contents as plain text.
     #
-    cdata = '<![CDATA[' any* ']]>';
+
+    cdata_start = '<![CDATA[';
+    cdata_end   = ']]>';
+
+    action start_cdata {
+        mark = ts + 9;
+
+        fnext cdata_body;
+    }
+
+    cdata_body := |*
+        cdata_end => {
+            callback("on_cdata", data, encoding, mark, te - 3);
+
+            mark = 0;
+
+            fnext main;
+        };
+
+        any;
+    *|;
 
     # Strings
     #
@@ -236,10 +256,7 @@
         doctype_start  => start_doctype;
         xml_decl_start => start_xml_decl;
         comment_start  => start_comment;
-
-        cdata => {
-            callback("on_cdata", data, encoding, ts + 9, te - 3);
-        };
+        cdata_start    => start_cdata;
 
         # The start of an element.
         '<' => start_element;
