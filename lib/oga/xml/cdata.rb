@@ -3,7 +3,7 @@ module Oga
     ##
     # Class used for storing information about CDATA tags.
     #
-    class Cdata < Text
+    class Cdata < CharacterNode
       ##
       # Converts the node back to XML.
       #

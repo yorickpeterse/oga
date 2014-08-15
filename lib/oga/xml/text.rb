@@ -4,37 +4,7 @@ module Oga
     # Class containing information about a single text node. Text nodes don't
     # have any children, attributes and the likes; just text.
     #
-    # @!attribute [rw] text
-    #  @return [String]
-    #
-    class Text < Node
-      attr_accessor :text
-
-      ##
-      # @param [Hash] options
-      #
-      # @option options [String] :text The text of the node.
-      #
-      def initialize(options = {})
-        super
-
-        @text = options[:text]
-      end
-
-      ##
-      # @return [String]
-      #
-      def to_xml
-        return text.to_s
-      end
-
-      ##
-      # @return [String]
-      #
-      def inspect
-        return "#{self.class.to_s.split('::').last}(#{text.inspect})"
-      end
-
+    class Text < CharacterNode
       ##
       # @return [Symbol]
       #

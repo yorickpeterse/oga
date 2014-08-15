@@ -3,7 +3,7 @@ module Oga
     ##
     # Class used for storing information about XML comments.
     #
-    class Comment < Text
+    class Comment < CharacterNode
       ##
       # Converts the node back to XML.
       #

@@ -18,6 +18,7 @@ end
 
 require_relative 'oga/xml/node'
 require_relative 'oga/xml/document'
+require_relative 'oga/xml/character_node'
 require_relative 'oga/xml/text'
 require_relative 'oga/xml/comment'
 require_relative 'oga/xml/cdata'
