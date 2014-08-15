@@ -301,6 +301,29 @@ module Oga
       end
 
       ##
+      # Called on the start of a processing instruction.
+      #
+      def on_proc_ins_start
+        add_token(:T_PROC_INS_START)
+      end
+
+      ##
+      # Called on a processing instruction name.
+      #
+      # @param [String] value
+      #
+      def on_proc_ins_name(value)
+        add_token(:T_PROC_INS_NAME, value)
+      end
+
+      ##
+      # Called on the end of a processing instruction.
+      #
+      def on_proc_ins_end
+        add_token(:T_PROC_INS_END)
+      end
+
+      ##
       # Called on the name of an element.
       #
       # @param [String] name The name of the element, including namespace.

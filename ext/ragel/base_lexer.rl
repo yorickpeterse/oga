@@ -98,6 +98,40 @@
         any;
     *|;
 
+    # Processing Instructions
+    #
+    # http://www.w3.org/TR/xpath/#section-Processing-Instruction-Nodes
+    # http://en.wikipedia.org/wiki/Processing_Instruction
+    #
+    # These are tags meant to be used by parsers/libraries for custom behaviour.
+    # One example are the tags used by PHP: <?php and ?>. Note that the XML
+    # declaration tags (<?xml ?>) are not considered to be a processing
+    # instruction.
+    #
+
+    proc_ins_start = '<?' identifier;
+    proc_ins_end   = '?>';
+
+    action start_proc_ins {
+        callback_simple("on_proc_ins_start");
+        callback("on_proc_ins_name", data, encoding, ts + 2, te);
+
+        mark = te;
+
+        fnext proc_ins_body;
+    }
+
+    proc_ins_body := |*
+        proc_ins_end => {
+            callback("on_text", data, encoding, mark, ts);
+            callback_simple("on_proc_ins_end");
+
+            fnext main;
+        };
+
+        any;
+    *|;
+
     # Strings
     #
     # Strings in HTML can either be single or double quoted. If a string
@@ -257,6 +291,7 @@
         xml_decl_start => start_xml_decl;
         comment_start  => start_comment;
         cdata_start    => start_cdata;
+        proc_ins_start => start_proc_ins;
 
         # The start of an element.
         '<' => start_element;
