@@ -52,7 +52,7 @@
     comment_end   = '-->';
 
     action start_comment {
-        mark = ts + 4;
+        mark = te;
 
         fnext comment_body;
     }
@@ -81,7 +81,7 @@
     cdata_end   = ']]>';
 
     action start_cdata {
-        mark = ts + 9;
+        mark = te;
 
         fnext cdata_body;
     }
