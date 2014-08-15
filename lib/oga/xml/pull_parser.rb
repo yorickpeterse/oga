@@ -46,7 +46,8 @@ module Oga
       BLOCK_CALLBACKS = [
         :on_cdata,
         :on_comment,
-        :on_text
+        :on_text,
+        :on_proc_ins
       ]
 
       ##

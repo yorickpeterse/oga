@@ -15,6 +15,7 @@ token T_DOCTYPE_INLINE
 token T_CDATA T_COMMENT
 token T_ELEM_START T_ELEM_NAME T_ELEM_NS T_ELEM_END T_ATTR T_ATTR_NS
 token T_XML_DECL_START T_XML_DECL_END
+token T_PROC_INS_START T_PROC_INS_NAME T_PROC_INS_END
 
 options no_result_var
 
@@ -40,6 +41,7 @@ rule
     | element
     | text
     | xmldecl
+    | proc_ins
     ;
 
   # Doctypes
@@ -93,6 +95,20 @@ rule
   comment
     # <!-- foo -->
     : T_COMMENT { on_comment(val[0]) }
+    ;
+
+  # Processing Instructions
+
+  proc_ins
+    # <?xml?>
+    : T_PROC_INS_START T_PROC_INS_NAME T_PROC_INS_END
+      {
+        on_proc_ins(val[1])
+      }
+    | T_PROC_INS_START T_PROC_INS_NAME T_TEXT T_PROC_INS_END
+      {
+        on_proc_ins(val[1], val[2])
+      }
     ;
 
   # Elements
@@ -155,6 +171,7 @@ rule
     ;
 
   # XML declarations
+
   xmldecl
     : T_XML_DECL_START attributes T_XML_DECL_END { on_xml_decl(val[1]) }
     ;
@@ -305,6 +322,15 @@ Unexpected #{name} with value #{value.inspect} on line #{@line}:
   #
   def on_comment(text = nil)
     return Comment.new(:text => text)
+  end
+
+  ##
+  # @param [String] name
+  # @param [String] text
+  # @return [Oga::XML::ProcessingInstruction]
+  #
+  def on_proc_ins(name, text = nil)
+    return ProcessingInstruction.new(:name => name, :text => text)
   end
 
   ##
