@@ -90,11 +90,12 @@ public class Lexer extends RubyObject
 
         byte[] data = rb_str.getBytes();
 
-        int ts  = 0;
-        int te  = 0;
-        int p   = 0;
-        int pe  = data.length;
-        int eof = data.length;
+        int ts   = 0;
+        int te   = 0;
+        int p    = 0;
+        int mark = 0;
+        int pe   = data.length;
+        int eof  = data.length;
 
         %% write exec;
 

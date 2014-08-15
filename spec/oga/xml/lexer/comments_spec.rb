@@ -36,5 +36,18 @@ describe Oga::XML::Lexer do
         [:T_COMMENT, '', 1]
       ]
     end
+
+    example 'lex two comments following each other' do
+      lex('<a><!--foo--><b><!--bar--></b></a>').should == [
+        [:T_ELEM_START, nil, 1],
+        [:T_ELEM_NAME, 'a', 1],
+        [:T_COMMENT, 'foo', 1],
+        [:T_ELEM_START, nil, 1],
+        [:T_ELEM_NAME, 'b', 1],
+        [:T_COMMENT, 'bar', 1],
+        [:T_ELEM_END, nil, 1],
+        [:T_ELEM_END, nil, 1]
+      ]
+    end
   end
 end

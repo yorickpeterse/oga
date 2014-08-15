@@ -47,7 +47,27 @@
     # such as `--` and `->`. Putting extra checks in for these sequences would
     # actually make the rules/actions more complex.
     #
-    comment = '<!--' any* '-->';
+
+    comment_start = '<!--';
+    comment_end   = '-->';
+
+    action start_comment {
+        mark = ts + 4;
+
+        fnext comment_body;
+    }
+
+    comment_body := |*
+        comment_end => {
+            callback("on_comment", data, encoding, mark, te - 3);
+
+            mark = 0;
+
+            fnext main;
+        };
+
+        any;
+    *|;
 
     # CDATA
     #
@@ -215,10 +235,7 @@
     main := |*
         doctype_start  => start_doctype;
         xml_decl_start => start_xml_decl;
-
-        comment => {
-            callback("on_comment", data, encoding, ts + 4, te - 3);
-        };
+        comment_start  => start_comment;
 
         cdata => {
             callback("on_cdata", data, encoding, ts + 9, te - 3);

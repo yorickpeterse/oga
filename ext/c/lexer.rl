@@ -77,11 +77,12 @@ VALUE oga_xml_lexer_advance(VALUE self, VALUE data_block)
 
     char *data_str_val = StringValuePtr(data_block);
 
-    const char *p   = data_str_val;
-    const char *pe  = data_str_val + strlen(data_str_val);
-    const char *eof = pe;
-    const char *ts  = 0;
-    const char *te  = 0;
+    const char *p    = data_str_val;
+    const char *pe   = data_str_val + strlen(data_str_val);
+    const char *eof  = pe;
+    const char *ts   = 0;
+    const char *te   = 0;
+    const char *mark = 0;
 
     int act = NUM2INT(oga_ivar_get(self, "@act"));
     int cs  = NUM2INT(oga_ivar_get(self, "@cs"));
