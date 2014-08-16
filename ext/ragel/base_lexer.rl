@@ -50,24 +50,11 @@
 
     comment_start = '<!--';
     comment_end   = '-->';
+    comment       = comment_start (any* -- comment_end) comment_end;
 
     action start_comment {
-        mark = te;
-
-        fnext comment_body;
+        callback("on_comment", data, encoding, ts + 4, te - 3);
     }
-
-    comment_body := |*
-        comment_end => {
-            callback("on_comment", data, encoding, mark, te - 3);
-
-            mark = 0;
-
-            fnext main;
-        };
-
-        any;
-    *|;
 
     # CDATA
     #
@@ -79,24 +66,11 @@
 
     cdata_start = '<![CDATA[';
     cdata_end   = ']]>';
+    cdata       = cdata_start (any* -- cdata_end) cdata_end;
 
     action start_cdata {
-        mark = te;
-
-        fnext cdata_body;
+        callback("on_cdata", data, encoding, ts + 9, te - 3);
     }
-
-    cdata_body := |*
-        cdata_end => {
-            callback("on_cdata", data, encoding, mark, te - 3);
-
-            mark = 0;
-
-            fnext main;
-        };
-
-        any;
-    *|;
 
     # Processing Instructions
     #
@@ -289,9 +263,10 @@
     main := |*
         doctype_start  => start_doctype;
         xml_decl_start => start_xml_decl;
-        comment_start  => start_comment;
-        cdata_start    => start_cdata;
+        comment        => start_comment;
+        cdata          => start_cdata;
         proc_ins_start => start_proc_ins;
+
 
         # The start of an element.
         '<' => start_element;
