@@ -7,7 +7,7 @@ describe Oga::XPath::Evaluator do
       @evaluator = described_class.new(@document)
     end
 
-    context 'matching text nodes' do
+    context 'matching comment nodes' do
       before do
         @set = @evaluator.evaluate('a/comment()')
       end
@@ -23,7 +23,7 @@ describe Oga::XPath::Evaluator do
       end
     end
 
-    context 'matching nested text nodes' do
+    context 'matching nested comment nodes' do
       before do
         @set = @evaluator.evaluate('a/b/comment()')
       end
