@@ -1,10 +1,10 @@
 module Oga
   module XML
     ##
-    # The NodeSet class contains a set of {Oga::XML::Node} instances that can
-    # be queried and modified. Optionally NodeSet instances can take ownership
-    # of a node (besides just containing it). This allows the nodes to query
-    # their previous and next elements.
+    # The NodeSet class contains a set of unique {Oga::XML::Node} instances that
+    # can be queried and modified. Optionally NodeSet instances can take
+    # ownership of a node (besides just containing it). This allows the nodes to
+    # query their previous and next elements.
     #
     # There are two types of sets:
     #
@@ -44,7 +44,7 @@ module Oga
       # @param [Oga::XML::NodeSet] owner The owner of the set.
       #
       def initialize(nodes = [], owner = nil)
-        @nodes = nodes
+        @nodes = nodes.uniq
         @owner = owner
 
         @nodes.each { |node| take_ownership(node) }
@@ -105,6 +105,8 @@ module Oga
       # @param [Oga::XML::Node] node
       #
       def push(node)
+        return if @nodes.include?(node)
+
         @nodes << node
 
         take_ownership(node)
@@ -118,6 +120,8 @@ module Oga
       # @param [Oga::XML::Node] node
       #
       def unshift(node)
+        return if @nodes.include?(node)
+
         @nodes.unshift(node)
 
         take_ownership(node)
@@ -176,7 +180,7 @@ module Oga
       # @return [Oga::XML::NodeSet]
       #
       def +(other)
-        return self.class.new(to_a + other.to_a)
+        return self.class.new(to_a | other.to_a)
       end
 
       ##

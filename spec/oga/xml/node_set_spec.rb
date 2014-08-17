@@ -25,6 +25,13 @@ describe Oga::XML::NodeSet do
 
       node.node_set.should == set
     end
+
+    example 'only store unique nodes' do
+      n1  = Oga::XML::Element.new(:name => 'a')
+      set = described_class.new([n1, n1])
+
+      set.length.should == 1
+    end
   end
 
   context '#each' do
@@ -94,6 +101,15 @@ describe Oga::XML::NodeSet do
       @set.length.should == 1
     end
 
+    example 'do not push a node that is already part of the set' do
+      element = Oga::XML::Element.new(:name => 'a')
+
+      @set.push(element)
+      @set.push(element)
+
+      @set.length.should == 1
+    end
+
     example 'take ownership of a node if the set has an owner' do
       child      = Oga::XML::Element.new
       @set.owner = Oga::XML::Element.new
@@ -106,8 +122,8 @@ describe Oga::XML::NodeSet do
 
   context '#unshift' do
     before do
-      n1   = Oga::XML::Element.new(:name => 'a')
-      @set = described_class.new([n1])
+      @n1  = Oga::XML::Element.new(:name => 'a')
+      @set = described_class.new([@n1])
     end
 
     example 'push a node at the beginning of the set' do
@@ -116,6 +132,12 @@ describe Oga::XML::NodeSet do
       @set.unshift(n2)
 
       @set.first.should == n2
+    end
+
+    example 'do not push a node if it is already part of the set' do
+      @set.unshift(@n1)
+
+      @set.length.should == 1
     end
 
     example 'take ownership of a node if the set has an owner' do
@@ -206,6 +228,10 @@ describe Oga::XML::NodeSet do
 
     example 'merge two sets together' do
       (@set1 + @set2).to_a.should == [@n1, @n2]
+    end
+
+    example 'ignore duplicate nodes' do
+      (@set1 + described_class.new([@n1])).length.should == 1
     end
   end
 
