@@ -510,6 +510,20 @@ module Oga
       end
 
       ##
+      # Processes the pipe (`|`) operator. This operator creates a union of two
+      # sets.
+      #
+      # @param [Oga::XPath::Node] ast_node
+      # @param [Oga::XML::NodeSet] context
+      # @return [Oga::XML::NodeSet]
+      #
+      def on_pipe(ast_node, context)
+        left, right = *ast_node
+
+        return process(left, context) + process(right, context)
+      end
+
+      ##
       # Returns a node set containing all the child nodes of the given set of
       # nodes.
       #
