@@ -98,11 +98,15 @@ module Oga
       # @return [Oga::XML::NodeSet]
       #
       def on_test(ast_node, context)
-        nodes = XML::NodeSet.new
+        nodes     = XML::NodeSet.new
+        predicate = ast_node.children[2]
 
         context.each do |xml_node|
           nodes << xml_node if node_matches?(xml_node, ast_node)
         end
+
+        # Filter the nodes based on the predicate.
+        nodes = process(predicate, nodes) if predicate
 
         return nodes
       end
@@ -521,6 +525,42 @@ module Oga
         left, right = *ast_node
 
         return process(left, context) + process(right, context)
+      end
+
+      ##
+      # Delegates function calls to specific handlers.
+      #
+      # Handler functions take two arguments:
+      #
+      # 1. The context node set
+      # 2. A variable list of XPath function arguments, passed as individual
+      #    Ruby method arguments.
+      #
+      # @param [Oga::XPath::Node] ast_node
+      # @param [Oga::XML::NodeSet] context
+      # @return [Oga::XML::NodeSet]
+      #
+      def on_call(ast_node, context)
+        name, args = *ast_node
+
+        handler = name.gsub('-', '_')
+
+        return send("on_call_#{handler}", context, *args)
+      end
+
+      ##
+      # Processes the `last()` function call. This function call returns a node
+      # set containing the last node of the context set.
+      #
+      # @param [Oga::XML::NodeSet] context
+      # @return [Oga::XML::NodeSet]
+      #
+      def on_call_last(context)
+        if context.empty?
+          return context
+        else
+          return XML::NodeSet.new([context.last])
+        end
       end
 
       ##
