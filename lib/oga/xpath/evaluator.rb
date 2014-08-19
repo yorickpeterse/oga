@@ -549,18 +549,15 @@ module Oga
       end
 
       ##
-      # Processes the `last()` function call. This function call returns a node
-      # set containing the last node of the context set.
+      # Processes the `last()` function call. This function call returns the
+      # index of the last node in the current set.
       #
       # @param [Oga::XML::NodeSet] context
-      # @return [Oga::XML::NodeSet]
+      # @return [Float]
       #
       def on_call_last(context)
-        if context.empty?
-          return context
-        else
-          return XML::NodeSet.new([context.last])
-        end
+        # XPath uses indexes 1 to N instead of 0 to N.
+        return context.length.to_f
       end
 
       ##
