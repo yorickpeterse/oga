@@ -106,7 +106,26 @@ module Oga
         end
 
         # Filter the nodes based on the predicate.
-        nodes = process(predicate, nodes) if predicate
+        if predicate
+          new_nodes = XML::NodeSet.new
+
+          nodes.each_with_index do |current, index|
+            xpath_index = index + 1
+            # TODO: pass the current node for functions such as position().
+            retval      = process(predicate, nodes)
+
+            # Non empty node set? Keep the current node
+            if retval.is_a?(XML::NodeSet) and !retval.empty?
+              new_nodes << current
+
+            # In case of a number we'll use it as the index.
+            elsif retval.is_a?(Numeric) && retval.to_i == xpath_index
+              new_nodes << current
+            end
+          end
+
+          nodes = new_nodes
+        end
 
         return nodes
       end
