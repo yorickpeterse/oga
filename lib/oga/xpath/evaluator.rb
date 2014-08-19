@@ -1,8 +1,49 @@
 module Oga
   module XPath
     ##
-    # The Evaluator class is used to evaluate an XPath expression in the
-    # context of a given document.
+    # The Evaluator class evaluates XPath expressions, either as a String or an
+    # AST of {Oga::XPath::Node} instances.
+    #
+    # ## Thread Safety
+    #
+    # This class is not thread-safe, you can not share the same instance between
+    # multiple threads. This is due to the use of an internal stack (see below
+    # for more information). It is however perfectly fine to use multiple
+    # separated instances as this class does not use a thread global state.
+    #
+    # ## Node Stack
+    #
+    # This class uses an internal stack of XML nodes. This stack is used for
+    # certain XPath functions that require access to the current node being
+    # processed in a predicate. An example of such a function is `position()`.
+    #
+    # An alternative to a stack would be to pass the current node as arguments
+    # to the various `on_*` methods. The problematic part of this approach is
+    # that it requires every method to take and pass along the argument. It's
+    # far too easy to make mistakes in such a setup and as such I've chosen to
+    # use an internal stack instead.
+    #
+    # See {#with_node} and {#current_node} for more information.
+    #
+    # ## Set Indices
+    #
+    # XPath node sets start at index 1 instead of index 0. In other words, if
+    # you want to access the first node in a set you have to use index 1, not 0.
+    # Certain methods such as {#on_call_last} and {#on_call_position} take care
+    # of converting indices from Ruby to XPath.
+    #
+    # ## Number Types
+    #
+    # The XPath specification states that all numbers produced by an expression
+    # should be returned as double-precision 64bit IEEE 754 floating point
+    # numbers. For example, the return value of `position()` should be a float
+    # (e.g. "1.0", not "1").
+    #
+    # Oga takes care internally of converting numbers to integers and/or floats
+    # where needed. The output types however will always be floats.
+    #
+    # For more information on the specification, see
+    # <http://www.w3.org/TR/xpath/#numbers>.
     #
     class Evaluator
       ##
@@ -10,6 +51,7 @@ module Oga
       #
       def initialize(document)
         @document = document
+        @nodes    = []
       end
 
       ##
@@ -111,8 +153,7 @@ module Oga
 
           nodes.each_with_index do |current, index|
             xpath_index = index + 1
-            # TODO: pass the current node for functions such as position().
-            retval      = process(predicate, nodes)
+            retval      = with_node(current) { process(predicate, nodes) }
 
             # Non empty node set? Keep the current node
             if retval.is_a?(XML::NodeSet) and !retval.empty?
@@ -580,6 +621,19 @@ module Oga
       end
 
       ##
+      # Processes the `position()` function call. This function returns the
+      # position of the current node in the current node set.
+      #
+      # @param [Oga::XML::NodeSet] context
+      # @return [Float]
+      #
+      def on_call_position(context)
+        index = context.index(current_node) + 1
+
+        return index.to_f
+      end
+
+      ##
       # Returns a node set containing all the child nodes of the given set of
       # nodes.
       #
@@ -687,6 +741,43 @@ module Oga
       #
       def has_parent?(ast_node)
         return ast_node.respond_to?(:parent) && !!ast_node.parent
+      end
+
+      ##
+      # Stores the node in the node stack, yields the block and removes the node
+      # from the stack.
+      #
+      # This method is mainly intended to be used when processing predicates.
+      # Expressions inside a predicate might need access to the node on which
+      # the predicate is performed.
+      #
+      # This method's return value is the same as whatever the block returned.
+      #
+      # @example
+      #  some_node_set.each do |node|
+      #    result = with_node(node) { process(...) }
+      #  end
+      #
+      # @param [Oga::XML::Node] node
+      # @return [Mixed]
+      #
+      def with_node(node)
+        @nodes << node
+
+        retval = yield
+
+        @nodes.pop
+
+        return retval
+      end
+
+      ##
+      # Returns the current node that's being processed.
+      #
+      # @return [Oga::XML::Node]
+      #
+      def current_node
+        return @nodes.last
       end
     end # Evaluator
   end # XPath
