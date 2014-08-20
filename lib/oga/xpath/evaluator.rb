@@ -601,7 +601,7 @@ module Oga
       # @return [Oga::XML::NodeSet]
       #
       def on_call(ast_node, context)
-        name, args = *ast_node
+        name, *args = *ast_node
 
         handler = name.gsub('-', '_')
 
@@ -631,6 +631,36 @@ module Oga
         index = context.index(current_node) + 1
 
         return index.to_f
+      end
+
+      ##
+      # Processes the `count()` function call. This function counts the amount
+      # of nodes in `expression` and returns the result as a float.
+      #
+      # @param [Oga::XML::NodeSet] context
+      # @param [Oga::XPath::Node] expression
+      # @return [Float]
+      #
+      def on_call_count(context, expression)
+        retval = process(expression, context)
+
+        unless retval.is_a?(XML::NodeSet)
+          raise TypeError, 'count() can only operate on NodeSet instances'
+        end
+
+        return retval.length.to_f
+      end
+
+      ##
+      # Processes an `(int)` node. This method simply returns the value as a
+      # Float.
+      #
+      # @param [Oga::XPath::Node] ast_node
+      # @param [Oga::XML::NodeSet] context
+      # @return [Float]
+      #
+      def on_int(ast_node, context)
+        return ast_node.children[0].to_f
       end
 
       ##
