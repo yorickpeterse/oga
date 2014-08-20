@@ -99,6 +99,8 @@ module Oga
       def on_absolute_path(ast_node, context)
         if @document.respond_to?(:root_node)
           context = XML::NodeSet.new([@document.root_node])
+        else
+          context = XML::NodeSet.new([@document])
         end
 
         return on_path(ast_node, context)
@@ -652,6 +654,46 @@ module Oga
       end
 
       ##
+      # Processes the `id()` function call.
+      #
+      # The XPath specification states that this function's behaviour should be
+      # controlled by a DTD. If a DTD were to specify that the ID attribute for
+      # a certain element would be "foo" then this function should use said
+      # attribute.
+      #
+      # Oga does not support DTD parsing/evaluation and as such always uses the
+      # "id" attribute.
+      #
+      # This function searches the entire document for a matching node,
+      # regardless of the current position.
+      #
+      # @param [Oga::XML::NodeSet] context
+      # @param [Oga::XPath::Node] expression
+      # @return [Oga::XML::NodeSet]
+      #
+      def on_call_id(context, expression)
+        id    = process(expression, context)
+        nodes = XML::NodeSet.new
+
+        # Based on Nokogiri's/libxml behaviour it appears that when using a node
+        # set the text of the set is used as the ID.
+        id  = id.is_a?(XML::NodeSet) ? id.text : id.to_s
+        ids = id.split(' ')
+
+        @document.each_node do |node|
+          next unless node.is_a?(XML::Element)
+
+          attr = node.attribute('id')
+
+          if attr and ids.include?(attr.value)
+            nodes << node
+          end
+        end
+
+        return nodes
+      end
+
+      ##
       # Processes an `(int)` node. This method simply returns the value as a
       # Float.
       #
@@ -661,6 +703,17 @@ module Oga
       #
       def on_int(ast_node, context)
         return ast_node.children[0].to_f
+      end
+
+      ##
+      # Processes a `(string)` node.
+      #
+      # @param [Oga::XPath::Node] ast_node
+      # @param [Oga::XML::NodeSet] context
+      # @return [String]
+      #
+      def on_string(ast_node, context)
+        return ast_node.children[0]
       end
 
       ##
