@@ -157,12 +157,12 @@ module Oga
             xpath_index = index + 1
             retval      = with_node(current) { process(predicate, nodes) }
 
-            # Non empty node set? Keep the current node
-            if retval.is_a?(XML::NodeSet) and !retval.empty?
-              new_nodes << current
+            # Numeric values are used as node set indexes.
+            if retval.is_a?(Numeric)
+              new_nodes << current if retval.to_i == xpath_index
 
-            # In case of a number we'll use it as the index.
-            elsif retval.is_a?(Numeric) && retval.to_i == xpath_index
+            # Node sets, strings, etc
+            elsif retval and !retval.empty?
               new_nodes << current
             end
           end
@@ -691,6 +691,34 @@ module Oga
         end
 
         return nodes
+      end
+
+      ##
+      # Processes the `local-name()` function call.
+      #
+      # This function call returns the name of one of the following:
+      #
+      # * The current context node (if any)
+      # * The first node in the supplied node set
+      #
+      # @param [Oga::XML::NodeSet] context
+      # @param [Oga::XPath::Node] expression
+      # @return [Oga::XML::NodeSet]
+      #
+      def on_call_local_name(context, expression = nil)
+        if expression
+          node = process(expression, context)
+
+          if node.is_a?(XML::NodeSet)
+            node = node.first
+          else
+            raise TypeError, 'local-name() only takes node sets as arguments'
+          end
+        else
+          node = current_node
+        end
+
+        return node.is_a?(XML::Element) ? node.name : ''
       end
 
       ##
