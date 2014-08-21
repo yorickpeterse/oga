@@ -751,7 +751,7 @@ module Oga
       def on_call_namespace_uri(context, expression = nil)
         node = function_node(context, expression)
 
-        if node.is_a?(XML::Element) and node.namespace
+        if node.respond_to?(:namespace) and node.namespace
           return node.namespace.uri
         else
           return ''
