@@ -706,19 +706,31 @@ module Oga
       # @return [Oga::XML::NodeSet]
       #
       def on_call_local_name(context, expression = nil)
-        if expression
-          node = process(expression, context)
-
-          if node.is_a?(XML::NodeSet)
-            node = node.first
-          else
-            raise TypeError, 'local-name() only takes node sets as arguments'
-          end
-        else
-          node = current_node
-        end
+        node = context_node(context, expression)
 
         return node.is_a?(XML::Element) ? node.name : ''
+      end
+
+      ##
+      # Processes the `namespace-uri()` function call.
+      #
+      # This function call returns the namespace URI of one of the following:
+      #
+      # * The current context node (if any)
+      # * The first node in the supplied node set
+      #
+      # @param [Oga::XML::NodeSet] context
+      # @param [Oga::XPath::Node] expression
+      # @return [Oga::XML::NodeSet]
+      #
+      def on_call_namespace_uri(context, expression = nil)
+        node = context_node(context, expression)
+
+        if node.is_a?(XML::Element) and node.namespace
+          return node.namespace.uri
+        else
+          return ''
+        end
       end
 
       ##
@@ -742,6 +754,30 @@ module Oga
       #
       def on_string(ast_node, context)
         return ast_node.children[0]
+      end
+
+      ##
+      # Returns the node for a function call. This node is either the first node
+      # in the supplied node set, or the first node in the current context.
+      #
+      # @param [Oga::XML::NodeSet] context
+      # @param [Oga::XPath::Node] expression
+      # @return [Oga::XML::Node]
+      #
+      def context_node(context, expression = nil)
+        if expression
+          node = process(expression, context)
+
+          if node.is_a?(XML::NodeSet)
+            node = node.first
+          else
+            raise TypeError, 'only node sets can be used as arguments'
+          end
+        else
+          node = current_node
+        end
+
+        return node
       end
 
       ##
