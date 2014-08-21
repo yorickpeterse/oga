@@ -725,7 +725,7 @@ module Oga
       def on_call_name(context, expression = nil)
         node = function_node(context, expression)
 
-        if node.is_a?(XML::Element)
+        if node.respond_to?(:name) and node.respond_to?(:namespace)
           if node.namespace
             return "#{node.namespace.name}:#{node.name}"
           else

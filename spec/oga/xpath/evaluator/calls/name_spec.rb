@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Oga::XPath::Evaluator do
   context 'name() function' do
     before do
-      @document  = parse('<root xmlns:x="y"><x:a></x:a><b></b></root>')
+      @document  = parse('<root xmlns:x="y"><x:a></x:a><b x:num="10"></b></root>')
       @evaluator = described_class.new(@document)
     end
 
@@ -14,6 +14,10 @@ describe Oga::XPath::Evaluator do
 
       example 'return the name of the <b> node' do
         @evaluator.evaluate('name(root/b)').should == 'b'
+      end
+
+      example 'return the local name for the "num" attribute' do
+        @evaluator.evaluate('name(root/b/@x:num)').should == 'x:num'
       end
 
       example 'return only the name of the first node in the set' do
