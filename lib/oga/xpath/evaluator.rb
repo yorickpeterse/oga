@@ -708,7 +708,7 @@ module Oga
       def on_call_local_name(context, expression = nil)
         node = function_node(context, expression)
 
-        return node.is_a?(XML::Element) ? node.name : ''
+        return node.respond_to?(:name) ? node.name : ''
       end
 
       ##
