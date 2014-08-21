@@ -712,6 +712,31 @@ module Oga
       end
 
       ##
+      # Processes the `name()` function call.
+      #
+      # This function call is similar to `local-name()` (see
+      # {#on_call_local_name}) except that it includes the namespace name if
+      # present.
+      #
+      # @param [Oga::XML::NodeSet] context
+      # @param [Oga::XPath::Node] expression
+      # @return [Oga::XML::NodeSet]
+      #
+      def on_call_name(context, expression = nil)
+        node = function_node(context, expression)
+
+        if node.is_a?(XML::Element)
+          if node.namespace
+            return "#{node.namespace.name}:#{node.name}"
+          else
+            return node.name
+          end
+        else
+          return ''
+        end
+      end
+
+      ##
       # Processes the `namespace-uri()` function call.
       #
       # This function call returns the namespace URI of one of the following:
