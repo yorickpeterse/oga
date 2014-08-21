@@ -706,7 +706,7 @@ module Oga
       # @return [Oga::XML::NodeSet]
       #
       def on_call_local_name(context, expression = nil)
-        node = context_node(context, expression)
+        node = function_node(context, expression)
 
         return node.is_a?(XML::Element) ? node.name : ''
       end
@@ -724,7 +724,7 @@ module Oga
       # @return [Oga::XML::NodeSet]
       #
       def on_call_namespace_uri(context, expression = nil)
-        node = context_node(context, expression)
+        node = function_node(context, expression)
 
         if node.is_a?(XML::Element) and node.namespace
           return node.namespace.uri
@@ -764,7 +764,7 @@ module Oga
       # @param [Oga::XPath::Node] expression
       # @return [Oga::XML::Node]
       #
-      def context_node(context, expression = nil)
+      def function_node(context, expression = nil)
         if expression
           node = process(expression, context)
 
