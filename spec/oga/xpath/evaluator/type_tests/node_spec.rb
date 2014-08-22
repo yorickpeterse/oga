@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Oga::XPath::Evaluator do
   context 'node() tests' do
     before do
-      @document  = parse('<a><b>foo</b></a>')
+      @document  = parse('<a><b>foo</b><!--foo--><![CDATA[bar]]></a>')
       @evaluator = described_class.new(@document)
     end
 
@@ -24,10 +24,18 @@ describe Oga::XPath::Evaluator do
         @set = @evaluator.evaluate('a/node()')
       end
 
-      it_behaves_like :node_set, :length => 1
+      it_behaves_like :node_set, :length => 3
 
       example 'return the <b> node' do
         @set[0].name.should == 'b'
+      end
+
+      example 'return the "foo" comment' do
+        @set[1].text.should == 'foo'
+      end
+
+      example 'return the "bar" CDATA tag' do
+        @set[2].text.should == 'bar'
       end
     end
 

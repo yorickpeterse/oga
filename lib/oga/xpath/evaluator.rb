@@ -515,9 +515,7 @@ module Oga
         nodes = XML::NodeSet.new
 
         context.each do |node|
-          if node.is_a?(XML::Element) or node.is_a?(XML::Text)
-            nodes << node
-          end
+          nodes << node if node.is_a?(XML::Node)
         end
 
         return nodes
