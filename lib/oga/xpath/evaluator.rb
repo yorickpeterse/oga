@@ -757,6 +757,35 @@ module Oga
       end
 
       ##
+      # Evaluates the `string()` function call.
+      #
+      # This function call converts the given argument *or* the current context
+      # node to a string. If a node set is given then only the first node is
+      # converted to a string.
+      #
+      # @param [Oga::XML::NodeSet] context
+      # @param [Oga::XPath::Node] expression
+      # @return [Oga::XML::NodeSet]
+      #
+      def on_call_string(context, expression = nil)
+        if expression
+          convert = process(expression, context)
+
+          if convert.is_a?(XML::NodeSet)
+            convert = convert.first
+          end
+        else
+          convert = current_node
+        end
+
+        if convert.respond_to?(:text)
+          return convert.text
+        else
+          return convert.to_s
+        end
+      end
+
+      ##
       # Processes an `(int)` node. This method simply returns the value as a
       # Float.
       #
