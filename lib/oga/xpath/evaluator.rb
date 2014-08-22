@@ -769,6 +769,17 @@ module Oga
       end
 
       ##
+      # Processes an `(float)` node.
+      #
+      # @param [Oga::XPath::Node] ast_node
+      # @param [Oga::XML::NodeSet] context
+      # @return [Float]
+      #
+      def on_float(ast_node, context)
+        return ast_node.children[0]
+      end
+
+      ##
       # Processes a `(string)` node.
       #
       # @param [Oga::XPath::Node] ast_node
