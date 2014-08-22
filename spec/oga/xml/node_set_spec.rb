@@ -310,19 +310,21 @@ describe Oga::XML::NodeSet do
 
   context '#text' do
     before do
-      child = Oga::XML::Text.new(:text => 'foo')
+      child   = Oga::XML::Text.new(:text => 'foo')
+      comment = Oga::XML::Comment.new(:text => 'bar')
+      cdata   = Oga::XML::Cdata.new(:text => 'baz')
+      text    = Oga::XML::Text.new(:text => "\nbar")
 
       @el = Oga::XML::Element.new(
         :name     => 'a',
-        :children => described_class.new([child])
+        :children => described_class.new([child, comment, cdata])
       )
 
-      @txt = Oga::XML::Text.new(:text => "\nbar")
-      @set = described_class.new([@el, @txt])
+      @set = described_class.new([@el, text])
     end
 
     example 'return the text of all nodes' do
-      @set.text.should == "foo\nbar"
+      @set.text.should == "foobaz\nbar"
     end
   end
 end

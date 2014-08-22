@@ -240,7 +240,7 @@ module Oga
       alias_method :attr, :attribute
 
       ##
-      # Returns the text of all nodes in the set.
+      # Returns the text of all nodes in the set, ignoring comment nodes.
       #
       # @return [String]
       #
@@ -248,7 +248,7 @@ module Oga
         text = ''
 
         @nodes.each do |node|
-          if node.respond_to?(:text)
+          if node.respond_to?(:text) and !node.is_a?(Comment)
             text << node.text
           end
         end
