@@ -794,7 +794,7 @@ module Oga
       # @return [Float]
       #
       def on_int(ast_node, context)
-        return ast_node.children[0].to_f
+        return ast_node.children[0]
       end
 
       ##

@@ -12,8 +12,8 @@ describe Oga::XPath::Evaluator do
       @number.should == 1
     end
 
-    example 'return integers as floats' do
-      @number.is_a?(Float).should == true
+    example 'return integers as Fixnums' do
+      @number.is_a?(Fixnum).should == true
     end
   end
 end
