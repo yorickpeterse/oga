@@ -786,8 +786,29 @@ module Oga
       end
 
       ##
-      # Processes an `(int)` node. This method simply returns the value as a
-      # Float.
+      # Processes the `concat()` function call.
+      #
+      # This function call converts its arguments to strings and concatenates
+      # them. In case of node sets the text of the set is used.
+      #
+      # @param [Oga::XML::NodeSet] context
+      # @param [Oga::XPath::Node] first
+      # @param [Oga::XPath::Node] second
+      # @param [Array<Oga::XPath::Node>] rest
+      #
+      def on_call_concat(context, first, second, *rest)
+        args   = [first, second] + rest
+        retval = ''
+
+        args.each do |arg|
+          retval << on_call_string(context, arg)
+        end
+
+        return retval
+      end
+
+      ##
+      # Processes an `(int)` node.
       #
       # @param [Oga::XPath::Node] ast_node
       # @param [Oga::XML::NodeSet] context
