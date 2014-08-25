@@ -983,6 +983,26 @@ module Oga
       end
 
       ##
+      # Processes the `normalize-space()` function call.
+      #
+      # This function strips the 1st argument string *or* the current context
+      # node of leading/trailing whitespace as well as replacing multiple
+      # whitespace sequences with single spaces.
+      #
+      # @example
+      #  normalize-space(" fo  o    ") # => "fo o"
+      #
+      # @param [Oga::XML::NodeSet] context
+      # @param [Oga::XPath::Node] expression
+      # @return [String]
+      #
+      def on_call_normalize_space(context, expression = nil)
+        str = on_call_string(context, expression)
+
+        return str.strip.gsub(/\s+/, ' ')
+      end
+
+      ##
       # Processes an `(int)` node.
       #
       # @param [Oga::XPath::Node] ast_node
