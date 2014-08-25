@@ -763,9 +763,12 @@ module Oga
       # node to a string. If a node set is given then only the first node is
       # converted to a string.
       #
+      # @example
+      #  string(10) # => "10"
+      #
       # @param [Oga::XML::NodeSet] context
       # @param [Oga::XPath::Node] expression
-      # @return [Oga::XML::NodeSet]
+      # @return [String]
       #
       def on_call_string(context, expression = nil)
         if expression
