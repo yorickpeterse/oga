@@ -967,6 +967,22 @@ module Oga
       end
 
       ##
+      # Processes the `string-length()` function.
+      #
+      # This function returns the length of the string given in the 1st argument
+      # *or* the current context node. If the expression is not a string it's
+      # converted to a string using the `string()` function.
+      #
+      # @see [#on_call_string]
+      # @param [Oga::XML::NodeSet] context
+      # @param [Oga::XPath::Node] expression
+      # @return [Float]
+      #
+      def on_call_string_length(context, expression = nil)
+        return on_call_string(context, expression).length.to_f
+      end
+
+      ##
       # Processes an `(int)` node.
       #
       # @param [Oga::XPath::Node] ast_node
