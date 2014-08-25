@@ -201,8 +201,8 @@ module Oga
         dquote = '"';
         squote = "'";
 
-        string_dquote = (dquote ^dquote+ dquote);
-        string_squote = (squote ^squote+ squote);
+        string_dquote = (dquote ^dquote* dquote);
+        string_squote = (squote ^squote* squote);
 
         string = string_dquote | string_squote;
 
