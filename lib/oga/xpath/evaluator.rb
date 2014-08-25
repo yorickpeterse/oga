@@ -784,6 +784,13 @@ module Oga
         if convert.respond_to?(:text)
           return convert.text
         else
+          # If we have a number that has a zero decimal (e.g. 10.0) we want to
+          # get rid of that decimal. For this we'll first convert the number to
+          # an integer.
+          if convert.is_a?(Float) and convert.modulo(1).zero?
+            convert = convert.to_i
+          end
+
           return convert.to_s
         end
       end

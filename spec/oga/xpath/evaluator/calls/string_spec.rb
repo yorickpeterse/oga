@@ -37,7 +37,7 @@ describe Oga::XPath::Evaluator do
       end
 
       example 'convert an integer to a string' do
-        @evaluator.evaluate('string(10)').should == '10.0'
+        @evaluator.evaluate('string(10)').should == '10'
       end
 
       example 'convert a float to a string' do
