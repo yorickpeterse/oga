@@ -811,7 +811,7 @@ module Oga
       # Processes the `starts-with()` function call.
       #
       # This function call returns `true` if the string in the 1st argument
-      # starts with the string in the 2nd argument.
+      # starts with the string in the 2nd argument. Node sets can also be used.
       #
       # @example
       #  starts-with("hello world", "hello") # => true
@@ -826,6 +826,22 @@ module Oga
         needle_str   = on_call_string(context, needle)
 
         return haystack_str.start_with?(needle_str)
+      end
+
+      ##
+      # Processes the `contains()` function call.
+      #
+      # This function call returns `true` if the string in the 1st argument
+      # contains the string in the 2nd argument. Node sets can also be used.
+      #
+      # @example
+      #  contains("hello world", "o w") # => true
+      #
+      def on_call_contains(context, haystack, needle)
+        haystack_str = on_call_string(context, haystack)
+        needle_str   = on_call_string(context, needle)
+
+        return haystack_str.include?(needle_str)
       end
 
       ##
