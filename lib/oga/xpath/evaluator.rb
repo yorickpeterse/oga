@@ -857,7 +857,7 @@ module Oga
       #
       #     substring-before("2014-08-25", "-")
       #
-      # This would return "2014" as its the first string that occurs before "-".
+      # This would return "2014" as it occurs before the first "-".
       #
       # @param [Oga::XML::NodeSet] context
       # @param [Oga::XPath::Node] haystack The string to search.
@@ -871,6 +871,30 @@ module Oga
         before, sep, after = haystack_str.partition(needle_str)
 
         return sep.empty? ? sep : before
+      end
+
+      ##
+      # Processes the `substring-after()` function call.
+      #
+      # This function call returns the substring of the 1st argument that occurs
+      # after the string given in the 2nd argument. For example:
+      #
+      #     substring-before("2014-08-25", "-")
+      #
+      # This would return "08-25" as it occurs after the first "-".
+      #
+      # @param [Oga::XML::NodeSet] context
+      # @param [Oga::XPath::Node] haystack The string to search.
+      # @param [Oga::XPath::Node] needle The string to search for.
+      # @return [String]
+      #
+      def on_call_substring_after(context, haystack, needle)
+        haystack_str = on_call_string(context, haystack)
+        needle_str   = on_call_string(context, needle)
+
+        before, sep, after = haystack_str.partition(needle_str)
+
+        return sep.empty? ? sep : after
       end
 
       ##
