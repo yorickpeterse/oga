@@ -837,11 +837,40 @@ module Oga
       # @example
       #  contains("hello world", "o w") # => true
       #
+      # @param [Oga::XML::NodeSet] context
+      # @param [Oga::XPath::Node] haystack The string to search.
+      # @param [Oga::XPath::Node] needle The string to search for.
+      # @return [String]
+      #
       def on_call_contains(context, haystack, needle)
         haystack_str = on_call_string(context, haystack)
         needle_str   = on_call_string(context, needle)
 
         return haystack_str.include?(needle_str)
+      end
+
+      ##
+      # Processes the `substring-before()` function call.
+      #
+      # This function call returns the substring of the 1st argument that occurs
+      # before the string given in the 2nd argument. For example:
+      #
+      #     substring-before("2014-08-25", "-")
+      #
+      # This would return "2014" as its the first string that occurs before "-".
+      #
+      # @param [Oga::XML::NodeSet] context
+      # @param [Oga::XPath::Node] haystack The string to search.
+      # @param [Oga::XPath::Node] needle The string to search for.
+      # @return [String]
+      #
+      def on_call_substring_before(context, haystack, needle)
+        haystack_str = on_call_string(context, haystack)
+        needle_str   = on_call_string(context, needle)
+
+        before, sep, after = haystack_str.partition(needle_str)
+
+        return sep.empty? ? sep : before
       end
 
       ##
