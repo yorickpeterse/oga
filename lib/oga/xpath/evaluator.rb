@@ -921,6 +921,45 @@ module Oga
       end
 
       ##
+      # Processes the `substring()` function call.
+      #
+      # This function call returns the substring of the 1st argument, starting
+      # at the position given in the 2nd argument. If the third argument is
+      # given it is used as the length for the substring, otherwise the string
+      # is consumed until the end.
+      #
+      # XPath string indexes start from position 1, not position 0.
+      #
+      # @example Using a literal string
+      #  substring("foo", 2) # => "oo"
+      #
+      # @exxample Using a literal string with a custom length
+      #  substring("foo", 1, 2) # => "fo"
+      #
+      # @example Using a node set
+      #  substring(users/user/username, 5)
+      #
+      # @param [Oga::XML::NodeSet] context
+      # @param [Oga::XPath::Node] haystack
+      # @param [Oga::XPath::Node] start
+      # @param [Oga::XPath::Node] length
+      # @return [String]
+      #
+      def on_call_substring(context, haystack, start, length = nil)
+        haystack_str = on_call_string(context, haystack)
+        start_index  = on_call_number(context, start).to_i - 1
+
+        if length
+          length_int = on_call_number(context, length).to_i - 1
+          stop_index = start_index + length_int
+        else
+          stop_index = -1
+        end
+
+        return haystack_str[start_index..stop_index]
+      end
+
+      ##
       # Processes an `(int)` node.
       #
       # @param [Oga::XPath::Node] ast_node
