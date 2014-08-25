@@ -789,6 +789,26 @@ module Oga
       end
 
       ##
+      # Evaluates the `number()` function call.
+      #
+      # This function call converts its first argument *or* the current context
+      # node to a number, similar to the `string()` function.
+      #
+      # @example
+      #  number("10") # => 10.0
+      #
+      # @see [#on_call_string]
+      # @param [Oga::XML::NodeSet] context
+      # @param [Oga::XPath::Node] expression
+      # @return [Float]
+      #
+      def on_call_number(context, expression = nil)
+        str_val = on_call_string(context, expression)
+
+        return Float(str_val) rescue Float::NAN
+      end
+
+      ##
       # Processes the `concat()` function call.
       #
       # This function call converts its arguments to strings and concatenates
