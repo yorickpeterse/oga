@@ -808,6 +808,27 @@ module Oga
       end
 
       ##
+      # Processes the `starts-with()` function call.
+      #
+      # This function call returns `true` if the string in the 1st argument
+      # starts with the string in the 2nd argument.
+      #
+      # @example
+      #  starts-with("hello world", "hello") # => true
+      #
+      # @param [Oga::XML::NodeSet] context
+      # @param [Oga::XPath::Node] haystack The string to search.
+      # @param [Oga::XPath::Node] needle The string to search for.
+      # @return [TrueClass|FalseClass]
+      #
+      def on_call_starts_with(context, haystack, needle)
+        haystack_str = on_call_string(context, haystack)
+        needle_str   = on_call_string(context, needle)
+
+        return haystack_str.start_with?(needle_str)
+      end
+
+      ##
       # Processes an `(int)` node.
       #
       # @param [Oga::XPath::Node] ast_node
