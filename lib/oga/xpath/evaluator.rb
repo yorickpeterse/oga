@@ -1003,6 +1003,35 @@ module Oga
       end
 
       ##
+      # Processes the `translate()` function call.
+      #
+      # This function takes the string of the 1st argument and replaces all
+      # characters of the 2nd argument with those specified in the 3rd argument.
+      #
+      # @example
+      #  translate("bar", "abc", "ABC") # => "BAr"
+      #
+      # @param [Oga::XML::NodeSet] context
+      # @param [Oga::XPath::Node] input
+      # @param [Oga::XPath::Node] find
+      # @param [Oga::XPath::Node] replace
+      # @return [String]
+      #
+      def on_call_translate(context, input, find, replace)
+        input_str     = on_call_string(context, input)
+        find_chars    = on_call_string(context, find).chars
+        replace_chars = on_call_string(context, replace).chars
+        replaced      = input_str
+
+        find_chars.each_with_index do |char, index|
+          replace_with = replace_chars[index] ? replace_chars[index] : ''
+          replaced     = replaced.gsub(char, replace_with)
+        end
+
+        return replaced
+      end
+
+      ##
       # Processes an `(int)` node.
       #
       # @param [Oga::XPath::Node] ast_node
