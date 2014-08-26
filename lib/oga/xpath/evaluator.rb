@@ -1019,8 +1019,8 @@ module Oga
       #
       def on_call_translate(context, input, find, replace)
         input_str     = on_call_string(context, input)
-        find_chars    = on_call_string(context, find).chars
-        replace_chars = on_call_string(context, replace).chars
+        find_chars    = on_call_string(context, find).chars.to_a
+        replace_chars = on_call_string(context, replace).chars.to_a
         replaced      = input_str
 
         find_chars.each_with_index do |char, index|
