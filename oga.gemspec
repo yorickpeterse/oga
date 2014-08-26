@@ -33,7 +33,7 @@ Gem::Specification.new do |s|
   s.has_rdoc              = 'yard'
   s.required_ruby_version = '>= 1.9.3'
 
-  s.add_dependency 'racc'
+  s.add_dependency 'racc', ['~> 1.4', '>= 1.4.12']
   s.add_dependency 'ast'
 
   s.add_development_dependency 'rake'
