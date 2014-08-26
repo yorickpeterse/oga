@@ -855,7 +855,8 @@ module Oga
         haystack_str = on_call_string(context, haystack)
         needle_str   = on_call_string(context, needle)
 
-        return haystack_str.start_with?(needle_str)
+        # https://github.com/jruby/jruby/issues/1923
+        return needle_str.empty? || haystack_str.start_with?(needle_str)
       end
 
       ##
