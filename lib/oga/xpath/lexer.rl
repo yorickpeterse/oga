@@ -178,8 +178,8 @@ module Oga
         # instead lexes them separately so that we can convert the values to
         # the corresponding Ruby types (Fixnum and Float).
 
-        integer = digit+;
-        float   = digit+ ('.' digit+)*;
+        integer = ('-' | '+')* digit+;
+        float   = ('-' | '+')* digit+ ('.' digit+)*;
 
         action emit_integer {
           value = slice_input(ts, te).to_i
