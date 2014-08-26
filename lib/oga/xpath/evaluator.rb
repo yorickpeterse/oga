@@ -1032,6 +1032,29 @@ module Oga
       end
 
       ##
+      # Processes the `boolean()` function call.
+      #
+      # This function converts the 1st argument to a boolean.
+      #
+      # The boolean `true` is returned for the following:
+      #
+      # * A non empty string
+      # * A non empty node set
+      # * A non zero number, either positive or negative
+      #
+      # The boolean `false` is returned for all other cases.
+      #
+      def on_call_boolean(context, expression)
+        retval = process(expression, context)
+
+        if retval.is_a?(Numeric)
+          return !retval.nan? && !retval.zero?
+        else
+          return retval && !retval.empty?
+        end
+      end
+
+      ##
       # Processes an `(int)` node.
       #
       # @param [Oga::XPath::Node] ast_node
