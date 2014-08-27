@@ -19,5 +19,11 @@ describe Oga::XPath::Evaluator do
     example 'return zero by default' do
       @evaluator.evaluate('sum(foo)').should be_zero
     end
+
+    example 'raise a TypeError for non node set arguments' do
+      block = lambda { @evaluator.evaluate('sum("foo")') }
+
+      block.should raise_error(TypeError)
+    end
   end
 end

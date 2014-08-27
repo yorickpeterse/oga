@@ -1174,6 +1174,10 @@ module Oga
         nodes = process(expression, context)
         sum   = 0.0
 
+        unless nodes.is_a?(XML::NodeSet)
+          raise TypeError, 'sum() can only operate on NodeSet instances'
+        end
+
         nodes.each do |node|
           sum += node.text.to_f
         end
