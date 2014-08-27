@@ -161,8 +161,13 @@ module Oga
             if retval.is_a?(Numeric)
               new_nodes << current if retval.to_i == xpath_index
 
-            # Node sets, strings, etc
-            elsif retval and !retval.empty?
+            # Node sets, strings, booleans, etc
+            elsif retval
+              # Empty strings and node sets evaluate to false.
+              if retval.respond_to?(:empty?) and retval.empty?
+                next
+              end
+
               new_nodes << current
             end
           end
