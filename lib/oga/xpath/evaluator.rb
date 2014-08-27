@@ -780,7 +780,7 @@ module Oga
           convert = process(expression, context)
 
           if convert.is_a?(XML::NodeSet)
-            convert = convert.first
+            convert = convert[0]
           end
         else
           convert = current_node
@@ -815,9 +815,28 @@ module Oga
       # @return [Float]
       #
       def on_call_number(context, expression = nil)
-        str_val = on_call_string(context, expression)
+        convert = nil
 
-        return Float(str_val) rescue Float::NAN
+        if expression
+          exp_retval = process(expression, context)
+
+          if exp_retval.is_a?(XML::NodeSet)
+            convert = first_node_text(exp_retval)
+
+          elsif exp_retval == true
+            convert = 1.0
+
+          elsif exp_retval == false
+            convert = 0.0
+
+          elsif exp_retval
+            convert = exp_retval
+          end
+        else
+          convert = current_node.text
+        end
+
+        return Float(convert) rescue Float::NAN
       end
 
       ##
