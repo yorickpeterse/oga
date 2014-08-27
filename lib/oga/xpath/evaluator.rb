@@ -1075,6 +1075,30 @@ module Oga
       end
 
       ##
+      # Processes the `true()` function call.
+      #
+      # This function simply returns the boolean `true`.
+      #
+      # @param [Oga::XPath::NodeSet] context
+      # @return [TrueClass]
+      #
+      def on_call_true(context)
+        return true
+      end
+
+      ##
+      # Processes the `false()` function call.
+      #
+      # This function simply returns the boolean `false`.
+      #
+      # @param [Oga::XPath::NodeSet] context
+      # @return [FalseClass]
+      #
+      def on_call_false(context)
+        return false
+      end
+
+      ##
       # Processes an `(int)` node.
       #
       # @param [Oga::XPath::Node] ast_node
