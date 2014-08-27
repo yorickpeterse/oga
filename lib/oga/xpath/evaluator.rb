@@ -1045,6 +1045,10 @@ module Oga
       #
       # The boolean `false` is returned for all other cases.
       #
+      # @param [Oga::XML::NodeSet] context
+      # @param [Oga::XPath::Node] expression
+      # @return [TrueClass|FalseClass]
+      #
       def on_call_boolean(context, expression)
         retval = process(expression, context)
 
@@ -1053,6 +1057,21 @@ module Oga
         else
           return retval && !retval.empty?
         end
+      end
+
+      ##
+      # Processes the `not()` function call.
+      #
+      # This function converts the 1st argument to a boolean and returns the
+      # opposite boolean value. For example, if the first argument results in
+      # `true` then this function returns `false` instead.
+      #
+      # @param [Oga::XML::NodeSet] context
+      # @param [Oga::XPath::Node] expression
+      # @return [TrueClass|FalseClass]
+      #
+      def on_call_not(context, expression)
+        return !on_call_boolean(context, expression)
       end
 
       ##
