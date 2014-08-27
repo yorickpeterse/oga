@@ -1220,6 +1220,17 @@ module Oga
       end
 
       ##
+      # Returns the text of the first node in the node set, or an empty string
+      # if the node set is empty.
+      #
+      # @param [Oga::XML::NodeSet] set
+      # @return [String]
+      #
+      def first_node_text(set)
+        return set[0].respond_to?(:text) ? set[0].text : ''
+      end
+
+      ##
       # Returns a node set containing all the child nodes of the given set of
       # nodes.
       #

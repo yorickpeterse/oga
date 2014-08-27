@@ -6,6 +6,46 @@ describe Oga::XPath::Evaluator do
     @evaluator = described_class.new(@document)
   end
 
+  context '#function_node' do
+    before do
+      @context_set = Oga::XML::NodeSet.new([@document])
+    end
+
+    example 'return the first node in the expression' do
+      exp  = s(:axis, 'child', s(:test, nil, 'a'))
+      node = @evaluator.function_node(@context_set, exp)
+
+      node.should == @document.children[0]
+    end
+
+    example 'raise a TypeError if the expression did not return a node set' do
+      exp   = s(:call, 'false')
+      block = lambda { @evaluator.function_node(@context_set, exp) }
+
+      block.should raise_error(TypeError)
+    end
+
+    example 'use the current context node if the expression is empty' do
+      a_node = @document.children[0]
+
+      @evaluator.stub(:current_node).and_return(a_node)
+
+      @evaluator.function_node(@context_set).should == a_node
+    end
+  end
+
+  context '#first_node_text' do
+    example 'return the text of the first node' do
+      @evaluator.first_node_text(@document.children).should == 'Hello'
+    end
+
+    example 'return an empty string if the node set is empty' do
+      set = Oga::XML::NodeSet.new
+
+      @evaluator.first_node_text(set).should == ''
+    end
+  end
+
   context '#child_nodes' do
     before do
       @children = Oga::XML::NodeSet.new([
