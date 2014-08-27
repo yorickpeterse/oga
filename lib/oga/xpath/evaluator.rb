@@ -1133,6 +1133,36 @@ module Oga
       end
 
       ##
+      # Processes the `sum()` function call.
+      #
+      # This function call takes a node set, converts each node to a number and
+      # then sums the values.
+      #
+      # As an example, take the following XML:
+      #
+      #     <root>
+      #       <a>1</a>
+      #       <b>2</b>
+      #     </root>
+      #
+      # Using the expression `sum(root/*)` the return value would be `3.0`.
+      #
+      # @param [Oga::XML::NodeSet] context
+      # @param [Oga::XPath::Node] expression
+      # @return [Float]
+      #
+      def on_call_sum(context, expression)
+        nodes = process(expression, context)
+        sum   = 0.0
+
+        nodes.each do |node|
+          sum += node.text.to_f
+        end
+
+        return sum
+      end
+
+      ##
       # Processes an `(int)` node.
       #
       # @param [Oga::XPath::Node] ast_node
