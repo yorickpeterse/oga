@@ -42,5 +42,9 @@ describe Oga::XPath::Evaluator do
     example 'return NaN for empty node sets' do
       @evaluator.evaluate('number(foo)').should be_nan
     end
+
+    example 'return NaN for empty strings' do
+      @evaluator.evaluate('number("")').should be_nan
+    end
   end
 end
