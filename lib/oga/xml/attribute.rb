@@ -22,6 +22,17 @@ module Oga
       attr_accessor :name, :namespace_name, :element, :value
 
       ##
+      # The default namespace available to all attributes. This namespace can
+      # not be modified.
+      #
+      # @return [Oga::XML::Namespace]
+      #
+      DEFAULT_NAMESPACE = Namespace.new(
+        :name => 'xml',
+        :uri  => 'http://www.w3.org/XML/1998/namespace'
+      ).freeze
+
+      ##
       # @param [Hash] options
       #
       # @option options [String] :name
@@ -44,7 +55,15 @@ module Oga
       # @return [Oga::XML::Namespace]
       #
       def namespace
-        return @namespace ||= element.available_namespaces[namespace_name]
+        unless @namespace
+          if namespace_name == DEFAULT_NAMESPACE.name
+            @namespace = DEFAULT_NAMESPACE
+          else
+            @namespace = element.available_namespaces[namespace_name]
+          end
+        end
+
+        return @namespace
       end
 
       ##

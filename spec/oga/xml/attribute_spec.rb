@@ -24,10 +24,16 @@ describe Oga::XML::Attribute do
         :name           => 'a',
         :element        => element
       )
+
+      @default = described_class.new(:namespace_name => 'xml', :name => 'x')
     end
 
     example 'return a Namespace instance' do
       @attribute.namespace.should == @namespace
+    end
+
+    example 'return the default XML namespace when the "xml" prefix is used' do
+      @default.namespace.should == Oga::XML::Attribute::DEFAULT_NAMESPACE
     end
   end
 
