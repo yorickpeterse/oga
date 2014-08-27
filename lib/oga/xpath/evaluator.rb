@@ -1188,7 +1188,8 @@ module Oga
       ##
       # Processes the `floor()` function call.
       #
-      # This function floors a numeric value and returns the result as a float.
+      # This function call rounds the 1st argument down to the closest integer,
+      # and then returns that number as a float.
       #
       # @param [Oga::XML::NodeSet] context
       # @param [Oga::XPath::Node] expression
@@ -1203,8 +1204,8 @@ module Oga
       ##
       # Processes the `ceiling()` function call.
       #
-      # This function returns the ceiling of a numeric value, the result is
-      # returned as a float.
+      # This function call rounds the 1st argument up to the closest integer,
+      # and then returns that number as a float.
       #
       # @param [Oga::XML::NodeSet] context
       # @param [Oga::XPath::Node] expression
@@ -1219,8 +1220,8 @@ module Oga
       ##
       # Processes the `round()` function call.
       #
-      # This function call rounds the 1st argument to the closest integer number
-      # and then returns that number as a float.
+      # This function call rounds the 1st argument to the closest integer, and
+      # then returns that number as a float.
       #
       # @param [Oga::XML::NodeSet] context
       # @param [Oga::XPath::Node] expression
