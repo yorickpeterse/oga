@@ -1217,6 +1217,22 @@ module Oga
       end
 
       ##
+      # Processes the `round()` function call.
+      #
+      # This function call rounds the 1st argument to the closest integer number
+      # and then returns that number as a float.
+      #
+      # @param [Oga::XML::NodeSet] context
+      # @param [Oga::XPath::Node] expression
+      # @return [Float]
+      #
+      def on_call_round(context, expression)
+        number = on_call_number(context, expression)
+
+        return number.nan? ? number : number.round.to_f
+      end
+
+      ##
       # Processes an `(int)` node.
       #
       # @param [Oga::XPath::Node] ast_node
