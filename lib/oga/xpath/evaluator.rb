@@ -1186,6 +1186,21 @@ module Oga
       end
 
       ##
+      # Processes the `floor()` function call.
+      #
+      # This function floors a numeric value and returns the result as a float.
+      #
+      # @param [Oga::XML::NodeSet] context
+      # @param [Oga::XPath::Node] expression
+      # @return [Float]
+      #
+      def on_call_floor(context, expression)
+        number = on_call_number(context, expression)
+
+        return number.nan? ? number : number.floor.to_f
+      end
+
+      ##
       # Processes an `(int)` node.
       #
       # @param [Oga::XPath::Node] ast_node
