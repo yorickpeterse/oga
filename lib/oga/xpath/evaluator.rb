@@ -1104,6 +1104,35 @@ module Oga
       end
 
       ##
+      # Processes the `lang()` function call.
+      #
+      # This function returns `true` if the current context node is in the given
+      # language, `false` otherwise.
+      #
+      # The language is based on the value of the "xml:lang" attribute of either
+      # the context node or an ancestor node (in case the context node has no
+      # such attribute).
+      #
+      # @param [Oga::XML::NodeSet] context
+      # @param [Oga::XPath::Node] language
+      # @return [TrueClass|FalseClass]
+      #
+      def on_call_lang(context, language)
+        lang_str = on_call_string(context, language)
+        node     = current_node
+
+        while node.respond_to?(:attribute)
+          found = node.attribute('xml:lang')
+
+          return found.value == lang_str if found
+
+          node = node.parent
+        end
+
+        return false
+      end
+
+      ##
       # Processes an `(int)` node.
       #
       # @param [Oga::XPath::Node] ast_node
