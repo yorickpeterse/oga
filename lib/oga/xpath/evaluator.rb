@@ -1201,6 +1201,22 @@ module Oga
       end
 
       ##
+      # Processes the `ceiling()` function call.
+      #
+      # This function returns the ceiling of a numeric value, the result is
+      # returned as a float.
+      #
+      # @param [Oga::XML::NodeSet] context
+      # @param [Oga::XPath::Node] expression
+      # @return [Float]
+      #
+      def on_call_ceiling(context, expression)
+        number = on_call_number(context, expression)
+
+        return number.nan? ? number : number.ceil.to_f
+      end
+
+      ##
       # Processes an `(int)` node.
       #
       # @param [Oga::XPath::Node] ast_node
