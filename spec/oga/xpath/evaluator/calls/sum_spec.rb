@@ -15,5 +15,9 @@ describe Oga::XPath::Evaluator do
     example 'return the sum of the child nodes of the <root> node' do
       @evaluator.evaluate('sum(root/*)').should == 3.0
     end
+
+    example 'return zero by default' do
+      @evaluator.evaluate('sum(foo)').should be_zero
+    end
   end
 end
