@@ -610,6 +610,23 @@ module Oga
       end
 
       ##
+      # Processes the `or` operator.
+      #
+      # This operator returns `true` if one of the expressions evaluates to
+      # true, otherwise false is returned. If the first expression evaluates to
+      # `true` the second expression is ignored.
+      #
+      # @param [Oga::XPath::Node] ast_node
+      # @param [Oga::XML::NodeSet] context
+      # @return [TrueClass|FalseClass]
+      #
+      def on_or(ast_node, context)
+        left, right = *ast_node
+
+        return on_call_boolean(context, left) || on_call_boolean(context, right)
+      end
+
+      ##
       # Delegates function calls to specific handlers.
       #
       # Handler functions take two arguments:
