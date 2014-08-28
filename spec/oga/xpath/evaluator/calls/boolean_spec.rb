@@ -19,6 +19,14 @@ describe Oga::XPath::Evaluator do
       @evaluator.evaluate('boolean(10)').should == true
     end
 
+    example 'return true for a boolean true' do
+      @evaluator.evaluate('boolean(true())').should == true
+    end
+
+    example 'return false for a boolean false' do
+      @evaluator.evaluate('boolean(false())').should == false
+    end
+
     example 'return true for a positive float' do
       @evaluator.evaluate('boolean(10.5)').should == true
     end

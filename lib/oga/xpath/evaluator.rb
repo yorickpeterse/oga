@@ -1075,12 +1075,15 @@ module Oga
       #
       def on_call_boolean(context, expression)
         retval = process(expression, context)
+        bool   = false
 
         if retval.is_a?(Numeric)
-          return !retval.nan? && !retval.zero?
-        else
-          return retval && !retval.empty?
+          bool = !retval.nan? && !retval.zero?
+        elsif retval
+          bool = !retval.respond_to?(:empty?) || !retval.empty?
         end
+
+        return bool
       end
 
       ##
