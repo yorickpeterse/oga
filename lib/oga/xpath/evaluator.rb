@@ -593,6 +593,23 @@ module Oga
       end
 
       ##
+      # Processes the `and` operator.
+      #
+      # This operator returns true if both the left and right expression
+      # evaluate to `true`. If the first expression evaluates to `false` the
+      # right expression is ignored.
+      #
+      # @param [Oga::XPath::Node] ast_node
+      # @param [Oga::XML::NodeSet] context
+      # @return [TrueClass|FalseClass]
+      #
+      def on_and(ast_node, context)
+        left, right = *ast_node
+
+        return on_call_boolean(context, left) && on_call_boolean(context, right)
+      end
+
+      ##
       # Delegates function calls to specific handlers.
       #
       # Handler functions take two arguments:
