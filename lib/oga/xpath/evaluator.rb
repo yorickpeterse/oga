@@ -691,6 +691,22 @@ module Oga
       end
 
       ##
+      # Processes the `-` operator.
+      #
+      # This operator converts the left and right expressions to numbers and
+      # subtracts the right number of the left number.
+      #
+      # @param [Oga::XPath::Node] ast_node
+      # @param [Oga::XML::NodeSet] context
+      # @return [Float]
+      #
+      def on_sub(ast_node, context)
+        left, right = *ast_node
+
+        return on_call_number(context, left) - on_call_number(context, right)
+      end
+
+      ##
       # Delegates function calls to specific handlers.
       #
       # Handler functions take two arguments:
