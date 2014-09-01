@@ -46,5 +46,13 @@ describe Oga::XPath::Evaluator do
     example 'return true if a node set and a string are equal' do
       @evaluator.evaluate('root/a = "10"').should == true
     end
+
+    example 'return true if a node set wildcard and a number are equal' do
+      @evaluator.evaluate('root/* = 10').should == true
+    end
+
+    example 'return true if a number and a node set wildcard are equal' do
+      @evaluator.evaluate('10 = root/*').should == true
+    end
   end
 end

@@ -724,11 +724,11 @@ module Oga
         right = process(ast_node.children[1], context)
 
         if left.is_a?(XML::NodeSet)
-          left = left.text
+          left = first_node_text(left)
         end
 
         if right.is_a?(XML::NodeSet)
-          right = right.text
+          right = first_node_text(right)
         end
 
         if left.is_a?(Numeric) and !right.is_a?(Numeric)
