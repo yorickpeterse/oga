@@ -787,6 +787,23 @@ module Oga
       end
 
       ##
+      # Processes the `<=` operator.
+      #
+      # This operator converts the left and right expression to a number and
+      # returns `true` if the first number is lower-than or equal to the second
+      # number.
+      #
+      # @param [Oga::XML::Node] ast_node
+      # @param [Oga::XML::NodeSet] context
+      # @return [TrueClass|FalseClass]
+      #
+      def on_lte(ast_node, context)
+        left, right = *ast_node
+
+        return on_call_number(context, left) <= on_call_number(context, right)
+      end
+
+      ##
       # Delegates function calls to specific handlers.
       #
       # Handler functions take two arguments:
