@@ -743,6 +743,18 @@ module Oga
       end
 
       ##
+      # Processes the `!=` operator.
+      #
+      # This operator does the exact opposite of the `=` operator. See {#on_eq}
+      # for more information.
+      #
+      # @see [#on_eq]
+      #
+      def on_neq(ast_node, context)
+        return !on_eq(ast_node, context)
+      end
+
+      ##
       # Delegates function calls to specific handlers.
       #
       # Handler functions take two arguments:
