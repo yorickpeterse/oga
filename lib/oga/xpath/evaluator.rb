@@ -707,6 +707,42 @@ module Oga
       end
 
       ##
+      # Processes the `=` operator.
+      #
+      # This operator evaluates the expression on the left and right and returns
+      # `true` if they are equal. This operator can be used to compare strings,
+      # numbers and node sets. When using node sets the text of the set is
+      # compared instead of the nodes themselves. That is, nodes with different
+      # names but the same text are considered to be equal.
+      #
+      # @param [Oga::XPath::Node] ast_node
+      # @param [Oga::XML::NodeSet] context
+      # @return [TrueClass|FalseClass]
+      #
+      def on_eq(ast_node, context)
+        left  = process(ast_node.children[0], context)
+        right = process(ast_node.children[1], context)
+
+        if left.is_a?(XML::NodeSet)
+          left = left.text
+        end
+
+        if right.is_a?(XML::NodeSet)
+          right = right.text
+        end
+
+        if left.is_a?(Numeric) and !right.is_a?(Numeric)
+          right = to_float(right)
+        end
+
+        if left.is_a?(String) and !right.is_a?(String)
+          right = to_string(right)
+        end
+
+        return left == right
+      end
+
+      ##
       # Delegates function calls to specific handlers.
       #
       # Handler functions take two arguments:
@@ -903,14 +939,7 @@ module Oga
         if convert.respond_to?(:text)
           return convert.text
         else
-          # If we have a number that has a zero decimal (e.g. 10.0) we want to
-          # get rid of that decimal. For this we'll first convert the number to
-          # an integer.
-          if convert.is_a?(Float) and convert.modulo(1).zero?
-            convert = convert.to_i
-          end
-
-          return convert.to_s
+          return to_string(convert)
         end
       end
 
@@ -950,7 +979,7 @@ module Oga
           convert = current_node.text
         end
 
-        return Float(convert) rescue Float::NAN
+        return to_float(convert)
       end
 
       ##
@@ -1526,6 +1555,35 @@ module Oga
       #
       def has_parent?(ast_node)
         return ast_node.respond_to?(:parent) && !!ast_node.parent
+      end
+
+      ##
+      # Converts the given value to a float. If the value can't be converted to
+      # a float NaN is returned instead.
+      #
+      # @param [Mixed] value
+      # @return [Float]
+      #
+      def to_float(value)
+        return Float(value) rescue Float::NAN
+      end
+
+      ##
+      # Converts the given value to a string according to the XPath string
+      # conversion rules.
+      #
+      # @param [Mixed] value
+      # @return [String]
+      #
+      def to_string(value)
+        # If we have a number that has a zero decimal (e.g. 10.0) we want to
+        # get rid of that decimal. For this we'll first convert the number to
+        # an integer.
+        if value.is_a?(Float) and value.modulo(1).zero?
+          value = value.to_i
+        end
+
+        return value.to_s
       end
 
       ##

@@ -154,4 +154,24 @@ describe Oga::XPath::Evaluator do
       @evaluator.has_parent?(@parent).should == false
     end
   end
+
+  context '#to_string' do
+    example 'convert a float to a string' do
+      @evaluator.to_string(10.5).should == '10.5'
+    end
+
+    example 'convert a float without decimals to a string' do
+      @evaluator.to_string(10.0).should == '10'
+    end
+  end
+
+  context '#to_float' do
+    example 'convert a string to a float' do
+      @evaluator.to_float('10').should == 10.0
+    end
+
+    example "return NaN for values that can't be converted to floats" do
+      @evaluator.to_float('a').should be_nan
+    end
+  end
 end
