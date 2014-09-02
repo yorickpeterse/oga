@@ -37,7 +37,8 @@
 
     newline    = '\n' | '\r\n';
     whitespace = [ \t];
-    identifier = [a-zA-Z0-9\-_]+;
+    ident_char = [a-zA-Z0-9\-_];
+    identifier = ident_char+;
 
     # Comments
     #
@@ -209,11 +210,17 @@
     # body of an element is lexed using the `main` machine.
     #
 
-    element_end = '</' identifier (':' identifier)* '>';
+    element_start = '<' ident_char;
+    element_end   = '</' identifier (':' identifier)* '>';
 
     action start_element {
         callback_simple("on_element_start");
+        fhold;
         fnext element_name;
+    }
+
+    action close_element {
+        callback_simple("on_element_end");
     }
 
     # Machine used for lexing the name/namespace of an element.
@@ -262,6 +269,46 @@
         };
     *|;
 
+    # Text
+    #
+    # http://www.w3.org/TR/xml/#syntax
+    # http://www.w3.org/TR/html-markup/syntax.html#text-syntax
+    #
+    # Text content is everything leading up to certain special tags such as "</"
+    # and "<?".
+
+    action start_text {
+        fhold;
+        fnext text;
+    }
+
+    # These characters terminate a T_TEXT sequence and instruct Ragel to jump
+    # back to the main machine.
+    #
+    # Note that this only works if each sequence is exactly 2 characters
+    # long. Because of this "<!" is used instead of "<!--".
+
+    terminate_text = '</' | '<!' | '<?' | element_start;
+    allowed_text   = any* -- terminate_text;
+
+    text := |*
+        # Text followed by a special tag, such as "foo<!--"
+        allowed_text @{ mark = p; } terminate_text => {
+            callback("on_text", data, encoding, ts, mark);
+
+            p    = mark - 1;
+            mark = 0;
+
+            fnext main;
+        };
+
+        # Just regular text.
+        allowed_text => {
+            callback("on_text", data, encoding, ts, te);
+            fnext main;
+        };
+    *|;
+
     # The main machine aka the entry point of Ragel.
     main := |*
         doctype_start  => start_doctype;
@@ -269,19 +316,8 @@
         comment        => start_comment;
         cdata          => start_cdata;
         proc_ins_start => start_proc_ins;
-
-        # The start of an element.
-        '<' => start_element;
-
-        # Regular closing tags.
-        element_end => {
-            callback_simple("on_element_end");
-        };
-
-        # Treat everything else, except for "<", as regular text. The "<" sign
-        # is used for tags so we can't emit text nodes for these characters.
-        any+ -- '<' => {
-            callback("on_text", data, encoding, ts, te);
-        };
+        element_start  => start_element;
+        element_end    => close_element;
+        any            => start_text;
     *|;
 }%%
