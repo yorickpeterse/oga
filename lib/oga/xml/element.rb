@@ -21,6 +21,8 @@ module Oga
     #  @return [Hash]
     #
     class Element < Node
+      include Querying
+
       attr_accessor :name, :namespace_name, :attributes, :namespaces
 
       ##

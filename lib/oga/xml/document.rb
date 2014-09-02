@@ -13,6 +13,8 @@ module Oga
     #  @return [Oga::XML::XmlDeclaration]
     #
     class Document
+      include Querying
+
       attr_accessor :doctype, :xml_declaration
 
       ##
