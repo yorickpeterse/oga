@@ -208,6 +208,9 @@
     # name/namespace, contents of the open tag and the body of an element. The
     # body of an element is lexed using the `main` machine.
     #
+
+    element_end = '</' identifier (':' identifier)* '>';
+
     action start_element {
         callback_simple("on_element_start");
         fnext element_name;
@@ -267,18 +270,17 @@
         cdata          => start_cdata;
         proc_ins_start => start_proc_ins;
 
-
         # The start of an element.
         '<' => start_element;
 
         # Regular closing tags.
-        '</' identifier (':' identifier)* '>' => {
+        element_end => {
             callback_simple("on_element_end");
         };
 
         # Treat everything else, except for "<", as regular text. The "<" sign
         # is used for tags so we can't emit text nodes for these characters.
-        ^'<'+ => {
+        any+ -- '<' => {
             callback("on_text", data, encoding, ts, te);
         };
     *|;
