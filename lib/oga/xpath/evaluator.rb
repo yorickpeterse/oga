@@ -45,13 +45,29 @@ module Oga
     # For more information on the specification, see
     # <http://www.w3.org/TR/xpath/#numbers>.
     #
+    # ## Variables
+    #
+    # The evaluator supports the binding of custom variables in the
+    # {#initialize} method. Variables can be bound by passing in a Hash with the
+    # keys set to the variable names (minus the `$` sign) and their values to
+    # the variable values. The keys of the variables Hash *must* be Strings.
+    #
+    # A basic example:
+    #
+    #     evaluator = Evaluator.new(document, 'number' => 10)
+    #
+    #     evaluator.evaluate('$number') # => 10
+    #
     class Evaluator
       ##
       # @param [Oga::XML::Document|Oga::XML::Node] document
+      # @param [Hash] variables Hash containing variables to expose to the XPath
+      #  expressions.
       #
-      def initialize(document)
-        @document = document
-        @nodes    = []
+      def initialize(document, variables = {})
+        @document  = document
+        @nodes     = []
+        @variables = variables
       end
 
       ##
@@ -1488,6 +1504,25 @@ module Oga
       #
       def on_string(ast_node, context)
         return ast_node.children[0]
+      end
+
+      ##
+      # Processes a variable reference. If the variable is not defined an error
+      # is raised.
+      #
+      # @param [Oga::XPath::Node] ast_node
+      # @param [Oga::XML::NodeSet] context
+      # @return [Mixed]
+      # @raise [RuntimeError]
+      #
+      def on_var(ast_node, context)
+        name = ast_node.children[0]
+
+        if @variables.key?(name)
+          return @variables[name]
+        else
+          raise "Undefined XPath variable: #{name}"
+        end
       end
 
       ##
