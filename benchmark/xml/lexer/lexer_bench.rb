@@ -10,4 +10,6 @@ Benchmark.ips do |bench|
   bench.report '10MB as an IO' do
     Oga::XML::Lexer.new(big_xml_file).advance { }
   end
+
+  bench.compare!
 end
