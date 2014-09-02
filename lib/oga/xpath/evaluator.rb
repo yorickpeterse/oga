@@ -79,10 +79,21 @@ module Oga
       #  evaluator.evaluate('//a')
       #
       # @param [String] string An XPath expression as a String.
-      # @return [Oga::XML::Node]
+      # @return [Mixed]
       #
       def evaluate(string)
-        ast     = Parser.new(string).parse
+        ast = Parser.new(string).parse
+
+        return evaluate_ast(ast)
+      end
+
+      ##
+      # Evaluates a pre-parsed XPath expression.
+      #
+      # @param [Oga::XPath::Node] ast_node
+      # @return [Mixed]
+      #
+      def evaluate_ast(ast)
         context = XML::NodeSet.new([@document])
 
         return process(ast, context)
