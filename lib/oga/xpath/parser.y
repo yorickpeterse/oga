@@ -6,7 +6,7 @@ class Oga::XPath::Parser
 token T_AXIS T_COLON T_COMMA T_FLOAT T_INT T_IDENT T_TYPE_TEST
 token T_LBRACK T_RBRACK T_LPAREN T_RPAREN T_SLASH T_STRING
 token T_PIPE T_AND T_OR T_ADD T_DIV T_MOD T_EQ T_NEQ T_LT T_GT T_LTE T_GTE
-token T_SUB T_MUL
+token T_SUB T_MUL T_VAR
 
 options no_result_var
 
@@ -42,6 +42,7 @@ rule
     | call
     | path
     | absolute_path
+    | variable
     ;
 
   path_member
@@ -139,6 +140,10 @@ rule
   number
     : T_INT   { s(:int, val[0]) }
     | T_FLOAT { s(:float, val[0]) }
+
+  variable
+    : T_VAR { s(:var, val[0]) }
+    ;
 end
 
 ---- inner

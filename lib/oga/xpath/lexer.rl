@@ -316,6 +316,19 @@ module Oga
           emit(:T_TYPE_TEST, ts, te - 2)
         }
 
+        # Variables
+        #
+        # XPath 1.0 allows the use of variables in expressions. Oddly enough you
+        # can not assign variables in an expression, you can only refer to them.
+        # This means that libraries themselves have to expose an interface for
+        # setting variables.
+        #
+        var = '$' identifier;
+
+        action emit_variable {
+          emit(:T_VAR, ts + 1, te)
+        }
+
         main := |*
           operator;
           whitespace | slash | lparen | rparen | comma | colon;
@@ -325,6 +338,7 @@ module Oga
           '[' => { add_token(:T_LBRACK) };
           ']' => { add_token(:T_RBRACK) };
 
+          var        => emit_variable;
           string     => emit_string;
           integer    => emit_integer;
           float      => emit_float;
