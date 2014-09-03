@@ -53,6 +53,16 @@ describe Oga::XML::Lexer do
       ]
     end
 
+    example 'lex an element with an attribute with an empty value' do
+      lex('<p foo=""></p>').should == [
+        [:T_ELEM_START, nil, 1],
+        [:T_ELEM_NAME, 'p', 1],
+        [:T_ATTR, 'foo', 1],
+        [:T_STRING, '', 1],
+        [:T_ELEM_END, nil, 1]
+      ]
+    end
+
     example 'lex a paragraph element with attributes' do
       lex('<p class="foo">Hello</p>').should == [
         [:T_ELEM_START, nil, 1],
