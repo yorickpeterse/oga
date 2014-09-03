@@ -230,7 +230,7 @@ end
   def on_error(type, value, stack)
     name  = token_to_str(type)
     index = @line - 1
-    lines = @data.lines.to_a
+    lines = @data.each_line.to_a
     code  = ''
 
     # Show up to 5 lines before and after the offending line (if they exist).
