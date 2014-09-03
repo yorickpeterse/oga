@@ -37,13 +37,13 @@ describe Oga::XML::Attribute do
     end
   end
 
-  context '#to_s' do
+  context '#text' do
     example 'return an empty String when there is no value' do
-      described_class.new.to_s.should == ''
+      described_class.new.text.should == ''
     end
 
     example 'return the value if it is present' do
-      described_class.new(:value => 'a').to_s.should == 'a'
+      described_class.new(:value => 'a').text.should == 'a'
     end
   end
 

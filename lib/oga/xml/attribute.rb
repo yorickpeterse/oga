@@ -67,11 +67,15 @@ module Oga
       end
 
       ##
+      # Returns the value of the attribute.
+      #
       # @return [String]
       #
-      def to_s
+      def text
         return value.to_s
       end
+
+      alias_method :to_s, :text
 
       ##
       # @return [String]

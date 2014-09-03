@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Oga::XPath::Evaluator do
   context 'equal operator' do
     before do
-      @document  = parse('<root><a>10</a><b>10</b></root>')
+      @document  = parse('<root><a>10</a><b class="foo">10</b></root>')
       @evaluator = described_class.new(@document)
     end
 
@@ -53,6 +53,10 @@ describe Oga::XPath::Evaluator do
 
     example 'return true if a number and a node set wildcard are equal' do
       @evaluator.evaluate('10 = root/*').should == true
+    end
+
+    example 'return true if an attribute and string are equal' do
+      @evaluator.evaluate('root/b/@class = "foo"').should == true
     end
   end
 end
