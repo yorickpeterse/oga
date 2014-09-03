@@ -31,6 +31,17 @@ Parsing an IO handle pointing to XML (this also works when using
 
     Oga.parse_xml(handle)
 
+Parsing an IO handle using the pull parser:
+
+    handle = File.open('path/to/file.xml')
+    parser = Oga::XML::PullParser.new(handle)
+
+    parser.parse do |node|
+      parser.on(:text) do
+        puts node.text
+      end
+    end
+
 Querying a document using XPath:
 
     document = Oga.parse_xml('<people><person>Alice</person></people>')
