@@ -169,15 +169,14 @@ module Oga
       # @return [Oga::XML::NodeSet]
       #
       def on_test(ast_node, context)
-        nodes     = XML::NodeSet.new
-        predicate = ast_node.children[2]
+        nodes       = XML::NodeSet.new
+        predicate   = ast_node.children[2]
+        xpath_index = 1
 
-        context.each_with_index do |xml_node, index|
+        context.each do |xml_node|
           next unless node_matches?(xml_node, ast_node)
 
           if predicate
-            xpath_index = index + 1
-
             retval = with_node_set(context) do
               process(predicate, XML::NodeSet.new([xml_node]))
             end
@@ -197,6 +196,8 @@ module Oga
           else
             nodes << xml_node
           end
+
+          xpath_index += 1
         end
 
         return nodes
