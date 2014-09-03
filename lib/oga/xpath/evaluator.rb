@@ -11,19 +11,19 @@ module Oga
     # for more information). It is however perfectly fine to use multiple
     # separated instances as this class does not use a thread global state.
     #
-    # ## Node Stack
+    # ## Node Set Stack
     #
-    # This class uses an internal stack of XML nodes. This stack is used for
-    # certain XPath functions that require access to the current node being
-    # processed in a predicate. An example of such a function is `position()`.
+    # This class uses an internal stack of XML node sets. This stack is used for
+    # functions that require access to the set of nodes a predicate belongs to.
+    # An example of such a function is `position()`.
     #
-    # An alternative to a stack would be to pass the current node as arguments
-    # to the various `on_*` methods. The problematic part of this approach is
-    # that it requires every method to take and pass along the argument. It's
-    # far too easy to make mistakes in such a setup and as such I've chosen to
-    # use an internal stack instead.
+    # An alternative would be to pass the node sets a predicate belongs to as an
+    # extra argument to the various `on_*` methods.  The problematic part of
+    # this approach is that it requires every method to take and pass along the
+    # argument. It's far too easy to make mistakes in such a setup and as such
+    # I've chosen to use an internal stack instead.
     #
-    # See {#with_node} and {#current_node} for more information.
+    # See {#with_node_set} and {#current_node_set} for more information.
     #
     # ## Set Indices
     #
@@ -66,8 +66,8 @@ module Oga
       #
       def initialize(document, variables = {})
         @document  = document
-        @nodes     = [[]]
         @variables = variables
+        @node_sets = []
       end
 
       ##
@@ -147,15 +147,13 @@ module Oga
       def on_path(ast_node, context)
         nodes = XML::NodeSet.new
 
-        with_node_stack do
-          ast_node.children.each do |test|
-            nodes = process(test, context)
+        ast_node.children.each do |test|
+          nodes = process(test, context)
 
-            if nodes.empty?
-              break
-            else
-              context = nodes
-            end
+          if nodes.empty?
+            break
+          else
+            context = nodes
           end
         end
 
@@ -174,34 +172,31 @@ module Oga
         nodes     = XML::NodeSet.new
         predicate = ast_node.children[2]
 
-        context.each do |xml_node|
-          nodes << xml_node if node_matches?(xml_node, ast_node)
-        end
+        context.each_with_index do |xml_node, index|
+          next unless node_matches?(xml_node, ast_node)
 
-        # Filter the nodes based on the predicate.
-        if predicate
-          new_nodes = XML::NodeSet.new
-
-          nodes.each_with_index do |current, index|
+          if predicate
             xpath_index = index + 1
-            retval      = with_node(current) { process(predicate, nodes) }
+
+            retval = with_node_set(context) do
+              process(predicate, XML::NodeSet.new([xml_node]))
+            end
 
             # Numeric values are used as node set indexes.
             if retval.is_a?(Numeric)
-              new_nodes << current if retval.to_i == xpath_index
+              nodes << xml_node if retval.to_i == xpath_index
 
             # Node sets, strings, booleans, etc
             elsif retval
-              # Empty strings and node sets evaluate to false.
               if retval.respond_to?(:empty?) and retval.empty?
                 next
               end
 
-              new_nodes << current
+              nodes << xml_node
             end
+          else
+            nodes << xml_node
           end
-
-          nodes = new_nodes
         end
 
         return nodes
@@ -492,12 +487,8 @@ module Oga
       def on_axis_self(ast_node, context)
         nodes = XML::NodeSet.new
 
-        if current_node
-          nodes << current_node if node_matches?(current_node, ast_node)
-        else
-          context.each do |context_node|
-            nodes << context_node if node_matches?(context_node, ast_node)
-          end
+        context.each do |context_node|
+          nodes << context_node if node_matches?(context_node, ast_node)
         end
 
         return nodes
@@ -883,7 +874,7 @@ module Oga
       #
       def on_call_last(context)
         # XPath uses indexes 1 to N instead of 0 to N.
-        return context.length.to_f
+        return current_node_set.length.to_f
       end
 
       ##
@@ -894,7 +885,7 @@ module Oga
       # @return [Float]
       #
       def on_call_position(context)
-        index = context.index(current_node) + 1
+        index = current_node_set.index(context.first) + 1
 
         return index.to_f
       end
@@ -1044,7 +1035,7 @@ module Oga
             convert = convert[0]
           end
         else
-          convert = current_node
+          convert = context.first
         end
 
         if convert.respond_to?(:text)
@@ -1087,7 +1078,7 @@ module Oga
             convert = exp_retval
           end
         else
-          convert = current_node.text
+          convert = context.first.text
         end
 
         return to_float(convert)
@@ -1395,7 +1386,7 @@ module Oga
       #
       def on_call_lang(context, language)
         lang_str = on_call_string(context, language)
-        node     = current_node
+        node     = context.first
 
         while node.respond_to?(:attribute)
           found = node.attribute('xml:lang')
@@ -1560,7 +1551,7 @@ module Oga
             raise TypeError, 'only node sets can be used as arguments'
           end
         else
-          node = current_node
+          node = context.first
         end
 
         return node
@@ -1717,65 +1708,31 @@ module Oga
       end
 
       ##
-      # Stores the node in the node stack, yields the block and removes the node
-      # from the stack.
-      #
-      # This method is mainly intended to be used when processing predicates.
-      # Expressions inside a predicate might need access to the node on which
-      # the predicate is performed.
-      #
-      # This method's return value is the same as whatever the block returned.
+      # Stores the specified node set and yields the supplied block. The return
+      # value of this method is whatever the block returned.
       #
       # @example
-      #  some_node_set.each do |node|
-      #    result = with_node(node) { process(...) }
+      #  retval = with_node_set(context) do
+      #    process(....)
       #  end
       #
-      # @param [Oga::XML::Node] node
-      # @return [Mixed]
+      # @param [Oga::XML::NodeSet] nodes
       #
-      def with_node(node)
-        node_stack << node
+      def with_node_set(nodes)
+        @node_sets << nodes
 
         retval = yield
 
-        node_stack.pop
+        @node_sets.pop
 
         return retval
       end
 
       ##
-      # Adds a new stack for storing context nodes and yields the supplied
-      # block.
+      # @return [Oga::XML::NodeSet]
       #
-      # The return value of this method is whatever the supplied block returns.
-      #
-      # @return [Mixed]
-      #
-      def with_node_stack
-        @nodes << []
-
-        retval = yield
-
-        @nodes.pop
-
-        return retval
-      end
-
-      ##
-      # Returns the current node that's being processed.
-      #
-      # @return [Oga::XML::Node]
-      #
-      def current_node
-        return node_stack.last
-      end
-
-      ##
-      # @return [Array]
-      #
-      def node_stack
-        return @nodes.last
+      def current_node_set
+        return @node_sets.last
       end
     end # Evaluator
   end # XPath

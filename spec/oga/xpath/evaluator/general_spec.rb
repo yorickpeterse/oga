@@ -8,14 +8,15 @@ describe Oga::XPath::Evaluator do
 
   context '#function_node' do
     before do
-      @context_set = Oga::XML::NodeSet.new([@document])
+      @document    = parse('<root><a>Hello</a></root>')
+      @context_set = @document.children
     end
 
     example 'return the first node in the expression' do
       exp  = s(:axis, 'child', s(:test, nil, 'a'))
       node = @evaluator.function_node(@context_set, exp)
 
-      node.should == @document.children[0]
+      node.should == @context_set[0].children[0]
     end
 
     example 'raise a TypeError if the expression did not return a node set' do
@@ -26,11 +27,7 @@ describe Oga::XPath::Evaluator do
     end
 
     example 'use the current context node if the expression is empty' do
-      a_node = @document.children[0]
-
-      @evaluator.stub(:current_node).and_return(a_node)
-
-      @evaluator.function_node(@context_set).should == a_node
+      @evaluator.function_node(@context_set).should == @context_set[0]
     end
   end
 
