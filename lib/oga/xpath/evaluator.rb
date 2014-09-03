@@ -66,7 +66,7 @@ module Oga
       #
       def initialize(document, variables = {})
         @document  = document
-        @nodes     = []
+        @nodes     = [[]]
         @variables = variables
       end
 
@@ -147,13 +147,15 @@ module Oga
       def on_path(ast_node, context)
         nodes = XML::NodeSet.new
 
-        ast_node.children.each do |test|
-          nodes = process(test, context)
+        with_node_stack do
+          ast_node.children.each do |test|
+            nodes = process(test, context)
 
-          if nodes.empty?
-            break
-          else
-            context = nodes
+            if nodes.empty?
+              break
+            else
+              context = nodes
+            end
           end
         end
 
@@ -1733,7 +1735,25 @@ module Oga
       # @return [Mixed]
       #
       def with_node(node)
-        @nodes << node
+        node_stack << node
+
+        retval = yield
+
+        node_stack.pop
+
+        return retval
+      end
+
+      ##
+      # Adds a new stack for storing context nodes and yields the supplied
+      # block.
+      #
+      # The return value of this method is whatever the supplied block returns.
+      #
+      # @return [Mixed]
+      #
+      def with_node_stack
+        @nodes << []
 
         retval = yield
 
@@ -1748,6 +1768,13 @@ module Oga
       # @return [Oga::XML::Node]
       #
       def current_node
+        return node_stack.last
+      end
+
+      ##
+      # @return [Array]
+      #
+      def node_stack
         return @nodes.last
       end
     end # Evaluator
