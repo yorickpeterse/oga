@@ -228,31 +228,35 @@ end
   # @raise [Racc::ParseError]
   #
   def on_error(type, value, stack)
-    name  = token_to_str(type)
-    index = @line - 1
-    lines = @data.each_line.to_a
-    code  = ''
+    name        = token_to_str(type)
+    index       = @line - 1
+    index_range = (index - 5)..(index + 5)
+    code        = ''
+
+    # For IO we sadly have to re-read the input :<
+    if @data.respond_to?(:rewind)
+      @data.rewind
+    end
 
     # Show up to 5 lines before and after the offending line (if they exist).
-    (-5..5).each do |offset|
-      line   = lines[index + offset]
-      number = @line + offset
+    @data.each_line.with_index do |line, line_index|
+      next unless index_range.cover?(line_index)
 
-      if line and number > 0
-        if offset == 0
-          prefix = '=> '
-        else
-          prefix = '   '
-        end
+      number = line_index + 1
 
-        line = line.strip
-
-        if line.length > 80
-          line = line[0..79] + ' (more)'
-        end
-
-        code << "#{prefix}#{number}: #{line}\n"
+      if line_index == index
+        prefix = '=> '
+      else
+        prefix = '   '
       end
+
+      line = line.strip
+
+      if line.length > 80
+        line = line[0..79] + ' (more)'
+      end
+
+      code << "#{prefix}#{number}: #{line}\n"
     end
 
     raise Racc::ParseError, <<-EOF.strip
