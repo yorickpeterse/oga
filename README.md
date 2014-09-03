@@ -20,7 +20,7 @@ From [Wikipedia][oga-wikipedia]:
   * DOM parsing
   * Stream/pull parsing
 * High performance and low memory usage (depending on the parsing API)
-* Support for XPath 1.0 (planned)
+* Support for XPath 1.0
 * CSS selectors support (planned)
 
 ## Requirements
