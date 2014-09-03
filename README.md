@@ -14,6 +14,38 @@ From [Wikipedia][oga-wikipedia]:
 > power saws. One person stood on a raised platform, with the board below him,
 > and the other person stood underneath them.
 
+## Examples
+
+Parsing a simple string of XML:
+
+    Oga.parse_xml('<people><person>Alice</person></people>')
+
+Parsing a simple string of HTML:
+
+    Oga.parse_html('<link rel="stylesheet" href="foo.css">')
+
+Parsing an IO handle pointing to XML (this also works when using
+`Oga.parse_html`):
+
+    handle = File.open('path/to/file.xml')
+
+    Oga.parse_xml(handle)
+
+Querying a document using XPath:
+
+    document = Oga.parse_xml('<people><person>Alice</person></people>')
+
+    document.xpath('string(people/person)') # => "Alice"
+
+Modifying a document and serializing it back to XML:
+
+    document = Oga.parse_xml('<people><person>Alice</person></people>')
+    name     = document.at_xpath('people/person[1]/text()')
+
+    name.text = 'Bob'
+
+    document.to_xml # => "<people><person>Bob</person></people>"
+
 ## Features
 
 * Support for parsing XML and HTML(5)
