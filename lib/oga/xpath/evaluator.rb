@@ -490,8 +490,12 @@ module Oga
       def on_axis_self(ast_node, context)
         nodes = XML::NodeSet.new
 
-        context.each do |context_node|
-          nodes << context_node if node_matches?(context_node, ast_node)
+        if current_node
+          nodes << current_node if node_matches?(current_node, ast_node)
+        else
+          context.each do |context_node|
+            nodes << context_node if node_matches?(context_node, ast_node)
+          end
         end
 
         return nodes
