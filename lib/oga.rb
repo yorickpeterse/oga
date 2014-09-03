@@ -2,6 +2,9 @@ require 'ast'
 require 'set'
 require 'stringio'
 
+require_relative 'oga/version'
+require_relative 'oga/oga'
+
 # Load these first so that the native extensions don't have to define the
 # Oga::XML namespace.
 require_relative 'oga/xml/lexer'
