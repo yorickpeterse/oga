@@ -34,5 +34,29 @@ describe Oga::XML::Lexer do
         [:T_ELEM_END, nil, 1]
       ]
     end
+
+    example 'lex inline Javascript containing a processing instruction' do
+      lex("<script>#{@javascript}<?foo?></script>").should == [
+        [:T_ELEM_START, nil, 1],
+        [:T_ELEM_NAME, 'script', 1],
+        [:T_TEXT, @javascript, 1],
+        [:T_PROC_INS_START, nil, 1],
+        [:T_PROC_INS_NAME, 'foo', 1],
+        [:T_PROC_INS_END, nil, 1],
+        [:T_ELEM_END, nil, 1]
+      ]
+    end
+
+    example 'lex inline Javascript containing another element' do
+      lex("<script>#{@javascript}<p></p></script>").should == [
+        [:T_ELEM_START, nil, 1],
+        [:T_ELEM_NAME, 'script', 1],
+        [:T_TEXT, @javascript, 1],
+        [:T_ELEM_START, nil, 1],
+        [:T_ELEM_NAME, 'p', 1],
+        [:T_ELEM_END, nil, 1],
+        [:T_ELEM_END, nil, 1]
+      ]
+    end
   end
 end
