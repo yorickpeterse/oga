@@ -3,7 +3,34 @@
 module Oga
   module XPath
     ##
-    # Ragel lexer for lexing XPath expressions.
+    # Lexer for turning XPath expressions into a set of tokens. Tokens are
+    # returned as arrays with every array having two values:
+    #
+    # 1. The token type as a symbol
+    # 2. The token value or nil if there is no value
+    #
+    # Basic usage of this lexer is as following:
+    #
+    #     lexer  = Oga::XPath::Lexer.new('//foo/bar')
+    #     tokens = lexer.lex
+    #
+    # Alternatively you can stream tokens instead of returning them as a whole:
+    #
+    #     lexer = Oga::XPath::Lexer.new('//foo/bar')
+    #
+    #     lexer.advance do |type, value|
+    #
+    #     end
+    #
+    # Unlike the XML lexer the XPath lexer does not support IO instances, it can
+    # only lex strings.
+    #
+    # ## Thread Safety
+    #
+    # This class keeps track of an internal state. As a result it's not safe to
+    # share a single instance between multiple threads. However, you're free to
+    # use separate instances per thread as there is no global (= class level)
+    # shared state.
     #
     class Lexer
       %% write data;

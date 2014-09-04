@@ -105,6 +105,7 @@ module Oga
       # the node type.
       #
       # @param [Oga::XPath::Node] ast_node The XPath AST node to process.
+      #
       # @param [Oga::XML::NodeSet] context The context (a set of nodes) to
       #  evaluate an expression in.
       #
@@ -161,8 +162,7 @@ module Oga
       end
 
       ##
-      # Processes a node test. Nodes are compared using {#node_matches?} so see
-      # that method for more information on that matching logic.
+      # Processes a node test and optionally a predicate.
       #
       # @param [Oga::XPath::Node] ast_node
       # @param [Oga::XML::NodeSet] context
@@ -295,8 +295,8 @@ module Oga
       end
 
       ##
-      # Evaluates the `child` axis. This simply delegates work to {#on_test}
-      # or {#on_node_type}.
+      # Evaluates the `child` axis. This axis simply takes all the child nodes
+      # of the current context nodes.
       #
       # @param [Oga::XPath::Node] ast_node
       # @param [Oga::XML::NodeSet] context

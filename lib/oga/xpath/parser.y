@@ -1,5 +1,6 @@
 ##
-# Parser for XPath expressions.
+# AST parser for XPath expressions. The AST is built using {Oga::XPath::Node}
+# instances.
 #
 class Oga::XPath::Parser
 
