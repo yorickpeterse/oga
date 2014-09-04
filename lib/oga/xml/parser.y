@@ -1,11 +1,20 @@
 ##
 # DOM parser for both XML and HTML.
 #
-# Note that this parser itself does not deal with special HTML void elements.
-# It requires every tag to have a closing tag. As such you'll need to enable
-# HTML parsing mode when parsing HTML. This can be done as following:
+# This parser does not produce a dedicated AST, instead it emits XML nodes
+# directly. Basic usage of this parser is as following:
 #
-#     parser = Oga::XML::Parser.new(:html => true)
+#     parser   = Oga::XML::Parser.new('<foo></foo>')
+#     document = parser.parse
+#
+# To enable HTML parsing you'd use the following instead:
+#
+#     parser   = Oga::XML::Parser.new('<foo></foo>', :html => true)
+#     document = parser.parse
+#
+# In both cases you can use either a String or an IO as the parser input. IO
+# instances will result in lower memory overhead, especially when parsing large
+# files.
 #
 class Oga::XML::Parser
 
@@ -185,10 +194,9 @@ end
 
 ---- inner
   ##
-  # @param [String] data The input to parse.
-  #
+  # @param [String|IO] data The input to parse.
   # @param [Hash] options
-  # @see Oga::XML::Lexer#initialize
+  # @see [Oga::XML::Lexer#initialize]
   #
   def initialize(data, options = {})
     @data  = data

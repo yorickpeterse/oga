@@ -1,14 +1,19 @@
 module Oga
   module HTML
     ##
-    # Low level AST parser for parsing HTML documents. See {Oga::XML::Parser}
-    # for more information.
+    # Parser for processing HTML input. This parser is a small wrapper around
+    # {Oga::XML::Parser} and takes care of setting the various options required
+    # for parsing HTML documents.
+    #
+    # A basic example:
+    #
+    #     Oga::HTML::Parser.new('<meta charset="utf-8">').parse
     #
     class Parser < XML::Parser
       ##
-      # @param [String] data
+      # @param [String|IO] data
       # @param [Hash] options
-      # @see Oga::XML::Parser#initialize
+      # @see [Oga::XML::Parser#initialize]
       #
       def initialize(data, options = {})
         options = options.merge(:html => true)
