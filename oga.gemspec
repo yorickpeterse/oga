@@ -17,7 +17,6 @@ Gem::Specification.new do |s|
     'ext/**/*',
     'README.md',
     'LICENSE',
-    'MANIFEST',
     'oga.gemspec',
     '.yardopts'
   ]).select { |path| File.file?(path) }
