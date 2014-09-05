@@ -235,6 +235,22 @@ describe Oga::XML::NodeSet do
     end
   end
 
+  context '#concat' do
+    before do
+      n1 = Oga::XML::Element.new(:name => 'a')
+      n2 = Oga::XML::Element.new(:name => 'b')
+
+      @set1 = described_class.new([n1])
+      @set2 = described_class.new([n2])
+    end
+
+    example 'concatenate two node sets' do
+      @set1.concat(@set2)
+
+      @set1.length.should == 2
+    end
+  end
+
   context '#remove' do
     before do
       owner = Oga::XML::Element.new

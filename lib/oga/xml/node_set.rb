@@ -184,6 +184,15 @@ module Oga
       end
 
       ##
+      # Adds the nodes of the given node set to the current node set.
+      #
+      # @param [Oga::XML::NodeSet] other
+      #
+      def concat(other)
+        other.each { |node| push(node) }
+      end
+
+      ##
       # Removes the current nodes from their owning set. The nodes are *not*
       # removed from the current set.
       #
