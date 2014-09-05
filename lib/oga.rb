@@ -20,6 +20,7 @@ end
 #:nocov:
 
 require_relative 'oga/xml/querying'
+require_relative 'oga/xml/traversal'
 require_relative 'oga/xml/node'
 require_relative 'oga/xml/document'
 require_relative 'oga/xml/character_node'

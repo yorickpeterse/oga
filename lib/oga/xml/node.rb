@@ -9,6 +9,8 @@ module Oga
     #  @return [Oga::XML::NodeSet]
     #
     class Node
+      include Traversal
+
       attr_accessor :node_set
 
       ##

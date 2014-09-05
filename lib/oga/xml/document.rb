@@ -14,6 +14,7 @@ module Oga
     #
     class Document
       include Querying
+      include Traversal
 
       attr_accessor :doctype, :xml_declaration
 
@@ -48,46 +49,6 @@ module Oga
           @children = nodes
         else
           @children = NodeSet.new(nodes, self)
-        end
-      end
-
-      ##
-      # Traverses through the document and yields every node to the supplied
-      # block.
-      #
-      # The block's body can also determine whether or not to traverse child
-      # nodes. Preventing a node's children from being traversed can be done by
-      # using `throw :skip_children`
-      #
-      # This method uses a combination of breadth-first and depth-first
-      # traversal to traverse the entire XML tree in document order. See
-      # http://en.wikipedia.org/wiki/Breadth-first_search for more information.
-      #
-      # @example
-      #  document.each_node do |node|
-      #    p node.class
-      #  end
-      #
-      # @example Skipping the children of a certain node
-      #  document.each_node do |node|
-      #    if node.is_a?(Oga::XML::Element) and node.name == 'book'
-      #      throw :skip_children
-      #    end
-      #  end
-      #
-      # @yieldparam [Oga::XML::Node] The current node.
-      #
-      def each_node
-        visit = children.to_a.dup # copy it since we're modifying the array
-
-        until visit.empty?
-          current = visit.shift
-
-          catch :skip_children do
-            yield current
-
-            visit = current.children.to_a + visit
-          end
         end
       end
 
