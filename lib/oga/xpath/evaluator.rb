@@ -338,8 +338,11 @@ module Oga
       # @return [Oga::XML::NodeSet]
       #
       def on_axis_descendant_or_self(ast_node, context)
-        return on_test(ast_node, context) +
-          on_axis_descendant(ast_node, context)
+        nodes = on_test(ast_node, context)
+
+        nodes.concat(on_axis_descendant(ast_node, context))
+
+        return nodes
       end
 
       ##
@@ -1585,7 +1588,7 @@ module Oga
         children = XML::NodeSet.new
 
         nodes.each do |xml_node|
-          children += xml_node.children
+          children.concat(xml_node.children)
         end
 
         return children
