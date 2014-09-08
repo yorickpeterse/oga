@@ -90,7 +90,7 @@ module Oga
       ##
       # Evaluates a pre-parsed XPath expression.
       #
-      # @param [Oga::XPath::Node] ast_node
+      # @param [Oga::XPath::Node] ast
       # @return [Mixed]
       #
       def evaluate_ast(ast)
@@ -1219,7 +1219,7 @@ module Oga
       # @example Using a literal string
       #  substring("foo", 2) # => "oo"
       #
-      # @exxample Using a literal string with a custom length
+      # @example Using a literal string with a custom length
       #  substring("foo", 1, 2) # => "fo"
       #
       # @example Using a node set
