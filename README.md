@@ -2,11 +2,11 @@
 
 Oga is an XML/HTML parser written in Ruby. Oga aims to provide an easy to use
 and high performance API for all your XML/HTML parsing needs. Oga requires
-nothing other than Ruby, it does not depend on libxml and the likes.
+nothing other than Ruby, it does not depend on libxml or other system libraries.
 
-To achieve high performance Oga uses a C or Java extension depending on your
-Ruby platform. Pure Ruby is sadly not fast enough to process large amounts of
-text in reasonable time.
+Oga uses a small native extension (C for MRI/Rubinius, Java for JRuby) to
+speed up the process of lexing XML into tokens. Initial prototypes used a pure
+Ruby setup but this proved to be too slow when consuming large input sizes.
 
 From [Wikipedia][oga-wikipedia]:
 
@@ -62,9 +62,9 @@ Modifying a document and serializing it back to XML:
 * Support for parsing XML and HTML(5)
   * DOM parsing
   * Stream/pull parsing
-* High performance and low memory usage (depending on the parsing API)
+* Low memory footprint
+* High performance, if something doesn't perform well enough it's a bug
 * Support for XPath 1.0
-* CSS selectors support (planned)
 
 ## Requirements
 
