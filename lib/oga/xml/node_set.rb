@@ -154,6 +154,20 @@ module Oga
       end
 
       ##
+      # Inserts a node into the set at the given index.
+      #
+      # @param [Fixnum] index The index to insert the node at.
+      # @param [Oga::XML::Node] node
+      #
+      def insert(index, node)
+        return if @nodes.include?(node)
+
+        @nodes.insert(index, node)
+
+        take_ownership(node)
+      end
+
+      ##
       # Returns the node for the given index.
       #
       # @param [Fixnum] index

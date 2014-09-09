@@ -143,6 +143,28 @@ module Oga
       end
 
       ##
+      # Inserts the given node before the current node.
+      #
+      # @param [Oga::XML::Node] other
+      #
+      def before(other)
+        index = node_set.index(self)
+
+        node_set.insert(index, other)
+      end
+
+      ##
+      # Inserts the given node after the current node.
+      #
+      # @param [Oga::XML::Node] other
+      #
+      def after(other)
+        index = node_set.index(self) + 1
+
+        node_set.insert(index, other)
+      end
+
+      ##
       # @return [Symbol]
       #
       def node_type

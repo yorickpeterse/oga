@@ -178,4 +178,36 @@ describe Oga::XML::Node do
       @n1.node_set.nil?.should == true
     end
   end
+
+  context '#before' do
+    before do
+      @node      = described_class.new
+      @container = described_class.new(:children => [@node])
+    end
+
+    example 'insert a node before another node' do
+      other = described_class.new
+
+      @node.before(other)
+
+      @container.children[0].should == other
+      @container.children[1].should == @node
+    end
+  end
+
+  context '#after' do
+    before do
+      @node      = described_class.new
+      @container = described_class.new(:children => [@node])
+    end
+
+    example 'insert a node after another node' do
+      other = described_class.new
+
+      @node.after(other)
+
+      @container.children[0].should == @node
+      @container.children[1].should == other
+    end
+  end
 end

@@ -196,6 +196,49 @@ describe Oga::XML::NodeSet do
     end
   end
 
+  context '#insert' do
+    before do
+      @set       = described_class.new
+      @owned_set = described_class.new([], Oga::XML::Node.new)
+    end
+
+    example 'insert a node into an empty node set' do
+      node = Oga::XML::Node.new
+
+      @set.insert(0, node)
+
+      @set[0].should == node
+    end
+
+    example 'do not insert a node that is already in the set' do
+      node = Oga::XML::Node.new
+
+      @set.insert(0, node)
+      @set.insert(0, node)
+
+      @set.length.should == 1
+    end
+
+    example 'insert a node before another node' do
+      node1 = Oga::XML::Node.new
+      node2 = Oga::XML::Node.new
+
+      @set.insert(0, node1)
+      @set.insert(0, node2)
+
+      @set[0].should == node2
+      @set[1].should == node1
+    end
+
+    example 'take ownership of a node when inserting into an owned set' do
+      node = Oga::XML::Node.new
+
+      @owned_set.insert(0, node)
+
+      node.node_set.should == @owned_set
+    end
+  end
+
   context '#[]' do
     before do
       @n1  = Oga::XML::Element.new(:name => 'a')
