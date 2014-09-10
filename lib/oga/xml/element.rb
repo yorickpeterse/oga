@@ -55,7 +55,8 @@ module Oga
       end
 
       ##
-      # Returns the attribute of the given name.
+      # Returns an attribute matching the given name (with or without the
+      # namespace).
       #
       # @example
       #  # find an attribute that only has the name "foo"
@@ -64,8 +65,10 @@ module Oga
       #  # find an attribute with namespace "foo" and name bar"
       #  attribute('foo:bar')
       #
-      # @param [String] name
-      # @return [String]
+      # @param [String|Symbol] name The name (with or without the namespace)
+      #  of the attribute.
+      #
+      # @return [Oga::XML::Attribute]
       #
       def attribute(name)
         name, ns = split_name(name)
@@ -78,6 +81,20 @@ module Oga
       end
 
       alias_method :attr, :attribute
+
+      ##
+      # Returns the value of the given attribute.
+      #
+      # @example
+      #  element.get('class') # => "container"
+      #
+      # @see [#attribute]
+      #
+      def get(name)
+        found = attribute(name)
+
+        return found ? found.value : nil
+      end
 
       ##
       # Returns the namespace of the element.

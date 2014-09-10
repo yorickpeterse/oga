@@ -89,6 +89,18 @@ describe Oga::XML::Element do
     end
   end
 
+  context '#get' do
+    before do
+      attr = Oga::XML::Attribute.new(:name => 'foo', :value => 'bar')
+
+      @element = described_class.new(:attributes => [attr])
+    end
+
+    example 'return the value of an attribute' do
+      @element.get('foo').should == 'bar'
+    end
+  end
+
   context '#namespace' do
     before do
       @namespace = Oga::XML::Namespace.new(:name => 'x')
