@@ -86,6 +86,14 @@ gcc or clang. Oga's C extension can be compiled with both. JRuby does not
 require a compiler as the native extension is compiled during the Gem building
 process and bundled inside the Gem itself.
 
+## Documentation
+
+The documentation is best viewed [on the documentation website][doc-website].
+
+* {file:contributing Contributing}
+* {file:changelog Changelog}
+* {file:migrating\_from\_nokogiri Migrating From Nokogiri}
+
 ## Native Extension Setup
 
 The native extensions can be found in `ext/` and are divided into a C and Java
@@ -148,3 +156,4 @@ in the root directory of this repository.
 [nokogiri]: https://github.com/sparklemotion/nokogiri
 [oga-wikipedia]: https://en.wikipedia.org/wiki/Japanese_saw#Other_Japanese_saws
 [ox]: https://github.com/ohler55/ox
+[doc-website]: http://code.yorickpeterse.com/oga/latest/
