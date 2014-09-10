@@ -151,6 +151,24 @@ describe Oga::XML::Element do
     end
   end
 
+  context '#inner_text=' do
+    before do
+      @element = described_class.new
+    end
+
+    example 'set the inner text of an element' do
+      @element.inner_text = 'foo'
+      @element.inner_text.should == 'foo'
+    end
+
+    example 'remove existing text nodes before inserting new nodes' do
+      @element.children << Oga::XML::Text.new(:text => 'foo')
+
+      @element.inner_text = 'bar'
+      @element.inner_text.should == 'bar'
+    end
+  end
+
   context '#text_nodes' do
     before do
       @t1     = Oga::XML::Text.new(:text => 'Foo')

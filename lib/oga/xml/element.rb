@@ -146,6 +146,19 @@ module Oga
       end
 
       ##
+      # Sets the inner text of the current element to the given String.
+      #
+      # @param [String] text
+      #
+      def inner_text=(text)
+        children.each do |child|
+          child.remove if child.is_a?(Text)
+        end
+
+        children << XML::Text.new(:text => text)
+      end
+
+      ##
       # Converts the element and its child elements to XML.
       #
       # @return [String]
