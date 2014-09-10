@@ -101,6 +101,63 @@ describe Oga::XML::Element do
     end
   end
 
+  context '#add_attribute' do
+    before do
+      @element   = described_class.new
+      @attribute = Oga::XML::Attribute.new(:name => 'foo', :value => 'bar')
+    end
+
+    example 'add an Attribute to the element' do
+      @element.add_attribute(@attribute)
+
+      @element.attribute('foo').should == @attribute
+    end
+
+    example 'set the element of the attribute when adding it' do
+      @element.add_attribute(@attribute)
+
+      @attribute.element.should == @element
+    end
+  end
+
+  context '#set' do
+    before do
+      @element = described_class.new
+
+      @element.register_namespace('x', 'test')
+    end
+
+    example 'add a new attribute' do
+      @element.set('class', 'foo')
+
+      @element.get('class').should == 'foo'
+    end
+
+    example 'add a new attribute with a namespace' do
+      @element.set('x:bar', 'foo')
+
+      @element.get('x:bar').should == 'foo'
+    end
+
+    example 'set the namespace of an attribute' do
+      @element.set('x:bar', 'foo')
+
+      attr = @element.attribute('x:bar')
+
+      attr.namespace.is_a?(Oga::XML::Namespace).should == true
+    end
+
+    example 'overwrite the value of an existing attribute' do
+      attr = Oga::XML::Attribute.new(:name => 'foo', :value => 'bar')
+
+      @element.add_attribute(attr)
+
+      @element.set('foo', 'baz')
+
+      @element.get('foo').should == 'baz'
+    end
+  end
+
   context '#namespace' do
     before do
       @namespace = Oga::XML::Namespace.new(:name => 'x')

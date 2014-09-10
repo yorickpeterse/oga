@@ -97,6 +97,48 @@ module Oga
       end
 
       ##
+      # Adds a new attribute to the element.
+      #
+      # @param [Oga::XML::Attribute] attribute
+      #
+      def add_attribute(attribute)
+        attribute.element = self
+
+        attributes << attribute
+      end
+
+      ##
+      # Sets the value of an attribute to the given value. If the attribute does
+      # not exist it is created automatically.
+      #
+      # @param [String] name The name of the attribute, optionally including the
+      #  namespace.
+      #
+      # @param [String] value The new value of the attribute.
+      #
+      def set(name, value)
+        found = attribute(name)
+
+        if found
+          found.value = value
+        else
+          if name.include?(':')
+            ns, name = name.split(':')
+          else
+            ns = nil
+          end
+
+          attr = Attribute.new(
+            :name           => name,
+            :namespace_name => ns,
+            :value          => value
+          )
+
+          add_attribute(attr)
+        end
+      end
+
+      ##
       # Returns the namespace of the element.
       #
       # @return [Oga::XML::Namespace]
