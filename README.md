@@ -143,7 +143,7 @@ Ox looks very promising but it lacks a rather crucial feature: parsing HTML
 (without using a SAX API). It's also again a C extension making debugging more
 of a pain (at least for me).
 
-I just want an HTML parser that I can rely on stability wise and that is
+I just want an XML/HTML parser that I can rely on stability wise and that is
 written in Ruby so I can actually debug it. In theory it should also make it
 easier for other Ruby developers to contribute.
 
