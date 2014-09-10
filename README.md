@@ -90,7 +90,7 @@ process and bundled inside the Gem itself.
 
 The documentation is best viewed [on the documentation website][doc-website].
 
-* {file:contributing Contributing}
+* {file:CONTRIBUTING Contributing}
 * {file:changelog Changelog}
 * {file:migrating\_from\_nokogiri Migrating From Nokogiri}
 
