@@ -1,4 +1,3 @@
-# @title DCO
 # Developer's Certificate of Origin 1.0
 
 By making a contribution to this project, I certify that:
