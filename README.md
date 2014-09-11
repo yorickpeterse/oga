@@ -1,12 +1,14 @@
 # Oga
 
-Oga is an XML/HTML parser written in Ruby. Oga aims to provide an easy to use
-and high performance API for all your XML/HTML parsing needs. Oga requires
-nothing other than Ruby, it does not depend on libxml or other system libraries.
+Oga is an XML/HTML parser written in Ruby. It provides an easy to use API for
+parsing, modifying and querying documents (using XPath expressions). Oga does
+not require system libraries such as libxml, making it easier and faster to
+install on various platforms. To achieve better performance Oga uses a small,
+native extension (C for MRI/Rubinius, Java for JRuby).
 
-Oga uses a small native extension (C for MRI/Rubinius, Java for JRuby) to
-speed up the process of lexing XML into tokens. Initial prototypes used a pure
-Ruby setup but this proved to be too slow when consuming large input sizes.
+Oga provides an API that allows you to safely parse and query documents in a
+multi-threaded environment, without having to worry about your applications
+blowing up.
 
 From [Wikipedia][oga-wikipedia]:
 
@@ -85,6 +87,16 @@ To install Oga on MRI or Rubinius you'll need to have a working compiler such as
 gcc or clang. Oga's C extension can be compiled with both. JRuby does not
 require a compiler as the native extension is compiled during the Gem building
 process and bundled inside the Gem itself.
+
+## Thread Safety
+
+Documents parsed using Oga are thread-safe as long as they are not modified by
+multiple threads at the same time. Querying documents using XPath can be done by
+multiple threads just fine. Write operations, such as removing attributes, are
+_not_ thread-safe and should not be done by multiple threads at once.
+
+It is advised that you do not share parsed documents between threads unless you
+_really_ have to.
 
 ## Documentation
 
