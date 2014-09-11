@@ -81,7 +81,13 @@ module Oga
       # @return [String]
       #
       def to_xml
-        return %Q(#{name}="#{value}")
+        if namespace_name
+          full_name = "#{namespace.name}:#{name}"
+        else
+          full_name = name
+        end
+
+        return %Q(#{full_name}="#{value}")
       end
 
       ##

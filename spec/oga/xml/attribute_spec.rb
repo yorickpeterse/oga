@@ -48,10 +48,25 @@ describe Oga::XML::Attribute do
   end
 
   context '#to_xml' do
-    example 'return a key/value pair for an XML document' do
+    example 'convert an attribute to XML' do
       attr = described_class.new(:name => 'foo', :value => 'bar')
 
       attr.to_xml.should == 'foo="bar"'
+    end
+
+    example 'include the namespace when converting an attribute to XML' do
+      element = Oga::XML::Element.new
+
+      element.register_namespace('foo', 'http://foo')
+
+      attr = described_class.new(
+        :name           => 'class',
+        :namespace_name => 'foo',
+        :value          => '10',
+        :element        => element
+      )
+
+      attr.to_xml.should == 'foo:class="10"'
     end
   end
 
