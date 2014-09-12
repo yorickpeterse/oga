@@ -272,6 +272,19 @@ describe Oga::XML::Element do
       instance.to_xml.should == '<p key="value"></p>'
     end
 
+    example 'include multiple attributes, space-separated, if present' do
+      instance = described_class.new(
+          :name => 'p',
+          :attributes => [
+              Oga::XML::Attribute.new(:name => 'key1', :value => 'value1'),
+              Oga::XML::Attribute.new(:name => 'key2', :value => 'value2')
+          ]
+      )
+      instance.to_xml.should == '<p key1="value1" key2="value2"></p>'
+
+
+    end
+
     example 'include the child nodes if present' do
       instance = described_class.new(
         :name     => 'p',

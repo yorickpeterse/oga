@@ -208,13 +208,7 @@ module Oga
       def to_xml
         ns    = namespace ? "#{namespace}:" : ''
         body  = children.map(&:to_xml).join('')
-        attrs = ''
-
-        attributes.each do |attr|
-          attrs << attr.to_xml
-        end
-
-        attrs = " #{attrs}" unless attrs.empty?
+        attrs = ' ' << attributes.map{|x| x.to_xml}.join(' ') unless attributes.empty?
 
         return "<#{ns}#{name}#{attrs}>#{body}</#{ns}#{name}>"
       end
