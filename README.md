@@ -59,6 +59,13 @@ Modifying a document and serializing it back to XML:
 
     document.to_xml # => "<people><person>Bob</person></people>"
 
+Querying a document using a namespace:
+
+    document = Oga.parse_xml('<root xmlns:x="foo"><x:div></x:div></root>')
+    div      = document.xpath('root/x:div').first
+
+    div.namespace # => Namespace(name: "x" uri: "foo")
+
 ## Features
 
 * Support for parsing XML and HTML(5)
