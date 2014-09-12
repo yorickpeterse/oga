@@ -5,7 +5,7 @@ Gem::Specification.new do |s|
   s.version     = Oga::VERSION
   s.authors     = ['Yorick Peterse']
   s.email       = 'yorickpeterse@gmail.com'
-  s.summary     = 'A pure Ruby HTML/XML parser.'
+  s.summary     = 'Oga is an XML/HTML parser written in Ruby.'
   s.homepage    = 'https://github.com/yorickpeterse/oga/'
   s.description = s.summary
   s.license     = 'MIT'
