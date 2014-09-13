@@ -211,10 +211,8 @@ module Oga
         attrs = ''
 
         attributes.each do |attr|
-          attrs << attr.to_xml
+          attrs << " #{attr.to_xml}"
         end
-
-        attrs = " #{attrs}" unless attrs.empty?
 
         return "<#{ns}#{name}#{attrs}>#{body}</#{ns}#{name}>"
       end
