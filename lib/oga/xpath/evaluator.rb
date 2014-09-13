@@ -1188,7 +1188,7 @@ module Oga
       # This function call returns the substring of the 1st argument that occurs
       # after the string given in the 2nd argument. For example:
       #
-      #     substring-before("2014-08-25", "-")
+      #     substring-after("2014-08-25", "-")
       #
       # This would return "08-25" as it occurs after the first "-".
       #
