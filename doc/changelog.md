@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.0 - Unreleased
+
+The `node_type` method has been removed and its purpose has been moved into
+the `XML::PullParser` class itself. This method was solely used by the pull
+parser to provide shorthands for node classes. As such it doesn't make sense to
+expose this as a method to the outside world as a public method.
+
 ## 0.1.1 - 2014-09-13
 
 This release fixes a problem where element attributes were not separated by

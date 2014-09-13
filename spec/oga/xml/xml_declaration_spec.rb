@@ -54,10 +54,4 @@ XmlDeclaration(version: "1.0" encoding: "UTF-8")
       EOF
     end
   end
-
-  context '#type' do
-    example 'return the type of the node' do
-      described_class.new.node_type.should == :xml_decl
-    end
-  end
 end

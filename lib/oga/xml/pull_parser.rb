@@ -51,6 +51,21 @@ module Oga
       ]
 
       ##
+      # Returns the shorthands that can be used for various node classes.
+      #
+      # @return [Hash]
+      #
+      NODE_SHORTHANDS = {
+        :text            => XML::Text,
+        :node            => XML::Node,
+        :cdata           => XML::Cdata,
+        :element         => XML::Element,
+        :doctype         => XML::Doctype,
+        :comment         => XML::Comment,
+        :xml_declaration => XML::XmlDeclaration
+      }
+
+      ##
       # @see Oga::XML::Parser#reset
       #
       def reset
@@ -89,8 +104,7 @@ module Oga
       # Instead of this:
       #
       #     parser.parse do |node|
-      #       if node.node_type == :text \
-      #       and parser.nesting == %w{people person name}
+      #       if node.is_a?(Oga::XML::Text) and parser.nesting == %w{people person name}
       #         puts node.text
       #       end
       #     end
@@ -113,7 +127,7 @@ module Oga
       # @param [Array] nesting The element name nesting to act upon.
       #
       def on(type, nesting = [])
-        if node.node_type == type
+        if node.is_a?(NODE_SHORTHANDS[type])
           if nesting.empty? or nesting == self.nesting
             yield
           end

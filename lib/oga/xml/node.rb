@@ -163,13 +163,6 @@ module Oga
 
         node_set.insert(index, other)
       end
-
-      ##
-      # @return [Symbol]
-      #
-      def node_type
-        return :node
-      end
     end # Element
   end # XML
 end # Oga

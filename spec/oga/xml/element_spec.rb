@@ -324,12 +324,6 @@ describe Oga::XML::Element do
     end
   end
 
-  context '#type' do
-    example 'return the type of the node' do
-      described_class.new.node_type.should == :element
-    end
-  end
-
   context '#register_namespace' do
     before do
       @element = described_class.new

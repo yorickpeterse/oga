@@ -9,7 +9,6 @@ require_relative 'oga/oga'
 # Oga::XML namespace.
 require_relative 'oga/xml/lexer'
 require_relative 'oga/xml/parser'
-require_relative 'oga/xml/pull_parser'
 
 require_relative 'liboga'
 
@@ -35,6 +34,7 @@ require_relative 'oga/xml/attribute'
 require_relative 'oga/xml/element'
 require_relative 'oga/xml/node_set'
 
+require_relative 'oga/xml/pull_parser'
 require_relative 'oga/html/parser'
 
 require_relative 'oga/xpath/node'

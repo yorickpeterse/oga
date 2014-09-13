@@ -237,13 +237,6 @@ module Oga
       end
 
       ##
-      # @return [Symbol]
-      #
-      def node_type
-        return :element
-      end
-
-      ##
       # Registers a new namespace for the current element and its child
       # elements.
       #

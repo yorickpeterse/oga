@@ -12,13 +12,6 @@ module Oga
       def to_xml
         return "<!--#{text}-->"
       end
-
-      ##
-      # @return [Symbol]
-      #
-      def node_type
-        return :comment
-      end
     end # Comment
   end # XML
 end # Oga

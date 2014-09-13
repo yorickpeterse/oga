@@ -10,12 +10,6 @@ describe Oga::XML::Node do
     end
   end
 
-  context '#type' do
-    example 'return the type of the node' do
-      described_class.new.node_type.should == :node
-    end
-  end
-
   context '#children' do
     example 'return an empty set by default' do
       described_class.new.children.empty?.should == true

@@ -5,12 +5,7 @@ module Oga
     # have any children, attributes and the likes; just text.
     #
     class Text < CharacterNode
-      ##
-      # @return [Symbol]
-      #
-      def node_type
-        return :text
-      end
+
     end # Text
   end # XML
 end # Oga

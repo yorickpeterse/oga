@@ -64,13 +64,6 @@ module Oga
 
         return "XmlDeclaration(#{segments.join(' ')})"
       end
-
-      ##
-      # @return [Symbol]
-      #
-      def node_type
-        return :xml_decl
-      end
     end # XmlDeclaration
   end # XML
 end # Oga
