@@ -347,7 +347,7 @@ module Oga
       # Called on the closing `>` of the open tag of an element.
       #
       def on_element_open_end
-        if html? and HTML_VOID_ELEMENTS.include?(current_element)
+        if html? and HTML_VOID_ELEMENTS.include?(current_element.downcase)
           add_token(:T_ELEM_END)
           @elements.pop
         end
