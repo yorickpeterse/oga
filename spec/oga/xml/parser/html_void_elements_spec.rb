@@ -29,6 +29,20 @@ describe Oga::XML::Parser do
     end
   end
 
+  context 'void elements with different casing' do
+    before :all do
+      @node_uc = parse_html('<BR>').children[0]
+    end
+
+    example 'parse void elements with different casing' do
+      @node_uc.is_a?(Oga::XML::Element).should == true
+    end
+
+    example 'set the name of the void element to match casing' do
+      @node_uc.name.should == 'BR'
+    end
+  end
+
   context 'void elements with attributes' do
     before :all do
       @node = parse('<link href="foo">', :html => true).children[0]
