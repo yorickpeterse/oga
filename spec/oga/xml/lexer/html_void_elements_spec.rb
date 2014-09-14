@@ -11,7 +11,7 @@ describe Oga::XML::Lexer do
     end
 
     example 'lex a upper case void element' do
-      lex('<BR>', html: true).should == [
+      lex('<BR>', :html => true).should == [
         [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, "BR", 1],
         [:T_ELEM_END, nil, 1]
