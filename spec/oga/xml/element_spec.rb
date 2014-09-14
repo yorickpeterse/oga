@@ -358,19 +358,28 @@ describe Oga::XML::Element do
       @child.node_set = Oga::XML::NodeSet.new([@child], @parent)
 
       @parent.register_namespace('foo', 'bar')
+      @parent.register_namespace('baz', 'yyy')
+
       @child.register_namespace('baz', 'xxx')
 
       @parent_ns = @parent.available_namespaces
       @child_ns  = @child.available_namespaces
     end
 
-    example 'return the available namespaces of the child node' do
-      @child_ns['foo'].is_a?(Oga::XML::Namespace).should == true
-      @child_ns['baz'].is_a?(Oga::XML::Namespace).should == true
+    example 'inherit the "foo" namespace from the parent' do
+      @child_ns['foo'].uri.should == 'bar'
     end
 
-    example 'return the available namespaces of the parent node' do
-      @parent_ns['foo'].is_a?(Oga::XML::Namespace).should == true
+    example 'overwrite the "baz" namespace in the child' do
+      @child_ns['baz'].uri.should == 'xxx'
+    end
+
+    example 'return the "foo" namespace for the parent' do
+      @parent_ns['foo'].uri.should == 'bar'
+    end
+
+    example 'return the "baz" namespace for the parent' do
+      @parent_ns['baz'].uri.should == 'yyy'
     end
   end
 end

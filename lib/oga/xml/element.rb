@@ -263,8 +263,11 @@ module Oga
         node   = parent
 
         while node && node.respond_to?(:namespaces)
-          merged = merged.merge(node.namespaces)
-          node   = node.parent
+          node.namespaces.each do |prefix, ns|
+            merged[prefix] = ns unless merged[prefix]
+          end
+
+          node = node.parent
         end
 
         return merged
