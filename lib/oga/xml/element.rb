@@ -216,6 +216,7 @@ module Oga
 
         return "<#{ns}#{name}#{attrs}>#{body}</#{ns}#{name}>"
       end
+      alias_method :to_html, :to_xml
 
       ##
       # @return [String]

@@ -89,6 +89,7 @@ module Oga
 
         return %Q(#{full_name}="#{value}")
       end
+      alias_method :to_html, :to_xml
 
       ##
       # @return [String]

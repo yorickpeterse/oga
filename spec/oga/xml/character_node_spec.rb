@@ -14,6 +14,16 @@ describe Oga::XML::CharacterNode do
     end
   end
 
+  context '#to_html' do
+    before do
+      @instance = described_class.new
+    end
+
+    example 'to_xml should be aliased as to_html' do
+      @instance.method(:to_xml).should == @instance.method(:to_html)
+    end
+  end
+
   context '#to_xml' do
     example 'convert the node to XML' do
       described_class.new(:text => 'a').to_xml.should == 'a'
