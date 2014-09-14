@@ -31,20 +31,16 @@ describe Oga::XML::Parser do
 
   context 'void elements with different casing' do
     before :all do
-      @node_lc = parse('<br>', html: true).children[0]
-      @node_uc = parse('<BR>', html: true).children[0]
+      @node_uc = parse_html('<BR>').children[0]
     end
 
     example 'parse void elements with different casing' do
-      @node_lc.is_a?(Oga::XML::Element).should == true
       @node_uc.is_a?(Oga::XML::Element).should == true
     end
 
     example 'set the name of the void element to match casing' do
-      @node_lc.name.should == 'br'
       @node_uc.name.should == 'BR'
     end
-
   end
 
   context 'void elements with attributes' do
