@@ -27,6 +27,7 @@ module Oga
       def to_xml
         return "<?#{name}#{text}?>"
       end
+      alias_method :to_html, :to_xml
 
       ##
       # @return [String]

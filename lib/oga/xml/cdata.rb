@@ -12,6 +12,7 @@ module Oga
       def to_xml
         return "<![CDATA[#{text}]]>"
       end
+      alias_method :to_html, :to_xml
     end # Cdata
   end # XML
 end # Oga

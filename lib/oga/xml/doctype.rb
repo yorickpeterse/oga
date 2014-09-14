@@ -60,6 +60,7 @@ module Oga
 
         return segments + '>'
       end
+      alias_method :to_html, :to_xml
 
       ##
       # Inspects the doctype.

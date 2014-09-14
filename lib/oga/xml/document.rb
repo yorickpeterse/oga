@@ -70,6 +70,7 @@ module Oga
 
         return xml
       end
+      alias_method :to_html, :to_xml
 
       ##
       # Inspects the document and its child nodes. Child nodes are indented for

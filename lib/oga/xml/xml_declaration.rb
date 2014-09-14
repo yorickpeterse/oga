@@ -47,6 +47,7 @@ module Oga
 
         return "<?xml #{pairs.join(' ')} ?>"
       end
+      alias_method :to_html, :to_xml
 
       ##
       # @return [String]
