@@ -29,8 +29,8 @@ describe Oga::XML::Element do
       @element.namespaces['foo'].is_a?(Oga::XML::Namespace).should == true
     end
 
-    example 'remove the namespace attribute from the list of attributes' do
-      @element.attributes.empty?.should == true
+    example 'keep the attributes after registering the namespaces' do
+      @element.attributes.empty?.should == false
     end
   end
 
@@ -43,10 +43,6 @@ describe Oga::XML::Element do
 
     example 'register the default namespace' do
       @element.namespaces['xmlns'].is_a?(Oga::XML::Namespace).should == true
-    end
-
-    example 'remove the namespace attribute from the list of attributes' do
-      @element.attributes.empty?.should == true
     end
   end
 

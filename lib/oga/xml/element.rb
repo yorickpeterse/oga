@@ -285,15 +285,12 @@ module Oga
       # has been registered the corresponding attribute is removed.
       #
       def register_namespaces_from_attributes
-        self.attributes = attributes.reject do |attr|
+        attributes.each do |attr|
           # We're using `namespace_name` opposed to `namespace.name` as "xmlns"
           # is not a registered namespace.
-          remove = attr.name == XMLNS_PREFIX ||
-            attr.namespace_name == XMLNS_PREFIX
-
-          register_namespace(attr.name, attr.value) if remove
-
-          remove
+          if attr.name == XMLNS_PREFIX or attr.namespace_name == XMLNS_PREFIX
+            register_namespace(attr.name, attr.value)
+          end
         end
       end
 
