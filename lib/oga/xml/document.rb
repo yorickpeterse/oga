@@ -12,11 +12,15 @@ module Oga
     #  The XML declaration of the document.
     #  @return [Oga::XML::XmlDeclaration]
     #
+    # @!attribute [rw] type
+    #  The document type, either `:xml` or `:html`.
+    #  @return [Symbol]
+    #
     class Document
       include Querying
       include Traversal
 
-      attr_accessor :doctype, :xml_declaration
+      attr_accessor :doctype, :xml_declaration, :type
 
       ##
       # @param [Hash] options
@@ -24,10 +28,12 @@ module Oga
       # @option options [Oga::XML::NodeSet] :children
       # @option options [Oga::XML::Doctype] :doctype
       # @option options [Oga::XML::XmlDeclaration] :xml_declaration
+      # @option options [Symbol] :type
       #
       def initialize(options = {})
         @doctype         = options[:doctype]
         @xml_declaration = options[:xml_declaration]
+        @type            = options[:type] || :xml
 
         self.children = options[:children] if options[:children]
       end

@@ -296,7 +296,9 @@ Unexpected #{name} with value #{value.inspect} on line #{@line}:
   # @return [Oga::XML::Document]
   #
   def on_document(children = [])
-    document = Document.new
+    document = Document.new(
+      :type => @lexer.html ? :html : :xml
+    )
 
     children.each do |child|
       if child.is_a?(Doctype)

@@ -11,6 +11,20 @@ describe Oga::XML::Parser do
     end
   end
 
+  context 'XML documents' do
+    before :all do
+      @document = parse('<foo></foo>')
+    end
+
+    example 'return a Document instance' do
+      @document.is_a?(Oga::XML::Document).should == true
+    end
+
+    example 'set the document type' do
+      @document.type.should == :xml
+    end
+  end
+
   context 'HTML documents' do
     before :all do
       html = <<-EOF.strip
@@ -29,6 +43,10 @@ describe Oga::XML::Parser do
 
     example 'return a Document instance' do
       @document.is_a?(Oga::XML::Document).should == true
+    end
+
+    example 'set the document type' do
+      @document.type.should == :html
     end
 
     example 'set the doctype of the document' do

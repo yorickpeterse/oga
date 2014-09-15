@@ -8,6 +8,10 @@ describe Oga::XML::Document do
 
       document.children[0].should == child
     end
+
+    example 'set the document type' do
+      described_class.new(:type => :html).type.should == :html
+    end
   end
 
   context '#children=' do
