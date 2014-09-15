@@ -30,6 +30,18 @@ describe Oga::XPath::Evaluator do
     end
   end
 
+  context 'absolute paths without node tests' do
+    before do
+      @set = described_class.new(@document).evaluate('/')
+    end
+
+    it_behaves_like :node_set, :length => 1
+
+    example 'return the root document' do
+      @set[0].is_a?(Oga::XML::Document).should == true
+    end
+  end
+
   context 'invalid absolute paths' do
     before do
       @set = described_class.new(@document).evaluate('/x/a')

@@ -131,7 +131,8 @@ module Oga
           context = XML::NodeSet.new([@document])
         end
 
-        return on_path(ast_node, context)
+        # If the expression is just "/" we'll just return the current context.
+        return ast_node.children.empty? ? context : on_path(ast_node, context)
       end
 
       ##

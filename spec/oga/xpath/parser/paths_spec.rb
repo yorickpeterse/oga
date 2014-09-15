@@ -20,5 +20,9 @@ describe Oga::XPath::Parser do
         s(:axis, 'child', s(:test, nil, 'B'))
       )
     end
+
+    example 'parse an absolute path without a node test' do
+      parse_xpath('/').should == s(:absolute_path)
+    end
   end
 end

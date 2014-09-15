@@ -66,6 +66,7 @@ rule
   absolute_path
     : T_SLASH path_members { s(:absolute_path, *val[1]) }
     | T_SLASH path_member  { s(:absolute_path, val[1]) }
+    | T_SLASH              { s(:absolute_path) }
     ;
 
   # Whenever a bare test is used (e.g. just "A") this actually means "child::A".
