@@ -315,6 +315,16 @@ describe Oga::XML::Element do
 
       instance.to_xml.should == '<p><!--foo--></p>'
     end
+
+    example 'generate the corresponding XML when using a default namespace' do
+      namespace = Oga::XML::Namespace.new(:name => 'xmlns', :uri => 'foo')
+      instance  = described_class.new(
+        :name       => 'foo',
+        :namespaces => {'xmlns' => namespace}
+      )
+
+      instance.to_xml.should == '<foo></foo>'
+    end
   end
 
   context '#inspect' do

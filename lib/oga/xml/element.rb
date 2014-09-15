@@ -211,7 +211,7 @@ module Oga
       # @return [String]
       #
       def to_xml
-        ns    = namespace ? "#{namespace}:" : ''
+        ns    = namespace_name ? "#{namespace_name}:" : ''
         body  = children.map(&:to_xml).join('')
         attrs = ''
 
