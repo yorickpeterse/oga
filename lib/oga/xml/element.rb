@@ -291,12 +291,6 @@ module Oga
           remove = attr.name == XMLNS_PREFIX ||
             attr.namespace_name == XMLNS_PREFIX
 
-          # If the attribute sets the default namespace we'll also overwrite the
-          # namespace_name.
-          if attr.name == XMLNS_PREFIX
-            @namespace_name = XMLNS_PREFIX
-          end
-
           register_namespace(attr.name, attr.value) if remove
 
           remove
