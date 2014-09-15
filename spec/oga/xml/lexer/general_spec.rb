@@ -21,5 +21,17 @@ describe Oga::XML::Lexer do
     example 'lex a > as regular text' do
       lex('>').should == [[:T_TEXT, '>', 1]]
     end
+
+    example 'lex </ as regular text' do
+      lex('</').should == [[:T_TEXT, '</', 1]]
+    end
+
+    example 'lex <! as regular text' do
+      lex('<!').should == [[:T_TEXT, '<!', 1]]
+    end
+
+    example 'lex <? as regular text' do
+      lex('<?').should == [[:T_TEXT, '<?', 1]]
+    end
   end
 end

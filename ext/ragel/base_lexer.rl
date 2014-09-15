@@ -292,6 +292,14 @@
     allowed_text   = any* -- terminate_text;
 
     text := |*
+        # Input such as just "</" or "<?". This rule takes precedence over the
+        # rules below, but only if those don't match.
+        terminate_text => {
+            callback("on_text", data, encoding, ts, te);
+
+            fnext main;
+        };
+
         # Text followed by a special tag, such as "foo<!--"
         allowed_text @{ mark = p; } terminate_text => {
             callback("on_text", data, encoding, ts, mark);
