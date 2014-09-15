@@ -34,6 +34,22 @@ describe Oga::XML::Element do
     end
   end
 
+  context 'setting the default namespace without a prefix' do
+    before do
+      attr = Oga::XML::Attribute.new(:name => 'xmlns', :value => 'foo')
+
+      @element = described_class.new(:attributes => [attr])
+    end
+
+    example 'register the default namespace' do
+      @element.namespaces['xmlns'].is_a?(Oga::XML::Namespace).should == true
+    end
+
+    example 'remove the namespace attribute from the list of attributes' do
+      @element.attributes.empty?.should == true
+    end
+  end
+
   context '#attribute' do
     before do
       attributes = [
@@ -159,16 +175,23 @@ describe Oga::XML::Element do
   end
 
   context '#namespace' do
-    before do
-      @namespace = Oga::XML::Namespace.new(:name => 'x')
-      @element   = described_class.new(
+    example 'return the namespace' do
+      namespace = Oga::XML::Namespace.new(:name => 'x')
+      element   = described_class.new(
         :namespace_name => 'x',
-        :namespaces     => {'x' => @namespace}
+        :namespaces     => {'x' => namespace}
       )
+
+      element.namespace.should == namespace
     end
 
-    example 'return the namespace' do
-      @element.namespace.should == @namespace
+    example 'return the default namespace if available' do
+      namespace = Oga::XML::Namespace.new(:name => 'xmlns')
+      element   = described_class.new(
+        :namespaces => {'xmlns' => namespace}
+      )
+
+      element.namespace.should == namespace
     end
   end
 

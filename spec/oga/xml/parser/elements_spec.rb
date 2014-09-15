@@ -37,6 +37,31 @@ describe Oga::XML::Parser do
     end
   end
 
+  context 'elements with default namespaces' do
+    before :all do
+      @document = parse('<foo xmlns="bar"><bar></bar></foo>')
+
+      @foo = @document.children[0]
+      @bar = @foo.children[0]
+    end
+
+    example 'set the namespace name of the <foo> element' do
+      @foo.namespace.name.should == 'xmlns'
+    end
+
+    example 'set the namespace URI of the <foo> element' do
+      @foo.namespace.uri.should == 'bar'
+    end
+
+    example 'set the namespace name of the <bar> element' do
+      @bar.namespace.name.should == 'xmlns'
+    end
+
+    example 'set the namespace URI of the <bar> element' do
+      @bar.namespace.uri.should == 'bar'
+    end
+  end
+
   context 'elements with attributes' do
     before :all do
       @element = parse('<foo bar="baz"></foo>').children[0]

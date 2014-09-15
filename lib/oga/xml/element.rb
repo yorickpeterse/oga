@@ -144,7 +144,13 @@ module Oga
       # @return [Oga::XML::Namespace]
       #
       def namespace
-        return @namespace ||= available_namespaces[namespace_name]
+        unless @namespace
+          available = available_namespaces
+
+          @namespace = available[namespace_name] || available[XMLNS_PREFIX]
+        end
+
+        return @namespace
       end
 
       ##
@@ -283,7 +289,14 @@ module Oga
         self.attributes = attributes.reject do |attr|
           # We're using `namespace_name` opposed to `namespace.name` as "xmlns"
           # is not a registered namespace.
-          remove = attr.namespace_name && attr.namespace_name == XMLNS_PREFIX
+          remove = attr.name == XMLNS_PREFIX ||
+            attr.namespace_name == XMLNS_PREFIX
+
+          # If the attribute sets the default namespace we'll also overwrite the
+          # namespace_name.
+          if attr.name == XMLNS_PREFIX
+            @namespace_name = XMLNS_PREFIX
+          end
 
           register_namespace(attr.name, attr.value) if remove
 
