@@ -267,17 +267,18 @@ describe Oga::XML::Element do
 
   context '#to_xml' do
     example 'generate the corresponding XML' do
-      described_class.new(:name => 'p').to_xml.should == '<p></p>'
+      described_class.new(:name => 'p').to_xml.should == '<p />'
     end
 
     example 'include the namespace if present' do
       instance = described_class.new(
         :name           => 'p',
         :namespace_name => 'foo',
-        :namespaces     => {'foo' => Oga::XML::Namespace.new(:name => 'foo')}
+        :namespaces     => {'foo' => Oga::XML::Namespace.new(:name => 'foo')},
+        :children       => [Oga::XML::Text.new(:text => 'Foo')]
       )
 
-      instance.to_xml.should == '<foo:p></foo:p>'
+      instance.to_xml.should == '<foo:p>Foo</foo:p>'
     end
 
     example 'include a single attribute if present' do
@@ -288,7 +289,7 @@ describe Oga::XML::Element do
         ]
       )
 
-      instance.to_xml.should == '<p key="value"></p>'
+      instance.to_xml.should == '<p key="value" />'
     end
 
     example 'include multiple attributes if present' do
@@ -300,7 +301,7 @@ describe Oga::XML::Element do
         ]
       )
 
-      instance.to_xml.should == '<p key1="value1" key2="value2"></p>'
+      instance.to_xml.should == '<p key1="value1" key2="value2" />'
     end
 
     example 'include the child nodes if present' do
@@ -319,7 +320,21 @@ describe Oga::XML::Element do
         :namespaces => {'xmlns' => namespace}
       )
 
-      instance.to_xml.should == '<foo></foo>'
+      instance.to_xml.should == '<foo />'
+    end
+
+    example 'generate the XML for the HTML <script> element' do
+      element  = described_class.new(:name => 'script')
+      document = Oga::XML::Document.new(:type => :html, :children => [element])
+
+      element.to_xml.should == '<script></script>'
+    end
+
+    example 'generate the XML for the HTML <link> element' do
+      element  = described_class.new(:name => 'link')
+      document = Oga::XML::Document.new(:type => :html, :children => [element])
+
+      element.to_xml.should == '<link />'
     end
   end
 
@@ -409,6 +424,34 @@ describe Oga::XML::Element do
 
     example 'return the "baz" namespace for the parent' do
       @parent_ns['baz'].uri.should == 'yyy'
+    end
+  end
+
+  context '#self_closing?' do
+    example 'return true for an empty XML element' do
+      described_class.new(:name => 'foo').should be_self_closing
+    end
+
+    example 'return false for a non empty XML element' do
+      text = Oga::XML::Text.new(:text => 'bar')
+      node = described_class.new(:name => 'foo', :children => [text])
+
+      node.should_not be_self_closing
+    end
+
+    example 'return true for an HTML void element' do
+      element  = described_class.new(:name => 'link')
+      document = Oga::XML::Document.new(:type => :html, :children => [element])
+
+      element.should be_self_closing
+    end
+
+    example 'return false for a non empty HTML element' do
+      text     = Oga::XML::Text.new(:text => 'alert()')
+      element  = described_class.new(:name => 'script', :children => [text])
+      document = Oga::XML::Document.new(:type => :html, :children => [element])
+
+      element.should_not be_self_closing
     end
   end
 end

@@ -211,7 +211,12 @@ module Oga
       # @return [String]
       #
       def to_xml
-        ns    = namespace_name ? "#{namespace_name}:" : ''
+        if namespace_name
+          full_name = "#{namespace_name}:#{name}"
+        else
+          full_name = name
+        end
+
         body  = children.map(&:to_xml).join('')
         attrs = ''
 
@@ -219,7 +224,11 @@ module Oga
           attrs << " #{attr.to_xml}"
         end
 
-        return "<#{ns}#{name}#{attrs}>#{body}</#{ns}#{name}>"
+        if self_closing?
+          return "<#{full_name}#{attrs} />"
+        else
+          return "<#{full_name}#{attrs}>#{body}</#{full_name}>"
+        end
       end
 
       ##
@@ -276,6 +285,23 @@ module Oga
         end
 
         return merged
+      end
+
+      ##
+      # Returns `true` if the element is a self-closing element.
+      #
+      # @return [TrueClass|FalseClass]
+      #
+      def self_closing?
+        self_closing = children.empty?
+        root         = root_node
+
+        if root.is_a?(Document) and root.type == :html \
+        and !HTML_VOID_ELEMENTS.include?(name)
+          self_closing = false
+        end
+
+        return self_closing
       end
 
       private
