@@ -194,6 +194,35 @@ end
 
 ---- inner
   ##
+  # Hash mapping token types and dedicated error labels.
+  #
+  # @return [Hash]
+  #
+  TOKEN_ERROR_MAPPING = {
+    'T_STRING'         => 'string',
+    'T_TEXT'           => 'text',
+    'T_DOCTYPE_START'  => 'doctype start',
+    'T_DOCTYPE_END'    => 'doctype closing tag',
+    'T_DOCTYPE_TYPE'   => 'doctype type',
+    'T_DOCTYPE_NAME'   => 'doctype name',
+    'T_DOCTYPE_INLINE' => 'inline doctype rules',
+    'T_CDATA'          => 'CDATA',
+    'T_COMMENT'        => 'comment',
+    'T_ELEM_START'     => 'element start',
+    'T_ELEM_NAME'      => 'element name',
+    'T_ELEM_NS'        => 'element namespace',
+    'T_ELEM_END'       => 'element closing tag',
+    'T_ATTR'           => 'attribute',
+    'T_ATTR_NS'        => 'attribute namespace',
+    'T_XML_DECL_START' => 'XML declaration start',
+    'T_XML_DECL_END'   => 'XML declaration end',
+    'T_PROC_INS_START' => 'processing-instruction start',
+    'T_PROC_INS_NAME'  => 'processing-instruction name',
+    'T_PROC_INS_END'   => 'processing-instruction closing tag',
+    '$end'             => 'end of input'
+  }
+
+  ##
   # @param [String|IO] data The input to parse.
   # @param [Hash] options
   # @see [Oga::XML::Lexer#initialize]
@@ -237,6 +266,7 @@ end
   #
   def on_error(type, value, stack)
     name        = token_to_str(type)
+    name        = TOKEN_ERROR_MAPPING[name] || name
     index       = @line - 1
     index_range = (index - 5)..(index + 5)
     code        = ''
@@ -268,7 +298,7 @@ end
     end
 
     raise Racc::ParseError, <<-EOF.strip
-Unexpected #{name} with value #{value.inspect} on line #{@line}:
+Unexpected #{name} on line #{@line}:
 
 #{code}
     EOF

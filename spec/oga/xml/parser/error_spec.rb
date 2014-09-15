@@ -43,5 +43,9 @@ describe Oga::XML::Parser do
 
       parse_error(StringIO.new(@invalid_xml)).should =~ /#{partial}/
     end
+
+    example 'use more friendly error messages when available' do
+      parse_error('</foo>').should =~ /Unexpected element closing tag/
+    end
   end
 end
