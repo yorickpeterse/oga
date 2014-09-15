@@ -145,8 +145,7 @@ module Oga
       #
       def namespace
         unless @namespace
-          available = available_namespaces
-
+          available  = available_namespaces
           @namespace = available[namespace_name] || available[XMLNS_PREFIX]
         end
 
