@@ -44,6 +44,26 @@ Parsing an IO handle using the pull parser:
       end
     end
 
+Parse a string of XML using the SAX parser:
+
+    class ElementNames
+      attr_reader :names
+
+      def initialize
+        @names = []
+      end
+
+      def on_element(namespace, name, attrs = {})
+        @names << name
+      end
+    end
+
+    handler = ElementNames.new
+
+    Oga.sax_parse_xml(handler, '<foo><bar></bar></foo>')
+
+    handler.names # => ["foo", "bar"]
+
 Querying a document using XPath:
 
     document = Oga.parse_xml('<people><person>Alice</person></people>')
