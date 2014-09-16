@@ -49,7 +49,7 @@ module Oga
   #  Oga.sax_parse_html(handler, '<script>foo()</script>')
   #
   # @param [Object] handler The SAX handler for the parser.
-  # @param [String|IO] HTML The HTML to parse.
+  # @param [String|IO] html The HTML to parse.
   #
   def self.sax_parse_html(handler, html)
     HTML::SaxParser.new(handler, html).parse
