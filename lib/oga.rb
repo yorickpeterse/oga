@@ -37,8 +37,11 @@ require_relative 'oga/xml/attribute'
 require_relative 'oga/xml/element'
 require_relative 'oga/xml/node_set'
 
+require_relative 'oga/xml/sax_parser'
 require_relative 'oga/xml/pull_parser'
+
 require_relative 'oga/html/parser'
+require_relative 'oga/html/sax_parser'
 
 require_relative 'oga/xpath/node'
 require_relative 'oga/xpath/lexer'

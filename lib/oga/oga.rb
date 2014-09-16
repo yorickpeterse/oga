@@ -24,4 +24,34 @@ module Oga
   def self.parse_html(html)
     return HTML::Parser.new(html).parse
   end
+
+  ##
+  # Parses the given XML document using the SAX parser.
+  #
+  # @example
+  #  handler = SomeSaxHandler.new
+  #
+  #  Oga.sax_parse_html(handler, '<root>Hello</root>')
+  #
+  # @param [Object] handler The SAX handler for the parser.
+  # @param [String|IO] xml The XML to parse.
+  #
+  def self.sax_parse_xml(handler, xml)
+    XML::SaxParser.new(handler, xml).parse
+  end
+
+  ##
+  # Parses the given HTML document using the SAX parser.
+  #
+  # @example
+  #  handler = SomeSaxHandler.new
+  #
+  #  Oga.sax_parse_html(handler, '<script>foo()</script>')
+  #
+  # @param [Object] handler The SAX handler for the parser.
+  # @param [String|IO] HTML The HTML to parse.
+  #
+  def self.sax_parse_html(handler, html)
+    HTML::SaxParser.new(handler, html).parse
+  end
 end # Oga
