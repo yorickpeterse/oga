@@ -34,6 +34,16 @@ module Oga
     end
 
     ##
+    # Lexes a CSS expression.
+    #
+    # @param [String] input
+    # @return [Array]
+    #
+    def lex_css(input)
+      return Oga::CSS::Lexer.new(input).lex
+    end
+
+    ##
     # Parses an XPath expression.
     #
     # @param [String] input
