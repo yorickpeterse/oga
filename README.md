@@ -91,6 +91,7 @@ Querying a document using a namespace:
 * Support for parsing XML and HTML(5)
   * DOM parsing
   * Stream/pull parsing
+  * SAX parsing
 * Low memory footprint
 * High performance, if something doesn't perform well enough it's a bug
 * Support for XPath 1.0
