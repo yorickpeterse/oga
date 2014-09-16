@@ -1,3 +1,5 @@
+gem 'racc'
+
 require 'ast'
 require 'set'
 require 'stringio'
