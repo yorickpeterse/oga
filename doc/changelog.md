@@ -1,5 +1,8 @@
 # Changelog
 
+This document contains details of the various releases and their release dates.
+Dates are in the format `yyyy-mm-dd`.
+
 ## 0.2.0 - Unreleased
 
 ### SAX API
