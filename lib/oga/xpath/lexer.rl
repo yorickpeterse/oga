@@ -186,6 +186,8 @@ module Oga
         rparen = ')' @{ add_token(:T_RPAREN) };
         comma  = ',' @{ add_token(:T_COMMA) };
         colon  = ':' @{ add_token(:T_COLON) };
+        lbrack = '[' @{ add_token(:T_LBRACK) };
+        rbrack = ']' @{ add_token(:T_RBRACK) };
 
         # Identifiers
         #
@@ -337,7 +339,12 @@ module Oga
         #
         # See http://www.w3.org/TR/xpath/#NT-NodeType for more information.
 
-        type_test = 'comment' | 'text' | 'processing-instruction' | 'node';
+        type_test = (
+          'comment' |
+          'text' |
+          'processing-instruction' |
+          'node'
+        ) '()';
 
         action emit_type_test {
           emit(:T_TYPE_TEST, ts, te - 2)
@@ -358,13 +365,9 @@ module Oga
 
         main := |*
           operator;
-          whitespace | slash | lparen | rparen | comma | colon;
+          whitespace | slash | lparen | rparen | comma | colon | lbrack | rbrack;
 
-          type_test '()' => emit_type_test;
-
-          '[' => { add_token(:T_LBRACK) };
-          ']' => { add_token(:T_RBRACK) };
-
+          type_test  => emit_type_test;
           var        => emit_variable;
           string     => emit_string;
           integer    => emit_integer;
