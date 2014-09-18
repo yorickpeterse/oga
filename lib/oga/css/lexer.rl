@@ -132,9 +132,12 @@ module Oga
 
         whitespace = [\t ]+;
 
-        action emit_space {
-          add_token(:T_SPACE)
-        }
+        comma  = ',' @{ add_token(:T_COMMA) };
+        hash   = '#' @{ add_token(:T_HASH) };
+        dot    = '.' @{ add_token(:T_DOT) };
+        pipe   = '|' @{ add_token(:T_PIPE) };
+        lbrack = '[' @{ add_token(:T_LBRACK) };
+        rbrack = ']' @{ add_token(:T_RBRACK) };
 
         # Identifiers
         #
@@ -148,8 +151,9 @@ module Oga
         }
 
         main := |*
+          whitespace | comma | hash | dot | pipe | lbrack | rbrack;
+
           identifier => emit_identifier;
-          whitespace => emit_space;
 
           any;
         *|;
