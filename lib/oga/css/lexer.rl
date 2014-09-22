@@ -137,6 +137,9 @@ module Oga
         dot    = '.' %{ add_token(:T_DOT) };
         lbrack = '[' %{ add_token(:T_LBRACK) };
         rbrack = ']' %{ add_token(:T_RBRACK) };
+        colon  = ':' %{ add_token(:T_COLON) };
+        lparen = '(' %{ add_token(:T_LPAREN) };
+        rparen = ')' %{ add_token(:T_RPAREN) };
         pipe   = '|';
 
         # Identifiers
@@ -168,8 +171,43 @@ module Oga
         op_fol_direct  = '+';
         op_fol         = '~';
 
+        # Numbers
+        #
+        # CSS selectors only understand integers, floating points are not
+        # supported.
+
+        integer = ('-' | '+')* digit+;
+
+        action emit_integer {
+          value = slice_input(ts, te).to_i
+
+          add_token(:T_INT, value)
+        }
+
+        # Nth numbers
+        #
+        # These numbers are in the form of 2n+1 and are used for
+        # pseudo-selectors such as nth-child(2n+1). The following parts such as
+        # "-1" and "+1" are handled by the `integer` type and the corresponding
+        # `emit_integer` action.
+
+        nth_integer    = integer 'n';
+        nth_identifier = '+n' | '-n';
+
+        action emit_nth_integer {
+          value = slice_input(ts, te - 1).to_i
+
+          add_token(:T_INT, value)
+          add_token(:T_NTH, 'n')
+        }
+
+        action emit_nth_identifier {
+          emit(:T_NTH, ts, te)
+        }
+
         main := |*
-          whitespace | comma | hash | dot | lbrack | rbrack;
+          whitespace | comma | hash | dot | lbrack | rbrack | colon;
+          lparen | rparen;
 
           # Some of the operators have similar characters (e.g. the "="). As a
           # result we can't use rules like the following:
@@ -194,7 +232,10 @@ module Oga
           # this is handled separately.
           pipe => { add_token(:T_PIPE) };
 
-          identifier => emit_identifier;
+          identifier     => emit_identifier;
+          nth_integer    => emit_nth_integer;
+          nth_identifier => emit_nth_identifier;
+          integer        => emit_integer;
 
           any;
         *|;
