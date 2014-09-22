@@ -132,12 +132,12 @@ module Oga
 
         whitespace = [\t ]+;
 
-        comma  = ',' @{ add_token(:T_COMMA) };
-        hash   = '#' @{ add_token(:T_HASH) };
-        dot    = '.' @{ add_token(:T_DOT) };
-        pipe   = '|' @{ add_token(:T_PIPE) };
-        lbrack = '[' @{ add_token(:T_LBRACK) };
-        rbrack = ']' @{ add_token(:T_RBRACK) };
+        comma  = ',' %{ add_token(:T_COMMA) };
+        hash   = '#' %{ add_token(:T_HASH) };
+        dot    = '.' %{ add_token(:T_DOT) };
+        lbrack = '[' %{ add_token(:T_LBRACK) };
+        rbrack = ']' %{ add_token(:T_RBRACK) };
+        pipe   = '|';
 
         # Identifiers
         #
@@ -150,8 +150,49 @@ module Oga
           emit(:T_IDENT, ts, te)
         }
 
+        # Operators
+        #
+        # Various operators that can be used for filtering nodes. For example,
+        # "$=" can be used to select attribute values that end with a given
+        # string.
+        #
+        # http://www.w3.org/TR/css3-selectors/#selectors
+
+        op_eq          = '=';
+        op_space_in    = '~=';
+        op_starts_with = '^=';
+        op_ends_with   = '$=';
+        op_in          = '*=';
+        op_hyphen_in   = '|=';
+        op_child       = '>';
+        op_fol_direct  = '+';
+        op_fol         = '~';
+
         main := |*
-          whitespace | comma | hash | dot | pipe | lbrack | rbrack;
+          whitespace | comma | hash | dot | lbrack | rbrack;
+
+          # Some of the operators have similar characters (e.g. the "="). As a
+          # result we can't use rules like the following:
+          #
+          #     '='  %{ ... };
+          #     '*=' %{ ... };
+          #
+          # This would result in both machines being executed for the input
+          # "*=". The syntax below ensures that only the first match is handled.
+
+          op_eq          => { add_token(:T_EQ) };
+          op_space_in    => { add_token(:T_SPACE_IN) };
+          op_starts_with => { add_token(:T_STARTS_WITH) };
+          op_ends_with   => { add_token(:T_ENDS_WITH) };
+          op_in          => { add_token(:T_IN) };
+          op_hyphen_in   => { add_token(:T_HYPHEN_IN) };
+          op_child       => { add_token(:T_CHILD) };
+          op_fol_direct  => { add_token(:T_FOLLOWING_DIRECT) };
+          op_fol         => { add_token(:T_FOLLOWING) };
+
+          # The pipe character is also used in the |= operator so the action for
+          # this is handled separately.
+          pipe => { add_token(:T_PIPE) };
 
           identifier => emit_identifier;
 
