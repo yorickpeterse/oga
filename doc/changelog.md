@@ -3,7 +3,7 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
-## 0.2.0 - Unreleased
+## 0.1.2 - 2014-09-23
 
 ### SAX API
 
