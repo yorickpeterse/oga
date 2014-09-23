@@ -301,7 +301,7 @@
         };
 
         # Text followed by a special tag, such as "foo<!--"
-        allowed_text @{ mark = p; } terminate_text => {
+        allowed_text %{ mark = p; } terminate_text => {
             callback("on_text", data, encoding, ts, mark);
 
             p    = mark - 1;
