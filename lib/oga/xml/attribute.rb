@@ -82,7 +82,7 @@ module Oga
       #
       def to_xml
         if namespace_name
-          full_name = "#{namespace.name}:#{name}"
+          full_name = "#{namespace_name}:#{name}"
         else
           full_name = name
         end

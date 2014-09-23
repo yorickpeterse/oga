@@ -68,6 +68,16 @@ describe Oga::XML::Attribute do
 
       attr.to_xml.should == 'foo:class="10"'
     end
+
+    example 'include the "xmlns" namespace when present but not registered' do
+      attr = described_class.new(
+        :name           => 'class',
+        :namespace_name => 'xmlns',
+        :element        => Oga::XML::Element.new
+      )
+
+      attr.to_xml.should == 'xmlns:class=""'
+    end
   end
 
   context '#inspect' do
