@@ -307,8 +307,7 @@ module Oga
       private
 
       ##
-      # Registers namespaces based on any "xmlns" attributes. Once a namespace
-      # has been registered the corresponding attribute is removed.
+      # Registers namespaces based on any "xmlns" attributes.
       #
       def register_namespaces_from_attributes
         attributes.each do |attr|
