@@ -3,6 +3,12 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 0.1.3 - 2014-09-24
+
+This release fixes a problem with serializing attributes using the namespace
+prefix "xmlns". See <https://github.com/YorickPeterse/oga/issues/47> for more
+information.
+
 ## 0.1.2 - 2014-09-23
 
 ### SAX API
