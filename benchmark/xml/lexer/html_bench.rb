@@ -4,6 +4,6 @@ html = read_html
 
 Benchmark.ips do |bench|
   bench.report 'lex HTML' do
-    Oga::XML::Lexer.new(html, :html => true).lex
+    Oga::XML::Lexer.new(html, :html => true).advance { }
   end
 end
