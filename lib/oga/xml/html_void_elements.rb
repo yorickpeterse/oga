@@ -24,5 +24,7 @@ module Oga
       'track',
       'wbr'
     ])
+
+    HTML_VOID_ELEMENTS.merge(HTML_VOID_ELEMENTS.map { |name| name.upcase })
   end # XML
 end # Oga
