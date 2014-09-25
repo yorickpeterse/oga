@@ -265,43 +265,10 @@ end
   # @raise [Racc::ParseError]
   #
   def on_error(type, value, stack)
-    name        = token_to_str(type)
-    name        = TOKEN_ERROR_MAPPING[name] || name
-    index       = @line - 1
-    index_range = (index - 5)..(index + 5)
-    code        = ''
+    name = token_to_str(type)
+    name = TOKEN_ERROR_MAPPING[name] || name
 
-    # For IO we sadly have to re-read the input :<
-    if @data.respond_to?(:rewind)
-      @data.rewind
-    end
-
-    # Show up to 5 lines before and after the offending line (if they exist).
-    @data.each_line.with_index do |line, line_index|
-      next unless index_range.cover?(line_index)
-
-      number = line_index + 1
-
-      if line_index == index
-        prefix = '=> '
-      else
-        prefix = '   '
-      end
-
-      line = line.strip
-
-      if line.length > 80
-        line = line[0..79] + ' (more)'
-      end
-
-      code << "#{prefix}#{number}: #{line}\n"
-    end
-
-    raise Racc::ParseError, <<-EOF.strip
-Unexpected #{name} on line #{@line}:
-
-#{code}
-    EOF
+    raise Racc::ParseError, "Unexpected #{name} on line #{@line}"
   end
 
   ##
