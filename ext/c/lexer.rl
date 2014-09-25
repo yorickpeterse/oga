@@ -22,6 +22,9 @@ on `ts` and `te`) so the macro ignores this argument.
 #define oga_ivar_set(owner, name, value) \
     rb_ivar_set(owner, rb_intern(name), value)
 
+#define advance_line(amount) \
+    rb_funcall(self, rb_intern("advance_line"), 1, INT2NUM(amount));
+
 %%machine c_lexer;
 
 /**
@@ -84,8 +87,9 @@ VALUE oga_xml_lexer_advance(VALUE self, VALUE data_block)
     const char *te   = 0;
     const char *mark = 0;
 
-    int act = NUM2INT(oga_ivar_get(self, "@act"));
-    int cs  = NUM2INT(oga_ivar_get(self, "@cs"));
+    int act   = NUM2INT(oga_ivar_get(self, "@act"));
+    int cs    = NUM2INT(oga_ivar_get(self, "@cs"));
+    int lines = 0;
 
     %% write exec;
 

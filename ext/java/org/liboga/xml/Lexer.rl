@@ -90,12 +90,13 @@ public class Lexer extends RubyObject
 
         byte[] data = rb_str.getBytes();
 
-        int ts   = 0;
-        int te   = 0;
-        int p    = 0;
-        int mark = 0;
-        int pe   = data.length;
-        int eof  = data.length;
+        int ts    = 0;
+        int te    = 0;
+        int p     = 0;
+        int mark  = 0;
+        int lines = 0;
+        int pe    = data.length;
+        int eof   = data.length;
 
         %% write exec;
 
@@ -140,6 +141,17 @@ public class Lexer extends RubyObject
         ThreadContext context = this.runtime.getCurrentContext();
 
         this.callMethod(context, name);
+    }
+
+    /**
+     * Advances the line number by `amount` lines.
+     */
+    public void advance_line(int amount)
+    {
+        ThreadContext context = this.runtime.getCurrentContext();
+        RubyFixnum lines      = this.runtime.newFixnum(amount);
+
+        this.callMethod(context, "advance_line", lines);
     }
 }
 

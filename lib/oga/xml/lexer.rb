@@ -348,13 +348,7 @@ module Oga
       # @param [String] value
       #
       def on_text(value)
-        unless value.empty?
-          add_token(:T_TEXT, value)
-
-          lines = value.count("\n")
-
-          advance_line(lines) if lines > 0
-        end
+        add_token(:T_TEXT, value) unless value.empty?
       end
 
       ##

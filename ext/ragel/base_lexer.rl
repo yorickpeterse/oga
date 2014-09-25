@@ -35,7 +35,12 @@
     # stack.
     #
 
-    newline    = '\n' | '\r\n';
+    newline = '\n' | '\r\n';
+
+    action count_newlines {
+        if ( fc == '\n' ) lines++;
+    }
+
     whitespace = [ \t];
     ident_char = [a-zA-Z0-9\-_];
     identifier = ident_char+;
@@ -289,13 +294,18 @@
     # long. Because of this "<!" is used instead of "<!--".
 
     terminate_text = '</' | '<!' | '<?' | element_start;
-    allowed_text   = any* -- terminate_text;
+    allowed_text   = (any* -- terminate_text) $count_newlines;
 
     text := |*
-        # Input such as just "</" or "<?". This rule takes precedence over the
-        # rules below, but only if those don't match.
-        terminate_text => {
+        terminate_text | allowed_text => {
             callback("on_text", data, encoding, ts, te);
+
+            if ( lines > 0 )
+            {
+                advance_line(lines);
+
+                lines = 0;
+            }
 
             fnext main;
         };
@@ -307,12 +317,13 @@
             p    = mark - 1;
             mark = 0;
 
-            fnext main;
-        };
+            if ( lines > 0 )
+            {
+                advance_line(lines);
 
-        # Just regular text.
-        allowed_text => {
-            callback("on_text", data, encoding, ts, te);
+                lines = 0;
+            }
+
             fnext main;
         };
     *|;
