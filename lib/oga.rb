@@ -21,6 +21,7 @@ end
 #:nocov:
 
 require_relative 'oga/xml/html_void_elements'
+require_relative 'oga/xml/entities'
 require_relative 'oga/xml/querying'
 require_relative 'oga/xml/traversal'
 require_relative 'oga/xml/node'

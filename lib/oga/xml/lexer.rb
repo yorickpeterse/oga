@@ -194,7 +194,7 @@ module Oga
       # @param [String] value The data between the quotes.
       #
       def on_string(value)
-        add_token(:T_STRING, value)
+        add_token(:T_STRING, Entities.decode(value))
       end
 
       ##
@@ -348,7 +348,9 @@ module Oga
       # @param [String] value
       #
       def on_text(value)
-        add_token(:T_TEXT, value) unless value.empty?
+        return if value.empty?
+
+        add_token(:T_TEXT, Entities.decode(value))
       end
 
       ##

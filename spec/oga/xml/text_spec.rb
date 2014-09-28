@@ -15,12 +15,16 @@ describe Oga::XML::Text do
   end
 
   context '#to_xml' do
-    before do
-      @instance = described_class.new(:text => 'foo')
+    example 'generate the corresponding XML' do
+      node = described_class.new(:text => 'foo')
+
+      node.to_xml.should == 'foo'
     end
 
-    example 'generate the corresponding XML' do
-      @instance.to_xml.should == 'foo'
+    example 'encode special characters as XML entities' do
+      node = described_class.new(:text => '&<>')
+
+      node.to_xml.should == '&amp;&lt;&gt;'
     end
   end
 

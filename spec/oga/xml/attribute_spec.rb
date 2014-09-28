@@ -78,6 +78,12 @@ describe Oga::XML::Attribute do
 
       attr.to_xml.should == 'xmlns:class=""'
     end
+
+    example 'convert special characters to XML entities' do
+      attr = described_class.new(:name => 'href', :value => '&<>')
+
+      attr.to_xml.should == 'href="&amp;&lt;&gt;"'
+    end
   end
 
   context '#inspect' do
