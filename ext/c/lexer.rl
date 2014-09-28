@@ -78,7 +78,7 @@ VALUE oga_xml_lexer_advance(VALUE self, VALUE data_block)
     /* Make sure that all data passed back to Ruby has the proper encoding. */
     rb_encoding *encoding = rb_enc_get(data_block);
 
-    char *data_str_val = StringValuePtr(data_block);
+    char *data_str_val = StringValueCStr(data_block);
 
     const char *p    = data_str_val;
     const char *pe   = data_str_val + strlen(data_str_val);
