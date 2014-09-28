@@ -66,7 +66,7 @@ module Oga
         @line     = 1
         @elements = []
 
-        @data.rewind if io_input?
+        @data.rewind if @data.respond_to?(:rewind)
 
         reset_native
       end
@@ -78,25 +78,18 @@ module Oga
       # @yieldparam [String]
       #
       def read_data
-        # We can't check for #each_line since String also defines that. Using
-        # String#each_line has no benefit over just lexing the String in one
-        # go.
-        if io_input?
-          @data.each_line do |line|
-            yield line
-          end
-        else
+        if @data.is_a?(String)
           yield @data
-        end
-      end
 
-      ##
-      # Returns `true` if the input is an IO like object, false otherwise.
-      #
-      # @return [TrueClass|FalseClass]
-      #
-      def io_input?
-        return @data.is_a?(IO) || @data.is_a?(StringIO)
+        # IO, StringIO, etc
+        # THINK: read(N) would be nice, but currently this screws up the C code
+        elsif @data.respond_to?(:each_line)
+          @data.each_line { |line| yield line }
+
+        # Enumerator, Array, etc
+        elsif @data.respond_to?(:each)
+          @data.each { |chunk| yield chunk }
+        end
       end
 
       ##

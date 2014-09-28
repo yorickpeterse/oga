@@ -2,10 +2,12 @@ require 'spec_helper'
 
 describe Oga::XML::Lexer do
   context 'IO as input' do
-    example 'lex a paragraph element with attributes' do
-      io = StringIO.new("<p class='foo'>\nHello</p>")
+    before do
+      @io = StringIO.new("<p class='foo'>\nHello</p>")
+    end
 
-      lex(io).should == [
+    example 'lex a paragraph element with attributes' do
+      lex(@io).should == [
         [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'p', 1],
         [:T_ATTR, 'class', 1],
@@ -17,7 +19,7 @@ describe Oga::XML::Lexer do
     end
 
     example 'rewind input when resetting the lexer' do
-      lexer = described_class.new(StringIO.new(('<a>foo</a>')))
+      lexer = described_class.new(@io)
 
       lexer.lex.empty?.should == false
       lexer.lex.empty?.should == false
