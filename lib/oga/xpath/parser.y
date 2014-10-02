@@ -1,5 +1,5 @@
 ##
-# AST parser for XPath expressions. The AST is built using {Oga::XPath::Node}
+# AST parser for XPath expressions. The AST is built using {AST::Node}
 # instances.
 #
 class Oga::XPath::Parser
@@ -162,10 +162,10 @@ end
   #
   # @param [Symbol] type
   # @param [Array] children
-  # @return [Oga::XPath::Node]
+  # @return [AST::Node]
   #
   def s(type, *children)
-    return Node.new(type, children)
+    return AST::Node.new(type, children)
   end
 
   ##
@@ -188,7 +188,7 @@ end
   #  parser = Oga::XPath::Parser.new('//foo')
   #  ast    = parser.parse
   #
-  # @return [Oga::XPath::Node]
+  # @return [AST::Node]
   #
   def parse
     ast = yyparse(self, :yield_next_token)

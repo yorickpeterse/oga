@@ -44,7 +44,6 @@ require_relative 'oga/xml/pull_parser'
 require_relative 'oga/html/parser'
 require_relative 'oga/html/sax_parser'
 
-require_relative 'oga/xpath/node'
 require_relative 'oga/xpath/lexer'
 require_relative 'oga/xpath/parser'
 require_relative 'oga/xpath/evaluator'

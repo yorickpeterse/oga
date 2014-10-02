@@ -2,7 +2,7 @@ module Oga
   module XPath
     ##
     # The Evaluator class evaluates XPath expressions, either as a String or an
-    # AST of {Oga::XPath::Node} instances.
+    # AST of {AST::Node} instances.
     #
     # ## Thread Safety
     #
@@ -90,7 +90,7 @@ module Oga
       ##
       # Evaluates a pre-parsed XPath expression.
       #
-      # @param [Oga::XPath::Node] ast
+      # @param [AST::Node] ast
       # @return [Mixed]
       #
       def evaluate_ast(ast)
@@ -104,7 +104,7 @@ module Oga
       # dedicated handler method. Handler methods are called "on_X" where "X" is
       # the node type.
       #
-      # @param [Oga::XPath::Node] ast_node The XPath AST node to process.
+      # @param [AST::Node] ast_node The XPath AST node to process.
       #
       # @param [Oga::XML::NodeSet] context The context (a set of nodes) to
       #  evaluate an expression in.
@@ -120,7 +120,7 @@ module Oga
       ##
       # Processes an absolute XPath expression such as `/foo`.
       #
-      # @param [Oga::XPath::Node] ast_node
+      # @param [AST::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
@@ -142,7 +142,7 @@ module Oga
       # `&&` / `and` operator. Whenever a path results in an empty node set the
       # evaluation is aborted immediately.
       #
-      # @param [Oga::XPath::Node] ast_node
+      # @param [AST::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
@@ -165,7 +165,7 @@ module Oga
       ##
       # Processes a node test and optionally a predicate.
       #
-      # @param [Oga::XPath::Node] ast_node
+      # @param [AST::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
@@ -209,7 +209,7 @@ module Oga
       # similar to {#process} except the handler names are "on_axis_X" with "X"
       # being the axis name.
       #
-      # @param [Oga::XPath::Node] ast_node
+      # @param [AST::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
@@ -228,7 +228,7 @@ module Oga
       # Evaluation happens using a "short-circuit" mechanism. The moment a
       # matching node is found it is returned immediately.
       #
-      # @param [Oga::XPath::Node] ast_node
+      # @param [AST::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
@@ -279,7 +279,7 @@ module Oga
       # (unlike some other methods which return the moment they find a matching
       # node).
       #
-      # @param [Oga::XPath::Node] ast_node
+      # @param [AST::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
@@ -299,7 +299,7 @@ module Oga
       # Evaluates the `child` axis. This axis simply takes all the child nodes
       # of the current context nodes.
       #
-      # @param [Oga::XPath::Node] ast_node
+      # @param [AST::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
@@ -311,7 +311,7 @@ module Oga
       # Evaluates the `descendant` axis. This method processes child nodes until
       # the very end of the tree, no "short-circuiting" mechanism is used.
       #
-      # @param [Oga::XPath::Node] ast_node
+      # @param [AST::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
@@ -334,7 +334,7 @@ module Oga
       ##
       # Evaluates the `descendant-or-self` axis.
       #
-      # @param [Oga::XPath::Node] ast_node
+      # @param [AST::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
@@ -349,7 +349,7 @@ module Oga
       ##
       # Evaluates the `following` axis.
       #
-      # @param [Oga::XPath::Node] ast_node
+      # @param [AST::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
@@ -379,7 +379,7 @@ module Oga
       ##
       # Evaluates the `following-sibling` axis.
       #
-      # @param [Oga::XPath::Node] ast_node
+      # @param [AST::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
@@ -416,7 +416,7 @@ module Oga
       ##
       # Evaluates the `parent` axis.
       #
-      # @param [Oga::XPath::Node] ast_node
+      # @param [AST::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
@@ -437,7 +437,7 @@ module Oga
       ##
       # Evaluates the `preceding` axis.
       #
-      # @param [Oga::XPath::Node] ast_node
+      # @param [AST::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
@@ -463,7 +463,7 @@ module Oga
       ##
       # Evaluates the `preceding-sibling` axis.
       #
-      # @param [Oga::XPath::Node] ast_node
+      # @param [AST::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
@@ -490,7 +490,7 @@ module Oga
       ##
       # Evaluates the `self` axis.
       #
-      # @param [Oga::XPath::Node] ast_node
+      # @param [AST::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
@@ -507,7 +507,7 @@ module Oga
       ##
       # Evaluates the `namespace` axis.
       #
-      # @param [Oga::XPath::Node] ast_node
+      # @param [AST::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
@@ -531,7 +531,7 @@ module Oga
       ##
       # Dispatches node type matching to dedicated handlers.
       #
-      # @param [Oga::XPath::Node] ast_node
+      # @param [AST::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
@@ -546,7 +546,7 @@ module Oga
       ##
       # Processes the `node` type matcher. This matcher matches all node types.
       #
-      # @param [Oga::XPath::Node] ast_node
+      # @param [AST::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
@@ -563,7 +563,7 @@ module Oga
       ##
       # Processes the `text()` type test. This matches only text nodes.
       #
-      # @param [Oga::XPath::Node] ast_node
+      # @param [AST::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
@@ -580,7 +580,7 @@ module Oga
       ##
       # Processes the `comment()` type test. This matches only comment nodes.
       #
-      # @param [Oga::XPath::Node] ast_node
+      # @param [AST::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
@@ -598,7 +598,7 @@ module Oga
       # Processes the `processing-instruction()` type test. This matches only
       # processing-instruction nodes.
       #
-      # @param [Oga::XPath::Node] ast_node
+      # @param [AST::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
@@ -616,7 +616,7 @@ module Oga
       # Processes the pipe (`|`) operator. This operator creates a union of two
       # sets.
       #
-      # @param [Oga::XPath::Node] ast_node
+      # @param [AST::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
@@ -633,7 +633,7 @@ module Oga
       # evaluate to `true`. If the first expression evaluates to `false` the
       # right expression is ignored.
       #
-      # @param [Oga::XPath::Node] ast_node
+      # @param [AST::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [TrueClass|FalseClass]
       #
@@ -650,7 +650,7 @@ module Oga
       # true, otherwise false is returned. If the first expression evaluates to
       # `true` the second expression is ignored.
       #
-      # @param [Oga::XPath::Node] ast_node
+      # @param [AST::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [TrueClass|FalseClass]
       #
@@ -666,7 +666,7 @@ module Oga
       # This operator converts the left and right expressions to numbers and
       # adds them together.
       #
-      # @param [Oga::XPath::Node] ast_node
+      # @param [AST::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Float]
       #
@@ -682,7 +682,7 @@ module Oga
       # This operator converts the left and right expressions to numbers and
       # divides the left number with the right number.
       #
-      # @param [Oga::XPath::Node] ast_node
+      # @param [AST::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Float]
       #
@@ -698,7 +698,7 @@ module Oga
       # This operator converts the left and right expressions to numbers and
       # returns the modulo of the two numbers.
       #
-      # @param [Oga::XPath::Node] ast_node
+      # @param [AST::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Float]
       #
@@ -714,7 +714,7 @@ module Oga
       # This operator converts the left and right expressions to numbers and
       # multiplies the left number with the right number.
       #
-      # @param [Oga::XPath::Node] ast_node
+      # @param [AST::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Float]
       #
@@ -730,7 +730,7 @@ module Oga
       # This operator converts the left and right expressions to numbers and
       # subtracts the right number of the left number.
       #
-      # @param [Oga::XPath::Node] ast_node
+      # @param [AST::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Float]
       #
@@ -749,7 +749,7 @@ module Oga
       # compared instead of the nodes themselves. That is, nodes with different
       # names but the same text are considered to be equal.
       #
-      # @param [Oga::XPath::Node] ast_node
+      # @param [AST::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [TrueClass|FalseClass]
       #
@@ -863,7 +863,7 @@ module Oga
       # 2. A variable list of XPath function arguments, passed as individual
       #    Ruby method arguments.
       #
-      # @param [Oga::XPath::Node] ast_node
+      # @param [AST::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
@@ -905,7 +905,7 @@ module Oga
       # of nodes in `expression` and returns the result as a float.
       #
       # @param [Oga::XML::NodeSet] context
-      # @param [Oga::XPath::Node] expression
+      # @param [AST::Node] expression
       # @return [Float]
       #
       def on_call_count(context, expression)
@@ -933,7 +933,7 @@ module Oga
       # regardless of the current position.
       #
       # @param [Oga::XML::NodeSet] context
-      # @param [Oga::XPath::Node] expression
+      # @param [AST::Node] expression
       # @return [Oga::XML::NodeSet]
       #
       def on_call_id(context, expression)
@@ -967,7 +967,7 @@ module Oga
       # * The first node in the supplied node set
       #
       # @param [Oga::XML::NodeSet] context
-      # @param [Oga::XPath::Node] expression
+      # @param [AST::Node] expression
       # @return [Oga::XML::NodeSet]
       #
       def on_call_local_name(context, expression = nil)
@@ -984,7 +984,7 @@ module Oga
       # present.
       #
       # @param [Oga::XML::NodeSet] context
-      # @param [Oga::XPath::Node] expression
+      # @param [AST::Node] expression
       # @return [Oga::XML::NodeSet]
       #
       def on_call_name(context, expression = nil)
@@ -1010,7 +1010,7 @@ module Oga
       # * The first node in the supplied node set
       #
       # @param [Oga::XML::NodeSet] context
-      # @param [Oga::XPath::Node] expression
+      # @param [AST::Node] expression
       # @return [Oga::XML::NodeSet]
       #
       def on_call_namespace_uri(context, expression = nil)
@@ -1034,7 +1034,7 @@ module Oga
       #  string(10) # => "10"
       #
       # @param [Oga::XML::NodeSet] context
-      # @param [Oga::XPath::Node] expression
+      # @param [AST::Node] expression
       # @return [String]
       #
       def on_call_string(context, expression = nil)
@@ -1066,7 +1066,7 @@ module Oga
       #
       # @see [#on_call_string]
       # @param [Oga::XML::NodeSet] context
-      # @param [Oga::XPath::Node] expression
+      # @param [AST::Node] expression
       # @return [Float]
       #
       def on_call_number(context, expression = nil)
@@ -1101,9 +1101,9 @@ module Oga
       # them. In case of node sets the text of the set is used.
       #
       # @param [Oga::XML::NodeSet] context
-      # @param [Oga::XPath::Node] first
-      # @param [Oga::XPath::Node] second
-      # @param [Array<Oga::XPath::Node>] rest
+      # @param [AST::Node] first
+      # @param [AST::Node] second
+      # @param [Array<AST::Node>] rest
       #
       def on_call_concat(context, first, second, *rest)
         args   = [first, second] + rest
@@ -1126,8 +1126,8 @@ module Oga
       #  starts-with("hello world", "hello") # => true
       #
       # @param [Oga::XML::NodeSet] context
-      # @param [Oga::XPath::Node] haystack The string to search.
-      # @param [Oga::XPath::Node] needle The string to search for.
+      # @param [AST::Node] haystack The string to search.
+      # @param [AST::Node] needle The string to search for.
       # @return [TrueClass|FalseClass]
       #
       def on_call_starts_with(context, haystack, needle)
@@ -1148,8 +1148,8 @@ module Oga
       #  contains("hello world", "o w") # => true
       #
       # @param [Oga::XML::NodeSet] context
-      # @param [Oga::XPath::Node] haystack The string to search.
-      # @param [Oga::XPath::Node] needle The string to search for.
+      # @param [AST::Node] haystack The string to search.
+      # @param [AST::Node] needle The string to search for.
       # @return [String]
       #
       def on_call_contains(context, haystack, needle)
@@ -1170,8 +1170,8 @@ module Oga
       # This would return "2014" as it occurs before the first "-".
       #
       # @param [Oga::XML::NodeSet] context
-      # @param [Oga::XPath::Node] haystack The string to search.
-      # @param [Oga::XPath::Node] needle The string to search for.
+      # @param [AST::Node] haystack The string to search.
+      # @param [AST::Node] needle The string to search for.
       # @return [String]
       #
       def on_call_substring_before(context, haystack, needle)
@@ -1194,8 +1194,8 @@ module Oga
       # This would return "08-25" as it occurs after the first "-".
       #
       # @param [Oga::XML::NodeSet] context
-      # @param [Oga::XPath::Node] haystack The string to search.
-      # @param [Oga::XPath::Node] needle The string to search for.
+      # @param [AST::Node] haystack The string to search.
+      # @param [AST::Node] needle The string to search for.
       # @return [String]
       #
       def on_call_substring_after(context, haystack, needle)
@@ -1227,9 +1227,9 @@ module Oga
       #  substring(users/user/username, 5)
       #
       # @param [Oga::XML::NodeSet] context
-      # @param [Oga::XPath::Node] haystack
-      # @param [Oga::XPath::Node] start
-      # @param [Oga::XPath::Node] length
+      # @param [AST::Node] haystack
+      # @param [AST::Node] start
+      # @param [AST::Node] length
       # @return [String]
       #
       def on_call_substring(context, haystack, start, length = nil)
@@ -1255,7 +1255,7 @@ module Oga
       #
       # @see [#on_call_string]
       # @param [Oga::XML::NodeSet] context
-      # @param [Oga::XPath::Node] expression
+      # @param [AST::Node] expression
       # @return [Float]
       #
       def on_call_string_length(context, expression = nil)
@@ -1273,7 +1273,7 @@ module Oga
       #  normalize-space(" fo  o    ") # => "fo o"
       #
       # @param [Oga::XML::NodeSet] context
-      # @param [Oga::XPath::Node] expression
+      # @param [AST::Node] expression
       # @return [String]
       #
       def on_call_normalize_space(context, expression = nil)
@@ -1292,9 +1292,9 @@ module Oga
       #  translate("bar", "abc", "ABC") # => "BAr"
       #
       # @param [Oga::XML::NodeSet] context
-      # @param [Oga::XPath::Node] input
-      # @param [Oga::XPath::Node] find
-      # @param [Oga::XPath::Node] replace
+      # @param [AST::Node] input
+      # @param [AST::Node] find
+      # @param [AST::Node] replace
       # @return [String]
       #
       def on_call_translate(context, input, find, replace)
@@ -1325,7 +1325,7 @@ module Oga
       # The boolean `false` is returned for all other cases.
       #
       # @param [Oga::XML::NodeSet] context
-      # @param [Oga::XPath::Node] expression
+      # @param [AST::Node] expression
       # @return [TrueClass|FalseClass]
       #
       def on_call_boolean(context, expression)
@@ -1349,7 +1349,7 @@ module Oga
       # `true` then this function returns `false` instead.
       #
       # @param [Oga::XML::NodeSet] context
-      # @param [Oga::XPath::Node] expression
+      # @param [AST::Node] expression
       # @return [TrueClass|FalseClass]
       #
       def on_call_not(context, expression)
@@ -1361,7 +1361,7 @@ module Oga
       #
       # This function simply returns the boolean `true`.
       #
-      # @param [Oga::XPath::NodeSet] context
+      # @param [AST::NodeSet] context
       # @return [TrueClass]
       #
       def on_call_true(context)
@@ -1373,7 +1373,7 @@ module Oga
       #
       # This function simply returns the boolean `false`.
       #
-      # @param [Oga::XPath::NodeSet] context
+      # @param [AST::NodeSet] context
       # @return [FalseClass]
       #
       def on_call_false(context)
@@ -1391,7 +1391,7 @@ module Oga
       # such attribute).
       #
       # @param [Oga::XML::NodeSet] context
-      # @param [Oga::XPath::Node] language
+      # @param [AST::Node] language
       # @return [TrueClass|FalseClass]
       #
       def on_call_lang(context, language)
@@ -1425,7 +1425,7 @@ module Oga
       # Using the expression `sum(root/*)` the return value would be `3.0`.
       #
       # @param [Oga::XML::NodeSet] context
-      # @param [Oga::XPath::Node] expression
+      # @param [AST::Node] expression
       # @return [Float]
       #
       def on_call_sum(context, expression)
@@ -1450,7 +1450,7 @@ module Oga
       # and then returns that number as a float.
       #
       # @param [Oga::XML::NodeSet] context
-      # @param [Oga::XPath::Node] expression
+      # @param [AST::Node] expression
       # @return [Float]
       #
       def on_call_floor(context, expression)
@@ -1466,7 +1466,7 @@ module Oga
       # and then returns that number as a float.
       #
       # @param [Oga::XML::NodeSet] context
-      # @param [Oga::XPath::Node] expression
+      # @param [AST::Node] expression
       # @return [Float]
       #
       def on_call_ceiling(context, expression)
@@ -1482,7 +1482,7 @@ module Oga
       # then returns that number as a float.
       #
       # @param [Oga::XML::NodeSet] context
-      # @param [Oga::XPath::Node] expression
+      # @param [AST::Node] expression
       # @return [Float]
       #
       def on_call_round(context, expression)
@@ -1494,7 +1494,7 @@ module Oga
       ##
       # Processes an `(int)` node.
       #
-      # @param [Oga::XPath::Node] ast_node
+      # @param [AST::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Float]
       #
@@ -1505,7 +1505,7 @@ module Oga
       ##
       # Processes an `(float)` node.
       #
-      # @param [Oga::XPath::Node] ast_node
+      # @param [AST::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Float]
       #
@@ -1516,7 +1516,7 @@ module Oga
       ##
       # Processes a `(string)` node.
       #
-      # @param [Oga::XPath::Node] ast_node
+      # @param [AST::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [String]
       #
@@ -1528,7 +1528,7 @@ module Oga
       # Processes a variable reference. If the variable is not defined an error
       # is raised.
       #
-      # @param [Oga::XPath::Node] ast_node
+      # @param [AST::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Mixed]
       # @raise [RuntimeError]
@@ -1548,7 +1548,7 @@ module Oga
       # in the supplied node set, or the first node in the current context.
       #
       # @param [Oga::XML::NodeSet] context
-      # @param [Oga::XPath::Node] expression
+      # @param [AST::Node] expression
       # @return [Oga::XML::Node]
       #
       def function_node(context, expression = nil)
@@ -1596,7 +1596,7 @@ module Oga
       end
 
       ##
-      # Checks if a given {Oga::XML::Node} instance matches a {Oga::XPath::Node}
+      # Checks if a given {Oga::XML::Node} instance matches a {AST::Node}
       # instance.
       #
       # This method can use both "test" and "type-test" nodes. In case of
@@ -1614,7 +1614,7 @@ module Oga
       # For both the name and namespace a wildcard (`*`) can be used.
       #
       # @param [Oga::XML::Node] xml_node
-      # @param [Oga::XPath::Node] ast_node
+      # @param [AST::Node] ast_node
       # @return [Oga::XML::NodeSet]
       #
       def node_matches?(xml_node, ast_node)
@@ -1645,7 +1645,7 @@ module Oga
 
       ##
       # @param [Oga::XML::Node] xml_node
-      # @param [Oga::XPath::Node] ast_node
+      # @param [AST::Node] ast_node
       # @return [TrueClass|FalseClass]
       #
       def type_matches?(xml_node, ast_node)

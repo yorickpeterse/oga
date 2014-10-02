@@ -8,8 +8,7 @@ module Oga
     # @return [AST::Node]
     #
     def s(type, *children)
-      # TODO: add support for CSS AST nodes.
-      return Oga::XPath::Node.new(type, children)
+      return AST::Node.new(type, children)
     end
 
     ##
@@ -47,7 +46,7 @@ module Oga
     # Parses an XPath expression.
     #
     # @param [String] input
-    # @return [Oga::XPath::Node]
+    # @return [AST::Node]
     #
     def parse_xpath(input)
       return Oga::XPath::Parser.new(input).parse
