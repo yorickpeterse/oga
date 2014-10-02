@@ -54,11 +54,9 @@ module Oga
     end
 
     ##
-    # Parses the given XML and returns an AST.
-    #
     # @param [String] input
     # @param [Hash] options
-    # @return [Oga::AST::Node]
+    # @return [Oga::XML::Document]
     #
     def parse(input, options = {})
       return Oga::XML::Parser.new(input, options).parse
