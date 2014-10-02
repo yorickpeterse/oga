@@ -153,7 +153,6 @@ end
   # @param [String] data The input to parse.
   #
   def initialize(data)
-    @data  = data
     @lexer = Lexer.new(data)
   end
 
