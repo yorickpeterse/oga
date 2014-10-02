@@ -3,4 +3,8 @@ rule '.rb' => '.y' do |task|
 end
 
 desc 'Generates the parser'
-task :parser => ['lib/oga/xml/parser.rb', 'lib/oga/xpath/parser.rb']
+task :parser => [
+  'lib/oga/xml/parser.rb',
+  'lib/oga/xpath/parser.rb',
+  'lib/oga/css/parser.rb'
+]

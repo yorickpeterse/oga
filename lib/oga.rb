@@ -49,3 +49,4 @@ require_relative 'oga/xpath/parser'
 require_relative 'oga/xpath/evaluator'
 
 require_relative 'oga/css/lexer'
+require_relative 'oga/css/parser'
