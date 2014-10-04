@@ -7,17 +7,26 @@ options no_result_var
 
 rule
   css
-    : selectors  { val[0] }
+    : expression { val[0] }
     | /* none */ { nil }
     ;
 
-  selectors
-    : selectors selector { val[0] << val[1] }
-    | selector           { val[0] }
+  expression
+    : path
+    | node_test
     ;
 
-  selector
+  path_member
     : node_test
+    ;
+
+  path_members
+    : path_member path_member  { [val[0], val[1]] }
+    | path_member path_members { [val[0], *val[1]] }
+    ;
+
+  path
+    : path_members { s(:path, *val[0]) }
     ;
 
   node_test
