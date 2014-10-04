@@ -43,6 +43,14 @@ module Oga
     end
 
     ##
+    # @param [String] input
+    # @return [AST::Node]
+    #
+    def parse_css(input)
+      return Oga::CSS::Parser.new(input).parse
+    end
+
+    ##
     # Parses an XPath expression.
     #
     # @param [String] input
