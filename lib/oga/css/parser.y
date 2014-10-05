@@ -14,6 +14,7 @@ rule
   path_member
     : node_test
     | axis
+    | pseudo_class
     ;
 
   path_members
@@ -60,6 +61,11 @@ rule
     | op_members T_HYPHEN_IN   op_members { s(:hyphen_in, val[0],val[2]) }
     ;
 
+  op_members
+    : node_test
+    | string
+    ;
+
   axis
     # x > y
     : node_test T_CHILD node_test
@@ -80,13 +86,32 @@ rule
       }
     ;
 
-  op_members
-    : node_test
-    | string
+  pseudo_class
+    # x:root
+    : node_test T_COLON T_IDENT { s(:pseudo, val[2], val[0]) }
+
+    # x:nth-child(2)
+    | node_test T_COLON T_IDENT T_LPAREN pseudo_args T_RPAREN
+      {
+        s(:pseudo, val[2], val[0], *val[4])
+      }
+    ;
+
+  pseudo_args
+    : pseudo_args pseudo_arg { val[0] << val[1] }
+    | pseudo_arg             { val }
+    ;
+
+  pseudo_arg
+    : integer
     ;
 
   string
     : T_STRING { s(:string, val[0]) }
+    ;
+
+  integer
+    : T_INT { s(:int, val[0].to_i) }
     ;
 end
 
