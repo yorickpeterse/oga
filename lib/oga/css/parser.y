@@ -51,8 +51,8 @@ rule
     ;
 
   predicate_members
-    : expression { val[0] }
-    | operator   { val[0] }
+    : node_test { val[0] }
+    | operator  { val[0] }
     ;
 
   operator
