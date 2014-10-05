@@ -55,29 +55,5 @@ describe Oga::CSS::Parser do
         s(:hyphen_in, s(:test, nil, 'a'), s(:string, 'b'))
       )
     end
-
-    example 'parse the > operator' do
-      parse_css('x > y').should == s(
-        :child,
-        s(:test, nil, 'x'),
-        s(:test, nil, 'y')
-      )
-    end
-
-    example 'parse the + operator' do
-      parse_css('x + y').should == s(
-        :following_direct,
-        s(:test, nil, 'x'),
-        s(:test, nil, 'y')
-      )
-    end
-
-    example 'parse the ~ operator' do
-      parse_css('x ~ y').should == s(
-        :following,
-        s(:test, nil, 'x'),
-        s(:test, nil, 'y')
-      )
-    end
   end
 end

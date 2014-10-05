@@ -14,11 +14,12 @@ rule
   expression
     : path
     | node_test
-    | node_operators
+    | axis
     ;
 
   path_member
     : node_test
+    | axis
     ;
 
   path_members
@@ -51,8 +52,8 @@ rule
     ;
 
   predicate_members
-    : node_test { val[0] }
-    | operator  { val[0] }
+    : node_test
+    | operator
     ;
 
   operator
@@ -64,12 +65,23 @@ rule
     | op_members T_HYPHEN_IN   op_members { s(:hyphen_in, val[0],val[2]) }
     ;
 
-  node_operators
-    : node_test T_CHILD     node_test { s(:child, val[0], val[2]) }
-    | node_test T_FOLLOWING node_test { s(:following, val[0], val[2]) }
+  axis
+    # x > y
+    : node_test T_CHILD node_test
+      {
+        s(:axis, 'child', val[0], val[2])
+      }
+
+    # x + y
+    | node_test T_FOLLOWING node_test
+      {
+        s(:axis, 'following', val[0], val[2])
+      }
+
+    # x ~ y
     | node_test T_FOLLOWING_DIRECT node_test
       {
-        s(:following_direct, val[0], val[2])
+        s(:axis, 'following-direct', val[0], val[2])
       }
     ;
 
