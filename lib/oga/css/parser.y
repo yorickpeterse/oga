@@ -30,7 +30,8 @@ rule
     ;
 
   node_test
-    : node_name { s(:test, *val[0]) }
+    : node_name           { s(:test, *val[0]) }
+    | node_name predicate { s(:test, *val[0], val[1]) }
     ;
 
   node_name
@@ -42,6 +43,10 @@ rule
 
     # |foo
     | T_PIPE T_IDENT { [nil, val[1]] }
+    ;
+
+  predicate
+    : T_LBRACK expression T_RBRACK { val[1] }
     ;
 end
 
