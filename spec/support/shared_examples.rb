@@ -1,4 +1,4 @@
-shared_examples :node_set do |options|
+RSpec.shared_examples :node_set do |options|
   example 'return a NodeSet instance' do
     @set.is_a?(Oga::XML::NodeSet).should == true
   end
@@ -8,7 +8,7 @@ shared_examples :node_set do |options|
   end
 end
 
-shared_examples :empty_node_set do
+RSpec.shared_examples :empty_node_set do
   example 'return a NodeSet instance' do
     @set.is_a?(Oga::XML::NodeSet).should == true
   end
