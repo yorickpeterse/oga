@@ -7,14 +7,8 @@ options no_result_var
 
 rule
   css
-    : expression { val[0] }
+    : path       { val[0] }
     | /* none */ { nil }
-    ;
-
-  expression
-    : path
-    | node_test
-    | axis
     ;
 
   path_member
@@ -29,6 +23,7 @@ rule
 
   path
     : path_members { s(:path, *val[0]) }
+    | path_member
     ;
 
   node_test
