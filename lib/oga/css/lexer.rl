@@ -147,7 +147,7 @@ module Oga
         # Identifiers are used for element and attribute names. Identifiers have
         # to start with a letter.
 
-        identifier = [a-zA-Z*]+ [a-zA-Z\-_0-9]*;
+        identifier = '*' | [a-zA-Z]+ [a-zA-Z\-_0-9]*;
 
         action emit_identifier {
           emit(:T_IDENT, ts, te)
@@ -182,6 +182,23 @@ module Oga
           value = slice_input(ts, te).to_i
 
           add_token(:T_INT, value)
+        }
+
+        # Strings
+        #
+        # Strings can be single or double quoted. They are mainly used for
+        # attribute values.
+        #
+        dquote = '"';
+        squote = "'";
+
+        string_dquote = (dquote ^dquote* dquote);
+        string_squote = (squote ^squote* squote);
+
+        string = string_dquote | string_squote;
+
+        action emit_string {
+          emit(:T_STRING, ts + 1, te - 1)
         }
 
         # Nth numbers
@@ -236,6 +253,7 @@ module Oga
           nth_integer    => emit_nth_integer;
           nth_identifier => emit_nth_identifier;
           integer        => emit_integer;
+          string         => emit_string;
 
           any;
         *|;

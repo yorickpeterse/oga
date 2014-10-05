@@ -22,6 +22,10 @@ describe Oga::CSS::Lexer do
       lex_css('*=').should == [[:T_IN, nil]]
     end
 
+    example 'lex an identifier followed by the *= operator' do
+      lex_css('foo *=').should == [[:T_IDENT, 'foo'], [:T_IN, nil]]
+    end
+
     example 'lex the |= operator' do
       lex_css('|=').should == [[:T_HYPHEN_IN, nil]]
     end

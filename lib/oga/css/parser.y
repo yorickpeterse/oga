@@ -14,6 +14,7 @@ rule
   expression
     : path
     | node_test
+    | node_operators
     ;
 
   path_member
@@ -46,7 +47,39 @@ rule
     ;
 
   predicate
-    : T_LBRACK expression T_RBRACK { val[1] }
+    : T_LBRACK predicate_members T_RBRACK { val[1] }
+    ;
+
+  predicate_members
+    : expression { val[0] }
+    | operator   { val[0] }
+    ;
+
+  operator
+    : op_members T_EQ          op_members { s(:eq, val[0], val[2]) }
+    | op_members T_SPACE_IN    op_members { s(:space_in, val[0], val[2]) }
+    | op_members T_STARTS_WITH op_members { s(:starts_with, val[0], val[2]) }
+    | op_members T_ENDS_WITH   op_members { s(:ends_with, val[0], val[2]) }
+    | op_members T_IN          op_members { s(:in, val[0], val[2]) }
+    | op_members T_HYPHEN_IN   op_members { s(:hyphen_in, val[0],val[2]) }
+    ;
+
+  node_operators
+    : node_test T_CHILD     node_test { s(:child, val[0], val[2]) }
+    | node_test T_FOLLOWING node_test { s(:following, val[0], val[2]) }
+    | node_test T_FOLLOWING_DIRECT node_test
+      {
+        s(:following_direct, val[0], val[2])
+      }
+    ;
+
+  op_members
+    : node_test
+    | string
+    ;
+
+  string
+    : T_STRING { s(:string, val[0]) }
     ;
 end
 
