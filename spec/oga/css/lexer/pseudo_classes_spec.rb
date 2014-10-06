@@ -19,24 +19,90 @@ describe Oga::CSS::Lexer do
       ]
     end
 
-    example 'lex the :nth-child pseudo class using "odd" as an argument' do
+    example 'lex the :nth-child(odd) pseudo class' do
       lex_css(':nth-child(odd)').should == [
         [:T_COLON, nil],
         [:T_IDENT, 'nth-child'],
         [:T_LPAREN, nil],
-        [:T_IDENT, 'odd'],
+        [:T_ODD, nil],
         [:T_RPAREN, nil]
       ]
     end
 
-    example 'lex the :nth-child pseudo class using "2n+1" as an argument' do
+    example 'lex the :nth-child(even) pseudo class' do
+      lex_css(':nth-child(even)').should == [
+        [:T_COLON, nil],
+        [:T_IDENT, 'nth-child'],
+        [:T_LPAREN, nil],
+        [:T_EVEN, nil],
+        [:T_RPAREN, nil]
+      ]
+    end
+
+    example 'lex the :nth-child(n) pseudo class' do
+      lex_css(':nth-child(n)').should == [
+        [:T_COLON, nil],
+        [:T_IDENT, 'nth-child'],
+        [:T_LPAREN, nil],
+        [:T_NTH, nil],
+        [:T_RPAREN, nil]
+      ]
+    end
+
+    example 'lex the :nth-child(-n) pseudo class' do
+      lex_css(':nth-child(-n)').should == [
+        [:T_COLON, nil],
+        [:T_IDENT, 'nth-child'],
+        [:T_LPAREN, nil],
+        [:T_MINUS, nil],
+        [:T_NTH, nil],
+        [:T_RPAREN, nil]
+      ]
+    end
+
+    example 'lex the :nth-child(2n) pseudo class' do
+      lex_css(':nth-child(2n)').should == [
+        [:T_COLON, nil],
+        [:T_IDENT, 'nth-child'],
+        [:T_LPAREN, nil],
+        [:T_INT, 2],
+        [:T_NTH, nil],
+        [:T_RPAREN, nil]
+      ]
+    end
+
+    example 'lex the :nth-child(2n+1) pseudo class' do
       lex_css(':nth-child(2n+1)').should == [
         [:T_COLON, nil],
         [:T_IDENT, 'nth-child'],
         [:T_LPAREN, nil],
         [:T_INT, 2],
-        [:T_NTH, 'n'],
+        [:T_NTH, nil],
         [:T_INT, 1],
+        [:T_RPAREN, nil]
+      ]
+    end
+
+    example 'lex the :nth-child(2n-1) pseudo class' do
+      lex_css(':nth-child(2n-1)').should == [
+        [:T_COLON, nil],
+        [:T_IDENT, 'nth-child'],
+        [:T_LPAREN, nil],
+        [:T_INT, 2],
+        [:T_NTH, nil],
+        [:T_INT, -1],
+        [:T_RPAREN, nil]
+      ]
+    end
+
+    example 'lex the :nth-child(-2n-1) pseudo class' do
+      lex_css(':nth-child(-2n-1)').should == [
+        [:T_COLON, nil],
+        [:T_IDENT, 'nth-child'],
+        [:T_LPAREN, nil],
+        [:T_INT, -2],
+        [:T_NTH, nil],
+        [:T_INT, -1],
         [:T_RPAREN, nil]
       ]
     end

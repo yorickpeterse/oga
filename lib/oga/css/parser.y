@@ -104,6 +104,24 @@ rule
 
   pseudo_arg
     : integer
+    | odd
+    | even
+    | nth
+    ;
+
+  odd
+    : T_ODD { s(:odd) }
+    ;
+
+  even
+    : T_EVEN { s(:even) }
+    ;
+
+  nth
+    : T_NTH                 { s(:nth) }
+    | T_MINUS T_NTH         { s(:nth) }
+    | integer T_NTH         { s(:nth, val[0]) }
+    | integer T_NTH integer { s(:nth, val[0], val[2]) }
     ;
 
   string

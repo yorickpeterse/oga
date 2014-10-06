@@ -138,9 +138,13 @@ module Oga
         lbrack = '[' %{ add_token(:T_LBRACK) };
         rbrack = ']' %{ add_token(:T_RBRACK) };
         colon  = ':' %{ add_token(:T_COLON) };
-        lparen = '(' %{ add_token(:T_LPAREN) };
-        rparen = ')' %{ add_token(:T_RPAREN) };
+        lparen = '(';
+        rparen = ')';
         pipe   = '|';
+        odd    = 'odd';
+        even   = 'even';
+        minus  = '-';
+        nth    = 'n';
 
         # Identifiers
         #
@@ -208,23 +212,51 @@ module Oga
         # "-1" and "+1" are handled by the `integer` type and the corresponding
         # `emit_integer` action.
 
-        nth_integer    = integer 'n';
-        nth_identifier = '+n' | '-n';
+        #nth_integer    = integer 'n';
+        #nth_identifier = '+n' | '-n';
 
-        action emit_nth_integer {
-          value = slice_input(ts, te - 1).to_i
+        #action emit_nth_integer {
+        #  value = slice_input(ts, te - 1).to_i
 
-          add_token(:T_INT, value)
-          add_token(:T_NTH, 'n')
+        #  add_token(:T_INT, value)
+        #  add_token(:T_NTH, nil)
+        #}
+
+        #action emit_nth_identifier {
+        #  emit(:T_NTH, ts, te)
+        #}
+
+        # Pseudo Classes
+        #
+        # http://www.w3.org/TR/css3-selectors/#structural-pseudos
+
+        action emit_lparen {
+          add_token(:T_LPAREN)
+
+          fnext pseudo_args;
         }
 
-        action emit_nth_identifier {
-          emit(:T_NTH, ts, te)
+        action emit_rparen {
+          add_token(:T_RPAREN)
+
+          fnext main;
         }
+
+        # Machine used for processing the arguments of a pseudo class. These are
+        # handled in a separate machine as these arguments can contain data not
+        # allowed elsewhere. For example, "2n" is not allowed to appear outside
+        # of the arguments list.
+        pseudo_args := |*
+          nth     => { add_token(:T_NTH) };
+          minus   => { add_token(:T_MINUS) };
+          odd     => { add_token(:T_ODD) };
+          even    => { add_token(:T_EVEN) };
+          integer => emit_integer;
+          rparen  => emit_rparen;
+        *|;
 
         main := |*
           whitespace | comma | hash | dot | lbrack | rbrack | colon;
-          lparen | rparen;
 
           # Some of the operators have similar characters (e.g. the "="). As a
           # result we can't use rules like the following:
@@ -249,11 +281,10 @@ module Oga
           # this is handled separately.
           pipe => { add_token(:T_PIPE) };
 
-          identifier     => emit_identifier;
-          nth_integer    => emit_nth_integer;
-          nth_identifier => emit_nth_identifier;
-          integer        => emit_integer;
-          string         => emit_string;
+          lparen     => emit_lparen;
+          identifier => emit_identifier;
+          integer    => emit_integer;
+          string     => emit_string;
 
           any;
         *|;
