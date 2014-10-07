@@ -138,16 +138,8 @@ module Oga
 
         hash   = '#' %{ add_token(:T_HASH) };
         dot    = '.' %{ add_token(:T_DOT) };
-        lbrack = '[' %{ add_token(:T_LBRACK) };
-        rbrack = ']' %{ add_token(:T_RBRACK) };
         colon  = ':' %{ add_token(:T_COLON) };
-        lparen = '(';
-        rparen = ')';
         pipe   = '|';
-        odd    = 'odd';
-        even   = 'even';
-        minus  = '-';
-        nth    = 'n';
         comma  = whitespace* ',' whitespace*;
 
         action emit_pipe {
@@ -221,6 +213,13 @@ module Oga
         #
         # http://www.w3.org/TR/css3-selectors/#structural-pseudos
 
+        lparen = '(';
+        rparen = ')';
+        odd    = 'odd';
+        even   = 'even';
+        minus  = '-';
+        nth    = 'n';
+
         action emit_lparen {
           add_token(:T_LPAREN)
 
@@ -248,8 +247,29 @@ module Oga
           rparen  => emit_rparen;
         *|;
 
-        main := |*
-          hash | dot | lbrack | rbrack | colon;
+        # Predicates
+        #
+        # CSS predicates can be used to filter nodes based on the value of an
+        # attribute.
+
+        lbrack = '[';
+        rbrack = ']';
+
+        action emit_lbrack {
+          add_token(:T_LBRACK)
+
+          fnext predicate;
+        }
+
+        action emit_rbrack {
+          add_token(:T_RBRACK)
+
+          fnext main;
+        }
+
+        # Machine used for lexing the body of a CSS predicate.
+        predicate := |*
+          whitespace;
 
           # Some of the operators have similar characters (e.g. the "="). As a
           # result we can't use rules like the following:
@@ -259,26 +279,30 @@ module Oga
           #
           # This would result in both machines being executed for the input
           # "*=". The syntax below ensures that only the first match is handled.
-
           op_eq          => { add_token(:T_EQ) };
           op_space_in    => { add_token(:T_SPACE_IN) };
           op_starts_with => { add_token(:T_STARTS_WITH) };
           op_ends_with   => { add_token(:T_ENDS_WITH) };
           op_in          => { add_token(:T_IN) };
           op_hyphen_in   => { add_token(:T_HYPHEN_IN) };
-          op_child       => { add_token(:T_CHILD) };
-          op_fol_direct  => { add_token(:T_FOLLOWING_DIRECT) };
-          op_fol         => { add_token(:T_FOLLOWING) };
+          identifier     => emit_identifier;
+          rbrack         => emit_rbrack;
+          string         => emit_string;
+        *|;
 
-          # The pipe character is also used in the |= operator so the action for
-          # this is handled separately.
+        main := |*
+          hash | dot | colon;
+
+          op_child      => { add_token(:T_CHILD) };
+          op_fol_direct => { add_token(:T_FOLLOWING_DIRECT) };
+          op_fol        => { add_token(:T_FOLLOWING) };
+
+          lbrack     => emit_lbrack;
           pipe       => emit_pipe;
           comma      => emit_comma;
           whitespace => emit_whitespace;
           lparen     => emit_lparen;
           identifier => emit_identifier;
-          integer    => emit_integer;
-          string     => emit_string;
 
           any;
         *|;
