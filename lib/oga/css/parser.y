@@ -6,13 +6,14 @@ class Oga::CSS::Parser
 token T_IDENT T_PIPE T_LBRACK T_RBRACK T_COLON T_SPACE T_LPAREN T_RPAREN T_MINUS
 token T_EQ T_SPACE_IN T_STARTS_WITH T_ENDS_WITH T_IN T_HYPHEN_IN
 token T_CHILD T_FOLLOWING T_FOLLOWING_DIRECT
-token T_NTH T_INT T_STRING T_ODD T_EVEN
+token T_NTH T_INT T_STRING T_ODD T_EVEN T_DOT T_HASH
 
 options no_result_var
 
 prechigh
   left T_COLON
   left T_CHILD T_FOLLOWING T_FOLLOWING_DIRECT
+  left T_DOT T_HASH
 preclow
 
 rule
@@ -39,6 +40,8 @@ rule
     : node_test
     | axis
     | pseudo_class
+    | class
+    | id
     ;
 
   node_test
@@ -64,6 +67,24 @@ rule
   predicate_members
     : node_test
     | operator
+    ;
+
+  class
+    : class_name             { s(:class, val[0]) }
+    | path_member class_name { s(:class, val[1], val[0]) }
+    ;
+
+  class_name
+    : T_DOT T_IDENT { val[1] }
+    ;
+
+  id
+    : id_name             { s(:id, val[0]) }
+    | path_member id_name { s(:id, val[1], val[0]) }
+    ;
+
+  id_name
+    : T_HASH T_IDENT { val[1] }
     ;
 
   operator

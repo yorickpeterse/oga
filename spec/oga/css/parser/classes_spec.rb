@@ -17,5 +17,17 @@ describe Oga::CSS::Parser do
     example 'parse a selector using a class and an ID' do
       parse_css('#foo.bar').should == s(:class, 'bar', s(:id, 'foo'))
     end
+
+    example 'parse a selector using a class and a pseudo class' do
+      parse_css('.foo:root').should == s(:pseudo, 'root', s(:class, 'foo'))
+    end
+
+    example 'parse a selector using a pseudo class and a class' do
+      parse_css('x:root.foo').should == s(
+        :class,
+        'foo',
+        s(:pseudo, 'root', s(:test, nil, 'x'))
+      )
+    end
   end
 end
