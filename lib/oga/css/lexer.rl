@@ -205,27 +205,6 @@ module Oga
           emit(:T_STRING, ts + 1, te - 1)
         }
 
-        # Nth numbers
-        #
-        # These numbers are in the form of 2n+1 and are used for
-        # pseudo-selectors such as nth-child(2n+1). The following parts such as
-        # "-1" and "+1" are handled by the `integer` type and the corresponding
-        # `emit_integer` action.
-
-        #nth_integer    = integer 'n';
-        #nth_identifier = '+n' | '-n';
-
-        #action emit_nth_integer {
-        #  value = slice_input(ts, te - 1).to_i
-
-        #  add_token(:T_INT, value)
-        #  add_token(:T_NTH, nil)
-        #}
-
-        #action emit_nth_identifier {
-        #  emit(:T_NTH, ts, te)
-        #}
-
         # Pseudo Classes
         #
         # http://www.w3.org/TR/css3-selectors/#structural-pseudos
