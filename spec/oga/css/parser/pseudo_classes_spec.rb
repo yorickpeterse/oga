@@ -86,5 +86,13 @@ describe Oga::CSS::Parser do
         s(:nth, s(:int, -2), s(:int, -1))
       )
     end
+
+    example 'parse two pseudo selectors' do
+      parse_css('x:focus:hover').should == s(
+        :pseudo,
+        'hover',
+        s(:pseudo, 'focus', s(:test, nil, 'x'))
+      )
+    end
   end
 end

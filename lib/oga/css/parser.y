@@ -3,28 +3,42 @@
 #
 class Oga::CSS::Parser
 
+token T_IDENT T_PIPE T_LBRACK T_RBRACK T_COLON T_SPACE T_LPAREN T_RPAREN T_MINUS
+token T_EQ T_SPACE_IN T_STARTS_WITH T_ENDS_WITH T_IN T_HYPHEN_IN
+token T_CHILD T_FOLLOWING T_FOLLOWING_DIRECT
+token T_NTH T_INT T_STRING T_ODD T_EVEN
+
 options no_result_var
+
+prechigh
+  left T_COLON
+  left T_CHILD T_FOLLOWING T_FOLLOWING_DIRECT
+preclow
 
 rule
   css
-    : path       { val[0] }
+    : expression { val[0] }
     | /* none */ { nil }
+    ;
+
+  expression
+    : path
+    | path_member
+    ;
+
+  path
+    : path_members { s(:path, *val[0]) }
+    ;
+
+  path_members
+    : path_member T_SPACE path_member  { [val[0], val[2]] }
+    | path_member T_SPACE path_members { [val[0], *val[2]] }
     ;
 
   path_member
     : node_test
     | axis
     | pseudo_class
-    ;
-
-  path_members
-    : path_member path_member  { [val[0], val[1]] }
-    | path_member path_members { [val[0], *val[1]] }
-    ;
-
-  path
-    : path_members { s(:path, *val[0]) }
-    | path_member
     ;
 
   node_test
@@ -68,19 +82,19 @@ rule
 
   axis
     # x > y
-    : node_test T_CHILD node_test
+    : path_member T_CHILD path_member
       {
         s(:axis, 'child', val[0], val[2])
       }
 
     # x + y
-    | node_test T_FOLLOWING node_test
+    | path_member T_FOLLOWING path_member
       {
         s(:axis, 'following', val[0], val[2])
       }
 
     # x ~ y
-    | node_test T_FOLLOWING_DIRECT node_test
+    | path_member T_FOLLOWING_DIRECT path_member
       {
         s(:axis, 'following-direct', val[0], val[2])
       }
@@ -88,18 +102,13 @@ rule
 
   pseudo_class
     # x:root
-    : node_test T_COLON T_IDENT { s(:pseudo, val[2], val[0]) }
+    : path_member T_COLON T_IDENT { s(:pseudo, val[2], val[0]) }
 
     # x:nth-child(2)
-    | node_test T_COLON T_IDENT T_LPAREN pseudo_args T_RPAREN
+    | path_member T_COLON T_IDENT T_LPAREN pseudo_arg T_RPAREN
       {
-        s(:pseudo, val[2], val[0], *val[4])
+        s(:pseudo, val[2], val[0], val[4])
       }
-    ;
-
-  pseudo_args
-    : pseudo_args pseudo_arg { val[0] << val[1] }
-    | pseudo_arg             { val }
     ;
 
   pseudo_arg
@@ -129,8 +138,8 @@ rule
     ;
 
   integer
-    : T_INT { s(:int, val[0].to_i) }
-    ;
+   : T_INT { s(:int, val[0].to_i) }
+   ;
 end
 
 ---- inner
