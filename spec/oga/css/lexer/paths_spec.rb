@@ -9,6 +9,15 @@ describe Oga::CSS::Lexer do
     example 'lex a path with two members' do
       lex_css('div h3').should == [
         [:T_IDENT, 'div'],
+        [:T_SPACE, nil],
+        [:T_IDENT, 'h3']
+      ]
+    end
+
+    example 'lex a path with two members separated by multiple spaces' do
+      lex_css('div    h3').should == [
+        [:T_IDENT, 'div'],
+        [:T_SPACE, nil],
         [:T_IDENT, 'h3']
       ]
     end

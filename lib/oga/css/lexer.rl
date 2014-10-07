@@ -132,7 +132,10 @@ module Oga
 
         whitespace = [\t ]+;
 
-        comma  = ',' %{ add_token(:T_COMMA) };
+        action emit_whitespace {
+          add_token(:T_SPACE)
+        }
+
         hash   = '#' %{ add_token(:T_HASH) };
         dot    = '.' %{ add_token(:T_DOT) };
         lbrack = '[' %{ add_token(:T_LBRACK) };
@@ -145,6 +148,15 @@ module Oga
         even   = 'even';
         minus  = '-';
         nth    = 'n';
+        comma  = whitespace* ',' whitespace*;
+
+        action emit_pipe {
+          add_token(:T_PIPE)
+        }
+
+        action emit_comma {
+          add_token(:T_COMMA)
+        }
 
         # Identifiers
         #
@@ -226,6 +238,8 @@ module Oga
         # allowed elsewhere. For example, "2n" is not allowed to appear outside
         # of the arguments list.
         pseudo_args := |*
+          whitespace;
+
           nth     => { add_token(:T_NTH) };
           minus   => { add_token(:T_MINUS) };
           odd     => { add_token(:T_ODD) };
@@ -235,7 +249,7 @@ module Oga
         *|;
 
         main := |*
-          whitespace | comma | hash | dot | lbrack | rbrack | colon;
+          hash | dot | lbrack | rbrack | colon;
 
           # Some of the operators have similar characters (e.g. the "="). As a
           # result we can't use rules like the following:
@@ -258,8 +272,9 @@ module Oga
 
           # The pipe character is also used in the |= operator so the action for
           # this is handled separately.
-          pipe => { add_token(:T_PIPE) };
-
+          pipe       => emit_pipe;
+          comma      => emit_comma;
+          whitespace => emit_whitespace;
           lparen     => emit_lparen;
           identifier => emit_identifier;
           integer    => emit_integer;

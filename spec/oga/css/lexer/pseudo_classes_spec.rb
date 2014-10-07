@@ -19,6 +19,16 @@ describe Oga::CSS::Lexer do
       ]
     end
 
+    example 'lex the :nth-child pseudo class with extra whitespace' do
+      lex_css(':nth-child(  1)').should == [
+        [:T_COLON, nil],
+        [:T_IDENT, 'nth-child'],
+        [:T_LPAREN, nil],
+        [:T_INT, 1],
+        [:T_RPAREN, nil]
+      ]
+    end
+
     example 'lex the :nth-child(odd) pseudo class' do
       lex_css(':nth-child(odd)').should == [
         [:T_COLON, nil],
