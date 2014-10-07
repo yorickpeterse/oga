@@ -13,5 +13,14 @@ describe Oga::CSS::Parser do
         s(:test, nil, 'bar', s(:test, nil, 'baz'))
       )
     end
+
+    example 'parse a predicate testing an attribute value' do
+      parse_css('foo[bar="baz"]').should == s(
+        :test,
+        nil,
+        'foo',
+        s(:eq, s(:test, nil, 'bar'), s(:string, 'baz'))
+      )
+    end
   end
 end
