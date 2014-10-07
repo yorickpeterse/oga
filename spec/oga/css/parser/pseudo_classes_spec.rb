@@ -2,15 +2,28 @@ require 'spec_helper'
 
 describe Oga::CSS::Parser do
   context 'pseudo classes' do
-    example 'parse the :root pseudo class' do
+    example 'parse the x:root pseudo class' do
       parse_css('x:root').should == s(:pseudo, 'root', s(:test, nil, 'x'))
     end
 
-    example 'parse the x:nth-child pseudo class' do
+    example 'parse the :root pseudo class' do
+      parse_css(':root').should == s(:pseudo, 'root')
+    end
+
+    example 'parse the x:nth-child(1) pseudo class' do
       parse_css('x:nth-child(1)').should == s(
         :pseudo,
         'nth-child',
         s(:test, nil, 'x'),
+        s(:int, 1)
+      )
+    end
+
+    example 'parse the :nth-child(1) pseudo class' do
+      parse_css(':nth-child(1)').should == s(
+        :pseudo,
+        'nth-child',
+        nil,
         s(:int, 1)
       )
     end

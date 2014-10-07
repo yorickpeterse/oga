@@ -122,14 +122,25 @@ rule
     ;
 
   pseudo_class
+    # :root
+    : pseudo_name { s(:pseudo, val[0]) }
+
     # x:root
-    : path_member T_COLON T_IDENT { s(:pseudo, val[2], val[0]) }
+    | path_member pseudo_name { s(:pseudo, val[1], val[0]) }
+
+    # :nth-child(2)
+    | pseudo_name pseudo_args { s(:pseudo, val[0], nil, val[1]) }
 
     # x:nth-child(2)
-    | path_member T_COLON T_IDENT T_LPAREN pseudo_arg T_RPAREN
-      {
-        s(:pseudo, val[2], val[0], val[4])
-      }
+    | path_member pseudo_name pseudo_args { s(:pseudo, val[1], val[0], val[2]) }
+    ;
+
+  pseudo_name
+    : T_COLON T_IDENT { val[1] }
+    ;
+
+  pseudo_args
+    : T_LPAREN pseudo_arg T_RPAREN { val[1] }
     ;
 
   pseudo_arg
