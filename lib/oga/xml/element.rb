@@ -95,6 +95,7 @@ module Oga
 
         return found ? found.value : nil
       end
+      alias_method :[], :get
 
       ##
       # Adds a new attribute to the element.
@@ -137,6 +138,7 @@ module Oga
           add_attribute(attr)
         end
       end
+      alias_method :[]=, :set
 
       ##
       # Returns the namespace of the element.
