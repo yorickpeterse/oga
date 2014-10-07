@@ -33,17 +33,5 @@ describe Oga::CSS::Lexer do
     example 'lex the |= operator' do
       lex_css('|=').should == [[:T_HYPHEN_IN, nil]]
     end
-
-    example 'lex the > operator' do
-      lex_css('>').should == [[:T_CHILD, nil]]
-    end
-
-    example 'lex the + operator' do
-      lex_css('+').should == [[:T_FOLLOWING_DIRECT, nil]]
-    end
-
-    example 'lex the ~ operator' do
-      lex_css('~').should == [[:T_FOLLOWING, nil]]
-    end
   end
 end

@@ -183,9 +183,9 @@ module Oga
         op_ends_with   = '$=';
         op_in          = '*=';
         op_hyphen_in   = '|=';
-        op_child       = '>';
-        op_fol_direct  = '+';
-        op_fol         = '~';
+        op_child       = whitespace* '>' whitespace*;
+        op_fol_direct  = whitespace* '+' whitespace*;
+        op_fol         = whitespace* '~' whitespace*;
 
         # Numbers
         #
