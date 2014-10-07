@@ -20,6 +20,24 @@ describe Oga::CSS::Parser do
       )
     end
 
+    example 'parse an > axis followed by an element with an ID' do
+      parse_css('x > foo#bar').should == s(
+        :axis,
+        'child',
+        s(:test, nil, 'x'),
+        s(:id, 'bar', s(:test, nil, 'foo'))
+      )
+    end
+
+    example 'parse an > axis followed by an element with a class' do
+      parse_css('x > foo.bar').should == s(
+        :axis,
+        'child',
+        s(:test, nil, 'x'),
+        s(:class, 'bar', s(:test, nil, 'foo'))
+      )
+    end
+
     example 'parse the + axis' do
       parse_css('x + y').should == s(
         :axis,

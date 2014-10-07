@@ -11,7 +11,7 @@ token T_NTH T_INT T_STRING T_ODD T_EVEN T_DOT T_HASH
 options no_result_var
 
 prechigh
-  left T_COLON
+  left T_COLON T_HASH T_DOT
   left T_CHILD T_FOLLOWING T_FOLLOWING_DIRECT
   left T_DOT T_HASH
 preclow
