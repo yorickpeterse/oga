@@ -103,21 +103,15 @@ rule
 
   axis
     # x > y
-    : path_member T_CHILD path_member
-      {
-        s(:axis, 'child', val[0], val[2])
-      }
+    : path_member T_CHILD path_member { s(:child, val[0], val[2]) }
 
     # x + y
-    | path_member T_FOLLOWING path_member
-      {
-        s(:axis, 'following', val[0], val[2])
-      }
+    | path_member T_FOLLOWING path_member { s(:following, val[0], val[2]) }
 
     # x ~ y
     | path_member T_FOLLOWING_DIRECT path_member
       {
-        s(:axis, 'following-direct', val[0], val[2])
+        s(:following_direct, val[0], val[2])
       }
     ;
 
