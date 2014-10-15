@@ -239,12 +239,16 @@ module Oga
         pseudo_args := |*
           whitespace;
 
-          nth     => { add_token(:T_NTH) };
-          minus   => { add_token(:T_MINUS) };
-          odd     => { add_token(:T_ODD) };
-          even    => { add_token(:T_EVEN) };
-          integer => emit_integer;
-          rparen  => emit_rparen;
+          # NOTE: the priorities here are put in place to ensure that rules such
+          # as  `nth` take precedence over `identifier`. The highest number has
+          # the highest priority.
+          nth > 5        => { add_token(:T_NTH) };
+          minus          => { add_token(:T_MINUS) };
+          odd > 4        => { add_token(:T_ODD) };
+          even > 3       => { add_token(:T_EVEN) };
+          integer > 2    => emit_integer;
+          rparen         => emit_rparen;
+          identifier > 1 => emit_identifier;
         *|;
 
         # Predicates

@@ -142,6 +142,7 @@ rule
     | odd
     | even
     | nth
+    | node_test
     ;
 
   odd

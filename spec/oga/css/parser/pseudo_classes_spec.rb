@@ -107,5 +107,14 @@ describe Oga::CSS::Parser do
         s(:pseudo, 'focus', s(:test, nil, 'x'))
       )
     end
+
+    example 'parse a pseudo class with an identifier as the argument' do
+      parse_css('x:lang(fr)').should == s(
+        :pseudo,
+        'lang',
+        s(:test, nil, 'x'),
+        s(:test, nil, 'fr')
+      )
+    end
   end
 end

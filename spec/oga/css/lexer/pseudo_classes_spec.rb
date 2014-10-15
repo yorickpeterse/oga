@@ -116,5 +116,15 @@ describe Oga::CSS::Lexer do
         [:T_RPAREN, nil]
       ]
     end
+
+    example 'lex the :lang(fr) pseudo class' do
+      lex_css(':lang(fr)').should == [
+        [:T_COLON, nil],
+        [:T_IDENT, 'lang'],
+        [:T_LPAREN, nil],
+        [:T_IDENT, 'fr'],
+        [:T_RPAREN, nil]
+      ]
+    end
   end
 end
