@@ -7,27 +7,27 @@ describe Oga::CSS::Transformer do
     end
 
     example 'convert a class node without a node test' do
-      @transformer.process(parse_css('.foo')).should == s(
+      @transformer.process(parse_css('.y')).should == s(
         :axis,
         'child',
         s(
           :test,
           nil,
           '*',
-          s(:eq, s(:axis, 'attribute', s(:test, nil, 'class')), s(:string, 'foo'))
+          s(:eq, s(:axis, 'attribute', s(:test, nil, 'class')), s(:string, 'y'))
         )
       )
     end
 
     example 'convert a class node with a node test' do
-      @transformer.process(parse_css('x.foo')).should == s(
+      @transformer.process(parse_css('x.y')).should == s(
         :axis,
         'child',
         s(
           :test,
           nil,
           'x',
-          s(:eq, s(:axis, 'attribute', s(:test, nil, 'class')), s(:string, 'foo'))
+          s(:eq, s(:axis, 'attribute', s(:test, nil, 'class')), s(:string, 'y'))
         )
       )
     end
