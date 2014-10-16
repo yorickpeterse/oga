@@ -89,5 +89,17 @@ module Oga
     rescue Racc::ParseError => error
       return error.message
     end
+
+    ##
+    # Parses and transforms a CSS AST into an XPath AST.
+    #
+    # @param [String] css
+    # @return [AST::Node]
+    #
+    def transform_css(css)
+      ast = parse_css(css)
+
+      return Oga::CSS::Transformer.new.process(ast)
+    end
   end # ParsingHelpers
 end # Oga
