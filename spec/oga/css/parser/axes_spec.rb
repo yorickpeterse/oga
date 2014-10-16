@@ -77,7 +77,7 @@ describe Oga::CSS::Parser do
     example 'parse a pseudo class followed by the ~ axis' do
       parse_css('x:root ~ a').should == s(
         :following,
-        s(:pseudo, 'root', s(:test, nil, 'x')),
+        s(:pseudo, s(:test, nil, 'x'), 'root'),
         s(:test, nil, 'a')
       )
     end
@@ -86,7 +86,7 @@ describe Oga::CSS::Parser do
       parse_css('a ~ x:root').should == s(
         :following,
         s(:test, nil, 'a'),
-        s(:pseudo, 'root', s(:test, nil, 'x'))
+        s(:pseudo, s(:test, nil, 'x'), 'root')
       )
     end
   end

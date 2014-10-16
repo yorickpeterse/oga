@@ -117,16 +117,16 @@ rule
 
   pseudo_class
     # :root
-    : pseudo_name { s(:pseudo, val[0]) }
+    : pseudo_name { s(:pseudo, nil, val[0]) }
 
     # x:root
-    | path_member pseudo_name { s(:pseudo, val[1], val[0]) }
+    | path_member pseudo_name { s(:pseudo, val[0], val[1]) }
 
     # :nth-child(2)
-    | pseudo_name pseudo_args { s(:pseudo, val[0], nil, val[1]) }
+    | pseudo_name pseudo_args { s(:pseudo, nil, val[0], val[1]) }
 
     # x:nth-child(2)
-    | path_member pseudo_name pseudo_args { s(:pseudo, val[1], val[0], val[2]) }
+    | path_member pseudo_name pseudo_args { s(:pseudo, val[0], val[1], val[2]) }
     ;
 
   pseudo_name
