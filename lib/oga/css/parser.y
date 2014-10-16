@@ -70,8 +70,8 @@ rule
     ;
 
   class
-    : class_name             { s(:class, val[0]) }
-    | path_member class_name { s(:class, val[1], val[0]) }
+    : class_name             { s(:class, nil, val[0]) }
+    | path_member class_name { s(:class, val[0], val[1]) }
     ;
 
   class_name
@@ -79,8 +79,8 @@ rule
     ;
 
   id
-    : id_name             { s(:id, val[0]) }
-    | path_member id_name { s(:id, val[1], val[0]) }
+    : id_name             { s(:id, nil, val[0]) }
+    | path_member id_name { s(:id, val[0], val[1]) }
     ;
 
   id_name

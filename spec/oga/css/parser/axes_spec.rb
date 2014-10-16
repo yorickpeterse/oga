@@ -22,7 +22,7 @@ describe Oga::CSS::Parser do
       parse_css('x > foo#bar').should == s(
         :child,
         s(:test, nil, 'x'),
-        s(:id, 'bar', s(:test, nil, 'foo'))
+        s(:id, s(:test, nil, 'foo'), 'bar')
       )
     end
 
@@ -30,7 +30,7 @@ describe Oga::CSS::Parser do
       parse_css('x > foo.bar').should == s(
         :child,
         s(:test, nil, 'x'),
-        s(:class, 'bar', s(:test, nil, 'foo'))
+        s(:class, s(:test, nil, 'foo'), 'bar')
       )
     end
 
