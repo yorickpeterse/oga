@@ -71,7 +71,7 @@ rule
     ;
 
   attribute_test
-    : node_name { s(:test, *val[0]) }
+    : node_name { s(:axis, 'attribute', s(:test, *val[0])) }
     ;
 
   node_name
@@ -91,7 +91,7 @@ rule
 
   predicate_members
     : attribute_test
-    #| operator
+    | operator
     ;
 
   class
@@ -116,19 +116,19 @@ rule
       }
     ;
 
-  # operator
-  #   : op_members T_EQ          op_members { s(:eq, val[0], val[2]) }
-  #   | op_members T_SPACE_IN    op_members { s(:space_in, val[0], val[2]) }
-  #   | op_members T_STARTS_WITH op_members { s(:starts_with, val[0], val[2]) }
-  #   | op_members T_ENDS_WITH   op_members { s(:ends_with, val[0], val[2]) }
-  #   | op_members T_IN          op_members { s(:in, val[0], val[2]) }
-  #   | op_members T_HYPHEN_IN   op_members { s(:hyphen_in, val[0],val[2]) }
-  #   ;
-  #
-  # op_members
-  #   : node_test
-  #   | string
-  #   ;
+  operator
+    : op_members T_EQ          op_members { s(:eq, val[0], val[2]) }
+    | op_members T_SPACE_IN    op_members { s(:space_in, val[0], val[2]) }
+    | op_members T_STARTS_WITH op_members { s(:starts_with, val[0], val[2]) }
+    | op_members T_ENDS_WITH   op_members { s(:ends_with, val[0], val[2]) }
+    | op_members T_IN          op_members { s(:in, val[0], val[2]) }
+    | op_members T_HYPHEN_IN   op_members { s(:hyphen_in, val[0],val[2]) }
+    ;
+
+  op_members
+    : attribute_test
+    | string
+    ;
   #
   # axis
   #   # x > y
@@ -188,14 +188,14 @@ rule
   #   | integer T_NTH         { s(:nth, val[0]) }
   #   | integer T_NTH integer { s(:nth, val[0], val[2]) }
   #   ;
-  #
-  # string
-  #   : T_STRING { s(:string, val[0]) }
-  #   ;
-  #
-  # integer
-  #  : T_INT { s(:int, val[0].to_i) }
-  #  ;
+
+  string
+    : T_STRING { s(:string, val[0]) }
+    ;
+
+  integer
+   : T_INT { s(:int, val[0].to_i) }
+   ;
 end
 
 ---- inner
