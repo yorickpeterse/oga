@@ -97,9 +97,12 @@ rule
   class
     : T_DOT T_IDENT
       {
+        axis = s(:axis, 'attribute', s(:test, nil, 'class'))
+
         s(
-          :eq,
-          s(:axis, 'attribute', s(:test, nil, 'class')),
+          :call,
+          'contains',
+          s(:call, 'concat', s(:string, ' '), axis, s(:string, ' ')),
           s(:string, val[1])
         )
       }

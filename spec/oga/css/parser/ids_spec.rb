@@ -22,7 +22,8 @@ describe Oga::CSS::Parser do
 
     example 'parse a selector using an ID and a class' do
       parse_css('.foo#bar').should == parse_xpath(
-        'descendant-or-self::*[@class="foo" and @id="bar"]'
+        'descendant-or-self::*[contains(concat(" ", @class, " "), "foo") ' \
+          'and @id="bar"]'
       )
     end
   end
