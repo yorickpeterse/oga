@@ -23,30 +23,55 @@ rule
     ;
 
   expression
-    : path
-    | path_member
+    : steps { s(:path, *val[0]) }
+    | step
     ;
 
-  path
-    : path_members { s(:path, *val[0]) }
+  steps
+    : step T_SPACE step  { [val[0], val[2]] }
+    | step T_SPACE steps { [val[0], *val[2]] }
     ;
 
-  path_members
-    : path_member T_SPACE path_member  { [val[0], val[2]] }
-    | path_member T_SPACE path_members { [val[0], *val[2]] }
+  step
+    : step_test { s(:axis, 'descendant-or-self', val[0]) }
     ;
 
-  path_member
-    : node_test
-    | axis
-    | pseudo_class
-    | class
+  step_test
+    : element_test    { val[0] }
+    | step_predicates { s(:test, nil, '*', val[0]) }
+    ;
+
+  step_predicates
+    : step_predicate
+    | step_predicates step_predicate { s(:and, val[0], val[1]) }
+    ;
+
+  step_predicate
+    : class
     | id
+    #| axis
+    #| pseudo_class
     ;
 
-  node_test
-    : node_name           { s(:test, *val[0]) }
+  element_test
+    # foo
+    : node_name { s(:test, *val[0]) }
+
+    # foo[bar]
     | node_name predicate { s(:test, *val[0], val[1]) }
+
+    # foo:root
+    | node_name step_predicates { s(:test, *val[0], val[1]) }
+
+    # foo[bar]:root
+    | node_name predicate step_predicates
+      {
+        s(:test, *val[0], s(:and, val[1], val[2]))
+      }
+    ;
+
+  attribute_test
+    : node_name { s(:test, *val[0]) }
     ;
 
   node_name
@@ -65,108 +90,112 @@ rule
     ;
 
   predicate_members
-    : node_test
-    | operator
+    : attribute_test
+    #| operator
     ;
 
   class
-    : class_name             { s(:class, nil, val[0]) }
-    | path_member class_name { s(:class, val[0], val[1]) }
-    ;
-
-  class_name
-    : T_DOT T_IDENT { val[1] }
-    ;
-
-  id
-    : id_name             { s(:id, nil, val[0]) }
-    | path_member id_name { s(:id, val[0], val[1]) }
-    ;
-
-  id_name
-    : T_HASH T_IDENT { val[1] }
-    ;
-
-  operator
-    : op_members T_EQ          op_members { s(:eq, val[0], val[2]) }
-    | op_members T_SPACE_IN    op_members { s(:space_in, val[0], val[2]) }
-    | op_members T_STARTS_WITH op_members { s(:starts_with, val[0], val[2]) }
-    | op_members T_ENDS_WITH   op_members { s(:ends_with, val[0], val[2]) }
-    | op_members T_IN          op_members { s(:in, val[0], val[2]) }
-    | op_members T_HYPHEN_IN   op_members { s(:hyphen_in, val[0],val[2]) }
-    ;
-
-  op_members
-    : node_test
-    | string
-    ;
-
-  axis
-    # x > y
-    : path_member T_CHILD path_member { s(:child, val[0], val[2]) }
-
-    # x + y
-    | path_member T_FOLLOWING path_member { s(:following, val[0], val[2]) }
-
-    # x ~ y
-    | path_member T_FOLLOWING_DIRECT path_member
+    : T_DOT T_IDENT
       {
-        s(:following_direct, val[0], val[2])
+        s(
+          :eq,
+          s(:axis, 'attribute', s(:test, nil, 'class')),
+          s(:string, val[1])
+        )
       }
     ;
 
-  pseudo_class
-    # :root
-    : pseudo_name { s(:pseudo, nil, val[0]) }
-
-    # x:root
-    | path_member pseudo_name { s(:pseudo, val[0], val[1]) }
-
-    # :nth-child(2)
-    | pseudo_name pseudo_args { s(:pseudo, nil, val[0], val[1]) }
-
-    # x:nth-child(2)
-    | path_member pseudo_name pseudo_args { s(:pseudo, val[0], val[1], val[2]) }
+  id
+    : T_HASH T_IDENT
+      {
+        s(
+          :eq,
+          s(:axis, 'attribute', s(:test, nil, 'id')),
+          s(:string, val[1])
+        )
+      }
     ;
 
-  pseudo_name
-    : T_COLON T_IDENT { val[1] }
-    ;
-
-  pseudo_args
-    : T_LPAREN pseudo_arg T_RPAREN { val[1] }
-    ;
-
-  pseudo_arg
-    : integer
-    | odd
-    | even
-    | nth
-    | node_test
-    ;
-
-  odd
-    : T_ODD { s(:odd) }
-    ;
-
-  even
-    : T_EVEN { s(:even) }
-    ;
-
-  nth
-    : T_NTH                 { s(:nth) }
-    | T_MINUS T_NTH         { s(:nth) }
-    | integer T_NTH         { s(:nth, val[0]) }
-    | integer T_NTH integer { s(:nth, val[0], val[2]) }
-    ;
-
-  string
-    : T_STRING { s(:string, val[0]) }
-    ;
-
-  integer
-   : T_INT { s(:int, val[0].to_i) }
-   ;
+  # operator
+  #   : op_members T_EQ          op_members { s(:eq, val[0], val[2]) }
+  #   | op_members T_SPACE_IN    op_members { s(:space_in, val[0], val[2]) }
+  #   | op_members T_STARTS_WITH op_members { s(:starts_with, val[0], val[2]) }
+  #   | op_members T_ENDS_WITH   op_members { s(:ends_with, val[0], val[2]) }
+  #   | op_members T_IN          op_members { s(:in, val[0], val[2]) }
+  #   | op_members T_HYPHEN_IN   op_members { s(:hyphen_in, val[0],val[2]) }
+  #   ;
+  #
+  # op_members
+  #   : node_test
+  #   | string
+  #   ;
+  #
+  # axis
+  #   # x > y
+  #   : step_member T_CHILD step_member { s(:child, val[0], val[2]) }
+  #
+  #   # x + y
+  #   | step_member T_FOLLOWING step_member { s(:following, val[0], val[2]) }
+  #
+  #   # x ~ y
+  #   | step_member T_FOLLOWING_DIRECT step_member
+  #     {
+  #       s(:following_direct, val[0], val[2])
+  #     }
+  #   ;
+  #
+  # pseudo_class
+  #   # :root
+  #   : pseudo_name { s(:pseudo, nil, val[0]) }
+  #
+  #   # x:root
+  #   | step_member pseudo_name { s(:pseudo, val[0], val[1]) }
+  #
+  #   # :nth-child(2)
+  #   | pseudo_name pseudo_args { s(:pseudo, nil, val[0], val[1]) }
+  #
+  #   # x:nth-child(2)
+  #   | step_member pseudo_name pseudo_args { s(:pseudo, val[0], val[1], val[2]) }
+  #   ;
+  #
+  # pseudo_name
+  #   : T_COLON T_IDENT { val[1] }
+  #   ;
+  #
+  # pseudo_args
+  #   : T_LPAREN pseudo_arg T_RPAREN { val[1] }
+  #   ;
+  #
+  # pseudo_arg
+  #   : integer
+  #   | odd
+  #   | even
+  #   | nth
+  #   | node_test
+  #   ;
+  #
+  # odd
+  #   : T_ODD { s(:odd) }
+  #   ;
+  #
+  # even
+  #   : T_EVEN { s(:even) }
+  #   ;
+  #
+  # nth
+  #   : T_NTH                 { s(:nth) }
+  #   | T_MINUS T_NTH         { s(:nth) }
+  #   | integer T_NTH         { s(:nth, val[0]) }
+  #   | integer T_NTH integer { s(:nth, val[0], val[2]) }
+  #   ;
+  #
+  # string
+  #   : T_STRING { s(:string, val[0]) }
+  #   ;
+  #
+  # integer
+  #  : T_INT { s(:int, val[0].to_i) }
+  #  ;
 end
 
 ---- inner
