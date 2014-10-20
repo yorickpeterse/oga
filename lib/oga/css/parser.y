@@ -103,7 +103,7 @@ rule
           :call,
           'contains',
           s(:call, 'concat', s(:string, ' '), axis, s(:string, ' ')),
-          s(:string, val[1])
+          s(:string, " #{val[1]} ")
         )
       }
     ;
