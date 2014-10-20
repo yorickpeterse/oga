@@ -3,34 +3,22 @@ require 'spec_helper'
 describe Oga::CSS::Parser do
   context 'axes' do
     example 'parse the > axis' do
-      parse_css('x > y').should == s(
-        :child,
-        s(:test, nil, 'x'),
-        s(:test, nil, 'y')
-      )
+      parse_css('x > y').should == parse_xpath('descendant-or-self::x/y')
     end
 
     example 'parse the > axis called on another > axis' do
-      parse_css('a > b > c').should == s(
-        :child,
-        s(:child, s(:test, nil, 'a'), s(:test, nil, 'b')),
-        s(:test, nil, 'c')
-      )
+      parse_css('a > b > c').should == parse_xpath('descendant-or-self::a/b/c')
     end
 
     example 'parse an > axis followed by an element with an ID' do
-      parse_css('x > foo#bar').should == s(
-        :child,
-        s(:test, nil, 'x'),
-        s(:id, s(:test, nil, 'foo'), 'bar')
+      parse_css('x > foo#bar').should == parse_xpath(
+        'descendant-or-self::x/foo[@id="bar"]'
       )
     end
 
     example 'parse an > axis followed by an element with a class' do
-      parse_css('x > foo.bar').should == s(
-        :child,
-        s(:test, nil, 'x'),
-        s(:class, s(:test, nil, 'foo'), 'bar')
+      parse_css('x > foo.bar').should == parse_xpath(
+        'descendant-or-self::x/foo[contains(concat(" ", @class, " "), "bar")]'
       )
     end
 
@@ -51,26 +39,20 @@ describe Oga::CSS::Parser do
     end
 
     example 'parse the ~ axis' do
-      parse_css('x ~ y').should == s(
-        :following,
-        s(:test, nil, 'x'),
-        s(:test, nil, 'y')
+      parse_css('x ~ y').should == parse_xpath(
+        'descendant-or-self::x/following-sibling::y'
       )
     end
 
     example 'parse the ~ axis followed by another node test' do
-      parse_css('x ~ y z').should == s(
-        :path,
-        s(:following, s(:test, nil, 'x'), s(:test, nil, 'y')),
-        s(:test, nil, 'z')
+      parse_css('x ~ y z').should == parse_xpath(
+        'descendant-or-self::x/following-sibling::y/z'
       )
     end
 
     example 'parse the ~ axis called on another ~ axis' do
-      parse_css('a ~ b ~ c').should == s(
-        :following,
-        s(:following, s(:test, nil, 'a'), s(:test, nil, 'b')),
-        s(:test, nil, 'c')
+      parse_css('a ~ b ~ c').should == parse_xpath(
+        'descendant-or-self::a/following-sibling::b/following-sibling::c'
       )
     end
 
