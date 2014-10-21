@@ -178,10 +178,10 @@ module Oga
 
         # Whitespace preceding these tokens is _not_ matched to make the parser
         # rules more consistent. As such input such as " > x" will result in
-        # tokens [T_SPACE, T_CHILD, T_IDENT].
-        op_child      = '>' whitespace*;
-        op_fol_direct = '+' whitespace*;
-        op_fol        = '~' whitespace*;
+        # tokens [T_SPACE, T_GREATER, T_IDENT].
+        op_greater = '>' whitespace*;
+        op_plus    = '+' whitespace*;
+        op_tilde   = '~' whitespace*;
 
         # Numbers
         #
@@ -301,9 +301,9 @@ module Oga
         main := |*
           hash | dot | colon;
 
-          op_child      => { add_token(:T_CHILD) };
-          op_fol_direct => { add_token(:T_FOLLOWING_DIRECT) };
-          op_fol        => { add_token(:T_FOLLOWING) };
+          op_greater => { add_token(:T_GREATER) };
+          op_plus    => { add_token(:T_PLUS) };
+          op_tilde   => { add_token(:T_TILDE) };
 
           lbrack     => emit_lbrack;
           pipe       => emit_pipe;

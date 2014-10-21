@@ -5,14 +5,14 @@ class Oga::CSS::Parser
 
 token T_IDENT T_PIPE T_LBRACK T_RBRACK T_COLON T_SPACE T_LPAREN T_RPAREN T_MINUS
 token T_EQ T_SPACE_IN T_STARTS_WITH T_ENDS_WITH T_IN T_HYPHEN_IN
-token T_CHILD T_FOLLOWING T_FOLLOWING_DIRECT
+token T_GREATER T_TILDE T_PLUS
 token T_NTH T_INT T_STRING T_ODD T_EVEN T_DOT T_HASH
 
 options no_result_var
 
 prechigh
   left T_COLON T_HASH T_DOT
-  left T_CHILD T_FOLLOWING T_FOLLOWING_DIRECT
+  left T_GREATER T_TILDE T_PLUS
 preclow
 
 rule
@@ -41,9 +41,9 @@ rule
     ;
 
   axis
-    : T_CHILD axis_selector             { s(:axis, 'child', val[1]) }
-    | T_FOLLOWING axis_selector         { s(:axis, 'following', val[1]) }
-    | T_FOLLOWING_DIRECT axis_selector  { s(:axis, 'following-direct', val[1]) }
+    : T_GREATER axis_selector { s(:axis, 'child', val[1]) }
+    | T_TILDE axis_selector   { s(:axis, 'following', val[1]) }
+    | T_PLUS axis_selector    { s(:axis, 'following-direct', val[1]) }
     ;
 
   axis_selector
