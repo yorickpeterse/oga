@@ -175,9 +175,13 @@ module Oga
         op_ends_with   = '$=';
         op_in          = '*=';
         op_hyphen_in   = '|=';
-        op_child       = whitespace* '>' whitespace*;
-        op_fol_direct  = whitespace* '+' whitespace*;
-        op_fol         = whitespace* '~' whitespace*;
+
+        # Whitespace preceding these tokens is _not_ matched to make the parser
+        # rules more consistent. As such input such as " > x" will result in
+        # tokens [T_SPACE, T_CHILD, T_IDENT].
+        op_child      = '>' whitespace*;
+        op_fol_direct = '+' whitespace*;
+        op_fol        = '~' whitespace*;
 
         # Numbers
         #
