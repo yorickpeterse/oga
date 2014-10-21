@@ -13,65 +13,74 @@ options no_result_var
 prechigh
   left T_COLON T_HASH T_DOT
   left T_CHILD T_FOLLOWING T_FOLLOWING_DIRECT
-  left T_DOT T_HASH
 preclow
 
 rule
   css
-    : expression { val[0] }
+    : selectors  { val[0] }
     | /* none */ { nil }
     ;
 
-  expression
-    : steps { s(:path, *val[0]) }
-    | step
+  selectors
+    : selector
+    | selectors_ { s(:path, *val[0]) }
     ;
 
-  steps
-    : step T_SPACE step  { [val[0], val[2]] }
-    | step T_SPACE steps { [val[0], *val[2]] }
+  selectors_
+    : selectors_ T_SPACE selector { val[0] << val[2] }
+    | selector T_SPACE selector   { [val[0], val[2]] }
     ;
 
-  step
-    : step_test { s(:axis, 'descendant-or-self', val[0]) }
+  selector
+    : descendant_or_self
+    | axis
     ;
 
-  step_test
-    : element_test    { val[0] }
-    | step_predicates { s(:test, nil, '*', val[0]) }
+  descendant_or_self
+    : node_test { s(:axis, 'descendant-or-self', val[0]) }
     ;
 
-  step_predicates
-    : step_predicate
-    | step_predicates step_predicate { s(:and, val[0], val[1]) }
+  axis
+    : T_CHILD axis_selector             { s(:axis, 'child', val[1]) }
+    | T_FOLLOWING axis_selector         { s(:axis, 'following', val[1]) }
+    | T_FOLLOWING_DIRECT axis_selector  { s(:axis, 'following-direct', val[1]) }
     ;
 
-  step_predicate
-    : class
-    | id
-    #| axis
-    #| pseudo_class
+  axis_selector
+    | node_test
+    | axis
     ;
 
-  element_test
+  node_test
     # foo
-    : node_name { s(:test, *val[0]) }
+    : node_name
+      {
+        s(:test, *val[0])
+      }
+
+    # .foo, :root, etc
+    | predicates
+      {
+        s(:test, nil, '*', val[0])
+      }
+
+    # foo.bar
+    | node_name predicates
+      {
+        s(:test, *val[0], val[1])
+      }
 
     # foo[bar]
-    | node_name predicate { s(:test, *val[0], val[1]) }
+    | node_name attribute_predicate
+      {
+        s(:test, *val[0], val[1])
+      }
 
-    # foo:root
-    | node_name step_predicates { s(:test, *val[0], val[1]) }
-
-    # foo[bar]:root
-    | node_name predicate step_predicates
+    # foo[bar].baz
+    | node_name attribute_predicate predicates
       {
         s(:test, *val[0], s(:and, val[1], val[2]))
       }
-    ;
-
-  attribute_test
-    : node_name { s(:axis, 'attribute', s(:test, *val[0])) }
     ;
 
   node_name
@@ -85,13 +94,32 @@ rule
     | T_PIPE T_IDENT { [nil, val[1]] }
     ;
 
-  predicate
-    : T_LBRACK predicate_members T_RBRACK { val[1] }
+  predicates
+    : predicates predicate { s(:and, val[0], val[1]) }
+    | predicate
     ;
 
-  predicate_members
-    : attribute_test
+  predicate
+    : class
+    | id
+    | pseudo_class
+    ;
+
+  attribute_predicate
+    : T_LBRACK attribute_predicate_members T_RBRACK { val[1] }
+    ;
+
+  attribute_predicate_members
+    : attribute
     | operator
+    ;
+
+  attribute
+    : node_name { s(:axis, 'attribute', s(:test, *val[0])) }
+    ;
+
+  operator
+    : attribute T_EQ string { s(:eq, val[0], val[2]) }
     ;
 
   class
@@ -119,78 +147,29 @@ rule
       }
     ;
 
-  operator
-    : op_members T_EQ          op_members { s(:eq, val[0], val[2]) }
-    | op_members T_SPACE_IN    op_members { s(:space_in, val[0], val[2]) }
-    | op_members T_STARTS_WITH op_members { s(:starts_with, val[0], val[2]) }
-    | op_members T_ENDS_WITH   op_members { s(:ends_with, val[0], val[2]) }
-    | op_members T_IN          op_members { s(:in, val[0], val[2]) }
-    | op_members T_HYPHEN_IN   op_members { s(:hyphen_in, val[0],val[2]) }
+  pseudo_class
+    # :root
+    : pseudo_name { s(:pseudo, nil, val[0]) }
+
+    # :nth-child(2)
+    | pseudo_name pseudo_args { s(:pseudo, nil, val[0], val[1]) }
     ;
 
-  op_members
-    : attribute_test
-    | string
+  pseudo_name
+    : T_COLON T_IDENT { val[1] }
     ;
-  #
-  # axis
-  #   # x > y
-  #   : step_member T_CHILD step_member { s(:child, val[0], val[2]) }
-  #
-  #   # x + y
-  #   | step_member T_FOLLOWING step_member { s(:following, val[0], val[2]) }
-  #
-  #   # x ~ y
-  #   | step_member T_FOLLOWING_DIRECT step_member
-  #     {
-  #       s(:following_direct, val[0], val[2])
-  #     }
-  #   ;
-  #
-  # pseudo_class
-  #   # :root
-  #   : pseudo_name { s(:pseudo, nil, val[0]) }
-  #
-  #   # x:root
-  #   | step_member pseudo_name { s(:pseudo, val[0], val[1]) }
-  #
-  #   # :nth-child(2)
-  #   | pseudo_name pseudo_args { s(:pseudo, nil, val[0], val[1]) }
-  #
-  #   # x:nth-child(2)
-  #   | step_member pseudo_name pseudo_args { s(:pseudo, val[0], val[1], val[2]) }
-  #   ;
-  #
-  # pseudo_name
-  #   : T_COLON T_IDENT { val[1] }
-  #   ;
-  #
-  # pseudo_args
-  #   : T_LPAREN pseudo_arg T_RPAREN { val[1] }
-  #   ;
-  #
-  # pseudo_arg
-  #   : integer
-  #   | odd
-  #   | even
-  #   | nth
-  #   | node_test
-  #   ;
-  #
-  # odd
-  #   : T_ODD { s(:odd) }
-  #   ;
-  #
-  # even
-  #   : T_EVEN { s(:even) }
-  #   ;
-  #
-  # nth
-  #   : T_NTH                 { s(:nth) }
-  #   | T_MINUS T_NTH         { s(:nth) }
-  #   | integer T_NTH         { s(:nth, val[0]) }
-  #   | integer T_NTH integer { s(:nth, val[0], val[2]) }
-  #   ;
+
+  pseudo_args
+    : T_LPAREN pseudo_arg T_RPAREN { val[1] }
+    ;
+
+  pseudo_arg
+    : integer
+    #| odd
+    #| even
+    #| nth
+    | selector
+    ;
 
   string
     : T_STRING { s(:string, val[0]) }
