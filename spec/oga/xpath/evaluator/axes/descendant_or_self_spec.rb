@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Oga::XPath::Evaluator do
   context 'descendant-or-self axis' do
     before do
-      document = parse('<a><b><b><c></c></b></b></a>')
+      document = parse('<a><b><b><c class="x"></c></b></b></a>')
 
       @first_a   = document.children[0]
       @first_b   = @first_a.children[0]
@@ -38,6 +38,14 @@ describe Oga::XPath::Evaluator do
       example 'return the <c> node' do
         @set[0].should == @first_c
       end
+    end
+
+    context 'nested descendants with a matching predicate' do
+      before do
+        @set = @evaluator.evaluate('descendant-or-self::c[@class="x"]')
+      end
+
+      it_behaves_like :node_set, :length => 1
     end
 
     context 'descendants of a specific node' do
@@ -83,6 +91,22 @@ describe Oga::XPath::Evaluator do
     context 'non existing descendants' do
       before do
         @set = @evaluator.evaluate('descendant-or-self::foobar')
+      end
+
+      it_behaves_like :empty_node_set
+    end
+
+    context 'direct descendants without a matching predicate' do
+      before do
+        @set = @evaluator.evaluate('descendant-or-self::a[@class]')
+      end
+
+      it_behaves_like :empty_node_set
+    end
+
+    context 'nested descendants without a matching predicate' do
+      before do
+        @set = @evaluator.evaluate('descendant-or-self::b[@class]')
       end
 
       it_behaves_like :empty_node_set

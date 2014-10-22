@@ -319,12 +319,8 @@ module Oga
         nodes = XML::NodeSet.new
 
         context.each do |context_node|
-          context_node.children.each do |node|
-            nodes << node if node_matches?(node, ast_node)
-          end
-
           context_node.each_node do |node|
-            nodes << node if node_matches?(node, ast_node)
+            nodes.concat(process(ast_node, XML::NodeSet.new([node])))
           end
         end
 
