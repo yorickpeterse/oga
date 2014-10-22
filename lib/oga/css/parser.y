@@ -23,7 +23,15 @@ rule
 
   selectors
     : selector
-    | selectors_ { s(:path, *val[0]) }
+      {
+        # a single "+ y" selector
+        if val[0].is_a?(Array)
+          return s(:path, *val[0])
+        else
+          return val[0]
+        end
+      }
+    | selectors_ { s(:path, *val[0].flatten) }
     ;
 
   selectors_
@@ -41,9 +49,21 @@ rule
     ;
 
   axis
-    : T_GREATER axis_selector { s(:axis, 'child', val[1]) }
-    | T_TILDE axis_selector   { s(:axis, 'following', val[1]) }
-    | T_PLUS axis_selector    { s(:axis, 'following-direct', val[1]) }
+    : T_GREATER axis_selector
+      {
+        s(:axis, 'child', val[1])
+      }
+    | T_TILDE axis_selector
+      {
+        s(:axis, 'following-sibling', val[1])
+      }
+    | T_PLUS axis_selector
+      {
+        [
+          s(:axis, 'following-sibling', s(:test, nil, '*', s(:int, 1))),
+          s(:axis, 'self', val[1])
+        ]
+      }
     ;
 
   axis_selector

@@ -18,23 +18,20 @@ describe Oga::CSS::Parser do
 
     example 'parse an > axis followed by an element with a class' do
       parse_css('x > foo.bar').should == parse_xpath(
-        'descendant-or-self::x/foo[contains(concat(" ", @class, " "), "bar")]'
+        'descendant-or-self::x/foo[contains(concat(" ", @class, " "), " bar ")]'
       )
     end
 
     example 'parse the + axis' do
-      parse_css('x + y').should == s(
-        :following_direct,
-        s(:test, nil, 'x'),
-        s(:test, nil, 'y')
+      parse_css('x + y').should == parse_xpath(
+        'descendant-or-self::x/following-sibling::*[1]/self::y'
       )
     end
 
     example 'parse the + axis called on another + axis' do
-      parse_css('a + b + c').should == s(
-        :following_direct,
-        s(:following_direct, s(:test, nil, 'a'), s(:test, nil, 'b')),
-        s(:test, nil, 'c')
+      parse_css('a + b + c').should == parse_xpath(
+        'descendant-or-self::a/following-sibling::*[1]/self::b/' \
+          'following-sibling::*[1]/self::c'
       )
     end
 
@@ -46,29 +43,13 @@ describe Oga::CSS::Parser do
 
     example 'parse the ~ axis followed by another node test' do
       parse_css('x ~ y z').should == parse_xpath(
-        'descendant-or-self::x/following-sibling::y/z'
+        'descendant-or-self::x/following-sibling::y/descendant-or-self::z'
       )
     end
 
     example 'parse the ~ axis called on another ~ axis' do
       parse_css('a ~ b ~ c').should == parse_xpath(
         'descendant-or-self::a/following-sibling::b/following-sibling::c'
-      )
-    end
-
-    example 'parse a pseudo class followed by the ~ axis' do
-      parse_css('x:root ~ a').should == s(
-        :following,
-        s(:pseudo, s(:test, nil, 'x'), 'root'),
-        s(:test, nil, 'a')
-      )
-    end
-
-    example 'parse the ~ axis followed by a pseudo class' do
-      parse_css('a ~ x:root').should == s(
-        :following,
-        s(:test, nil, 'a'),
-        s(:pseudo, s(:test, nil, 'x'), 'root')
       )
     end
   end
