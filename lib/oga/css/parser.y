@@ -237,10 +237,10 @@ rule
 
   pseudo_class
     # :root
-    : pseudo_name { s(:pseudo, nil, val[0]) }
+    : pseudo_name { on_pseudo_class(val[0]) }
 
     # :nth-child(2)
-    | pseudo_name pseudo_args { s(:pseudo, nil, val[0], val[1]) }
+    | pseudo_name pseudo_args { on_pseudo_class(val[0], val[1]) }
     ;
 
   pseudo_name
@@ -253,10 +253,25 @@ rule
 
   pseudo_arg
     : integer
-    #| odd
-    #| even
-    #| nth
+    | odd
+    | even
+    | nth
     | selector
+    ;
+
+  nth
+    : T_NTH                 { s(:nth) }
+    | T_MINUS T_NTH         { s(:nth) }
+    | integer T_NTH         { s(:nth, val[0]) }
+    | integer T_NTH integer { s(:nth, val[0], val[2]) }
+    ;
+
+  odd
+    : T_ODD { s(:nth, s(:int, 2), s(:int, 1)) }
+    ;
+
+  even
+    : T_EVEN { s(:nth, s(:int, 2)) }
     ;
 
   string
@@ -264,8 +279,8 @@ rule
     ;
 
   integer
-   : T_INT { s(:int, val[0].to_i) }
-   ;
+    : T_INT { s(:int, val[0].to_i) }
+    ;
 end
 
 ---- inner
@@ -313,4 +328,23 @@ end
     return ast
   end
 
+  ##
+  # @param [String] name
+  # @param [AST::Node] arg
+  # @return [AST::Node]
+  #
+  def on_pseudo_class(name, arg = nil)
+    handler = "on_pseudo_class_#{name.gsub('-', '_')}"
+
+    return arg ? send(handler, arg) : send(handler)
+  end
+
+  ##
+  # Generates the AST for the `root` pseudo class.
+  #
+  # @return [AST::Node]
+  #
+  def on_pseudo_class_root
+    return s(:call, 'not', s(:axis, 'parent', s(:test, nil, '*')))
+  end
 # vim: set ft=racc:
