@@ -106,6 +106,8 @@
             callback("on_text", data, encoding, mark, ts);
             callback_simple("on_proc_ins_end");
 
+            mark = 0;
+
             fnext main;
         };
 
@@ -121,14 +123,48 @@
     dquote = '"';
     squote = "'";
 
-    string_dquote = (dquote ^dquote* dquote);
-    string_squote = (squote ^squote* squote);
-
-    string = string_dquote | string_squote;
-
     action emit_string {
-        callback("on_string", data, encoding, ts + 1, te - 1);
+        callback("on_string_body", data, encoding, ts, te);
+
+        if ( lines > 0 )
+        {
+            advance_line(lines);
+
+            lines = 0;
+        }
     }
+
+    action start_string_squote {
+        callback_simple("on_string_squote");
+
+        fcall string_squote;
+    }
+
+    action start_string_dquote {
+        callback_simple("on_string_dquote");
+
+        fcall string_dquote;
+    }
+
+    string_squote := |*
+        ^squote* $count_newlines => emit_string;
+
+        squote => {
+            callback_simple("on_string_squote");
+
+            fret;
+        };
+    *|;
+
+    string_dquote := |*
+        ^dquote* $count_newlines => emit_string;
+
+        dquote => {
+            callback_simple("on_string_dquote");
+
+            fret;
+        };
+    *|;
 
     # DOCTYPES
     #
@@ -161,7 +197,8 @@
         };
 
         # Lex the public/system IDs as regular strings.
-        string => emit_string;
+        squote => start_string_squote;
+        dquote => start_string_dquote;
 
         # Whitespace inside doctypes is ignored since there's no point in
         # including it.
@@ -201,7 +238,8 @@
             callback("on_attribute", data, encoding, ts, te);
         };
 
-        string => emit_string;
+        squote => start_string_squote;
+        dquote => start_string_dquote;
 
         any;
     *|;
@@ -259,7 +297,8 @@
         };
 
         # Attribute values.
-        string => emit_string;
+        squote => start_string_squote;
+        dquote => start_string_dquote;
 
         # We're done with the open tag of the element.
         '>' => {

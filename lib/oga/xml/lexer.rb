@@ -182,12 +182,26 @@ module Oga
       end
 
       ##
-      # Called when processing single/double quoted strings.
+      # Called when processing a single quote.
+      #
+      def on_string_squote
+        add_token(:T_STRING_SQUOTE)
+      end
+
+      ##
+      # Called when processing a double quote.
+      #
+      def on_string_dquote
+        add_token(:T_STRING_DQUOTE)
+      end
+
+      ##
+      # Called when processing the body of a string.
       #
       # @param [String] value The data between the quotes.
       #
-      def on_string(value)
-        add_token(:T_STRING, Entities.decode(value))
+      def on_string_body(value)
+        add_token(:T_STRING_BODY, Entities.decode(value))
       end
 
       ##

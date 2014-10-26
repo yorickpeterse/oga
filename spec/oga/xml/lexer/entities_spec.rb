@@ -21,7 +21,9 @@ describe Oga::XML::Lexer do
         [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'foo', 1],
         [:T_ATTR, 'class', 1],
-        [:T_STRING, '&', 1],
+        [:T_STRING_DQUOTE, nil, 1],
+        [:T_STRING_BODY, '&', 1],
+        [:T_STRING_DQUOTE, nil, 1],
         [:T_ELEM_END, nil, 1]
       ]
     end
@@ -31,7 +33,9 @@ describe Oga::XML::Lexer do
         [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'foo', 1],
         [:T_ATTR, 'class', 1],
-        [:T_STRING, '<', 1],
+        [:T_STRING_DQUOTE, nil, 1],
+        [:T_STRING_BODY, '<', 1],
+        [:T_STRING_DQUOTE, nil, 1],
         [:T_ELEM_END, nil, 1]
       ]
     end
@@ -41,7 +45,9 @@ describe Oga::XML::Lexer do
         [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'foo', 1],
         [:T_ATTR, 'class', 1],
-        [:T_STRING, '>', 1],
+        [:T_STRING_DQUOTE, nil, 1],
+        [:T_STRING_BODY, '>', 1],
+        [:T_STRING_DQUOTE, nil, 1],
         [:T_ELEM_END, nil, 1]
       ]
     end

@@ -58,7 +58,8 @@ describe Oga::XML::Lexer do
         [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'p', 1],
         [:T_ATTR, 'foo', 1],
-        [:T_STRING, '', 1],
+        [:T_STRING_DQUOTE, nil, 1],
+        [:T_STRING_DQUOTE, nil, 1],
         [:T_ELEM_END, nil, 1]
       ]
     end
@@ -68,9 +69,24 @@ describe Oga::XML::Lexer do
         [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'p', 1],
         [:T_ATTR, 'class', 1],
-        [:T_STRING, 'foo', 1],
+        [:T_STRING_DQUOTE, nil, 1],
+        [:T_STRING_BODY, 'foo', 1],
+        [:T_STRING_DQUOTE, nil, 1],
         [:T_TEXT, 'Hello', 1],
         [:T_ELEM_END, nil, 1]
+      ]
+    end
+
+    example 'lex a paragraph element with a newline in an attribute' do
+      lex("<p class=\"\nfoo\">Hello</p>").should == [
+        [:T_ELEM_START, nil, 1],
+        [:T_ELEM_NAME, 'p', 1],
+        [:T_ATTR, 'class', 1],
+        [:T_STRING_DQUOTE, nil, 1],
+        [:T_STRING_BODY, "\nfoo", 1],
+        [:T_STRING_DQUOTE, nil, 2],
+        [:T_TEXT, 'Hello', 2],
+        [:T_ELEM_END, nil, 2]
       ]
     end
 
@@ -79,7 +95,9 @@ describe Oga::XML::Lexer do
         [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'p', 1],
         [:T_ATTR, 'class', 1],
-        [:T_STRING, 'foo', 1],
+        [:T_STRING_SQUOTE, nil, 1],
+        [:T_STRING_BODY, 'foo', 1],
+        [:T_STRING_SQUOTE, nil, 1],
         [:T_ELEM_END, nil, 1]
       ]
     end
@@ -90,7 +108,9 @@ describe Oga::XML::Lexer do
         [:T_ELEM_NAME, 'p', 1],
         [:T_ATTR_NS, 'foo', 1],
         [:T_ATTR, 'bar', 1],
-        [:T_STRING, 'baz', 1],
+        [:T_STRING_DQUOTE, nil, 1],
+        [:T_STRING_BODY, 'baz', 1],
+        [:T_STRING_DQUOTE, nil, 1],
         [:T_ELEM_END, nil, 1]
       ]
     end
@@ -137,7 +157,9 @@ describe Oga::XML::Lexer do
         [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'br', 1],
         [:T_ATTR, 'class', 1],
-        [:T_STRING, 'foo', 1],
+        [:T_STRING_DQUOTE, nil, 1],
+        [:T_STRING_BODY, 'foo', 1],
+        [:T_STRING_DQUOTE, nil, 1],
         [:T_ELEM_END, nil, 1]
       ]
     end

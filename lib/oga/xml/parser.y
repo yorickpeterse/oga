@@ -18,7 +18,7 @@
 #
 class Oga::XML::Parser
 
-token T_STRING T_TEXT
+token T_TEXT T_STRING_SQUOTE T_STRING_DQUOTE T_STRING_BODY
 token T_DOCTYPE_START T_DOCTYPE_END T_DOCTYPE_TYPE T_DOCTYPE_NAME
 token T_DOCTYPE_INLINE
 token T_CDATA T_COMMENT
@@ -69,13 +69,13 @@ rule
       }
 
     # <!DOCTYPE html PUBLIC "foo">
-    | T_DOCTYPE_START T_DOCTYPE_NAME T_DOCTYPE_TYPE T_STRING T_DOCTYPE_END
+    | T_DOCTYPE_START T_DOCTYPE_NAME T_DOCTYPE_TYPE string T_DOCTYPE_END
       {
         on_doctype(:name => val[1], :type => val[2], :public_id => val[3])
       }
 
     # <!DOCTYPE html PUBLIC "foo" "bar">
-    | T_DOCTYPE_START T_DOCTYPE_NAME T_DOCTYPE_TYPE T_STRING T_STRING T_DOCTYPE_END
+    | T_DOCTYPE_START T_DOCTYPE_NAME T_DOCTYPE_TYPE string string T_DOCTYPE_END
       {
         on_doctype(
           :name      => val[1],
@@ -161,7 +161,7 @@ rule
     : attribute_name { val[0] }
 
     # foo="bar"
-    | attribute_name T_STRING
+    | attribute_name string
       {
         val[0].value = val[1]
         val[0]
@@ -189,6 +189,28 @@ rule
 
   text
     : T_TEXT { on_text(val[0]) }
+    ;
+
+  string
+    : string_dquote
+    | string_squote
+    ;
+
+  # Single quoted strings
+  string_dquote
+    : T_STRING_DQUOTE T_STRING_DQUOTE             { '' }
+    | T_STRING_DQUOTE string_body T_STRING_DQUOTE { val[1] }
+    ;
+
+  # Double quoted strings
+  string_squote
+    : T_STRING_SQUOTE T_STRING_SQUOTE             { '' }
+    | T_STRING_SQUOTE string_body T_STRING_SQUOTE { val[1] }
+    ;
+
+  string_body
+    : T_STRING_BODY             { val[0] }
+    | string_body T_STRING_BODY { val[0] + val[1] }
     ;
 end
 

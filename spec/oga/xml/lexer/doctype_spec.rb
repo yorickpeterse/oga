@@ -15,8 +15,12 @@ describe Oga::XML::Lexer do
         [:T_DOCTYPE_START, nil, 1],
         [:T_DOCTYPE_NAME, 'HTML', 1],
         [:T_DOCTYPE_TYPE, 'PUBLIC', 1],
-        [:T_STRING, 'foobar', 1],
-        [:T_STRING, 'baz', 1],
+        [:T_STRING_DQUOTE, nil, 1],
+        [:T_STRING_BODY, 'foobar', 1],
+        [:T_STRING_DQUOTE, nil, 1],
+        [:T_STRING_DQUOTE, nil, 1],
+        [:T_STRING_BODY, 'baz', 1],
+        [:T_STRING_DQUOTE, nil, 1],
         [:T_DOCTYPE_END, nil, 1]
       ]
     end
@@ -26,8 +30,12 @@ describe Oga::XML::Lexer do
         [:T_DOCTYPE_START, nil, 1],
         [:T_DOCTYPE_NAME, 'HTML', 1],
         [:T_DOCTYPE_TYPE, 'PUBLIC', 1],
-        [:T_STRING, 'foobar', 1],
-        [:T_STRING, 'baz', 1],
+        [:T_STRING_SQUOTE, nil, 1],
+        [:T_STRING_BODY, 'foobar', 1],
+        [:T_STRING_SQUOTE, nil, 1],
+        [:T_STRING_SQUOTE, nil, 1],
+        [:T_STRING_BODY, 'baz', 1],
+        [:T_STRING_SQUOTE, nil, 1],
         [:T_DOCTYPE_END, nil, 1]
       ]
     end
@@ -48,7 +56,9 @@ describe Oga::XML::Lexer do
         [:T_DOCTYPE_START, nil, 1],
         [:T_DOCTYPE_NAME, 'html', 1],
         [:T_DOCTYPE_INLINE, '<!ELEMENT foo>', 1],
-        [:T_STRING, 'foo', 1],
+        [:T_STRING_DQUOTE, nil, 1],
+        [:T_STRING_BODY, 'foo', 1],
+        [:T_STRING_DQUOTE, nil, 1],
         [:T_DOCTYPE_END, nil, 1]
       ]
     end

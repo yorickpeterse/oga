@@ -2,16 +2,16 @@ require 'spec_helper'
 
 describe Oga::XML::Lexer do
   context 'IO as input' do
-    before do
-      @io = StringIO.new("<p class='foo'>\nHello</p>")
-    end
-
     example 'lex a paragraph element with attributes' do
-      lex(@io).should == [
+      io = StringIO.new("<p class='foo'>\nHello</p>")
+
+      lex(io).should == [
         [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'p', 1],
         [:T_ATTR, 'class', 1],
-        [:T_STRING, 'foo', 1],
+        [:T_STRING_SQUOTE, nil, 1],
+        [:T_STRING_BODY, 'foo', 1],
+        [:T_STRING_SQUOTE, nil, 1],
         [:T_TEXT, "\n", 1],
         [:T_TEXT, 'Hello', 2],
         [:T_ELEM_END, nil, 2]
@@ -19,10 +19,43 @@ describe Oga::XML::Lexer do
     end
 
     example 'rewind input when resetting the lexer' do
-      lexer = described_class.new(@io)
+      io    = StringIO.new("<p class='foo'>\nHello</p>")
+      lexer = described_class.new(io)
 
       lexer.lex.empty?.should == false
       lexer.lex.empty?.should == false
+    end
+
+    example 'lex an attribute value starting with a newline' do
+      io    = StringIO.new("<foo bar='\n10'></foo>")
+      lexer = described_class.new(io)
+
+      lexer.lex.should == [
+        [:T_ELEM_START, nil, 1],
+        [:T_ELEM_NAME, 'foo', 1],
+        [:T_ATTR, 'bar', 1],
+        [:T_STRING_SQUOTE, nil, 1],
+        [:T_STRING_BODY, "\n", 1],
+        [:T_STRING_BODY, "10", 2],
+        [:T_STRING_SQUOTE, nil, 2],
+        [:T_ELEM_END, nil, 2]
+      ]
+    end
+
+    example 'lex an attribute value split in two by a newline' do
+      io    = StringIO.new("<foo bar='foo\nbar'></foo>")
+      lexer = described_class.new(io)
+
+      lexer.lex.should == [
+        [:T_ELEM_START, nil, 1],
+        [:T_ELEM_NAME, 'foo', 1],
+        [:T_ATTR, 'bar', 1],
+        [:T_STRING_SQUOTE, nil, 1],
+        [:T_STRING_BODY, "foo\n", 1],
+        [:T_STRING_BODY, 'bar', 2],
+        [:T_STRING_SQUOTE, nil, 2],
+        [:T_ELEM_END, nil, 2]
+      ]
     end
   end
 end
