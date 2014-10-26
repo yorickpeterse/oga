@@ -40,6 +40,9 @@ public class Lexer extends RubyObject
     /* Used by Ragel to keep track of the current state. */
     int act;
     int cs;
+    int top;
+    int lines;
+    int[] stack;
 
     /**
      * Sets up the current class in the Ruby runtime.
@@ -94,11 +97,13 @@ public class Lexer extends RubyObject
         int te    = 0;
         int p     = 0;
         int mark  = 0;
-        int lines = 0;
+        int lines = this.lines;
         int pe    = data.length;
         int eof   = data.length;
 
         %% write exec;
+
+        this.lines = lines;
 
         return context.nil;
     }
@@ -109,8 +114,10 @@ public class Lexer extends RubyObject
     @JRubyMethod
     public IRubyObject reset_native(ThreadContext context)
     {
-        this.act = 0;
-        this.cs  = java_lexer_start;
+        this.act   = 0;
+        this.top   = 0;
+        this.stack = new int[4];
+        this.cs    = java_lexer_start;
 
         return context.nil;
     }
@@ -158,6 +165,8 @@ public class Lexer extends RubyObject
 %%{
     variable act this.act;
     variable cs this.cs;
+    variable stack this.stack;
+    variable top this.top;
 
     include base_lexer "base_lexer.rl";
 }%%
