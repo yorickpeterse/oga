@@ -5,4 +5,12 @@
 
 extern void Init_liboga_xml_lexer();
 
+typedef struct {
+    int act;
+    int cs;
+    int lines;
+    int stack[4];
+    int top;
+} OgaLexerState;
+
 #endif

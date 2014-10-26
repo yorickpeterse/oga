@@ -75,10 +75,14 @@ void liboga_xml_lexer_callback_simple(VALUE self, const char *name)
  */
 VALUE oga_xml_lexer_advance(VALUE self, VALUE data_block)
 {
+    OgaLexerState *state;
+
     /* Make sure that all data passed back to Ruby has the proper encoding. */
     rb_encoding *encoding = rb_enc_get(data_block);
 
     char *data_str_val = StringValueCStr(data_block);
+
+    Data_Get_Struct(self, OgaLexerState, state);
 
     const char *p    = data_str_val;
     const char *pe   = data_str_val + strlen(data_str_val);
@@ -87,14 +91,11 @@ VALUE oga_xml_lexer_advance(VALUE self, VALUE data_block)
     const char *te   = 0;
     const char *mark = 0;
 
-    int act   = NUM2INT(oga_ivar_get(self, "@act"));
-    int cs    = NUM2INT(oga_ivar_get(self, "@cs"));
-    int lines = 0;
+    int lines = state->lines;
 
     %% write exec;
 
-    oga_ivar_set(self, "@act", INT2NUM(act));
-    oga_ivar_set(self, "@cs", INT2NUM(cs));
+    state->lines = lines;
 
     return Qnil;
 }
@@ -104,14 +105,44 @@ VALUE oga_xml_lexer_advance(VALUE self, VALUE data_block)
  */
 VALUE oga_xml_lexer_reset(VALUE self)
 {
-    oga_ivar_set(self, "@act", INT2NUM(0));
-    oga_ivar_set(self, "@cs", INT2NUM(c_lexer_start));
+    OgaLexerState *state;
+
+    Data_Get_Struct(self, OgaLexerState, state);
+
+    state->act   = 0;
+    state->cs    = c_lexer_start;
+    state->lines = 0;
+    state->top   = 0;
 
     return Qnil;
 }
 
+/**
+ * Frees the associated lexer state struct.
+ */
+void oga_xml_lexer_free(void *state)
+{
+    free((OgaLexerState *) state);
+}
+
+/**
+ * Allocates and wraps the C lexer state struct. This state is used to keep
+ * track of the current position, line numbers, etc.
+ */
+VALUE oga_xml_lexer_allocate(VALUE klass)
+{
+    OgaLexerState *state = malloc(sizeof(OgaLexerState));
+
+    return Data_Wrap_Struct(klass, NULL, oga_xml_lexer_free, state);
+}
+
 %%{
     include base_lexer "base_lexer.rl";
+
+    variable top state->top;
+    variable stack state->stack;
+    variable act state->act;
+    variable cs state->cs;
 }%%
 
 void Init_liboga_xml_lexer()
@@ -122,4 +153,6 @@ void Init_liboga_xml_lexer()
 
     rb_define_method(cLexer, "advance_native", oga_xml_lexer_advance, 1);
     rb_define_method(cLexer, "reset_native", oga_xml_lexer_reset, 0);
+
+    rb_define_alloc_func(cLexer, oga_xml_lexer_allocate);
 }
