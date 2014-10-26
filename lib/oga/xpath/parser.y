@@ -35,6 +35,11 @@ rule
     ;
 
   expression
+    : expression_members
+    | T_LPAREN expression_members T_RPAREN { val[1] }
+    ;
+
+  expression_members
     : node_test_as_axis
     | operator
     | axis
