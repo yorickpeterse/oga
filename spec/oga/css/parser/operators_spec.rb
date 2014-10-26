@@ -3,56 +3,40 @@ require 'spec_helper'
 describe Oga::CSS::Parser do
   context 'operators' do
     example 'parse the = operator' do
-      parse_css('x[a="b"]').should == s(
-        :test,
-        nil,
-        'x',
-        s(:eq, s(:test, nil, 'a'), s(:string, 'b'))
+      parse_css('x[a="b"]').should == parse_xpath(
+        'descendant-or-self::x[@a="b"]'
       )
     end
 
     example 'parse the ~= operator' do
-      parse_css('x[a~="b"]').should == s(
-        :test,
-        nil,
-        'x',
-        s(:space_in, s(:test, nil, 'a'), s(:string, 'b'))
+      parse_css('x[a~="b"]').should == parse_xpath(
+        'descendant-or-self::x[contains(concat(" ", @a, " "), ' \
+          'concat(" ", "b", " "))]'
       )
     end
 
     example 'parse the ^= operator' do
-      parse_css('x[a^="b"]').should == s(
-        :test,
-        nil,
-        'x',
-        s(:starts_with, s(:test, nil, 'a'), s(:string, 'b'))
+      parse_css('x[a^="b"]').should == parse_xpath(
+        'descendant-or-self::x[starts-with(@a, "b")]'
       )
     end
 
     example 'parse the $= operator' do
-      parse_css('x[a$="b"]').should == s(
-        :test,
-        nil,
-        'x',
-        s(:ends_with, s(:test, nil, 'a'), s(:string, 'b'))
+      parse_css('x[a$="b"]').should == parse_xpath(
+        'descendant-or-self::x[substring(@a, string-length(@a) - ' \
+          'string-length("b") + 1, string-length("b")) = "b"]'
       )
     end
 
     example 'parse the *= operator' do
-      parse_css('x[a*="b"]').should == s(
-        :test,
-        nil,
-        'x',
-        s(:in, s(:test, nil, 'a'), s(:string, 'b'))
+      parse_css('x[a*="b"]').should == parse_xpath(
+        'descendant-or-self::x[contains(@a, "b")]'
       )
     end
 
     example 'parse the |= operator' do
-      parse_css('x[a|="b"]').should == s(
-        :test,
-        nil,
-        'x',
-        s(:hyphen_in, s(:test, nil, 'a'), s(:string, 'b'))
+      parse_css('x[a|="b"]').should == parse_xpath(
+        'descendant-or-self::x[@a = "b" or starts-with(@a, concat("b", "-"))]'
       )
     end
   end

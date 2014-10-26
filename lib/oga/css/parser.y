@@ -138,8 +138,76 @@ rule
     : node_name { s(:axis, 'attribute', s(:test, *val[0])) }
     ;
 
+  # The AST of these operators is mostly based on what
+  # `Nokogiri::CSS.xpath_for('...')` returns.
   operator
-    : attribute T_EQ string { s(:eq, val[0], val[2]) }
+    # a="b"
+    : attribute T_EQ string
+      {
+        s(:eq, val[0], val[2])
+      }
+
+    # a~="b"
+    | attribute T_SPACE_IN string
+      {
+        s(
+          :call,
+          'contains',
+          s(:call, 'concat', s(:string, ' '), val[0], s(:string, ' ')),
+          s(:call, 'concat', s(:string, ' '), val[2], s(:string, ' '))
+        )
+      }
+
+    # a^="b"
+    | attribute T_STARTS_WITH string
+      {
+        s(:call, 'starts-with', val[0], val[2])
+      }
+
+    # a$="b"
+    | attribute T_ENDS_WITH string
+      {
+        s(
+          :eq,
+          s(
+            :call,
+            'substring',
+            val[0],
+            s(
+              :add,
+              s(
+                :sub,
+                s(:call, 'string-length', val[0]),
+                s(:call, 'string-length', val[2])
+              ),
+              s(:int, 1)
+            ),
+            s(:call, 'string-length', val[2])
+          ),
+          val[2]
+        )
+      }
+
+    # a*="b"
+    | attribute T_IN string
+      {
+        s(:call, 'contains', val[0], val[2])
+      }
+
+    # a|="b"
+    | attribute T_HYPHEN_IN string
+      {
+        s(
+          :or,
+          s(:eq, val[0], val[2]),
+          s(
+            :call,
+            'starts-with',
+            val[0],
+            s(:call, 'concat', val[2], s(:string, '-'))
+          )
+        )
+      }
     ;
 
   class
