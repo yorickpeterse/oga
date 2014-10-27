@@ -15,38 +15,33 @@ describe Oga::CSS::Parser do
     end
 
     example 'parse the x:nth-child(1) pseudo class' do
-      parse_css('x:nth-child(1)').should == s(
-        :pseudo,
-        s(:test, nil, 'x'),
-        'nth-child',
-        s(:int, 1)
+      parse_css('x:nth-child(1)').should == parse_xpath(
+        'descendant-or-self::x[count(preceding-sibling::*) = 0]'
       )
     end
 
     example 'parse the :nth-child(1) pseudo class' do
-      parse_css(':nth-child(1)').should == s(
-        :pseudo,
-        nil,
-        'nth-child',
-        s(:int, 1)
+      parse_css(':nth-child(1)').should == parse_xpath(
+        'descendant-or-self::*[count(preceding-sibling::*) = 0]'
       )
     end
 
-    example 'parse the x:nth-child(odd) pseudo class' do
-      parse_css('x:nth-child(odd)').should == s(
-        :pseudo,
-        s(:test, nil, 'x'),
-        'nth-child',
-        s(:odd)
+    example 'parse the :nth-child(2) pseudo class' do
+      parse_css(':nth-child(2)').should == parse_xpath(
+        'descendant-or-self::*[count(preceding-sibling::*) = 1]'
       )
     end
 
     example 'parse the x:nth-child(even) pseudo class' do
-      parse_css('x:nth-child(even)').should == s(
-        :pseudo,
-        s(:test, nil, 'x'),
-        'nth-child',
-        s(:even)
+      parse_css('x:nth-child(even)').should == parse_xpath(
+        'descendant-or-self::x[(count(preceding-sibling::*) + 1) mod 2]'
+      )
+    end
+
+    example 'parse the x:nth-child(odd) pseudo class' do
+      parse_css('x:nth-child(odd)').should == parse_xpath(
+        'descendant-or-self::x[(count(preceding-sibling::*) + 1) >= 1 ' \
+          'and (((count(preceding-sibling::*) + 1) - 1) mod 2) = 0]'
       )
     end
 

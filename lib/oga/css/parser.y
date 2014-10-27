@@ -259,8 +259,19 @@ rule
     | selector
     ;
 
+  string
+    : T_STRING { s(:string, val[0]) }
+    ;
+
+  integer
+    : T_INT { s(:int, val[0].to_i) }
+    ;
+
+  # These AST nodes are _not_ the final AST nodes. Instead they are used by
+  # on_pseudo_class_nth_child() to determine what the final AST should be.
+
   nth
-    : T_NTH                 { s(:nth) }
+    : T_NTH                 { s(:nth, s(:int, 1)) }
     | T_MINUS T_NTH         { s(:nth) }
     | integer T_NTH         { s(:nth, val[0]) }
     | integer T_NTH integer { s(:nth, val[0], val[2]) }
@@ -272,14 +283,6 @@ rule
 
   even
     : T_EVEN { s(:nth, s(:int, 2)) }
-    ;
-
-  string
-    : T_STRING { s(:string, val[0]) }
-    ;
-
-  integer
-    : T_INT { s(:int, val[0].to_i) }
     ;
 end
 
@@ -347,4 +350,45 @@ end
   def on_pseudo_class_root
     return s(:call, 'not', s(:axis, 'parent', s(:test, nil, '*')))
   end
+
+  ##
+  # Generates the AST for the `nth-child` pseudo class.
+  #
+  # @param [AST::Node] arg
+  # @return [AST::Node]
+  #
+  def on_pseudo_class_nth_child(arg)
+    if arg.type == :int
+      node = s(
+        :eq,
+        s(
+          :call,
+          'count',
+          s(:axis, 'preceding-sibling', s(:test, nil, '*'))
+        ),
+        s(:int, arg.children[0] - 1)
+      )
+    else
+      step, offset = *arg
+
+      before_count = s(
+        :add,
+        s(:call, 'count', s(:axis, 'preceding-sibling', s(:test, nil, '*'))),
+        s(:int, 1)
+      )
+
+      if offset
+        node = s(
+          :and,
+          s(:gte, before_count, offset),
+          s(:eq, s(:mod, s(:sub, before_count, offset), s(:int, 2)), s(:int, 0))
+        )
+      else
+        node = s(:mod, before_count, step)
+      end
+    end
+
+    return node
+  end
+
 # vim: set ft=racc:
