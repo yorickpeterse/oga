@@ -272,7 +272,7 @@ rule
 
   nth
     : T_NTH                 { s(:nth, s(:int, 1)) }
-    | T_MINUS T_NTH         { s(:nth) }
+    | T_MINUS T_NTH         { s(:nth, s(:int, 1)) }
     | integer T_NTH         { s(:nth, val[0]) }
     | integer T_NTH integer { s(:nth, val[0], val[2]) }
     ;
@@ -384,7 +384,7 @@ end
           s(:eq, s(:mod, s(:sub, before_count, offset), s(:int, 2)), s(:int, 0))
         )
       else
-        node = s(:mod, before_count, step)
+        node = s(:eq, s(:mod, before_count, step), s(:int, 0))
       end
     end
 
