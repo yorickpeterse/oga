@@ -57,56 +57,48 @@ describe Oga::CSS::Parser do
       )
     end
 
-    example 'parse the x:nth-child(2n) pseudo class' do
-      parse_css('x:nth-child(2n)').should == s(
-        :pseudo,
-        s(:test, nil, 'x'),
-        'nth-child',
-        s(:nth, s(:int, 2))
+    example 'parse the x:nth-child(-n+6) pseudo class' do
+      parse_css('x:nth-child(-n+6)').should == parse_xpath(
+        'descendant-or-self::x[((count(preceding-sibling::*) + 1) <= 6) ' \
+          'and (((count(preceding-sibling::*) + 1) - 6) mod 1) = 0]'
       )
+    end
+
+    example 'parse the x:nth-child(-n-6) pseudo class' do
+      parse_css('x:nth-child(-n-6)').should == parse_xpath(
+        'descendant-or-self::x[count(preceding-sibling::*) = -1]'
+      )
+    end
+
+    example 'parse the x:nth-child(2n) pseudo class' do
+      parse_css('x:nth-child(2n)').should == parse_css('x:nth-child(even)')
     end
 
     example 'parse the x:nth-child(2n+1) pseudo class' do
-      parse_css('x:nth-child(2n+1)').should == s(
-        :pseudo,
-        s(:test, nil, 'x'),
-        'nth-child',
-        s(:nth, s(:int, 2), s(:int, 1))
+      parse_css('x:nth-child(2n+1)').should == parse_xpath(
+        'descendant-or-self::x[(count(preceding-sibling::*) + 1) >= 1 ' \
+          'and (((count(preceding-sibling::*) + 1) - 1) mod 2) = 0]'
       )
     end
 
-    example 'parse the x:nth-child(2n-1) pseudo class' do
-      parse_css('x:nth-child(2n-1)').should == s(
-        :pseudo,
-        s(:test, nil, 'x'),
-        'nth-child',
-        s(:nth, s(:int, 2), s(:int, -1))
+    example 'parse the x:nth-child(2n-6) pseudo class' do
+      parse_css('x:nth-child(2n-6)').should == parse_xpath(
+        'descendant-or-self::x[(count(preceding-sibling::*) + 1) >= 2 ' \
+          'and (((count(preceding-sibling::*) + 1) - 2) mod 2) = 0]'
       )
     end
 
-    example 'parse the x:nth-child(-2n-1) pseudo class' do
-      parse_css('x:nth-child(-2n-1)').should == s(
-        :pseudo,
-        s(:test, nil, 'x'),
-        'nth-child',
-        s(:nth, s(:int, -2), s(:int, -1))
+    example 'parse the x:nth-child(-2n-6) pseudo class' do
+      parse_css('x:nth-child(-2n-6)').should == parse_xpath(
+        'descendant-or-self::x[((count(preceding-sibling::*) + 1) <= -2) ' \
+          'and (((count(preceding-sibling::*) + 1) - -2) mod 2) = 0]'
       )
     end
 
-    example 'parse two pseudo selectors' do
-      parse_css('x:focus:hover').should == s(
-        :pseudo,
-        s(:pseudo, s(:test, nil, 'x'), 'focus'),
-        'hover'
-      )
-    end
-
-    example 'parse a pseudo class with an identifier as the argument' do
-      parse_css('x:lang(fr)').should == s(
-        :pseudo,
-        s(:test, nil, 'x'),
-        'lang',
-        s(:test, nil, 'fr')
+    example 'parse the x:nth-child(-2n+6) pseudo class' do
+      parse_css('x:nth-child(-2n+6)').should == parse_xpath(
+        'descendant-or-self::x[((count(preceding-sibling::*) + 1) <= 6) ' \
+          'and (((count(preceding-sibling::*) + 1) - 6) mod 2) = 0]'
       )
     end
   end

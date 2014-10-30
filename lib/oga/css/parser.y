@@ -271,10 +271,31 @@ rule
   # on_pseudo_class_nth_child() to determine what the final AST should be.
 
   nth
-    : T_NTH                 { s(:nth, s(:int, 1)) }
-    | T_MINUS T_NTH         { s(:nth, s(:int, 1)) }
-    | integer T_NTH         { s(:nth, val[0]) }
-    | integer T_NTH integer { s(:nth, val[0], val[2]) }
+    # n
+    : T_NTH { s(:nth, s(:int, 1)) }
+
+    # -n
+    | T_MINUS T_NTH { s(:nth, s(:int, 1)) }
+
+    # -n+2, -n-2
+    | T_MINUS T_NTH integer { s(:nth, nil, val[2]) }
+
+    # 2n
+    | integer T_NTH { s(:nth, val[0]) }
+
+    # 2n+1, 2n-1
+    | integer T_NTH integer
+      {
+        a = val[0]
+        b = val[2]
+
+        # 2n-1 gets turned into 2n+1
+        if b.children[0] < 0
+          b = s(:int, a.children[0] - (b.children[0] % a.children[0]))
+        end
+
+        s(:nth, a, b)
+      }
     ;
 
   odd
@@ -358,6 +379,7 @@ end
   # @return [AST::Node]
   #
   def on_pseudo_class_nth_child(arg)
+    # literal 2, 4, etc
     if arg.type == :int
       node = s(
         :eq,
@@ -371,18 +393,35 @@ end
     else
       step, offset = *arg
 
-      before_count = s(
-        :add,
-        s(:call, 'count', s(:axis, 'preceding-sibling', s(:test, nil, '*'))),
-        s(:int, 1)
+      count_call = s(
+        :call,
+        'count',
+        s(:axis, 'preceding-sibling', s(:test, nil, '*'))
       )
 
-      if offset
+      before_count = s(:add, count_call, s(:int, 1))
+
+      if step and step.children[0] >= 0
+        compare = :gte
+      else
+        compare = :lte
+      end
+
+      # -n-6, -n-4, etc
+      if !step and offset.children[0] <= 0
+        node = s(:eq, count_call, s(:int, -1))
+
+      # 2n+2, 2n-4, etc
+      elsif offset
+        mod_val = step ? s(:int, 2) : s(:int, 1)
+
         node = s(
           :and,
-          s(:gte, before_count, offset),
-          s(:eq, s(:mod, s(:sub, before_count, offset), s(:int, 2)), s(:int, 0))
+          s(compare, before_count, offset),
+          s(:eq, s(:mod, s(:sub, before_count, offset), mod_val), s(:int, 0))
         )
+
+      # 2n, n, -2n
       else
         node = s(:eq, s(:mod, before_count, step), s(:int, 0))
       end
