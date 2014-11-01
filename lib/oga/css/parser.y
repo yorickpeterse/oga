@@ -379,26 +379,32 @@ end
   # @return [AST::Node]
   #
   def on_pseudo_class_nth_child(arg)
-    # literal 2, 4, etc
+    return generate_nth_child('preceding-sibling', arg)
+  end
+
+  ##
+  # Generates the AST for the `nth-last-child` pseudo class.
+  #
+  # @param [AST::Node] arg
+  # @return [AST::Node]
+  #
+  def on_pseudo_class_nth_last_child(arg)
+    return generate_nth_child('following-sibling', arg)
+  end
+
+  ##
+  # @param [String] count_axis
+  # @param [AST::Node] arg
+  # @return [AST::Node]
+  #
+  def generate_nth_child(count_axis, arg)
+    count_call = s(:call, 'count', s(:axis, count_axis, s(:test, nil, '*')))
+
+   # literal 2, 4, etc
     if arg.type == :int
-      node = s(
-        :eq,
-        s(
-          :call,
-          'count',
-          s(:axis, 'preceding-sibling', s(:test, nil, '*'))
-        ),
-        s(:int, arg.children[0] - 1)
-      )
+      node = s(:eq, count_call, s(:int, arg.children[0] - 1))
     else
       step, offset = *arg
-
-      count_call = s(
-        :call,
-        'count',
-        s(:axis, 'preceding-sibling', s(:test, nil, '*'))
-      )
-
       before_count = s(:add, count_call, s(:int, 1))
 
       if step and step.children[0] >= 0
