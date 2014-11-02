@@ -407,7 +407,15 @@ specify one of the following:
 
 The first element in a node set for `:nth-child()` is located at position 1,
 _not_ position 0 (unlike most programming languages). As a result
-`:nth-child(1)` matches the _first_ element, _not_ the second.
+`:nth-child(1)` matches the _first_ element, _not_ the second. This can be
+visualized as following:
+
+               :nth-child(2)
+
+       1     2     3     4     5     6
+     +---+ +---+ +---+ +---+ +---+ +---+
+     |   | | X | |   | |   | |   | |   |
+     +---+ +---+ +---+ +---+ +---+ +---+
 
 Besides using a literal index argument you can also use an interval, optionally
 with an offset. This can be used to for example match every 2nd element, or
@@ -437,13 +445,23 @@ token. If this is not desired the following grammar can be used instead:
 
 To match every 2nd element you'd use the following:
 
-    :nth-child(2n)
+               :nth-child(2n)
 
-To match every 2nd element starting at element 2 you'd instead use this:
+       1     2     3     4     5     6
+     +---+ +---+ +---+ +---+ +---+ +---+
+     |   | | X | |   | | X | |   | | X |
+     +---+ +---+ +---+ +---+ +---+ +---+
 
-    :nth-child(2n+2)
+To match every 2nd element starting at element 1 you'd instead use this:
 
-As mentioned the `+2` in the above example is the initial offset. This is
+              :nth-child(2n+1)
+
+       1     2     3     4     5     6
+     +---+ +---+ +---+ +---+ +---+ +---+
+     | X | |   | | X | |   | | X | |   |
+     +---+ +---+ +---+ +---+ +---+ +---+
+
+As mentioned the `+1` in the above example is the initial offset. This is
 however _only_ the case if the second number is positive. That means that for
 `:nth-child(2n-2)` the offset is _not_ `-2`. When using a negative offset the
 actual offset first has to be calculated. When using an argument in the form of
@@ -475,8 +493,24 @@ Using `:nth-child(n)` simply matches all elements in the set. Using
 
 Expressions such as `:nth-child(-n-5)` are invalid as both parts of the interval
 (`-n` and `-5`) are a negative. However, `:nth-child(-n+5)` is
-perfectly valid and would match the first 5 elements in a set. Using
-`:nth-child(n+5)` would match all elements starting at element 5.
+perfectly valid and would match the first 5 elements in a set:
+
+             :nth-child(-n+5)
+
+      1     2     3     4     5     6
+    +---+ +---+ +---+ +---+ +---+ +---+
+    | X | | X | | X | | X | | X | |   |
+    +---+ +---+ +---+ +---+ +---+ +---+
+
+
+Using `:nth-child(n+5)` would match all elements starting at element 5:
+
+                         :nth-child(n+5)
+
+      1     2     3     4     5     6     7     8     9    10
+    +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+    |   | |   | |   | |   | | X | | X | | X | | X | | X | | X |
+    +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
 
 To summarize:
 
