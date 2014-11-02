@@ -446,7 +446,7 @@ To match every 2nd element starting at element 2 you'd instead use this:
 As mentioned the `+2` in the above example is the initial offset. This is
 however _only_ the case if the second number is positive. That means that for
 `:nth-child(2n-2)` the offset is _not_ `-2`. When using a negative offset the
-actual offset has to first be calculated. When using an argument in the form of
+actual offset first has to be calculated. When using an argument in the form of
 `An-B` we can calculate the actual offset as following:
 
     offset = A - (B % A)
