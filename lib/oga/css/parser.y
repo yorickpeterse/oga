@@ -274,11 +274,14 @@ rule
     # n
     : T_NTH { s(:nth, s(:int, 1)) }
 
+    # n+2
+    | T_NTH integer { s(:nth, s(:int, 1), val[1]) }
+
     # -n
     | T_MINUS T_NTH { s(:nth, s(:int, 1)) }
 
     # -n+2, -n-2
-    | T_MINUS T_NTH integer { s(:nth, nil, val[2]) }
+    | T_MINUS T_NTH integer { s(:nth, s(:int, -1), val[2]) }
 
     # 2n
     | integer T_NTH { s(:nth, val[0]) }
@@ -406,28 +409,12 @@ end
     else
       step, offset = *arg
       before_count = s(:add, count_call, s(:int, 1))
-
-      if step and step.children[0] >= 0
-        compare = :gte
-      else
-        compare = :lte
-      end
+      compare      = step_comparison(step)
 
       # 2n+2, 2n-4, etc
       if offset
-        # -2n
-        if step and non_positive_number?(step)
-          mod_val = s(:int, -step.children[0])
-
-        # 2n
-        elsif step
-          mod_val = step
-
-        else
-          mod_val = s(:int, 1)
-        end
-
-        node = s(
+        mod_val = step_modulo_value(step)
+        node    = s(
           :and,
           s(compare, before_count, offset),
           s(:eq, s(:mod, s(:sub, before_count, offset), mod_val), s(:int, 0))
@@ -458,6 +445,32 @@ end
   #
   def non_positive_number?(node)
     return node.children[0] <= 0
+  end
+
+  ##
+  # @param [AST::Node] node
+  # @return [Symbol]
+  #
+  def step_comparison(node)
+    return node.children[0] >= 0 ? :gte : :lte
+  end
+
+  ##
+  # @param [AST::Node] node
+  # @return [AST::Node]
+  #
+  def step_modulo_value(step)
+    # -2n
+    if step and non_positive_number?(step)
+      mod_val = s(:int, -step.children[0])
+
+    # 2n
+    elsif step
+      mod_val = step
+
+    else
+      mod_val = s(:int, 1)
+    end
   end
 
 # vim: set ft=racc:
