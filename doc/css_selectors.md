@@ -469,6 +469,28 @@ To ease the process of selecting even and uneven elements you can also use
 `:nth-child(2n)` while using `:nth-child(odd)` in turn is the same as
 `:nth-child(2n+1)`.
 
+Using `:nth-child(n)` simply matches all elements in the set. Using
+`:nth-child(-n)` doesn't match any elements, though Oga treats it the same as
+`:nth-child(n)`.
+
+Expressions such as `:nth-child(-n-5)` are invalid as both parts of the interval
+(`-n` and `-5`) are a negative. However, `:nth-child(-n+5)` is
+perfectly valid and would match the first 5 elements in a set. Using
+`:nth-child(n+5)` would match all elements starting at element 5.
+
+To summarize:
+
+    :nth-child(n)    => matches all elements
+    :nth-child(-n)   => matches nothing, though Oga treats it the same as "n"
+    :nth-child(5)    => matches element #5
+    :nth-child(2n)   => matches every 2 elements
+    :nth-child(2n+2) => matches every 2 elements, starting at element 2
+    :nth-child(2n-2) => matches every 2 elements, starting at element 1
+    :nth-child(n+5)  => matches all elements, starting at element 5
+    :nth-child(-n+5) => matches the first 5 elements
+    :nth-child(even) => matches every 2nd element, starting at element 2
+    :nth-child(odd)  => matches every 2nd element, starting at element 1
+
 [w3spec]: http://www.w3.org/TR/css3-selectors/
 [rfc-2119]: https://www.ietf.org/rfc/rfc2119.txt
 [kramdown]: http://kramdown.gettalong.org/
