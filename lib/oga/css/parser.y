@@ -490,7 +490,7 @@ end
   end
 
   ##
-  # @param [AST::Node] node
+  # @param [AST::Node] step
   # @return [AST::Node]
   #
   def step_modulo_value(step)

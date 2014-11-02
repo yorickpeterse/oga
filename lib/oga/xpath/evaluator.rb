@@ -2,7 +2,7 @@ module Oga
   module XPath
     ##
     # The Evaluator class evaluates XPath expressions, either as a String or an
-    # AST of {AST::Node} instances.
+    # AST of `AST::Node` instances.
     #
     # ## Thread Safety
     #
@@ -1592,7 +1592,7 @@ module Oga
       end
 
       ##
-      # Checks if a given {Oga::XML::Node} instance matches a {AST::Node}
+      # Checks if a given {Oga::XML::Node} instance matches a `AST::Node`
       # instance.
       #
       # This method can use both "test" and "type-test" nodes. In case of
