@@ -429,6 +429,40 @@ end
     return node
   end
 
+  ##
+  # Generates the AST for the `nth-of-type` pseudo class.
+  #
+  # @param [AST::Node] arg
+  # @return [AST::Node]
+  #
+  def on_pseudo_class_nth_of_type(arg)
+    position_call = s(:call, 'position')
+
+    # literal 2, 4, etc
+    if int_node?(arg)
+      node = s(:eq, position_call, arg)
+    else
+      step, offset = *arg
+      compare      = step_comparison(step)
+
+      # 2n+2, 2n-4, etc
+      if offset
+        mod_val = step_modulo_value(step)
+        node    = s(
+          :and,
+          s(compare, position_call, offset),
+          s(:eq, s(:mod, s(:sub, position_call, offset), mod_val), s(:int, 0))
+        )
+
+      # 2n, n, -2n
+      else
+        node = s(:eq, s(:mod, position_call, step), s(:int, 0))
+      end
+    end
+
+    return node
+  end
+
   private
 
   ##
