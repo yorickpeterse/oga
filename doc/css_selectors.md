@@ -491,9 +491,23 @@ To summarize:
     :nth-child(even) => matches every 2nd element, starting at element 2
     :nth-child(odd)  => matches every 2nd element, starting at element 1
 
+The corresponding XPath expressions are quite complex and differ based on the
+interval argument used. For the various forms the corresponding XPath
+expressions are as following:
+
+    :nth-child(n)    => *[((count(preceding-sibling::*) + 1) mod 1) = 0]
+    :nth-child(-n)   => *[((count(preceding-sibling::*) + 1) mod 1) = 0]
+    :nth-child(5)    => *[count(preceding-sibling::*) = 4]
+    :nth-child(2n)   => *[((count(preceding-sibling::*) + 1) mod 2) = 0]
+    :nth-child(2n+2) => *[(count(preceding-sibling::*) + 1) >= 2 and (((count(preceding-sibling::*) + 1) - 2) mod 2) = 0]
+    :nth-child(2n-6) => *[(count(preceding-sibling::*) + 1) >= 2 and (((count(preceding-sibling::*) + 1) - 2) mod 2) = 0]
+    :nth-child(n+5)  => *[(count(preceding-sibling::*) + 1) >= 5 and (((count(preceding-sibling::*) + 1) - 5) mod 1) = 0]
+    :nth-child(-n+6) => *[((count(preceding-sibling::*) + 1) <= 6) and (((count(preceding-sibling::*) + 1) - 6) mod 1) = 0]
+    :nth-child(even) => *[((count(preceding-sibling::*) + 1) mod 2) = 0]
+    :nth-child(odd)  => *[(count(preceding-sibling::*) + 1) >= 1 and (((count(preceding-sibling::*) + 1) - 1) mod 2) = 0]
+
 [w3spec]: http://www.w3.org/TR/css3-selectors/
 [rfc-2119]: https://www.ietf.org/rfc/rfc2119.txt
 [kramdown]: http://kramdown.gettalong.org/
 [universal-selector]: #universal-selector
-[bnf]: https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_Form
 [ragel]: http://www.colm.net/open-source/ragel/
