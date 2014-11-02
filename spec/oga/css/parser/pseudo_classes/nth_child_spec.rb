@@ -52,12 +52,6 @@ describe Oga::CSS::Parser do
       )
     end
 
-    example 'parse the x:nth-child(-n-6) pseudo class' do
-      parse_css('x:nth-child(-n-6)').should == parse_xpath(
-        'descendant-or-self::x[count(preceding-sibling::*) = -1]'
-      )
-    end
-
     example 'parse the x:nth-child(2n) pseudo class' do
       parse_css('x:nth-child(2n)').should == parse_css('x:nth-child(even)')
     end
@@ -80,13 +74,6 @@ describe Oga::CSS::Parser do
       parse_css('x:nth-child(2n-6)').should == parse_xpath(
         'descendant-or-self::x[(count(preceding-sibling::*) + 1) >= 2 ' \
           'and (((count(preceding-sibling::*) + 1) - 2) mod 2) = 0]'
-      )
-    end
-
-    example 'parse the x:nth-child(-2n-6) pseudo class' do
-      parse_css('x:nth-child(-2n-6)').should == parse_xpath(
-        'descendant-or-self::x[((count(preceding-sibling::*) + 1) <= -2) ' \
-          'and (((count(preceding-sibling::*) + 1) - -2) mod 2) = 0]'
       )
     end
 

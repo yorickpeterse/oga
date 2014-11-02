@@ -413,12 +413,8 @@ end
         compare = :lte
       end
 
-      # -n-6, -n-4, etc
-      if !step and non_positive_number?(offset)
-        node = s(:eq, count_call, s(:int, -1))
-
       # 2n+2, 2n-4, etc
-      elsif offset
+      if offset
         # -2n
         if step and non_positive_number?(step)
           mod_val = s(:int, -step.children[0])
