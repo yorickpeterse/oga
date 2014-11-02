@@ -505,6 +505,8 @@ end
     else
       mod_val = s(:int, 1)
     end
+
+    return mod_val
   end
 
 # vim: set ft=racc:
