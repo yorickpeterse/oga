@@ -401,7 +401,7 @@ end
     count_call = s(:call, 'count', s(:axis, count_axis, s(:test, nil, '*')))
 
    # literal 2, 4, etc
-    if arg.type == :int
+    if int_node?(arg)
       node = s(:eq, count_call, s(:int, arg.children[0] - 1))
     else
       step, offset = *arg
@@ -414,12 +414,22 @@ end
       end
 
       # -n-6, -n-4, etc
-      if !step and offset.children[0] <= 0
+      if !step and non_positive_number?(offset)
         node = s(:eq, count_call, s(:int, -1))
 
       # 2n+2, 2n-4, etc
       elsif offset
-        mod_val = step ? s(:int, 2) : s(:int, 1)
+        # -2n
+        if step and non_positive_number?(step)
+          mod_val = s(:int, -step.children[0])
+
+        # 2n
+        elsif step
+          mod_val = step
+
+        else
+          mod_val = s(:int, 1)
+        end
 
         node = s(
           :and,
@@ -434,6 +444,24 @@ end
     end
 
     return node
+  end
+
+  private
+
+  ##
+  # @param [AST::Node] node
+  # @return [TrueClass|FalseClass]
+  #
+  def int_node?(node)
+    return node.type == :int
+  end
+
+  ##
+  # @param [AST::Node] node
+  # @return [TrueClass|FalseClass]
+  #
+  def non_positive_number?(node)
+    return node.children[0] <= 0
   end
 
 # vim: set ft=racc:

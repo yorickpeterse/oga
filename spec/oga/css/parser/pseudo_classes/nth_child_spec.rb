@@ -69,6 +69,13 @@ describe Oga::CSS::Parser do
       )
     end
 
+    example 'parse the x:nth-child(3n+1) pseudo class' do
+      parse_css('x:nth-child(3n+1)').should == parse_xpath(
+        'descendant-or-self::x[(count(preceding-sibling::*) + 1) >= 1 ' \
+          'and (((count(preceding-sibling::*) + 1) - 1) mod 3) = 0]'
+      )
+    end
+
     example 'parse the x:nth-child(2n-6) pseudo class' do
       parse_css('x:nth-child(2n-6)').should == parse_xpath(
         'descendant-or-self::x[(count(preceding-sibling::*) + 1) >= 2 ' \
