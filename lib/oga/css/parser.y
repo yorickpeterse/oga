@@ -436,11 +436,36 @@ end
   # @return [AST::Node]
   #
   def on_pseudo_class_nth_of_type(arg)
-    position_call = s(:call, 'position')
+    position_node = s(:call, 'position')
 
+    return generate_nth_of_type(arg, position_node)
+  end
+
+  ##
+  # Generates the AST for the `nth-last-of-type` pseudo class.
+  #
+  # @param [AST::Node] arg
+  # @return [AST::Node]
+  #
+  def on_pseudo_class_nth_last_of_type(arg)
+    position_node = s(
+      :add,
+      s(:sub, s(:call, 'last'), s(:call, 'position')),
+      s(:int, 1)
+    )
+
+    return generate_nth_of_type(arg, position_node)
+  end
+
+  ##
+  # @param [AST::Node] arg
+  # @param [AST::Node] position_node
+  # @return [AST::Node]
+  #
+  def generate_nth_of_type(arg, position_node)
     # literal 2, 4, etc
     if int_node?(arg)
-      node = s(:eq, position_call, arg)
+      node = s(:eq, position_node, arg)
     else
       step, offset = *arg
       compare      = step_comparison(step)
@@ -450,13 +475,13 @@ end
         mod_val = step_modulo_value(step)
         node    = s(
           :and,
-          s(compare, position_call, offset),
-          s(:eq, s(:mod, s(:sub, position_call, offset), mod_val), s(:int, 0))
+          s(compare, position_node, offset),
+          s(:eq, s(:mod, s(:sub, position_node, offset), mod_val), s(:int, 0))
         )
 
       # 2n, n, -2n
       else
-        node = s(:eq, s(:mod, position_call, step), s(:int, 0))
+        node = s(:eq, s(:mod, position_node, step), s(:int, 0))
       end
     end
 
