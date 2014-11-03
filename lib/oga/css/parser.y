@@ -501,6 +501,19 @@ end
     )
   end
 
+  ##
+  # Generates the AST for the `:last-child` selector.
+  #
+  # @return [AST::Node]
+  #
+  def on_pseudo_class_last_child
+    return s(
+      :eq,
+      s(:call, 'count', s(:axis, 'following-sibling', s(:test, nil, '*'))),
+      s(:int, 0)
+    )
+  end
+
   private
 
   ##
