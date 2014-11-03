@@ -488,6 +488,19 @@ end
     return node
   end
 
+  ##
+  # Generates the AST for the `:first-child` selector.
+  #
+  # @return [AST::Node]
+  #
+  def on_pseudo_class_first_child
+    return s(
+      :eq,
+      s(:call, 'count', s(:axis, 'preceding-sibling', s(:test, nil, '*'))),
+      s(:int, 0)
+    )
+  end
+
   private
 
   ##
