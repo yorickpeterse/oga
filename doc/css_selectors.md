@@ -34,7 +34,7 @@ defined as following:
 
 A quick and basic crash course of the Ragel grammar:
 
-* `*`: zero or one instance of the preceding token(s)
+* `*`: zero or more instance of the preceding token(s)
 * `+`: one or more instances of the preceding token(s)
 * `(` and `)`: used for grouping expressions together
 * `^`: inverts a match, thus `^[0-9]` means "anything but a single digit"
