@@ -550,6 +550,15 @@ end
     return s(:eq, s(:call, 'last'), s(:int, 1))
   end
 
+  ##
+  # Generates the AST for the `:empty` selector.
+  #
+  # @return [AST::Node]
+  #
+  def on_pseudo_class_empty
+    return s(:call, 'not', s(:axis, 'child', s(:type_test, 'node')))
+  end
+
   private
 
   ##
