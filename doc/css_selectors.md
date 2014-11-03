@@ -398,8 +398,11 @@ For `:root` the XPath expression is:
 ### :nth-child(n)
 
 The `:nth-child(n)` selector can be used to select a set of elements based on
-their position and/or an interval. Here `n` is an argument that can be used to
-specify one of the following:
+their position or an interval, skipping elements that occur in a set before
+the given position or interval.
+
+In the form `:nth-child(n)` the identifier `n` is an argument that can be used
+to specify one of the following:
 
 1. A literal node set index
 2. A node interval used to match every N nodes
