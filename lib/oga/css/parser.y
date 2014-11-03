@@ -515,10 +515,21 @@ end
   end
 
   ##
+  # Generates the AST for the `:first-of-type` selector.
+  #
   # @return [AST::Node]
   #
   def on_pseudo_class_first_of_type
     return s(:eq, s(:call, 'position'), s(:int, 1))
+  end
+
+  ##
+  # Generates the AST for the `:last-of-type` selector.
+  #
+  # @return [AST::Node]
+  #
+  def on_pseudo_class_last_of_type
+    return s(:eq, s(:call, 'position'), s(:call, 'last'))
   end
 
   private
