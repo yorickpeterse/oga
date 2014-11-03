@@ -541,6 +541,15 @@ end
     return s(:and, on_pseudo_class_first_child, on_pseudo_class_last_child)
   end
 
+  ##
+  # Generates the AST for the `:only-of-type` selector.
+  #
+  # @return [AST::Node]
+  #
+  def on_pseudo_class_only_of_type
+    return s(:eq, s(:call, 'last'), s(:int, 1))
+  end
+
   private
 
   ##
