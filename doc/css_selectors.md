@@ -472,18 +472,17 @@ actual offset first has to be calculated. When using an argument in the form of
 
     offset = A - (B % A)
 
-For example, this would effectively turn `:nth-child(2n-2)` into
-`:nth-child(2n+2)` and `:nth-child(2n-5)` into `:nth-child(2n+1)`. Note that if
-the minus sign is part of the number you can simply use the following formula
-instead:
+For example, for the selector `:nth-child(2n-2)` the formula would be:
 
-    offset = B % A
+    offset = 2 - (-2 % 2) # => 2
 
-For `:nth-child(2n-5)` this translates to:
+This would result in the selector `:nth-child(2n+2)`.
 
-    offset = -5 % 2
+As an another example, for the selector `:nth-child(2n-5)` the formula would be:
 
-Which would result in `:nth-child(2n+1)`.
+    offset = 2 - (-5 % 2) # => 1
+
+Which would result in the selector `:nth-child(2n+1)`
 
 To ease the process of selecting even and uneven elements you can also use
 `even` and `odd` as an argument. Using `:nth-child(even)` is the same as
