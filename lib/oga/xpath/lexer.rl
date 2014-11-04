@@ -194,7 +194,7 @@ module Oga
         # Identifiers are used for element names, namespaces, attribute names,
         # etc. Identifiers have to start with a letter.
 
-        identifier = '*' | [a-zA-Z*_]+ [a-zA-Z\-_0-9]*;
+        identifier = '*' | [a-zA-Z_]+ [a-zA-Z\-_0-9]*;
 
         action emit_identifier {
           emit(:T_IDENT, ts, te)
