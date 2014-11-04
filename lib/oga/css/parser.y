@@ -45,7 +45,7 @@ rule
     ;
 
   descendant_or_self
-    : node_test { s(:axis, 'descendant-or-self', val[0]) }
+    : node_test { s(:axis, 'descendant', val[0]) }
     ;
 
   axis
