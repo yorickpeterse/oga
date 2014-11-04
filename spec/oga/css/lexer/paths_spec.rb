@@ -6,6 +6,10 @@ describe Oga::CSS::Lexer do
       lex_css('h3').should == [[:T_IDENT, 'h3']]
     end
 
+    example 'lex a simple path starting with an underscore' do
+      lex_css('_h3').should == [[:T_IDENT, '_h3']]
+    end
+
     example 'lex a path with two members' do
       lex_css('div h3').should == [
         [:T_IDENT, 'div'],
