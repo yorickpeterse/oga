@@ -108,20 +108,4 @@ describe 'CSS selector evaluation' do
       @set[2].should == @document.children[0].children[2]
     end
   end
-
-  context 'paths without namespaces and with name wildcards' do
-    before do
-      @set = evaluate_css(@document, 'a |*')
-    end
-
-    it_behaves_like :node_set, :length => 2
-
-    example 'include the first <b> node' do
-      @set[0].should == @document.children[0].children[0]
-    end
-
-    example 'include the second <b> node' do
-      @set[1].should == @document.children[0].children[1]
-    end
-  end
 end

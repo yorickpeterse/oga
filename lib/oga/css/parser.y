@@ -109,9 +109,6 @@ rule
 
     # ns|foo
     | T_IDENT T_PIPE T_IDENT { [val[0], val[2]] }
-
-    # |foo
-    | T_PIPE T_IDENT { [nil, val[1]] }
     ;
 
   predicates
