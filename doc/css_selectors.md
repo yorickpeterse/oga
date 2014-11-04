@@ -542,8 +542,70 @@ expressions are as following:
     :nth-child(even) => *[((count(preceding-sibling::*) + 1) mod 2) = 0]
     :nth-child(odd)  => *[(count(preceding-sibling::*) + 1) >= 1 and (((count(preceding-sibling::*) + 1) - 1) mod 2) = 0]
 
+### :nth-last-child(n)
+
+The `:nth-last-child(n)` selector can be used to select a set of elements based
+on their position or an interval, skipping elements that occur in a set after
+the given position or interval.
+
+The arguments that can be used by this selector are the same as those mentioned
+in [:nth-child(n)][nth-childn].
+
+Because this selectors matches in reverse (compared to
+[:nth-child(n)][nth-childn]) using an index such as "1" will match the _last_
+element in a set, not the first one:
+
+               :nth-last-child(1)
+
+       1     2     3     4     5     6
+     +---+ +---+ +---+ +---+ +---+ +---+
+     |   | |   | |   | |   | |   | | X | <- matching direction
+     +---+ +---+ +---+ +---+ +---+ +---+
+
+When using an interval (with or without an offset) the nodes are also matched in
+reverse order. However, matched nodes should be returned in the order they
+appear in in the document.
+
+For example, the selector `:nth-last-child(2n)` would match as following:
+
+               :nth-last-child(2n)
+
+       1     2     3     4     5     6
+     +---+ +---+ +---+ +---+ +---+ +---+
+     | X | |   | | X | |   | | X | |   | <- matching direction
+     +---+ +---+ +---+ +---+ +---+ +---+
+
+The resulting set however would contain the nodes in the order `[1, 3, 5]`
+instead of `[5, 3, 1]`.
+
+When using an interval with an initial offset the offset is also applied in
+reverse order. For example, the selector `:nth-last-child(2n)` would match as
+following:
+
+               :nth-last-child(2n+1)
+
+       1     2     3     4     5     6
+     +---+ +---+ +---+ +---+ +---+ +---+
+     |   | | X | |   | | X | |   | | X | <- matching direction
+     +---+ +---+ +---+ +---+ +---+ +---+
+
+The corresponding XPath expressions are similar to those used for
+[:nth-child(n)][nth-childn]:
+
+    :nth-last-child(n)    => *[count(following-sibling::*) = -1]
+    :nth-last-child(-n)   => *[count(following-sibling::*) = -1]
+    :nth-last-child(5)    => *[count(following-sibling::*) = 4]
+    :nth-last-child(2n)   => *[((count(following-sibling::*) + 1) mod 2) = 0]
+    :nth-last-child(2n+2) => *[((count(following-sibling::*) + 1) >= 2) and ((((count(following-sibling::*) + 1) - 2) mod 2) = 0)]
+    :nth-last-child(2n-6) => *[((count(following-sibling::*) + 1) >= 2) and ((((count(following-sibling::*) + 1) - 2) mod 2) = 0)]
+    :nth-last-child(n+5)  => *[((count(following-sibling::*) + 1) >= 5) and ((((count(following-sibling::*) + 1) - 5) mod 1) = 0)]
+    :nth-last-child(-n+6) => *[((count(following-sibling::*) + 1) <= 6) and ((((count(following-sibling::*) + 1) - 6) mod 1) = 0)]
+    :nth-last-child(even) => *[((count(following-sibling::*) + 1) mod 2) = 0]
+    :nth-last-child(odd)  => *[((count(following-sibling::*) + 1) >= 1) and ((((count(following-sibling::*) + 1) - 1) mod 2) = 0)]
+
 [w3spec]: http://www.w3.org/TR/css3-selectors/
 [rfc-2119]: https://www.ietf.org/rfc/rfc2119.txt
 [kramdown]: http://kramdown.gettalong.org/
 [universal-selector]: #universal-selector
 [ragel]: http://www.colm.net/open-source/ragel/
+[nth-childn]: #nth-childn
