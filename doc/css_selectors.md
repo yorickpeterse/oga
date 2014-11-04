@@ -71,14 +71,14 @@ elements at any position in the document. On the other hand, the selector
 `foo bar` only matches any `bar` elements that are a descedant of any `foo`
 element.
 
-In XPath the corresponding axis for this is `descendant-or-self`. In other
-words, this CSS expression:
+In XPath the corresponding axis for this is `descendant`. In other words, this
+CSS expression:
 
     foo
 
 is the same as this XPath expression:
 
-    descendant-or-self::foo
+    descendant::foo
 
 In turn this CSS expression:
 
@@ -86,10 +86,10 @@ In turn this CSS expression:
 
 is the same as this XPath expression:
 
-    descendant-or-self::foo/descendant-or-self::bar
+    descendant::foo/::bar
 
-Note that in the various XPath examples the `descendant-or-self` axis is omitted
-in order to enhance readability.
+Note that in the various XPath examples the `descendant` axis is omitted in
+order to enhance readability.
 
 ### Syntax
 
