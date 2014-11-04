@@ -6,6 +6,10 @@ describe Oga::XPath::Lexer do
       lex_xpath('/foo').should == [[:T_SLASH, nil], [:T_IDENT, 'foo']]
     end
 
+    example 'lex a simple expression with a test starting with an underscore' do
+      lex_xpath('/_foo').should == [[:T_SLASH, nil], [:T_IDENT, '_foo']]
+    end
+
     example 'lex a node test using a namespace' do
       lex_xpath('/foo:bar').should == [
         [:T_SLASH, nil],
