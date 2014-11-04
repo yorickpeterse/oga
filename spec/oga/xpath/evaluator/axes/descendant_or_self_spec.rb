@@ -40,6 +40,32 @@ describe Oga::XPath::Evaluator do
       end
     end
 
+    context 'chained descendants' do
+      before do
+        @set = @evaluator.evaluate(
+          'descendant-or-self::a/descendant-or-self::*'
+        )
+      end
+
+      it_behaves_like :node_set, :length => 4
+
+      example 'return the <a> node' do
+        @set[0].should == @first_a
+      end
+
+      example 'return the first <b> node' do
+        @set[1].should == @first_b
+      end
+
+      example 'return the second <b> node' do
+        @set[2].should == @second_b
+      end
+
+      example 'return the <c> node' do
+        @set[3].should == @first_c
+      end
+    end
+
     context 'nested descendants with a matching predicate' do
       before do
         @set = @evaluator.evaluate('descendant-or-self::c[@class="x"]')
@@ -137,6 +163,38 @@ describe Oga::XPath::Evaluator do
 
       example 'return the <c> node' do
         @set[0].should == @first_c
+      end
+    end
+
+    context 'descendants of descendants usign the short form' do
+      before do
+        @set = @evaluator.evaluate('//a//*')
+      end
+
+      it_behaves_like :node_set, :length => 3
+
+      example 'return the first <b> node' do
+        @set[0].should == @first_b
+      end
+
+      example 'return the second <b> node' do
+        @set[1].should == @second_b
+      end
+
+      example 'return the <c> node' do
+        @set[2].should == @first_c
+      end
+    end
+
+    context 'children of descendants using the short form' do
+      before do
+        @set = @evaluator.evaluate('//a/b')
+      end
+
+      it_behaves_like :node_set, :length => 1
+
+      example 'return the first <b> node' do
+        @set[0].should == @first_b
       end
     end
   end
