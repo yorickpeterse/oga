@@ -74,5 +74,17 @@ describe Oga::XPath::Evaluator do
         @set[0].should == @document.children[0].children[1]
       end
     end
+
+    context 'matching the document itself' do
+      before do
+        @set = @evaluator.evaluate('self::node()')
+      end
+
+      it_behaves_like :node_set, :length => 1
+
+      example 'return the document itself' do
+        @set[0].is_a?(Oga::XML::Document).should == true
+      end
+    end
   end
 end
