@@ -7,11 +7,14 @@ end
 
 require_relative '../lib/oga'
 require_relative 'support/parsing'
+require_relative 'support/evaluation'
 require_relative 'support/shared_examples'
 
 RSpec.configure do |config|
   config.color = true
+
   config.include Oga::ParsingHelpers
+  config.include Oga::EvaluationHelpers
 
   config.expect_with :rspec do |c|
     c.syntax = [:should, :expect]
