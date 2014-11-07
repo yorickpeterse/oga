@@ -12,7 +12,7 @@ describe 'CSS selector evaluation' do
 
     it_behaves_like :node_set, :length => 1
 
-    example 'return the <a> node' do
+    example 'include the <a> node' do
       @set[0].should == @document.children[0]
     end
   end
