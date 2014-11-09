@@ -278,6 +278,23 @@ describe Oga::XML::NodeSet do
     end
   end
 
+  context '#==' do
+    before do
+      node  = Oga::XML::Node.new
+      @set1 = described_class.new([node])
+      @set2 = described_class.new([node])
+      @set3 = described_class.new
+    end
+
+    example 'return true if two node sets are equal' do
+      @set1.should == @set2
+    end
+
+    example 'return false if two node sets are not equal' do
+      @set1.should_not == @set3
+    end
+  end
+
   context '#concat' do
     before do
       n1 = Oga::XML::Element.new(:name => 'a')

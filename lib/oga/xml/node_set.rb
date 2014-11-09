@@ -198,6 +198,28 @@ module Oga
       end
 
       ##
+      # Returns `true` if the current node set and the one given in `other` are
+      # equal to each other.
+      #
+      # @param [Oga::XML::NodeSet] other
+      #
+      def ==(other)
+        return other.is_a?(NodeSet) && other.equal_nodes?(@nodes)
+      end
+
+      ##
+      # Returns `true` if the nodes given in `nodes` are equal to those
+      # specified in the current `@nodes` variable. This method allows two
+      # NodeSet instances to compare each other without the need of exposing
+      # `@nodes` to the public.
+      #
+      # @param [Array<Oga::XML::Node>] nodes
+      #
+      def equal_nodes?(nodes)
+        return @nodes == nodes
+      end
+
+      ##
       # Adds the nodes of the given node set to the current node set.
       #
       # @param [Oga::XML::NodeSet] other
