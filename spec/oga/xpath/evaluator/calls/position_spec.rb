@@ -4,17 +4,19 @@ describe Oga::XPath::Evaluator do
   context 'position() function' do
     before do
       @document = parse('<root><a>foo</a><a>bar</a></root>')
-      @set      = described_class.new(@document).evaluate('root/a[position()]')
+
+      @a1 = @document.children[0].children[0]
+      @a2 = @document.children[0].children[1]
     end
 
-    it_behaves_like :node_set, :length => 2
-
-    example 'return the first <a> node' do
-      @set[0].should == @document.children[0].children[0]
+    example 'return a node set containing the first node' do
+      evaluate_xpath(@document, 'root/a[position() = 1]')
+        .should == node_set(@a1)
     end
 
-    example 'return the second <a> node' do
-      @set[1].should == @document.children[0].children[1]
+    example 'return a node set containing the second node' do
+      evaluate_xpath(@document, 'root/a[position() = 2]')
+        .should == node_set(@a2)
     end
   end
 end

@@ -3,56 +3,55 @@ require 'spec_helper'
 describe Oga::XPath::Evaluator do
   context 'boolean() function' do
     before do
-      @document  = parse('<root><a>foo</a></root>')
-      @evaluator = described_class.new(@document)
+      @document = parse('<root><a>foo</a></root>')
     end
 
     example 'return true for a non empty string literal' do
-      @evaluator.evaluate('boolean("foo")').should == true
+      evaluate_xpath(@document, 'boolean("foo")').should == true
     end
 
     example 'return false for an empty string' do
-      @evaluator.evaluate('boolean("")').should == false
+      evaluate_xpath(@document, 'boolean("")').should == false
     end
 
     example 'return true for a positive integer' do
-      @evaluator.evaluate('boolean(10)').should == true
+      evaluate_xpath(@document, 'boolean(10)').should == true
     end
 
     example 'return true for a boolean true' do
-      @evaluator.evaluate('boolean(true())').should == true
+      evaluate_xpath(@document, 'boolean(true())').should == true
     end
 
     example 'return false for a boolean false' do
-      @evaluator.evaluate('boolean(false())').should == false
+      evaluate_xpath(@document, 'boolean(false())').should == false
     end
 
     example 'return true for a positive float' do
-      @evaluator.evaluate('boolean(10.5)').should == true
+      evaluate_xpath(@document, 'boolean(10.5)').should == true
     end
 
     example 'return true for a negative integer' do
-      @evaluator.evaluate('boolean(-5)').should == true
+      evaluate_xpath(@document, 'boolean(-5)').should == true
     end
 
     example 'return true for a negative float' do
-      @evaluator.evaluate('boolean(-5.2)').should == true
+      evaluate_xpath(@document, 'boolean(-5.2)').should == true
     end
 
     example 'return false for a zero integer' do
-      @evaluator.evaluate('boolean(0)').should == false
+      evaluate_xpath(@document, 'boolean(0)').should == false
     end
 
     example 'return false for a zero float' do
-      @evaluator.evaluate('boolean(0.0)').should == false
+      evaluate_xpath(@document, 'boolean(0.0)').should == false
     end
 
     example 'return true for a non empty node set' do
-      @evaluator.evaluate('boolean(root/a)').should == true
+      evaluate_xpath(@document, 'boolean(root/a)').should == true
     end
 
     example 'return false for an empty node set' do
-      @evaluator.evaluate('boolean(root/b)').should == false
+      evaluate_xpath(@document, 'boolean(root/b)').should == false
     end
   end
 end
