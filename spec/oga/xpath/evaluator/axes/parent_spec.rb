@@ -3,40 +3,21 @@ require 'spec_helper'
 describe Oga::XPath::Evaluator do
   context 'parent axis' do
     before do
-      @document  = parse('<a><b></b></a>')
-      @evaluator = described_class.new(@document)
+      @document = parse('<a><b></b></a>')
+
+      @a1 = @document.children[0]
     end
 
-    context 'matching nodes without parents' do
-      before do
-        @set = @evaluator.evaluate('parent::a')
-      end
-
-      it_behaves_like :empty_node_set
+    example 'return an empty node set for non existing parents' do
+      evaluate_xpath(@document, 'parent::a').should == node_set
     end
 
-    context 'matching nodes with parents' do
-      before do
-        @set = @evaluator.evaluate('a/b/parent::a')
-      end
-
-      it_behaves_like :node_set, :length => 1
-
-      example 'return the <a> node' do
-        @set[0].should == @document.children[0]
-      end
+    example 'return a node set containing parents of a node' do
+      evaluate_xpath(@document, 'a/b/parent::a').should == node_set(@a1)
     end
 
-    context 'matching nodes with parents using the short form' do
-      before do
-        @set = @evaluator.evaluate('a/b/..')
-      end
-
-      it_behaves_like :node_set, :length => 1
-
-      example 'return the <a> node' do
-        @set[0].should == @document.children[0]
-      end
+    example 'return a node set containing parents of a node using the short form' do
+      evaluate_xpath(@document, 'a/b/..').should == node_set(@a1)
     end
   end
 end

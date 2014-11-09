@@ -3,40 +3,22 @@ require 'spec_helper'
 describe Oga::XPath::Evaluator do
   context 'child axis' do
     before do
-      @document  = parse('<a><b></b></a>')
-      @evaluator = described_class.new(@document)
+      @document = parse('<a><b></b></a>')
+
+      @a1 = @document.children[0]
+      @b1 = @a1.children[0]
     end
 
-    context 'direct children' do
-      before do
-        @set = @evaluator.evaluate('child::a')
-      end
-
-      it_behaves_like :node_set, :length => 1
-
-      example 'return the <a> node' do
-        @set[0].name.should == 'a'
-      end
+    example 'return a node set containing a direct child node' do
+      evaluate_xpath(@document, 'child::a').should == node_set(@a1)
     end
 
-    context 'nested children' do
-      before do
-        @set = @evaluator.evaluate('child::a/child::b')
-      end
-
-      it_behaves_like :node_set, :length => 1
-
-      example 'return the <b> node' do
-        @set[0].name.should == 'b'
-      end
+    example 'return a node set containing a nested child node' do
+      evaluate_xpath(@document, 'child::a/child::b').should == node_set(@b1)
     end
 
-    context 'non existing children' do
-      before do
-        @set = @evaluator.evaluate('child::b')
-      end
-
-      it_behaves_like :empty_node_set
+    example 'return an empty node set for non existing child nodes' do
+      evaluate_xpath(@document, 'child::x').should == node_set
     end
   end
 end

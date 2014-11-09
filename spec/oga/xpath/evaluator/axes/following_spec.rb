@@ -16,52 +16,25 @@ describe Oga::XPath::Evaluator do
 </root>
       EOF
 
-      @first_baz  = @document.children[0].children[0].children[1]
-      @second_baz = @first_baz.children[0]
-      @third_baz  = @document.children[0].children[1]
-      @evaluator  = described_class.new(@document)
+      @baz1 = @document.children[0].children[0].children[1]
+      @baz2 = @baz1.children[0]
+      @baz3 = @document.children[0].children[1]
     end
 
     # This should return an empty set since the document doesn't have any
     # following nodes.
-    context 'using a document as the root' do
-      before do
-        @set = @evaluator.evaluate('following::foo')
-      end
-
-      it_behaves_like :empty_node_set
+    example 'return an empty node set for the sibling of a document' do
+      evaluate_xpath(@document, 'following::foo').should == node_set
     end
 
-    context 'matching nodes in the current context' do
-      before do
-        @set = @evaluator.evaluate('root/foo/following::baz')
-      end
-
-      it_behaves_like :node_set, :length => 1
-
-      example 'return the third <baz> node' do
-        @set[0].should == @third_baz
-      end
+    example 'return a node set containing the following nodes of root/foo' do
+      evaluate_xpath(@document, 'root/foo/following::baz')
+        .should == node_set(@baz3)
     end
 
-    context 'matching nodes in other contexts' do
-      before do
-        @set = @evaluator.evaluate('root/foo/bar/following::baz')
-      end
-
-      it_behaves_like :node_set, :length => 3
-
-      example 'return the first <baz> node' do
-        @set[0].should == @first_baz
-      end
-
-      example 'return the second <baz> node' do
-        @set[1].should == @second_baz
-      end
-
-      example 'return the third <baz> node' do
-        @set[2].should == @third_baz
-      end
+    example 'return a node set containing the following nodes of root/foo/bar' do
+      evaluate_xpath(@document, 'root/foo/bar/following::baz')
+        .should == node_set(@baz1, @baz2, @baz3)
     end
   end
 end

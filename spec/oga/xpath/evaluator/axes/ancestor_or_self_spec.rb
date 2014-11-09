@@ -3,45 +3,27 @@ require 'spec_helper'
 describe Oga::XPath::Evaluator do
   context 'ancestor-or-self axis' do
     before do
-      @document  = parse('<a><b><c></c></b></a>')
-      @c_node    = @document.children[0].children[0].children[0]
-      @evaluator = described_class.new(@c_node)
+      @document = parse('<a><b><c></c></b></a>')
+
+      @a1 = @document.children[0]
+      @b1 = @a1.children[0]
+      @c1 = @b1.children[0]
     end
 
-    context 'direct ancestors' do
-      before do
-        @set = @evaluator.evaluate('ancestor-or-self::b')
-      end
-
-      it_behaves_like :node_set, :length => 1
-
-      example 'return the <b> ancestor' do
-        @set[0].name.should == 'b'
-      end
+    example 'return a node set containing the direct ancestor' do
+      evaluate_xpath(@c1, 'ancestor-or-self::b').should == node_set(@b1)
     end
 
-    context 'higher ancestors' do
-      before do
-        @set = @evaluator.evaluate('ancestor-or-self::a')
-      end
-
-      it_behaves_like :node_set, :length => 1
-
-      example 'return the <a> ancestor' do
-        @set[0].name.should == 'a'
-      end
+    example 'return a node set containing a higher ancestor' do
+      evaluate_xpath(@c1, 'ancestor-or-self::a').should == node_set(@a1)
     end
 
-    context 'ancestors that only match the context nodes' do
-      before do
-        @set = @evaluator.evaluate('ancestor-or-self::c')
-      end
+    example 'return a node set containing the context node itself' do
+      evaluate_xpath(@c1, 'ancestor-or-self::c').should == node_set(@c1)
+    end
 
-      it_behaves_like :node_set, :length => 1
-
-      example 'return the <c> node' do
-        @set[0].name.should == 'c'
-      end
+    example 'return an empty node set for non existing ancestors' do
+      evaluate_xpath(@c1, 'ancestor-or-self::foo').should == node_set
     end
   end
 end

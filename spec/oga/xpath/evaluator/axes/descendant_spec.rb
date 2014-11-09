@@ -3,60 +3,27 @@ require 'spec_helper'
 describe Oga::XPath::Evaluator do
   context 'descendant axis' do
     before do
-      @document  = parse('<a><b><c></c></b><a></a></a>')
-      @evaluator = described_class.new(@document)
+      @document = parse('<a><b><c></c></b><a></a></a>')
 
-      @first_a  = @document.children[0]
-      @second_a = @first_a.children[-1]
+      @a1 = @document.children[0]
+      @a2 = @a1.children[-1]
+      @c1 = @a1.children[0].children[0]
     end
 
-    context 'direct descendants' do
-      before do
-        @set = @evaluator.evaluate('descendant::a')
-      end
-
-      it_behaves_like :node_set, :length => 2
-
-      example 'return the first <a> node' do
-        @set[0].should == @first_a
-      end
-
-      example 'return the second <a> node' do
-        @set[1].should == @second_a
-      end
+    example 'return a node set containing a direct descendant' do
+      evaluate_xpath(@document, 'descendant::a').should == node_set(@a1, @a2)
     end
 
-    context 'nested descendants' do
-      before do
-        @set = @evaluator.evaluate('descendant::c')
-      end
-
-      it_behaves_like :node_set, :length => 1
-
-      example 'return the <c> node' do
-        @set[0].name.should == 'c'
-      end
+    example 'return a node set containing a nested descendant' do
+      evaluate_xpath(@document, 'descendant::c').should == node_set(@c1)
     end
 
-    context 'descendants of a specific node' do
-      before do
-        @set = @evaluator.evaluate('a/descendant::a')
-      end
-
-      it_behaves_like :node_set, :length => 1
-
-      example 'return the second <a> node' do
-        @set[0].should == @second_a
-      end
+    example 'return a node set containing a descendant relative to a node' do
+      evaluate_xpath(@document, 'a/descendant::a').should == node_set(@a2)
     end
 
-    context 'non existing descendants' do
-      before do
-        # This should result in an empty set since <c> has no <c> children.
-        @set = @evaluator.evaluate('a/b/c/descendant::c')
-      end
-
-      it_behaves_like :empty_node_set
+    example 'return an empty node set for non existing descendants' do
+      evaluate_xpath(@document, 'a/b/c/descendant::c').should == node_set
     end
   end
 end

@@ -15,39 +15,20 @@ describe Oga::XPath::Evaluator do
 </root>
       EOF
 
-      @first_foo  = @document.children[0].children[0]
-      @first_bar  = @first_foo.children[0]
-      @first_baz  = @first_foo.children[1]
-      @second_baz = @first_baz.children[0]
-      @evaluator  = described_class.new(@document)
+      @foo1 = @document.children[0].children[0]
+      @bar1 = @foo1.children[0]
+      @baz1 = @foo1.children[1]
+      @baz2 = @baz1.children[0]
     end
 
-    context 'matching nodes in the current context' do
-      before do
-        @set = @evaluator.evaluate('root/foo/baz/preceding::bar')
-      end
-
-      it_behaves_like :node_set, :length => 1
-
-      example 'return the first <bar> node' do
-        @set[0].should == @first_bar
-      end
+    example 'return a node set containing preceding nodes of root/foo/baz' do
+      evaluate_xpath(@document, 'root/foo/baz/preceding::bar')
+        .should == node_set(@bar1)
     end
 
-    context 'matching nodes in other contexts' do
-      before do
-        @set = @evaluator.evaluate('root/baz/preceding::baz')
-      end
-
-      it_behaves_like :node_set, :length => 2
-
-      example 'return the first <baz> node' do
-        @set[0].should == @first_baz
-      end
-
-      example 'return the second <baz> node' do
-        @set[1].should == @second_baz
-      end
+    example 'return a node set containing preceding nodes for root/baz' do
+      evaluate_xpath(@document, 'root/baz/preceding::baz')
+        .should == node_set(@baz1, @baz2)
     end
   end
 end

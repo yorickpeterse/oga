@@ -3,41 +3,23 @@ require 'spec_helper'
 describe Oga::XPath::Evaluator do
   context 'ancestor axis' do
     before do
-      @document  = parse('<a><b><c></c></b></a>')
-      @c_node    = @document.children[0].children[0].children[0]
-      @evaluator = described_class.new(@c_node)
+      @document = parse('<a><b><c></c></b></a>')
+
+      @a1 = @document.children[0]
+      @b1 = @a1.children[0]
+      @c1 = @b1.children[0]
     end
 
-    context 'direct ancestors' do
-      before do
-        @set = @evaluator.evaluate('ancestor::b')
-      end
-
-      it_behaves_like :node_set, :length => 1
-
-      example 'return the <b> ancestor' do
-        @set[0].name.should == 'b'
-      end
+    example 'return a node set containing a direct ancestor' do
+      evaluate_xpath(@c1, 'ancestor::b').should == node_set(@b1)
     end
 
-    context 'higher ancestors' do
-      before do
-        @set = @evaluator.evaluate('ancestor::a')
-      end
-
-      it_behaves_like :node_set, :length => 1
-
-      example 'return the <a> ancestor' do
-        @set[0].name.should == 'a'
-      end
+    example 'return a node set containing a higher ancestor' do
+      evaluate_xpath(@c1, 'ancestor::a').should == node_set(@a1)
     end
 
-    context 'non existing ancestors' do
-      before do
-        @set = @evaluator.evaluate('ancestor::foobar')
-      end
-
-      it_behaves_like :empty_node_set
+    example 'return an empty node set for non existing ancestors' do
+      evaluate_xpath(@c1, 'ancestor::c').should == node_set
     end
   end
 end
