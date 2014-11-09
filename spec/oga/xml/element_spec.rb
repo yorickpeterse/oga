@@ -247,21 +247,14 @@ describe Oga::XML::Element do
 
   context '#text_nodes' do
     before do
-      @t1     = Oga::XML::Text.new(:text => 'Foo')
-      @t2     = Oga::XML::Text.new(:text => 'Bar')
-      element = described_class.new(:children => [@t1, @t2])
+      @t1 = Oga::XML::Text.new(:text => 'Foo')
+      @t2 = Oga::XML::Text.new(:text => 'Bar')
 
-      @set = element.text_nodes
+      @element = described_class.new(:children => [@t1, @t2])
     end
 
-    it_behaves_like :node_set, :length => 2
-
-    example 'return the first Text node' do
-      @set[0].should == @t1
-    end
-
-    example 'return the second Text node' do
-      @set[1].should == @t2
+    example 'return a node set containing the text nodes' do
+      @element.text_nodes.should == node_set(@t1, @t2)
     end
   end
 
