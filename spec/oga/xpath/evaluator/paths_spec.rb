@@ -1,101 +1,47 @@
 require 'spec_helper'
 
 describe Oga::XPath::Evaluator do
-  before do
-    @document = parse('<a xmlns:ns1="x">Foo<b></b><b></b><ns1:c></ns1:c></a>')
-  end
-
-  context 'absolute paths' do
+  context 'paths' do
     before do
-      @set = described_class.new(@document).evaluate('/a')
+      @document = parse('<a xmlns:ns1="x">Foo<b></b><b></b><ns1:c></ns1:c></a>')
+
+      @a1 = @document.children[0]
+      @b1 = @a1.children[1]
+      @b2 = @a1.children[2]
     end
 
-    it_behaves_like :node_set, :length => 1
-
-    example 'return the correct nodes' do
-      @set[0].should == @document.children[0]
+    example 'evaluate an absolute path' do
+      evaluate_xpath(@document, '/a').should == node_set(@a1)
     end
-  end
 
-  context 'absolute paths from an element' do
-    before do
+    example 'evaluate an absolute path relative to a sub node' do
       b_node = @document.children[0].children[0]
-      @set   = described_class.new(b_node).evaluate('/a')
+
+      evaluate_xpath(b_node, '/a').should == node_set(@a1)
     end
 
-    it_behaves_like :node_set, :length => 1
-
-    example 'return the correct nodes' do
-      @set[0].should == @document.children[0]
-    end
-  end
-
-  context 'absolute paths without node tests' do
-    before do
-      @set = described_class.new(@document).evaluate('/')
+    example 'evaluate the root selector' do
+      evaluate_xpath(@document, '/').should == node_set(@document)
     end
 
-    it_behaves_like :node_set, :length => 1
-
-    example 'return the root document' do
-      @set[0].is_a?(Oga::XML::Document).should == true
-    end
-  end
-
-  context 'invalid absolute paths' do
-    before do
-      @set = described_class.new(@document).evaluate('/x/a')
+    example 'evaluate a relative path' do
+      evaluate_xpath(@document, 'a').should == node_set(@a1)
     end
 
-    it_behaves_like :node_set, :length => 0
-  end
-
-  context 'relative paths' do
-    before do
-      @set = described_class.new(@document).evaluate('a')
+    example 'evaluate a relative path that returns an empty node set' do
+      evaluate_xpath(@document, 'x/a').should == node_set
     end
 
-    it_behaves_like :node_set, :length => 1
-
-    example 'return the correct nodes' do
-      @set[0].should == @document.children[0]
-    end
-  end
-
-  context 'invalid relative paths' do
-    before do
-      @set = described_class.new(@document).evaluate('x/a')
+    example 'evaluate a nested absolute path' do
+      evaluate_xpath(@document, '/a/b').should == node_set(@b1, @b2)
     end
 
-    it_behaves_like :node_set, :length => 0
-  end
-
-  context 'nested paths' do
-    before do
-      @set = described_class.new(@document).evaluate('/a/b')
+    example 'evaluate an absolute path that returns an empty node set' do
+      evaluate_xpath(@document, '/x/a').should == node_set
     end
 
-    it_behaves_like :node_set, :length => 2
-
-    example 'return the correct nodes' do
-      a = @document.children[0]
-
-      @set[0].should == a.children[1]
-      @set[1].should == a.children[2]
-    end
-  end
-
-  context 'namespaced paths' do
-    before do
-      @set = described_class.new(@document).evaluate('a/ns1:c')
-    end
-
-    it_behaves_like :node_set, :length => 1
-
-    example 'return the correct row' do
-      a = @document.children[0]
-
-      @set[0].should == a.children[-1]
+    example 'evaluate a namespaced path' do
+      evaluate_xpath(@document, 'a/ns1:c').should == node_set(@a1.children[-1])
     end
   end
 end

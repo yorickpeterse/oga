@@ -1,6 +1,15 @@
 module Oga
   module EvaluationHelpers
     ##
+    # @param [Oga::XML::Document] document
+    # @param [String] xpath
+    # @return [Oga::XML::NodeSet]
+    #
+    def evaluate_xpath(document, xpath)
+      return Oga::XPath::Evaluator.new(document).evaluate(xpath)
+    end
+
+    ##
     # Parses and evaluates a CSS expression.
     #
     # @param [Oga::XML::Document] document

@@ -12,6 +12,13 @@ module Oga
     end
 
     ##
+    # @see [Oga::XML::NodeSet#initialize]
+    #
+    def node_set(*args)
+      return Oga::XML::NodeSet.new(args)
+    end
+
+    ##
     # Lexes a string and returns the tokens.
     #
     # @param [String] input
