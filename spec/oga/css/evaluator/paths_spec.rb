@@ -1,111 +1,42 @@
 require 'spec_helper'
 
 describe 'CSS selector evaluation' do
-  before do
-    @document = parse('<a xmlns:ns1="x"><b></b><b></b><ns1:c></ns1:c></a>')
-  end
-
-  context 'regular paths' do
+  context 'paths' do
     before do
-      @set = evaluate_css(@document, 'a')
+      @document = parse('<a xmlns:ns1="x"><b></b><b></b><ns1:c></ns1:c></a>')
+
+      @a1 = @document.children[0]
+      @b1 = @a1.children[0]
+      @b2 = @a1.children[1]
+      @c1 = @a1.children[2]
     end
 
-    it_behaves_like :node_set, :length => 1
-
-    example 'include the <a> node' do
-      @set[0].should == @document.children[0]
-    end
-  end
-
-  context 'nested paths' do
-    before do
-      @set = evaluate_css(@document, 'a b')
+    example 'return a node set containing the root node' do
+      evaluate_css(@document, 'a').should == node_set(@a1)
     end
 
-    it_behaves_like :node_set, :length => 2
-
-    example 'include the first <b> node' do
-      @set[0].should == @document.children[0].children[0]
+    example 'return a node set containing nested nodes' do
+      evaluate_css(@document, 'a b').should == node_set(@b1, @b2)
     end
 
-    example 'include the second <b> node' do
-      @set[1].should == @document.children[0].children[1]
-    end
-  end
-
-  context 'paths with namespaces' do
-    before do
-      @set = evaluate_css(@document, 'a ns1|c')
+    example 'return a node set containing namespaced nodes' do
+      evaluate_css(@document, 'a ns1|c').should == node_set(@c1)
     end
 
-    it_behaves_like :node_set, :length => 1
-
-    example 'include the <n1:c> node' do
-      @set[0].should == @document.children[0].children[2]
-    end
-  end
-
-  context 'paths with name wildcards' do
-    before do
-      @set = evaluate_css(@document, 'a *')
+    example 'return a node set containing wildcard nodes' do
+      evaluate_css(@document, 'a *').should == node_set(@b1, @b2, @c1)
     end
 
-    it_behaves_like :node_set, :length => 3
-
-    example 'include the first <b> node' do
-      @set[0].should == @document.children[0].children[0]
+    example 'return a node set containing nodes with namespace wildcards' do
+      evaluate_css(@document, 'a *|c')
     end
 
-    example 'include the second <b> node' do
-      @set[1].should == @document.children[0].children[1]
+    example 'return a node set containing nodes with a namespace name and name wildcard' do
+      evaluate_css(@document, 'a ns1|*').should == node_set(@c1)
     end
 
-    example 'include the second <ns1:c> node' do
-      @set[2].should == @document.children[0].children[2]
-    end
-  end
-
-  context 'paths with namespace wildcards' do
-    before do
-      @set = evaluate_css(@document, 'a *|c')
-    end
-
-    it_behaves_like :node_set, :length => 1
-
-    example 'include the <ns1:c> node' do
-      @set[0].should == @document.children[0].children[2]
-    end
-  end
-
-  context 'paths with namespaces and name wildcards' do
-    before do
-      @set = evaluate_css(@document, 'a ns1|*')
-    end
-
-    it_behaves_like :node_set, :length => 1
-
-    example 'include the <ns1:c> node' do
-      @set[0].should == @document.children[0].children[2]
-    end
-  end
-
-  context 'paths with full wildcards' do
-    before do
-      @set = evaluate_css(@document, 'a *|*')
-    end
-
-    it_behaves_like :node_set, :length => 3
-
-    example 'include the first <b> node' do
-      @set[0].should == @document.children[0].children[0]
-    end
-
-    example 'include the second <b> node' do
-      @set[1].should == @document.children[0].children[1]
-    end
-
-    example 'include the second <ns1:c> node' do
-      @set[2].should == @document.children[0].children[2]
+    example 'return a node set containing nodes using full wildcards' do
+      evaluate_css(@document, 'a *|*').should == node_set(@b1, @b2, @c1)
     end
   end
 end
