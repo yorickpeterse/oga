@@ -3,40 +3,20 @@ require 'spec_helper'
 describe Oga::XPath::Evaluator do
   context 'processing-instruction() tests' do
     before do
-      @document  = parse('<a><?a foo ?><b><?b bar ?></b></a>')
-      @evaluator = described_class.new(@document)
+      @document = parse('<a><?a foo ?><b><?b bar ?></b></a>')
+
+      @proc_ins1 = @document.children[0].children[0]
+      @proc_ins2 = @document.children[0].children[1].children[0]
     end
 
-    context 'matching processing instruction nodes' do
-      before do
-        @set = @evaluator.evaluate('a/processing-instruction()')
-      end
-
-      it_behaves_like :node_set, :length => 1
-
-      example 'return a ProcessingInstruction instance' do
-        @set[0].is_a?(Oga::XML::ProcessingInstruction).should == true
-      end
-
-      example 'return the "foo" node' do
-        @set[0].text.should == ' foo '
-      end
+    example 'return a node set containing processing instructions' do
+      evaluate_xpath(@document, 'a/processing-instruction()')
+        .should == node_set(@proc_ins1)
     end
 
-    context 'matching nested processing instruction nodes' do
-      before do
-        @set = @evaluator.evaluate('a/b/processing-instruction()')
-      end
-
-      it_behaves_like :node_set, :length => 1
-
-      example 'return a ProcessingInstruction instance' do
-        @set[0].is_a?(Oga::XML::ProcessingInstruction).should == true
-      end
-
-      example 'return the "bar" node' do
-        @set[0].text.should == ' bar '
-      end
+    example 'return a node set containing nested processing instructions' do
+      evaluate_xpath(@document, 'a/b/processing-instruction()')
+        .should == node_set(@proc_ins2)
     end
   end
 end

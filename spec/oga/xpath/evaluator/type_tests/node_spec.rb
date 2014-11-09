@@ -3,56 +3,25 @@ require 'spec_helper'
 describe Oga::XPath::Evaluator do
   context 'node() tests' do
     before do
-      @document  = parse('<a><b>foo</b><!--foo--><![CDATA[bar]]></a>')
-      @evaluator = described_class.new(@document)
+      @document = parse('<a><b>foo</b><!--foo--><![CDATA[bar]]></a>')
+
+      @a1       = @document.children[0]
+      @b1       = @a1.children[0]
+      @comment1 = @a1.children[1]
+      @cdata1   = @a1.children[2]
     end
 
-    context 'matching elements' do
-      before do
-        @set = @evaluator.evaluate('node()')
-      end
-
-      it_behaves_like :node_set, :length => 1
-
-      example 'return the <a> node' do
-        @set[0].name.should == 'a'
-      end
+    example 'return a node set containing elements' do
+      evaluate_xpath(@document, 'node()').should == node_set(@a1)
     end
 
-    context 'matching nested elements' do
-      before do
-        @set = @evaluator.evaluate('a/node()')
-      end
-
-      it_behaves_like :node_set, :length => 3
-
-      example 'return the <b> node' do
-        @set[0].name.should == 'b'
-      end
-
-      example 'return the "foo" comment' do
-        @set[1].text.should == 'foo'
-      end
-
-      example 'return the "bar" CDATA tag' do
-        @set[2].text.should == 'bar'
-      end
+    example 'return a node set containing elements, comments and CDATA tags' do
+      evaluate_xpath(@document, 'a/node()')
+        .should == node_set(@b1, @comment1, @cdata1)
     end
 
-    context 'matching text nodes' do
-      before do
-        @set = @evaluator.evaluate('a/b/node()')
-      end
-
-      it_behaves_like :node_set, :length => 1
-
-      example 'return a Text instance' do
-        @set[0].is_a?(Oga::XML::Text).should == true
-      end
-
-      example 'include the text' do
-        @set[0].text.should == 'foo'
-      end
+    example 'return a node set containing text nodes' do
+      evaluate_xpath(@document, 'a/b/node()').should == node_set(@b1.children[0])
     end
   end
 end

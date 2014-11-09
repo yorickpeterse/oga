@@ -3,40 +3,18 @@ require 'spec_helper'
 describe Oga::XPath::Evaluator do
   context 'comment() tests' do
     before do
-      @document  = parse('<a><!--foo--><b><!--bar--></b></a>')
-      @evaluator = described_class.new(@document)
+      @document = parse('<a><!--foo--><b><!--bar--></b></a>')
+
+      @comment1 = @document.children[0].children[0]
+      @comment2 = @document.children[0].children[1].children[0]
     end
 
-    context 'matching comment nodes' do
-      before do
-        @set = @evaluator.evaluate('a/comment()')
-      end
-
-      it_behaves_like :node_set, :length => 1
-
-      example 'return a Comment instance' do
-        @set[0].is_a?(Oga::XML::Comment).should == true
-      end
-
-      example 'return the "foo" comment node' do
-        @set[0].text.should == 'foo'
-      end
+    example 'return a node set containing comment nodes' do
+      evaluate_xpath(@document, 'a/comment()').should == node_set(@comment1)
     end
 
-    context 'matching nested comment nodes' do
-      before do
-        @set = @evaluator.evaluate('a/b/comment()')
-      end
-
-      it_behaves_like :node_set, :length => 1
-
-      example 'return a Comment instance' do
-        @set[0].is_a?(Oga::XML::Comment).should == true
-      end
-
-      example 'return the "bar" comment node' do
-        @set[0].text.should == 'bar'
-      end
+    example 'return a node set containing nested comments' do
+      evaluate_xpath(@document, 'a/b/comment()').should == node_set(@comment2)
     end
   end
 end

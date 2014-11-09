@@ -3,40 +3,18 @@ require 'spec_helper'
 describe Oga::XPath::Evaluator do
   context 'text() tests' do
     before do
-      @document  = parse('<a>foo<b>bar</b></a>')
-      @evaluator = described_class.new(@document)
+      @document = parse('<a>foo<b>bar</b></a>')
+
+      @text1 = @document.children[0].children[0]
+      @text2 = @document.children[0].children[1].children[0]
     end
 
-    context 'matching text nodes' do
-      before do
-        @set = @evaluator.evaluate('a/text()')
-      end
-
-      it_behaves_like :node_set, :length => 1
-
-      example 'return a Text instance' do
-        @set[0].is_a?(Oga::XML::Text).should == true
-      end
-
-      example 'return the "foo" text node' do
-        @set[0].text.should == 'foo'
-      end
+    example 'return a node set containing text nodes' do
+      evaluate_xpath(@document, 'a/text()').should == node_set(@text1)
     end
 
-    context 'matching nested text nodes' do
-      before do
-        @set = @evaluator.evaluate('a/b/text()')
-      end
-
-      it_behaves_like :node_set, :length => 1
-
-      example 'return a Text instance' do
-        @set[0].is_a?(Oga::XML::Text).should == true
-      end
-
-      example 'return the "bar" text node' do
-        @set[0].text.should == 'bar'
-      end
+    example 'return a node set containing nested text nodes' do
+      evaluate_xpath(@document, 'a/b/text()').should == node_set(@text2)
     end
   end
 end
