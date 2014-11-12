@@ -40,9 +40,8 @@ rule
     ;
 
   expression_members
-    : node_test_as_axis
+    : expression_with_predicate
     | operator
-    | axis
     | string
     | number
     | call
@@ -51,9 +50,14 @@ rule
     | variable
     ;
 
-  path_member
+  expression_with_predicate
     : node_test_as_axis
+    | node_test_as_axis predicate { s(:predicate, val[0], val[1]) }
     | axis
+    | axis predicate { s(:predicate, val[0], val[1]) }
+
+  path_member
+    : expression_with_predicate
     | call
     ;
 
@@ -83,7 +87,7 @@ rule
 
   node_test
     : node_name           { s(:test, *val[0]) }
-    | node_name predicate { s(:test, *val[0], val[1]) }
+    #| node_name predicate { s(:predicate, s(:test, *val[0]), val[1]) }
     | type_test           { val[0] }
     ;
 

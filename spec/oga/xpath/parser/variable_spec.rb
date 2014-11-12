@@ -8,9 +8,9 @@ describe Oga::XPath::Parser do
 
     example 'parse a variable reference in a predicate' do
       parse_xpath('foo[$bar]').should == s(
-        :axis,
-        'child',
-        s(:test, nil, 'foo', s(:var, 'bar'))
+        :predicate,
+        s(:axis, 'child', s(:test, nil, 'foo')),
+        s(:var, 'bar')
       )
     end
   end

@@ -163,45 +163,58 @@ module Oga
       end
 
       ##
-      # Processes a node test and optionally a predicate.
+      # Processes a node test.
       #
       # @param [AST::Node] ast_node
       # @param [Oga::XML::NodeSet] context
       # @return [Oga::XML::NodeSet]
       #
       def on_test(ast_node, context)
-        nodes       = XML::NodeSet.new
-        predicate   = ast_node.children[2]
-        xpath_index = 1
+        nodes = XML::NodeSet.new
 
         context.each do |xml_node|
-          next unless node_matches?(xml_node, ast_node)
+          nodes << xml_node if node_matches?(xml_node, ast_node)
+        end
 
-          if predicate
-            retval = with_node_set(context) do
-              process(predicate, XML::NodeSet.new([xml_node]))
+        return nodes
+      end
+
+      ##
+      # Processes a predicate.
+      #
+      # @param [AST::Node] ast_node
+      # @param [Oga::XML::NodeSet] context
+      # @return [Oga::XML::NodeSet]
+      #
+      def on_predicate(ast_node, context)
+        test, predicate = *ast_node
+
+        initial_nodes = process(test, context)
+        final_nodes   = XML::NodeSet.new
+        xpath_index   = 1
+
+        initial_nodes.each do |xml_node|
+          retval = with_node_set(initial_nodes) do
+            process(predicate, XML::NodeSet.new([xml_node]))
+          end
+
+          # Numeric values are used as node set indexes.
+          if retval.is_a?(Numeric)
+            final_nodes << xml_node if retval.to_i == xpath_index
+
+          # Node sets, strings, booleans, etc
+          elsif retval
+            if retval.respond_to?(:empty?) and retval.empty?
+              next
             end
 
-            # Numeric values are used as node set indexes.
-            if retval.is_a?(Numeric)
-              nodes << xml_node if retval.to_i == xpath_index
-
-            # Node sets, strings, booleans, etc
-            elsif retval
-              if retval.respond_to?(:empty?) and retval.empty?
-                next
-              end
-
-              nodes << xml_node
-            end
-          else
-            nodes << xml_node
+            final_nodes << xml_node
           end
 
           xpath_index += 1
         end
 
-        return nodes
+        return final_nodes
       end
 
       ##

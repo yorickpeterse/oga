@@ -43,17 +43,12 @@ describe Oga::XPath::Parser do
       parse_xpath('div[@class="foo"]/bar()').should == s(
         :path,
         s(
-          :axis,
-          'child',
+          :predicate,
+          s(:axis, 'child', s(:test, nil, 'div')),
           s(
-            :test,
-            nil,
-            'div',
-            s(
-              :eq,
-              s(:axis, 'attribute', s(:test, nil, 'class')),
-              s(:string, 'foo')
-            )
+            :eq,
+            s(:axis, 'attribute', s(:test, nil, 'class')),
+            s(:string, 'foo')
           )
         ),
         s(:call, 'bar')
@@ -64,14 +59,14 @@ describe Oga::XPath::Parser do
       parse_xpath('A[@x]/B[@x]/bar()').should == s(
         :path,
         s(
-          :axis,
-          'child',
-          s(:test, nil, 'A', s(:axis, 'attribute', s(:test, nil, 'x')))
+          :predicate,
+          s(:axis, 'child', s(:test, nil, 'A')),
+          s(:axis, 'attribute', s(:test, nil, 'x'))
         ),
         s(
-          :axis,
-          'child',
-          s(:test, nil, 'B', s(:axis, 'attribute', s(:test, nil, 'x')))
+          :predicate,
+          s(:axis, 'child', s(:test, nil, 'B')),
+          s(:axis, 'attribute', s(:test, nil, 'x'))
         ),
         s(:call, 'bar')
       )
