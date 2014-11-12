@@ -45,6 +45,11 @@ describe Oga::XPath::Evaluator do
         .should == node_set(@c1)
     end
 
+    example 'return a node set containing the first descendant' do
+      evaluate_xpath(@document, 'descendant-or-self::b[1]')
+        .should == node_set(@b1)
+    end
+
     example 'return an empty node set for a non existing descendant' do
       evaluate_xpath(@document, 'descendant-or-self::foobar').should == node_set
     end
