@@ -40,8 +40,23 @@ rule
     ;
 
   selector
-    : descendant_or_self
+    # .foo, :bar, etc
+    : predicates
+      {
+        s(:predicate, s(:axis, 'descendant', s(:test, nil, '*')), val[0])
+      }
+
+    # foo
+    | descendant_or_self
+
+    # foo.bar
+    | descendant_or_self predicates { s(:predicate, val[0], val[1]) }
+
+    # > foo
     | axis
+
+    # > foo.bar
+    | axis predicates { s(:predicate, val[0], val[1]) }
     ;
 
   descendant_or_self
@@ -49,18 +64,27 @@ rule
     ;
 
   axis
+    # > foo
     : T_GREATER axis_selector
       {
         s(:axis, 'child', val[1])
       }
+
+    # ~ foo
     | T_TILDE axis_selector
       {
         s(:axis, 'following-sibling', val[1])
       }
+
+    # + foo
     | T_PLUS axis_selector
       {
         [
-          s(:axis, 'following-sibling', s(:test, nil, '*', s(:int, 1))),
+          s(
+            :predicate,
+            s(:axis, 'following-sibling', s(:test, nil, '*')),
+            s(:int, 1)
+          ),
           s(:axis, 'self', val[1])
         ]
       }
@@ -73,34 +97,7 @@ rule
 
   node_test
     # foo
-    : node_name
-      {
-        s(:test, *val[0])
-      }
-
-    # .foo, :root, etc
-    | predicates
-      {
-        s(:test, nil, '*', val[0])
-      }
-
-    # foo.bar
-    | node_name predicates
-      {
-        s(:test, *val[0], val[1])
-      }
-
-    # foo[bar]
-    | node_name attribute_predicate
-      {
-        s(:test, *val[0], val[1])
-      }
-
-    # foo[bar].baz
-    | node_name attribute_predicate predicates
-      {
-        s(:test, *val[0], s(:and, val[1], val[2]))
-      }
+    : node_name { s(:test, *val[0]) }
     ;
 
   node_name
@@ -120,6 +117,7 @@ rule
     : class
     | id
     | pseudo_class
+    | attribute_predicate
     ;
 
   attribute_predicate
