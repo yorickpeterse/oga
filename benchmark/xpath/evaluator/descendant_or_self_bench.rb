@@ -10,4 +10,6 @@ Benchmark.ips do |bench|
   bench.report 'long form' do
     document.xpath('descendant-or-self::meta')
   end
+
+  bench.compare!
 end
