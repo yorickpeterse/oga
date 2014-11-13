@@ -364,11 +364,12 @@ module Oga
       #
       def on_axis_following(ast_node, context)
         nodes = XML::NodeSet.new
+        root  = root_node(@document)
 
         context.each do |context_node|
           check = false
 
-          @document.each_node do |doc_node|
+          root.each_node do |doc_node|
             # Skip child nodes of the current context node, compare all
             # following nodes.
             if doc_node == context_node
@@ -394,12 +395,13 @@ module Oga
       #
       def on_axis_following_sibling(ast_node, context)
         nodes = XML::NodeSet.new
+        root  = parent_node(@document)
 
         context.each do |context_node|
           check  = false
           parent = has_parent?(context_node) ? context_node.parent : nil
 
-          @document.each_node do |doc_node|
+          root.each_node do |doc_node|
             # Skip child nodes of the current context node, compare all
             # following nodes.
             if doc_node == context_node
@@ -452,11 +454,12 @@ module Oga
       #
       def on_axis_preceding(ast_node, context)
         nodes = XML::NodeSet.new
+        root  = root_node(@document)
 
         context.each do |context_node|
           check = true
 
-          @document.each_node do |doc_node|
+          root.each_node do |doc_node|
             # Test everything *until* we hit the current context node.
             if doc_node == context_node
               break
@@ -478,12 +481,13 @@ module Oga
       #
       def on_axis_preceding_sibling(ast_node, context)
         nodes = XML::NodeSet.new
+        root  = parent_node(@document)
 
         context.each do |context_node|
           check  = true
           parent = has_parent?(context_node) ? context_node.parent : nil
 
-          @document.each_node do |doc_node|
+          root.each_node do |doc_node|
             # Test everything *until* we hit the current context node.
             if doc_node == context_node
               break
@@ -1754,6 +1758,26 @@ module Oga
       #
       def current_node_set
         return @node_sets.last
+      end
+
+      ##
+      # Returns the root node of `node`, or `node` itself if its a Document.
+      #
+      # @param [Oga::XML::Node|Oga::XML::Document] node
+      # @return [Oga::XML::Node|Oga::XML::Document]
+      #
+      def root_node(node)
+        return node.respond_to?(:root_node) ? node.root_node : node
+      end
+
+      ##
+      # Returns the parent node of `node`, or `node` itself if its a Document.
+      #
+      # @param [Oga::XML::Node|Oga::XML::Document] node
+      # @return [Oga::XML::Node|Oga::XML::Document]
+      #
+      def parent_node(node)
+        return node.respond_to?(:parent) ? node.parent : node
       end
     end # Evaluator
   end # XPath
