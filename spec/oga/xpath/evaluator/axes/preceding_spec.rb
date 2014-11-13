@@ -19,6 +19,7 @@ describe Oga::XPath::Evaluator do
       @bar1 = @foo1.children[0]
       @baz1 = @foo1.children[1]
       @baz2 = @baz1.children[0]
+      @baz3 = @document.children[0].children[1]
     end
 
     example 'return a node set containing preceding nodes of root/foo/baz' do
@@ -29,6 +30,10 @@ describe Oga::XPath::Evaluator do
     example 'return a node set containing preceding nodes for root/baz' do
       evaluate_xpath(@document, 'root/baz/preceding::baz')
         .should == node_set(@baz1, @baz2)
+    end
+
+    example 'return a node set containing preceding nodes relative to root/baz' do
+      evaluate_xpath(@baz3, 'preceding::baz').should == node_set(@baz1, @baz2)
     end
   end
 end

@@ -16,6 +16,7 @@ describe Oga::XPath::Evaluator do
 </root>
       EOF
 
+      @bar1 = @document.children[0].children[0].children[0]
       @baz1 = @document.children[0].children[0].children[1]
       @baz2 = @baz1.children[0]
       @baz3 = @document.children[0].children[1]
@@ -34,6 +35,11 @@ describe Oga::XPath::Evaluator do
 
     example 'return a node set containing the following nodes of root/foo/bar' do
       evaluate_xpath(@document, 'root/foo/bar/following::baz')
+        .should == node_set(@baz1, @baz2, @baz3)
+    end
+
+    example 'return a node set containing the siblings relative to root/foo/bar' do
+      evaluate_xpath(@bar1, 'following::baz')
         .should == node_set(@baz1, @baz2, @baz3)
     end
   end
