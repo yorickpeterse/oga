@@ -188,30 +188,32 @@ module Oga
       #
       def on_predicate(ast_node, context)
         test, predicate = *ast_node
+        final_nodes     = XML::NodeSet.new
 
-        initial_nodes = process(test, context)
-        final_nodes   = XML::NodeSet.new
-        xpath_index   = 1
+        context.each do |context_node|
+          initial_nodes = process(test, XML::NodeSet.new([context_node]))
+          xpath_index   = 1
 
-        initial_nodes.each do |xml_node|
-          retval = with_node_set(initial_nodes) do
-            process(predicate, XML::NodeSet.new([xml_node]))
-          end
-
-          # Numeric values are used as node set indexes.
-          if retval.is_a?(Numeric)
-            final_nodes << xml_node if retval.to_i == xpath_index
-
-          # Node sets, strings, booleans, etc
-          elsif retval
-            if retval.respond_to?(:empty?) and retval.empty?
-              next
+          initial_nodes.each do |xml_node|
+            retval = with_node_set(initial_nodes) do
+              process(predicate, XML::NodeSet.new([xml_node]))
             end
 
-            final_nodes << xml_node
-          end
+            # Numeric values are used as node set indexes.
+            if retval.is_a?(Numeric)
+              final_nodes << xml_node if retval.to_i == xpath_index
 
-          xpath_index += 1
+            # Node sets, strings, booleans, etc
+            elsif retval
+              if retval.respond_to?(:empty?) and retval.empty?
+                next
+              end
+
+              final_nodes << xml_node
+            end
+
+            xpath_index += 1
+          end
         end
 
         return final_nodes

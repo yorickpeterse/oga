@@ -3,18 +3,23 @@ require 'spec_helper'
 describe Oga::XPath::Evaluator do
   context 'predicates' do
     before do
-      @document = parse('<root><b>10</b><b>20</b></root>')
+      @document = parse(<<-EOF)
+<root>
+  <a>10</a>
+  <b>
+    <a>20</a>
+    <a>30</3>
+  </b>
+</root>
+      EOF
 
-      @b1 = @document.children[0].children[0]
-      @b2 = @document.children[0].children[1]
+      @a1 = @document.at_xpath('root/a[1]')
+      @a2 = @document.at_xpath('root/b/a[1]')
     end
 
-    example 'evaluate a predicate that returns the first <b> node' do
-      evaluate_xpath(@document, 'root/b[1]').should == node_set(@b1)
-    end
-
-    example 'evaluate a predicate that returns the second <b> node' do
-      evaluate_xpath(@document, 'root/b[2]').should == node_set(@b2)
+    example 'return a node set containing all first <a> nodes' do
+      evaluate_xpath(@document, 'descendant-or-self::node()/a[1]')
+        .should == node_set(@a1, @a2)
     end
   end
 end
