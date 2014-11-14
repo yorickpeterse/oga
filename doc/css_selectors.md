@@ -603,9 +603,126 @@ The corresponding XPath expressions are similar to those used for
     :nth-last-child(even) => *[((count(following-sibling::*) + 1) mod 2) = 0]
     :nth-last-child(odd)  => *[((count(following-sibling::*) + 1) >= 1) and ((((count(following-sibling::*) + 1) - 1) mod 2) = 0)]
 
+### :nth-of-type(n)
+
+The `:nth-of-type(n)` selector can be used to select a set of elements that has
+a set of preceding siblings with the same name. The arguments that can be used
+by this selector are the same as those mentioned in [:nth-child(n)][nth-childn].
+
+The matching order of this selector is the same as [:nth-child(n)][nth-childn].
+
+Example XML:
+
+    <root>
+        <foo />
+        <foo />
+        <foo />
+        <foo />
+        <bar />
+    </root>
+
+Using the CSS expression `root foo:nth-of-type(even)` would return a set
+containing the 2nd and 4th `<foo>` nodes.
+
+The corresponding XPath expressions for the various forms of this selector are
+as following:
+
+    :nth-of-type(n)    => *[position() = n]
+    :nth-of-type(-n)   => *[position() = -n]
+    :nth-of-type(5)    => *[position() = 5]
+    :nth-of-type(2n)   => *[(position() mod 2) = 0]
+    :nth-of-type(2n+2) => *[(position() >= 2) and (((position() - 2) mod 2) = 0)]
+    :nth-of-type(2n-6) => *[(position() >= 2) and (((position() - 2) mod 2) = 0)]
+    :nth-of-type(n+5)  => *[(position() >= 5) and (((position() - 5) mod 1) = 0)]
+    :nth-of-type(-n+6) => *[(position() <= 6) and (((position() - 6) mod 1) = 0)]
+    :nth-of-type(even) => *[(position() mod 2) = 0]
+    :nth-of-type(odd)  => *[(position() >= 1) and (((position() - 1) mod 2) = 0)]
+
+### :nth-last-of-type(n)
+
+The `:nth-last-of-type(n)` selector behaves the same as
+[:nth-of-type(n)][nth-last-of-typen] excepts it matches nodes in reverse order
+similar to [:nth-last-child(n)][nth-last-childn].  To clarify, this means
+matching occurs as following:
+
+
+               :nth-last-of-type(1)
+
+       1     2     3     4     5     6
+     +---+ +---+ +---+ +---+ +---+ +---+
+     |   | |   | |   | |   | |   | | X | <- matching direction
+     +---+ +---+ +---+ +---+ +---+ +---+
+
+Example XML:
+
+    <root>
+        <foo />
+        <foo />
+        <foo />
+        <foo />
+        <bar />
+    </root>
+
+Using the CSS expression `root foo:nth-of-type(even)` would return a set
+containing the 1st and 3rd `<foo>` nodes.
+
+The corresponding XPath expressions for the various forms of this selector are
+as following:
+
+    :nth-last-of-type(n)    => *[position() = last() - -1]
+    :nth-last-of-type(-n)   => *[position() = last() - -1]
+    :nth-last-of-type(5)    => *[position() = last() - 4]
+    :nth-last-of-type(2n)   => *[((last() - position()+1) mod 2) = 0]
+    :nth-last-of-type(2n+2) => *[((last() - position()+1) >= 2) and ((((last() - position() + 1) - 2) mod 2) = 0)]
+    :nth-last-of-type(2n-6) => *[((last() - position()+1) >= 2) and ((((last() - position() + 1) - 2) mod 2) = 0)]
+    :nth-last-of-type(n+5)  => *[((last() - position()+1) >= 5) and ((((last() - position() + 1) - 5) mod 1) = 0)]
+    :nth-last-of-type(-n+6) => *[((last() - position()+1) <= 6) and ((((last() - position() + 1) - 6) mod 1) = 0)]
+    :nth-last-of-type(even) => *[((last() - position()+1) mod 2) = 0]
+    :nth-last-of-type(odd)  => *[((last() - position()+1) >= 1) and ((((last() - position() + 1) - 1) mod 2) = 0)]
+
+### :first-child
+
+The `:first-child` selector can be used to match a node that is the first child
+node of another node (= a node without any preceding nodes).
+
+Example XML:
+
+    <root>
+        <foo />
+        <bar />
+    </root>
+
+Using the CSS selector `root :first-child` would return a set containing only
+the `<foo>` node.
+
+The corresponding XPath expression for this selector is as following:
+
+    :first-child => *[count(preceding-sibling::*) = 0]
+
+### :last-child
+
+The `:last-child` selector can be used to match a node that is the last child
+node of another node (= a node without any following nodes).
+
+Example XML:
+
+    <root>
+        <foo />
+        <bar />
+    </root>
+
+Using the CSS selector `root :last-child` would return a set containing only
+the `<bar>` node.
+
+The corresponding XPath expression for this selector is as following:
+
+    :last-child => *[count(following-sibling::*) = 0]
+
 [w3spec]: http://www.w3.org/TR/css3-selectors/
 [rfc-2119]: https://www.ietf.org/rfc/rfc2119.txt
 [kramdown]: http://kramdown.gettalong.org/
 [universal-selector]: #universal-selector
 [ragel]: http://www.colm.net/open-source/ragel/
 [nth-childn]: #nth-childn
+[nth-last-childn]: #nth-last-childn
+[nth-last-of-typen]: #nth-last-of-typen
