@@ -32,4 +32,16 @@ describe Oga::XML::Querying do
       @document.at_xpath('$number', 'number' => 10).should == 10
     end
   end
+
+  context '#css' do
+    example 'query a document' do
+      @document.css('a').should == @document.children
+    end
+  end
+
+  context '#at_css' do
+    example 'query a document' do
+      @document.at_css('a').should == @document.children[0]
+    end
+  end
 end
