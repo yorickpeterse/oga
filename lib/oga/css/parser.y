@@ -515,11 +515,7 @@ end
   # @return [AST::Node]
   #
   def on_pseudo_class_first_of_type
-    return s(
-      :eq,
-      s(:call, 'count', s(:axis, 'preceding-sibling', s(:call, 'name'))),
-      s(:int, 0)
-    )
+    return s(:eq, s(:call, 'position'), s(:int, 1))
   end
 
   ##
