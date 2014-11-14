@@ -3,22 +3,25 @@ require 'spec_helper'
 describe 'CSS selector evaluation' do
   context ':first-of-type pseudo class' do
     before do
-      @document = parse('<root><a /><b /></root>')
+      @document = parse(<<-EOF)
+<dl>
+  <dt>foo</dt>
+  <dd>
+    <dl>
+      <dt>bar</dt>
+      <dd>baz</dd>
+    </dl>
+  </dd>
+</dl>
+      EOF
 
-      @a1 = @document.children[0].children[0]
-      @b1 = @document.children[0].children[1]
+      @dt1 = @document.at_xpath('dl/dt')
+      @dt2 = @document.at_xpath('dl/dd/dl/dt')
     end
 
-    example 'return a node set containing the first node' do
-      evaluate_css(@document, 'root :first-of-type').should == node_set(@a1)
-    end
-
-    example 'return a node set containing the first node with a node test' do
-      evaluate_css(@document, 'root a:first-of-type').should == node_set(@a1)
-    end
-
-    example 'return a node set containing the first <b> node' do
-      evaluate_css(@document, 'root b:first-of-type').should == node_set(@b1)
+    example 'return a node set containing all <dt> nodes' do
+      evaluate_css(@document, 'dl dt:first-of-type')
+        .should == node_set(@dt1, @dt2)
     end
   end
 end
