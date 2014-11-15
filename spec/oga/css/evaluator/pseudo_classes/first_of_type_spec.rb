@@ -14,7 +14,7 @@ describe 'CSS selector evaluation' do
       EOF
 
       @a1 = @document.at_xpath('root/a[1]')
-      @a3 = @document.at_xpath('root/a[2]/a[2]')
+      @a3 = @document.at_xpath('root/a[2]/a[1]')
     end
 
     example 'return a node set containing all first <a> nodes' do
