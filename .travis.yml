@@ -1,4 +1,6 @@
 ---
+language: ruby
+
 script: bundle exec rake
 
 before_install:
@@ -16,9 +18,8 @@ notifications:
   email:
     recipients:
       - yorickpeterse@gmail.com
-    email:
-      on_success: change
-      on_failure: change
+    on_success: change
+    on_failure: change
 
 cache: bundler
 
