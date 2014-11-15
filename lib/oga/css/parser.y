@@ -581,7 +581,7 @@ end
   # @return [AST::Node]
   #
   def on_pseudo_class_only_of_type
-    return s(:eq, s(:call, 'last'), s(:int, 1))
+    return s(:and, on_pseudo_class_first_of_type, on_pseudo_class_last_of_type)
   end
 
   ##
