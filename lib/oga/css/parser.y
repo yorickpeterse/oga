@@ -424,10 +424,11 @@ end
   ##
   # @param [String] count_axis
   # @param [AST::Node] arg
+  # @param [AST::Node] count_test
   # @return [AST::Node]
   #
-  def generate_nth_child(count_axis, arg)
-    count_call = s(:call, 'count', s(:axis, count_axis, s(:test, nil, '*')))
+  def generate_nth_child(count_axis, arg, count_test = s(:test, nil, '*'))
+    count_call = s(:call, 'count', s(:axis, count_axis, count_test))
 
    # literal 2, 4, etc
     if int_node?(arg)
@@ -462,9 +463,7 @@ end
   # @return [AST::Node]
   #
   def on_pseudo_class_nth_of_type(arg)
-    position_node = s(:call, 'position')
-
-    return generate_nth_of_type(arg, position_node)
+    return generate_nth_child('preceding-sibling', arg, current_element)
   end
 
   ##
@@ -474,44 +473,7 @@ end
   # @return [AST::Node]
   #
   def on_pseudo_class_nth_last_of_type(arg)
-    position_node = s(
-      :add,
-      s(:sub, s(:call, 'last'), s(:call, 'position')),
-      s(:int, 1)
-    )
-
-    return generate_nth_of_type(arg, position_node)
-  end
-
-  ##
-  # @param [AST::Node] arg
-  # @param [AST::Node] position_node
-  # @return [AST::Node]
-  #
-  def generate_nth_of_type(arg, position_node)
-    # literal 2, 4, etc
-    if int_node?(arg)
-      node = s(:eq, position_node, arg)
-    else
-      step, offset = *arg
-      compare      = step_comparison(step)
-
-      # 2n+2, 2n-4, etc
-      if offset
-        mod_val = step_modulo_value(step)
-        node    = s(
-          :and,
-          s(compare, position_node, offset),
-          s(:eq, s(:mod, s(:sub, position_node, offset), mod_val), s(:int, 0))
-        )
-
-      # 2n, n, -2n
-      else
-        node = s(:eq, s(:mod, position_node, step), s(:int, 0))
-      end
-    end
-
-    return node
+    return generate_nth_child('following-sibling', arg, current_element)
   end
 
   ##
