@@ -7,6 +7,9 @@ before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq ragel
 
+install:
+  - bundle install --retry=3
+
 rvm:
   - 1.9
   - 2.0
