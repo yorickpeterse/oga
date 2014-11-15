@@ -422,6 +422,91 @@ end
   end
 
   ##
+  # Generates the AST for the `nth-of-type` pseudo class.
+  #
+  # @param [AST::Node] arg
+  # @return [AST::Node]
+  #
+  def on_pseudo_class_nth_of_type(arg)
+    return generate_nth_child('preceding-sibling', arg, current_element)
+  end
+
+  ##
+  # Generates the AST for the `nth-last-of-type` pseudo class.
+  #
+  # @param [AST::Node] arg
+  # @return [AST::Node]
+  #
+  def on_pseudo_class_nth_last_of_type(arg)
+    return generate_nth_child('following-sibling', arg, current_element)
+  end
+
+  ##
+  # Generates the AST for the `:first-child` selector.
+  #
+  # @return [AST::Node]
+  #
+  def on_pseudo_class_first_child
+    return generate_no_siblings('preceding-sibling')
+  end
+
+  ##
+  # Generates the AST for the `:last-child` selector.
+  #
+  # @return [AST::Node]
+  #
+  def on_pseudo_class_last_child
+    return generate_no_siblings('following-sibling')
+  end
+
+  ##
+  # Generates the AST for the `:first-of-type` selector.
+  #
+  # @return [AST::Node]
+  #
+  def on_pseudo_class_first_of_type
+    return generate_no_siblings('preceding-sibling', current_element)
+  end
+
+  ##
+  # Generates the AST for the `:last-of-type` selector.
+  #
+  # @return [AST::Node]
+  #
+  def on_pseudo_class_last_of_type
+    return generate_no_siblings('following-sibling', current_element)
+  end
+
+  ##
+  # Generates the AST for the `:only-child` selector.
+  #
+  # @return [AST::Node]
+  #
+  def on_pseudo_class_only_child
+    return s(:and, on_pseudo_class_first_child, on_pseudo_class_last_child)
+  end
+
+  ##
+  # Generates the AST for the `:only-of-type` selector.
+  #
+  # @return [AST::Node]
+  #
+  def on_pseudo_class_only_of_type
+    return s(:and, on_pseudo_class_first_of_type, on_pseudo_class_last_of_type)
+  end
+
+  ##
+  # Generates the AST for the `:empty` selector.
+  #
+  # @return [AST::Node]
+  #
+  def on_pseudo_class_empty
+    return s(:call, 'not', s(:axis, 'child', s(:type_test, 'node')))
+  end
+
+  private
+
+  ##
   # @param [String] count_axis
   # @param [AST::Node] arg
   # @param [AST::Node] count_test
@@ -457,105 +542,13 @@ end
   end
 
   ##
-  # Generates the AST for the `nth-of-type` pseudo class.
-  #
-  # @param [AST::Node] arg
+  # @param [String] axis
+  # @param [AST::Node] test
   # @return [AST::Node]
   #
-  def on_pseudo_class_nth_of_type(arg)
-    return generate_nth_child('preceding-sibling', arg, current_element)
+  def generate_no_siblings(axis, test = s(:test, nil, '*'))
+    return s(:eq, s(:call, 'count', s(:axis, axis, test)), s(:int, 0))
   end
-
-  ##
-  # Generates the AST for the `nth-last-of-type` pseudo class.
-  #
-  # @param [AST::Node] arg
-  # @return [AST::Node]
-  #
-  def on_pseudo_class_nth_last_of_type(arg)
-    return generate_nth_child('following-sibling', arg, current_element)
-  end
-
-  ##
-  # Generates the AST for the `:first-child` selector.
-  #
-  # @return [AST::Node]
-  #
-  def on_pseudo_class_first_child
-    return s(
-      :eq,
-      s(:call, 'count', s(:axis, 'preceding-sibling', s(:test, nil, '*'))),
-      s(:int, 0)
-    )
-  end
-
-  ##
-  # Generates the AST for the `:last-child` selector.
-  #
-  # @return [AST::Node]
-  #
-  def on_pseudo_class_last_child
-    return s(
-      :eq,
-      s(:call, 'count', s(:axis, 'following-sibling', s(:test, nil, '*'))),
-      s(:int, 0)
-    )
-  end
-
-  ##
-  # Generates the AST for the `:first-of-type` selector.
-  #
-  # @return [AST::Node]
-  #
-  def on_pseudo_class_first_of_type
-    return s(
-      :eq,
-      s(:call, 'count', s(:axis, 'preceding-sibling', current_element)),
-      s(:int, 0)
-    )
-  end
-
-  ##
-  # Generates the AST for the `:last-of-type` selector.
-  #
-  # @return [AST::Node]
-  #
-  def on_pseudo_class_last_of_type
-    return s(
-      :eq,
-      s(:call, 'count', s(:axis, 'following-sibling', current_element)),
-      s(:int, 0)
-    )
-  end
-
-  ##
-  # Generates the AST for the `:only-child` selector.
-  #
-  # @return [AST::Node]
-  #
-  def on_pseudo_class_only_child
-    return s(:and, on_pseudo_class_first_child, on_pseudo_class_last_child)
-  end
-
-  ##
-  # Generates the AST for the `:only-of-type` selector.
-  #
-  # @return [AST::Node]
-  #
-  def on_pseudo_class_only_of_type
-    return s(:and, on_pseudo_class_first_of_type, on_pseudo_class_last_of_type)
-  end
-
-  ##
-  # Generates the AST for the `:empty` selector.
-  #
-  # @return [AST::Node]
-  #
-  def on_pseudo_class_empty
-    return s(:call, 'not', s(:axis, 'child', s(:type_test, 'node')))
-  end
-
-  private
 
   ##
   # @param [AST::Node] node
