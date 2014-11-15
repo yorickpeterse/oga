@@ -837,6 +837,29 @@ Example XML:
 Using the CSS selector `root :empty` would return a set containing only the
 `<a>` node.
 
+### Syntax
+
+The syntax of the various pseudo classes is as following:
+
+    integer = ('+' | '-')* [0-9]+;
+
+    odd  = 'odd';
+    even = 'even';
+    nth  = 'n';
+
+    pseudo_arg_interval = '-'* integer* nth;
+    pseudo_arg_offset   = ('+' | '-')* integer;
+
+    pseudo_arg = odd
+      | even
+      | '-'* nth
+      | integer
+      | pseudo_arg_interval
+      | pseudo_arg_interval pseudo_arg_offset;
+
+    # The `identifier` rule is the same as the one used for element names.
+    pseudo = ':' identifier ('(' space* pseudo_arg space* ')')*;
+
 [w3spec]: http://www.w3.org/TR/css3-selectors/
 [rfc-2119]: https://www.ietf.org/rfc/rfc2119.txt
 [kramdown]: http://kramdown.gettalong.org/
