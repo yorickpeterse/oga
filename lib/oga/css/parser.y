@@ -43,7 +43,7 @@ rule
     # .foo, :bar, etc
     : predicates
       {
-        s(:predicate, s(:axis, 'descendant', s(:test, nil, '*')), val[0])
+        s(:predicate, s(:axis, 'descendant', on_test(nil, '*')), val[0])
       }
 
     # foo
@@ -82,7 +82,7 @@ rule
         [
           s(
             :predicate,
-            s(:axis, 'following-sibling', s(:test, nil, '*')),
+            s(:axis, 'following-sibling', on_test(nil, '*')),
             s(:int, 1)
           ),
           s(:axis, 'self', val[1])
@@ -97,7 +97,7 @@ rule
 
   node_test
     # foo
-    : node_name { s(:test, *val[0]) }
+    : node_name { on_test(*val[0]) }
     ;
 
   node_name
@@ -130,7 +130,7 @@ rule
     ;
 
   attribute
-    : node_name { s(:axis, 'attribute', s(:test, *val[0])) }
+    : node_name { s(:axis, 'attribute', on_test(*val[0])) }
     ;
 
   # The AST of these operators is mostly based on what
@@ -314,6 +314,13 @@ end
   end
 
   ##
+  # Resets the internal state of the parser.
+  #
+  def reset
+    @current_element = nil
+  end
+
+  ##
   # @param [Symbol] type
   # @param [Array] children
   # @return [AST::Node]
@@ -336,6 +343,15 @@ end
   end
 
   ##
+  # Returns the node test for the current element.
+  #
+  # @return [AST::Node]
+  #
+  def current_element
+    return @current_element ||= s(:test, nil, '*')
+  end
+
+  ##
   # Parses the input and returns the corresponding AST.
   #
   # @example
@@ -345,9 +361,24 @@ end
   # @return [AST::Node]
   #
   def parse
+    reset
+
     ast = yyparse(self, :yield_next_token)
 
     return ast
+  end
+
+  ##
+  # Generates the AST for a node test.
+  #
+  # @param [String] namespace
+  # @param [String] name
+  # @return [AST::Node]
+  #
+  def on_test(namespace, name)
+    @current_element = s(:test, namespace, name)
+
+    return @current_element
   end
 
   ##
@@ -515,7 +546,11 @@ end
   # @return [AST::Node]
   #
   def on_pseudo_class_first_of_type
-    return s(:eq, s(:call, 'position'), s(:int, 1))
+    return s(
+      :eq,
+      s(:call, 'count', s(:axis, 'preceding-sibling', current_element)),
+      s(:int, 0)
+    )
   end
 
   ##
@@ -524,7 +559,11 @@ end
   # @return [AST::Node]
   #
   def on_pseudo_class_last_of_type
-    return s(:eq, s(:call, 'position'), s(:call, 'last'))
+    return s(
+      :eq,
+      s(:call, 'count', s(:axis, 'following-sibling', current_element)),
+      s(:int, 0)
+    )
   end
 
   ##
