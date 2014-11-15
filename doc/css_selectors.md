@@ -120,6 +120,12 @@ This would return a set containing two elements: `<foo>` and `<bar>`
 
 The corresponding XPath is also `*`.
 
+### Syntax
+
+The syntax for the universal selector is very simple:
+
+    universal = '*';
+
 ## Element Selector
 
 W3 chapter: <http://www.w3.org/TR/css3-selectors/#type-selectors>
