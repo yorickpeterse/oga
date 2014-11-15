@@ -397,8 +397,8 @@ For `:root` the XPath expression is:
 
 ### :nth-child(n)
 
-The `:nth-child(n)` selector can be used to select a set of elements based on
-their position or an interval, skipping elements that occur in a set before
+The `:nth-child(n)` pseudo class can be used to select a set of elements based
+on their position or an interval, skipping elements that occur in a set before
 the given position or interval.
 
 In the form `:nth-child(n)` the identifier `n` is an argument that can be used
@@ -544,9 +544,9 @@ expressions are as following:
 
 ### :nth-last-child(n)
 
-The `:nth-last-child(n)` selector can be used to select a set of elements based
-on their position or an interval, skipping elements that occur in a set after
-the given position or interval.
+The `:nth-last-child(n)` pseudo class can be used to select a set of elements
+based on their position or an interval, skipping elements that occur in a set
+after the given position or interval.
 
 The arguments that can be used by this selector are the same as those mentioned
 in [:nth-child(n)][nth-childn].
@@ -605,9 +605,10 @@ The corresponding XPath expressions are similar to those used for
 
 ### :nth-of-type(n)
 
-The `:nth-of-type(n)` selector can be used to select a set of elements that has
-a set of preceding siblings with the same name. The arguments that can be used
-by this selector are the same as those mentioned in [:nth-child(n)][nth-childn].
+The `:nth-of-type(n)` pseudo class can be used to select a set of elements that
+has a set of preceding siblings with the same name. The arguments that can be
+used by this selector are the same as those mentioned in
+[:nth-child(n)][nth-childn].
 
 The matching order of this selector is the same as [:nth-child(n)][nth-childn].
 
@@ -624,8 +625,8 @@ Example XML:
 Using the CSS expression `root foo:nth-of-type(even)` would return a set
 containing the 2nd and 4th `<foo>` nodes.
 
-The corresponding XPath expressions for the various forms of this selector are
-as following:
+The corresponding XPath expressions for the various forms of this pseudo class
+are as following:
 
     :nth-of-type(n)    => *[position() = n]
     :nth-of-type(-n)   => *[position() = -n]
@@ -640,7 +641,7 @@ as following:
 
 ### :nth-last-of-type(n)
 
-The `:nth-last-of-type(n)` selector behaves the same as
+The `:nth-last-of-type(n)` pseudo class behaves the same as
 [:nth-of-type(n)][nth-last-of-typen] excepts it matches nodes in reverse order
 similar to [:nth-last-child(n)][nth-last-childn].  To clarify, this means
 matching occurs as following:
@@ -666,8 +667,8 @@ Example XML:
 Using the CSS expression `root foo:nth-of-type(even)` would return a set
 containing the 1st and 3rd `<foo>` nodes.
 
-The corresponding XPath expressions for the various forms of this selector are
-as following:
+The corresponding XPath expressions for the various forms of this pseudo class
+are as following:
 
     :nth-last-of-type(n)    => *[position() = last() - -1]
     :nth-last-of-type(-n)   => *[position() = last() - -1]
@@ -682,8 +683,8 @@ as following:
 
 ### :first-child
 
-The `:first-child` selector can be used to match a node that is the first child
-node of another node (= a node without any preceding nodes).
+The `:first-child` pseudo class can be used to match a node that is the first
+child node of another node (= a node without any preceding nodes).
 
 Example XML:
 
@@ -695,14 +696,14 @@ Example XML:
 Using the CSS selector `root :first-child` would return a set containing only
 the `<foo>` node.
 
-The corresponding XPath expression for this selector is as following:
+The corresponding XPath expression for this pseudo class is as following:
 
     :first-child => *[count(preceding-sibling::*) = 0]
 
 ### :last-child
 
-The `:last-child` selector can be used to match a node that is the last child
-node of another node (= a node without any following nodes).
+The `:last-child` pseudo class can be used to match a node that is the last
+child node of another node (= a node without any following nodes).
 
 Example XML:
 
@@ -714,9 +715,127 @@ Example XML:
 Using the CSS selector `root :last-child` would return a set containing only
 the `<bar>` node.
 
-The corresponding XPath expression for this selector is as following:
+The corresponding XPath expression for this pseudo class is as following:
 
     :last-child => *[count(following-sibling::*) = 0]
+
+### :first-of-type
+
+The `:first-of-type` pseudo class matches elements that are the first sibling of
+its type in the list of elements of its parent element. This selector is the
+same as [:nth-of-type(1)][nth-of-typen].
+
+Example XML:
+
+    <root>
+      <a id="1" />
+      <a id="2">
+        <a id="3" />
+        <a id="4" />
+      </a>
+    </root>
+
+Using the CSS selector `root a:first-of-type` would return a node set containing
+nodes `<a id="1">` and `<a id="3">` as both nodes are the first siblings of
+their type.
+
+The corresponding XPath for this pseudo class is as following:
+
+    a:first-of-type => a[count(preceding-sibling::a) = 0]
+
+An alternative way is to use the following XPath:
+
+    a:first-of-type => //a[position() = 1]
+
+This however relies on the less efficient `descendant-or-self::node()` selector.
+For querying larger documents it's recommended to use the first form instead.
+
+### :last-of-type
+
+The `:last-of-type` pseudo class can be used to match elements that are the last
+sibling of its type in the list of elements of its parent. This selector is the
+same as [:nth-last-of-type(1)][nth-last-of-typen].
+
+Example XML:
+
+    <root>
+      <a id="1" />
+      <a id="2">
+        <a id="3" />
+        <a id="4" />
+      </a>
+    </root>
+
+Using the CSS selector `root a:last-of-type` would return a set containing nodes
+`<a id="2">` and `<a id="4">` as both nodes are the last siblings of their type.
+
+The corresponding XPath for this pseudo class is as following:
+
+    a:last-of-type => a[count(following-sibling::a) = 0]
+
+Similar to [:first-of-type][first-of-typen] this XPath can alternatively be
+written as following:
+
+    a:last-of-type => //a[position() = last()]
+
+### :only-child
+
+The `:only-child` pseudo class can be used to match elements that are the only
+child element of its parent.
+
+Example XML:
+
+    <root>
+      <a id="1" />
+      <a id="2">
+        <a id="3" />
+      </a>
+    </root>
+
+Using the CSS selector `root a:only-child` would return a set containing only
+the `<a id="3">` node.
+
+The corresponding XPath for this pseudo class is as following:
+
+    a:only-child => a[count(preceding-sibling::*) = 0 and count(following-sibling::*) = 0]
+
+### :only-of-type
+
+The `:only-of-type` pseudo class can be used to match elements that are the only
+child elements of its type of its parent.
+
+Example XML:
+
+    <root>
+      <a id="1" />
+      <a id="2">
+        <a id="3" />
+        <b id="4" />
+      </a>
+    </root>
+
+Using the CSS selector `root a:only-of-type` would return a set containing
+only the `<a id="3">` node due to it being the only `<a>` node in the list of
+elements of its parent.
+
+The corresponding XPath for this pseudo class is as following:
+
+    a:only-child => a[count(preceding-sibling::a) = 0 and count(following-sibling::a) = 0]
+
+### :empty
+
+The `:empty` pseudo class can be used to match elements that have no child nodes
+at all.
+
+Example XML:
+
+    <root>
+        <a />
+        <b>10</b>
+    </root>
+
+Using the CSS selector `root :empty` would return a set containing only the
+`<a>` node.
 
 [w3spec]: http://www.w3.org/TR/css3-selectors/
 [rfc-2119]: https://www.ietf.org/rfc/rfc2119.txt
@@ -726,3 +845,6 @@ The corresponding XPath expression for this selector is as following:
 [nth-childn]: #nth-childn
 [nth-last-childn]: #nth-last-childn
 [nth-last-of-typen]: #nth-last-of-typen
+[nth-of-typen]: #nth-of-type
+[nth-last-of-typen]: #nth-last-of-typen
+[first-of-typen]: #first-of-typen
