@@ -128,6 +128,53 @@ _not_ thread-safe and should not be done by multiple threads at once.
 It is advised that you do not share parsed documents between threads unless you
 _really_ have to.
 
+## Namespace Support
+
+Oga fully supports parsing/registering XML namespaces as well as querying them
+using XPath. For example, take the following XML:
+
+    <root xmlns="http://example.com">
+        <bar>bar</bar>
+    </root>
+
+If one were to try and query the `bar` element (e.g. using XPath `root/bar`)
+they'd end up with an empty node set. This is due to `<root>` defining an
+alternative default namespace. Instead you can query this element using the
+following XPath:
+
+    *[local-name() = "root"]/*[local-name() = "bar"]
+
+Alternatively, if you don't really care where the `<bar>` element is located you
+can use the following:
+
+    descendant::*[local-name() = "bar"]
+
+And if you want to specify an explici namespace URI, you can use this:
+
+    descendant::*[local-name() = "bar" and namespace-uri() = "http://example.com"]
+
+Unlike Nokogiri, Oga does _not_ provide a way to create "dynamic" namespaces.
+That is, Nokogiri allows one to query the above document as following:
+
+    document = Nokogiri::XML('<root xmlns="http://example.com"><bar>bar</bar></root>')
+
+    document.xpath('x:root/x:bar', :x => 'http://example.com')
+
+Oga does have a small trick you can use to cut down the size of your XPath
+queries. Because Oga assigns the name "xmlns" to default namespaces you can use
+this in your XPath queries:
+
+    document = Oga.parse_xml('<root xmlns="http://example.com"><bar>bar</bar></root>')
+
+    document.xpath('xmlns:root/xmlns:bar')
+
+When using this you can still restrict the query to the correct namespace URI:
+
+    document.xpath('xmlns:root[namespace-uri() = "http://example.com"]/xmlns:bar')
+
+In the future I might add an API to ease this process, although at this time I
+have little interest in providing an API similar to Nokogiri.
+
 ## Documentation
 
 The documentation is best viewed [on the documentation website][doc-website].
