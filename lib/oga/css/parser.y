@@ -1,6 +1,13 @@
 ##
 # AST parser for CSS expressions.
 #
+# This parser does _not_ build a CSS specific AST, instead it directly produces
+# an XPath AST. This removes the need to transform the AST or generate
+# corresponding XPath expressions as a String.
+#
+# Similar to {Oga::XPath::Parser} this parser only takes String instances as
+# input.
+#
 class Oga::CSS::Parser
 
 token T_IDENT T_PIPE T_LBRACK T_RBRACK T_COLON T_SPACE T_LPAREN T_RPAREN T_MINUS

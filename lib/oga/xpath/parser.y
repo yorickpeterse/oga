@@ -2,6 +2,8 @@
 # AST parser for XPath expressions. The AST is built using {AST::Node}
 # instances.
 #
+# Unlike {Oga::XML::Parser} this parser only takes String instances as input.
+#
 class Oga::XPath::Parser
 
 token T_AXIS T_COLON T_COMMA T_FLOAT T_INT T_IDENT T_TYPE_TEST
