@@ -418,6 +418,10 @@ describe Oga::XML::Element do
     example 'return the "baz" namespace for the parent' do
       @parent_ns['baz'].uri.should == 'yyy'
     end
+
+    example 'do not modify the list of direct namespaces' do
+      @child.namespaces.key?('foo').should == false
+    end
   end
 
   context '#self_closing?' do

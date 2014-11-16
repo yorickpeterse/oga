@@ -273,7 +273,7 @@ module Oga
       # @return [Hash]
       #
       def available_namespaces
-        merged = namespaces
+        merged = namespaces.dup
         node   = parent
 
         while node && node.respond_to?(:namespaces)
