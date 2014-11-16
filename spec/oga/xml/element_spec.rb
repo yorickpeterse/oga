@@ -111,6 +111,10 @@ describe Oga::XML::Element do
     example 'return the value of an attribute' do
       @element.get('foo').should == 'bar'
     end
+
+    example 'has #[] alias' do
+      @element['foo'].should == 'bar'
+    end
   end
 
   context '#add_attribute' do
@@ -143,6 +147,12 @@ describe Oga::XML::Element do
       @element.set('class', 'foo')
 
       @element.get('class').should == 'foo'
+    end
+
+    example 'has #[]= alias' do
+      @element['class'] = 'foobar'
+
+      @element['class'].should == 'foobar'
     end
 
     example 'add a new attribute with a namespace' do
