@@ -184,6 +184,7 @@ The documentation is best viewed [on the documentation website][doc-website].
 * {file:migrating\_from\_nokogiri Migrating From Nokogiri}
 * {Oga::XML::Parser XML Parser}
 * {Oga::XML::SaxParser XML SAX Parser}
+* {file:xml\_namespaces XML Namespaces}
 
 ## Native Extension Setup
 
