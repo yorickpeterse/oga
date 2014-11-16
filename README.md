@@ -95,6 +95,7 @@ Querying a document using a namespace:
 * Low memory footprint
 * High performance, if something doesn't perform well enough it's a bug
 * Support for XPath 1.0
+* CSS3 selector support
 * XML namespace support (registering, querying, etc)
 
 ## Requirements
