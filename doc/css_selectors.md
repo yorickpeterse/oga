@@ -186,7 +186,63 @@ following:
 This would match `|foo`, `*|foo` and `foo|bar`. In order to match `foo` the
 regular `identifier` rule declared above can be used.
 
-## Attribute Selectors
+## Class Selector
+
+Class selectors can be used to select a set of elements based on the values set
+in the `class` attribute. Class selectors start with a period (`.`) followed by
+an identifier. Multiple class selectors can be chained together, matching only
+elements that have all the specified classes set.
+
+As an example, `.foo` can be used to select all elements that have "foo" set in
+the `class` attribute, either as the sole or one of many values. In turn,
+`.foo.bar` matches elements that have both "foo" and "bar" set as the class.
+
+Example XML:
+
+    <root>
+        <a class="first" />
+        <b class="second" />
+    </root>
+
+Using the CSS selector `.first` would return a set containing only the `<a>`
+element. Using `.first.second` would return a set containing both the `<a>` and
+`<b>` nodes.
+
+### Syntax
+
+    identifier = '*' | [a-zA-Z]+ [a-zA-Z\-_0-9]*;
+
+    # .foo, .foo.bar, .foo.bar.baz, etc
+    class = ('.' identifier)+;
+
+## ID Selector
+
+The ID selector can be used to match elements where the value of the `id`
+attribute matches whatever is specified in the selector. ID selectors start with
+a hash sign (`#`) followed by an identifier.
+
+While technically multiple ID selectors _can_ be chained together, HTML only
+allows elements to have a single ID. As a result doing so is fairly useless.
+Unlike classes IDs are globally unique, no two elements can have the same ID.
+
+Example XML:
+
+    <root>
+        <a id="first" />
+        <b id="second" />
+    </root>
+
+Using the CSS selector `#first` would return a set containing only the `<a>`
+node.
+
+### Syntax
+
+    identifier = '*' | [a-zA-Z]+ [a-zA-Z\-_0-9]*;
+
+    # .foo, .foo.bar, .foo.bar.baz, etc
+    class = ('#' identifier)+;
+
+## Attribute Selector
 
 W3 chapter: <http://www.w3.org/TR/css3-selectors/#attribute-selectors>
 
