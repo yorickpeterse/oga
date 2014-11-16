@@ -182,6 +182,8 @@ The documentation is best viewed [on the documentation website][doc-website].
 * {file:CONTRIBUTING Contributing}
 * {file:changelog Changelog}
 * {file:migrating\_from\_nokogiri Migrating From Nokogiri}
+* {Oga::XML::Parser XML Parser}
+* {Oga::XML::SaxParser XML SAX Parser}
 
 ## Native Extension Setup
 
