@@ -70,6 +70,12 @@ Querying a document using XPath:
 
     document.xpath('string(people/person)') # => "Alice"
 
+Querying a document using CSS:
+
+    document = Oga.parse_xml('<people><person>Alice</person></people>')
+
+    document.css('people person') # => NodeSet(Element(name: "person" ...))
+
 Modifying a document and serializing it back to XML:
 
     document = Oga.parse_xml('<people><person>Alice</person></people>')
