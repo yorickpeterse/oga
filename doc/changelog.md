@@ -42,6 +42,8 @@ perhaps other libraries) the parser _does not_ output XPath expressions as a
 String or a CSS specific AST. Instead it directly emits an XPath AST. This
 allows the resulting AST to be directly evaluated by `Oga::XPath::Evaluator`.
 
+See <https://github.com/YorickPeterse/oga/issues/11> for more information.
+
 ### Mutli-line Attribute Support
 
 Oga can now lex/parse elements that have attributes with newlines in them.
