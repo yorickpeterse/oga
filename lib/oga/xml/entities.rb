@@ -4,15 +4,15 @@ module Oga
       ##
       # Hash containing XML entities and the corresponding characters.
       #
-      # The `&amp;` mapping must come first to ensure proper conversion of non
+      # The `&amp;` mapping must come last to ensure proper conversion of non
       # encoded to encoded forms (see {Oga::XML::Text#to_xml}).
       #
       # @return [Hash]
       #
       DECODE_MAPPING = {
-        '&amp;' => '&',
         '&lt;'  => '<',
-        '&gt;'  => '>'
+        '&gt;'  => '>',
+        '&amp;' => '&'
       }
 
       ##
@@ -20,7 +20,11 @@ module Oga
       #
       # @return [Hash]
       #
-      ENCODE_MAPPING = DECODE_MAPPING.invert
+      ENCODE_MAPPING = {
+        '&' => '&amp;',
+        '>' => '&gt;',
+        '<' => '&lt;'
+      }
 
       ##
       # Decodes XML entities.
