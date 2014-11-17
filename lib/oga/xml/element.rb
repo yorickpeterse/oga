@@ -139,6 +139,20 @@ module Oga
       end
 
       ##
+      # Removes an attribute from the element.
+      #
+      # @param [String] name The name (optionally including namespace prefix)
+      #  of the attribute to remove.
+      #
+      # @return [Oga::XML::Attribute]
+      #
+      def unset(name)
+        found = attribute(name)
+
+        return attributes.delete(found) if found
+      end
+
+      ##
       # Returns the namespace of the element.
       #
       # @return [Oga::XML::Namespace]

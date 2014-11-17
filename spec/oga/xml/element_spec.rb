@@ -170,6 +170,29 @@ describe Oga::XML::Element do
     end
   end
 
+  context '#unset' do
+    before do
+      @element = described_class.new
+
+      @element.register_namespace('x', 'test')
+
+      @element.set('foo', 'bar')
+      @element.set('x:foo', 'bar')
+    end
+
+    example 'remove an attribute by its name' do
+      @element.unset('foo')
+
+      @element.get('foo').should be_nil
+    end
+
+    example 'remove an attribute using a namespace' do
+      @element.unset('x:foo')
+
+      @element.get('x:foo').should be_nil
+    end
+  end
+
   context '#namespace' do
     example 'return the namespace' do
       namespace = Oga::XML::Namespace.new(:name => 'x')
