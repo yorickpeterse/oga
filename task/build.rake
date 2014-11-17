@@ -1,11 +1,11 @@
 namespace :build do
   desc 'Builds a new Gem'
-  task :gem => [:build] do
+  task :gem => [:clean, :build] do
     Rake::Task['checksum'].invoke
   end
 
   desc 'Builds a new Java Gem'
-  task :java => [:clean] do
+  task :java do
     sh 'chruby-exec jruby -- rake build:gem'
   end
 
