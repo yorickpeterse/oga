@@ -9,18 +9,18 @@ module Oga
       #
       # @return [Hash]
       #
-      DECODE_MAPPING = {
-        '&amp;' => '&',
-        '&lt;'  => '<',
-        '&gt;'  => '>'
-      }
+      DECODE_MAPPING = [
+        ['&lt;',  '<'],
+        ['&gt;',  '>'],
+        ['&amp;', '&'],
+      ]
 
       ##
       # Hash containing characters and the corresponding XML entities.
       #
       # @return [Hash]
       #
-      ENCODE_MAPPING = DECODE_MAPPING.invert
+      ENCODE_MAPPING = DECODE_MAPPING.reverse.map(&:reverse)
 
       ##
       # Decodes XML entities.
