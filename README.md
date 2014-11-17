@@ -44,6 +44,16 @@ Parsing an IO handle using the pull parser:
       end
     end
 
+Using an Enumerator to download and parse an XML document on the fly:
+
+    enum = Enumerator.new do |yielder|
+      HTTPClient.get('http://some-website.com/some-big-file.xml') do |chunk|
+        yielder << chunk
+      end
+    end
+
+    document = Oga.parse_xml(enum)
+
 Parse a string of XML using the SAX parser:
 
     class ElementNames
