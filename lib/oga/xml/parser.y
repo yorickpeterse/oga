@@ -86,10 +86,15 @@ rule
       }
 
     # <!DOCTYPE html [ ... ]>
-    | T_DOCTYPE_START T_DOCTYPE_NAME T_DOCTYPE_INLINE T_DOCTYPE_END
+    | T_DOCTYPE_START T_DOCTYPE_NAME doctype_inline T_DOCTYPE_END
       {
         on_doctype(:name => val[1], :inline_rules => val[2])
       }
+    ;
+
+  doctype_inline
+    : T_DOCTYPE_INLINE                { val[0] }
+    | doctype_inline T_DOCTYPE_INLINE { val[0] + val[1] }
     ;
 
   # CDATA tags

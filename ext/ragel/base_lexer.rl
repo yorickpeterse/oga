@@ -183,6 +183,22 @@
         fnext doctype;
     }
 
+    # Machine for processing inline rules of a doctype.
+    doctype_inline := |*
+        ^']'* $count_newlines => {
+            callback("on_doctype_inline", data, encoding, ts, te);
+
+            if ( lines > 0 )
+            {
+                advance_line(lines);
+
+                lines = 0;
+            }
+        };
+
+        ']' => { fnext doctype; };
+    *|;
+
     # Machine for processing doctypes. Doctype values such as the public
     # and system IDs are treated as T_STRING tokens.
     doctype := |*
@@ -190,11 +206,8 @@
             callback("on_doctype_type", data, encoding, ts, te);
         };
 
-        # Consumes everything between the [ and ]. Due to the use of :> the ]
-        # is not consumed by any+.
-        '[' any+ :> ']' => {
-            callback("on_doctype_inline", data, encoding, ts + 1, te - 1);
-        };
+        # Starts a set of inline doctype rules.
+        '[' => { fnext doctype_inline; };
 
         # Lex the public/system IDs as regular strings.
         squote => start_string_squote;

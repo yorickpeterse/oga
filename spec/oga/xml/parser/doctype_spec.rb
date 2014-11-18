@@ -94,4 +94,14 @@ describe Oga::XML::Parser do
       @document.doctype.inline_rules.should == '<!ELEMENT foo>'
     end
   end
+
+  context 'doctypes with inline rules and newlines using a StringIO' do
+    before :all do
+      @document = parse(StringIO.new("<!DOCTYPE html [\nfoo]>"))
+    end
+
+    example 'set the inline doctype rules' do
+      @document.doctype.inline_rules.should == "\nfoo"
+    end
+  end
 end
