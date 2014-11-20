@@ -3,6 +3,7 @@ gem 'racc'
 require 'ast'
 require 'set'
 require 'stringio'
+require 'htmlentities'
 
 require_relative 'oga/version'
 require_relative 'oga/oga'
