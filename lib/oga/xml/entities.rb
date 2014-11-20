@@ -15,7 +15,11 @@ module Oga
       # @return [String]
       #
       def self.decode(input)
-        return CODER.decode(input)
+        if input.include?("&")
+          input = CODER.decode(input)
+        end
+
+        return input
       end
 
       ##
