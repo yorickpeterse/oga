@@ -63,6 +63,42 @@ choice. Note that extensions compiled for MRI can not be used on Rubinius and
 vice-versa. To compile the JRuby extension you'll have to switch your active
 Ruby version to JRuby first.
 
+## Thread Safety
+
+To ensure Oga remains thread-safe for as much as possible the usage of global
+objects and/or state is forbidden. This means that you should _only_ use
+constants/class methods for static/read-only data (e.g. an Array of static
+Strings). In other words, this is fine:
+
+    NUMBERS = [10, 20, 30]
+
+    NUMBERS.each do |number|
+
+    end
+
+But this is not:
+
+    TOOL = SomeFindReplaceTool.new
+
+    output = TOOL.replace(input, 'foo', 'bar')
+
+The exception here are libraries that are designed to be thread-safe, clearly
+state this _and_ can prove it (e.g. by simply using a mutex). Even then global
+state is highly frowned upon.
+
+## Loading Libraries
+
+All `require` calls should be placed in `lib/oga.rb`. Any `require` calls
+specific to a Ruby implementation (e.g. JRuby) should be wrapped in a
+conditional. For example:
+
+    if RUBY_PLATFORM == 'java'
+      org.foo.bar.baz.DoSomething()
+    end
+
+For loading files in Oga itself `require_relative` should be used, _don't_
+modify `$LOAD_PATH`.
+
 ## Contact
 
 In case you have any further questions or would like to receive feedback before
