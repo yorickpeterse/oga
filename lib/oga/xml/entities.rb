@@ -1,13 +1,6 @@
-require 'htmlentities'
-
 module Oga
   module XML
     module Entities
-      ##
-      # @return [HTMLEntities]
-      #
-      CODER = HTMLEntities.new
-
       ##
       # Decodes XML entities.
       #
@@ -16,7 +9,8 @@ module Oga
       #
       def self.decode(input)
         if input.include?("&")
-          input = CODER.decode(input)
+          coder = HTMLEntities.new
+          input = coder.decode(input)
         end
 
         return input
@@ -29,7 +23,8 @@ module Oga
       # @return [String]
       #
       def self.encode(input)
-        return CODER.encode(input)
+        coder = HTMLEntities.new
+        return coder.encode(input)
       end
     end # Entities
   end # XML
