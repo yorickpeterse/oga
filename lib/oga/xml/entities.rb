@@ -1,30 +1,12 @@
+require 'htmlentities'
+
 module Oga
   module XML
     module Entities
       ##
-      # Hash containing XML entities and the corresponding characters.
+      # @return [HTMLEntities]
       #
-      # The `&amp;` mapping must come last to ensure proper conversion of non
-      # encoded to encoded forms (see {Oga::XML::Text#to_xml}).
-      #
-      # @return [Hash]
-      #
-      DECODE_MAPPING = {
-        '&lt;'  => '<',
-        '&gt;'  => '>',
-        '&amp;' => '&'
-      }
-
-      ##
-      # Hash containing characters and the corresponding XML entities.
-      #
-      # @return [Hash]
-      #
-      ENCODE_MAPPING = {
-        '&' => '&amp;',
-        '>' => '&gt;',
-        '<' => '&lt;'
-      }
+      CODER = HTMLEntities.new
 
       ##
       # Decodes XML entities.
@@ -33,13 +15,7 @@ module Oga
       # @return [String]
       #
       def self.decode(input)
-        if input.include?('&')
-          DECODE_MAPPING.each do |find, replace|
-            input = input.gsub(find, replace)
-          end
-        end
-
-        return input
+        return CODER.decode(input)
       end
 
       ##
@@ -49,11 +25,7 @@ module Oga
       # @return [String]
       #
       def self.encode(input)
-        ENCODE_MAPPING.each do |from, to|
-          input = input.gsub(from, to) if input.include?(from)
-        end
-
-        return input
+        return CODER.encode(input)
       end
     end # Entities
   end # XML

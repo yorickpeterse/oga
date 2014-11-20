@@ -14,6 +14,10 @@ describe Oga::XML::Entities do
       described_class.decode('&gt;').should == '>'
     end
 
+    example 'decode &quot; into "' do
+      described_class.decode('&quot;').should == '"'
+    end
+
     example 'decode &amp;gt; into &gt;' do
       described_class.decode('&amp;gt;').should == '&gt;'
     end
@@ -42,6 +46,10 @@ describe Oga::XML::Entities do
 
     example 'encode > as &gt;' do
       described_class.encode('>').should == '&gt;'
+    end
+
+    example 'encode " as &quot;' do
+      described_class.encode('"').should == '&quot;'
     end
 
     example 'encode &gt; as &amp;gt;' do

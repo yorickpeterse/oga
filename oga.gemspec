@@ -34,6 +34,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'racc', ['~> 1.4', '>= 1.4.12']
   s.add_dependency 'ast'
+  s.add_dependency 'htmlentities'
 
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec', ['~> 3.0']
