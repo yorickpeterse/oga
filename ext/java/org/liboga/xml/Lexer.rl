@@ -101,6 +101,31 @@ public class Lexer extends RubyObject
         int pe    = data.length;
         int eof   = data.length;
 
+        String id_advance_line        = "advance_line";
+        String id_on_attribute        = "on_attribute";
+        String id_on_attribute_ns     = "on_attribute_ns";
+        String id_on_cdata            = "on_cdata";
+        String id_on_comment          = "on_comment";
+        String id_on_doctype_end      = "on_doctype_end";
+        String id_on_doctype_inline   = "on_doctype_inline";
+        String id_on_doctype_name     = "on_doctype_name";
+        String id_on_doctype_start    = "on_doctype_start";
+        String id_on_doctype_type     = "on_doctype_type";
+        String id_on_element_end      = "on_element_end";
+        String id_on_element_name     = "on_element_name";
+        String id_on_element_ns       = "on_element_ns";
+        String id_on_element_open_end = "on_element_open_end";
+        String id_on_element_start    = "on_element_start";
+        String id_on_proc_ins_end     = "on_proc_ins_end";
+        String id_on_proc_ins_name    = "on_proc_ins_name";
+        String id_on_proc_ins_start   = "on_proc_ins_start";
+        String id_on_string_body      = "on_string_body";
+        String id_on_string_dquote    = "on_string_dquote";
+        String id_on_string_squote    = "on_string_squote";
+        String id_on_text             = "on_text";
+        String id_on_xml_decl_end     = "on_xml_decl_end";
+        String id_on_xml_decl_start   = "on_xml_decl_start";
+
         %% write exec;
 
         this.lines = lines;

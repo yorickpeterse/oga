@@ -59,7 +59,7 @@
     comment       = comment_start (any* -- comment_end) comment_end;
 
     action start_comment {
-        callback("on_comment", data, encoding, ts + 4, te - 3);
+        callback(id_on_comment, data, encoding, ts + 4, te - 3);
     }
 
     # CDATA
@@ -75,7 +75,7 @@
     cdata       = cdata_start (any* -- cdata_end) cdata_end;
 
     action start_cdata {
-        callback("on_cdata", data, encoding, ts + 9, te - 3);
+        callback(id_on_cdata, data, encoding, ts + 9, te - 3);
     }
 
     # Processing Instructions
@@ -93,8 +93,8 @@
     proc_ins_end   = '?>';
 
     action start_proc_ins {
-        callback_simple("on_proc_ins_start");
-        callback("on_proc_ins_name", data, encoding, ts + 2, te);
+        callback_simple(id_on_proc_ins_start);
+        callback(id_on_proc_ins_name, data, encoding, ts + 2, te);
 
         mark = te;
 
@@ -103,8 +103,8 @@
 
     proc_ins_body := |*
         proc_ins_end => {
-            callback("on_text", data, encoding, mark, ts);
-            callback_simple("on_proc_ins_end");
+            callback(id_on_text, data, encoding, mark, ts);
+            callback_simple(id_on_proc_ins_end);
 
             mark = 0;
 
@@ -124,7 +124,7 @@
     squote = "'";
 
     action emit_string {
-        callback("on_string_body", data, encoding, ts, te);
+        callback(id_on_string_body, data, encoding, ts, te);
 
         if ( lines > 0 )
         {
@@ -135,13 +135,13 @@
     }
 
     action start_string_squote {
-        callback_simple("on_string_squote");
+        callback_simple(id_on_string_squote);
 
         fcall string_squote;
     }
 
     action start_string_dquote {
-        callback_simple("on_string_dquote");
+        callback_simple(id_on_string_dquote);
 
         fcall string_dquote;
     }
@@ -150,7 +150,7 @@
         ^squote* $count_newlines => emit_string;
 
         squote => {
-            callback_simple("on_string_squote");
+            callback_simple(id_on_string_squote);
 
             fret;
         };
@@ -160,7 +160,7 @@
         ^dquote* $count_newlines => emit_string;
 
         dquote => {
-            callback_simple("on_string_dquote");
+            callback_simple(id_on_string_dquote);
 
             fret;
         };
@@ -179,14 +179,14 @@
     doctype_start = '<!DOCTYPE'i whitespace+;
 
     action start_doctype {
-        callback_simple("on_doctype_start");
+        callback_simple(id_on_doctype_start);
         fnext doctype;
     }
 
     # Machine for processing inline rules of a doctype.
     doctype_inline := |*
         ^']'* $count_newlines => {
-            callback("on_doctype_inline", data, encoding, ts, te);
+            callback(id_on_doctype_inline, data, encoding, ts, te);
 
             if ( lines > 0 )
             {
@@ -203,7 +203,7 @@
     # and system IDs are treated as T_STRING tokens.
     doctype := |*
         'PUBLIC' | 'SYSTEM' => {
-            callback("on_doctype_type", data, encoding, ts, te);
+            callback(id_on_doctype_type, data, encoding, ts, te);
         };
 
         # Starts a set of inline doctype rules.
@@ -218,11 +218,11 @@
         whitespace;
 
         identifier => {
-            callback("on_doctype_name", data, encoding, ts, te);
+            callback(id_on_doctype_name, data, encoding, ts, te);
         };
 
         '>' => {
-            callback_simple("on_doctype_end");
+            callback_simple(id_on_doctype_end);
             fnext main;
         };
     *|;
@@ -235,20 +235,20 @@
     xml_decl_end   = '?>';
 
     action start_xml_decl {
-        callback_simple("on_xml_decl_start");
+        callback_simple(id_on_xml_decl_start);
         fnext xml_decl;
     }
 
     # Machine that processes the contents of an XML declaration tag.
     xml_decl := |*
         xml_decl_end => {
-            callback_simple("on_xml_decl_end");
+            callback_simple(id_on_xml_decl_end);
             fnext main;
         };
 
         # Attributes and their values (e.g. version="1.0").
         identifier => {
-            callback("on_attribute", data, encoding, ts, te);
+            callback(id_on_attribute, data, encoding, ts, te);
         };
 
         squote => start_string_squote;
@@ -270,23 +270,23 @@
     element_end   = '</' identifier (':' identifier)* '>';
 
     action start_element {
-        callback_simple("on_element_start");
+        callback_simple(id_on_element_start);
         fhold;
         fnext element_name;
     }
 
     action close_element {
-        callback_simple("on_element_end");
+        callback_simple(id_on_element_end);
     }
 
     # Machine used for lexing the name/namespace of an element.
     element_name := |*
         identifier ':' => {
-            callback("on_element_ns", data, encoding, ts, te - 1);
+            callback(id_on_element_ns, data, encoding, ts, te - 1);
         };
 
         identifier => {
-            callback("on_element_name", data, encoding, ts, te);
+            callback(id_on_element_name, data, encoding, ts, te);
             fnext element_head;
         };
     *|;
@@ -297,16 +297,16 @@
         whitespace | '=';
 
         newline => {
-            callback_simple("advance_line");
+            callback_simple(id_advance_line);
         };
 
         # Attribute names and namespaces.
         identifier ':' => {
-            callback("on_attribute_ns", data, encoding, ts, te - 1);
+            callback(id_on_attribute_ns, data, encoding, ts, te - 1);
         };
 
         identifier => {
-            callback("on_attribute", data, encoding, ts, te);
+            callback(id_on_attribute, data, encoding, ts, te);
         };
 
         # Attribute values.
@@ -315,13 +315,13 @@
 
         # We're done with the open tag of the element.
         '>' => {
-            callback_simple("on_element_open_end");
+            callback_simple(id_on_element_open_end);
             fnext main;
         };
 
         # Self closing tags.
         '/>' => {
-            callback_simple("on_element_end");
+            callback_simple(id_on_element_end);
             fnext main;
         };
     *|;
@@ -350,7 +350,7 @@
 
     text := |*
         terminate_text | allowed_text => {
-            callback("on_text", data, encoding, ts, te);
+            callback(id_on_text, data, encoding, ts, te);
 
             if ( lines > 0 )
             {
@@ -364,7 +364,7 @@
 
         # Text followed by a special tag, such as "foo<!--"
         allowed_text %{ mark = p; } terminate_text => {
-            callback("on_text", data, encoding, ts, mark);
+            callback(id_on_text, data, encoding, ts, mark);
 
             p    = mark - 1;
             mark = 0;
