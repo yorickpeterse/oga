@@ -28,6 +28,17 @@
     # When you call a method in Ruby make sure that said method is defined as
     # an instance method in the `Oga::XML::Lexer` class.
     #
+    # The name of the callback to invoke should be an identifier starting with
+    # "id_". The identifier should be defined in the associated C and Java code.
+    # In case of C code its value should be a Symbol as a VALUE object, for Java
+    # it should be a String. For example:
+    #
+    #     VALUE id_foo = rb_intern("foo");
+    #
+    # And for Java:
+    #
+    #     String id_foo = "foo";
+    #
     # ## Machine Transitions
     #
     # To transition from one machine to another always use `fnext` instead of
