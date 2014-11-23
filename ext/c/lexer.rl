@@ -44,7 +44,7 @@ void liboga_xml_lexer_callback(
     const char *te
 )
 {
-    VALUE value  = rb_enc_str_new(ts, te - ts, encoding);
+    VALUE value = rb_enc_str_new(ts, te - ts, encoding);
 
     rb_funcall(self, name, 1, value);
 }
