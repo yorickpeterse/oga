@@ -90,30 +90,30 @@ VALUE oga_xml_lexer_advance(VALUE self, VALUE data_block)
 
     int lines = state->lines;
 
-    VALUE id_advance_line        = rb_intern("advance_line");
-    VALUE id_on_attribute        = rb_intern("on_attribute");
-    VALUE id_on_attribute_ns     = rb_intern("on_attribute_ns");
-    VALUE id_on_cdata            = rb_intern("on_cdata");
-    VALUE id_on_comment          = rb_intern("on_comment");
-    VALUE id_on_doctype_end      = rb_intern("on_doctype_end");
-    VALUE id_on_doctype_inline   = rb_intern("on_doctype_inline");
-    VALUE id_on_doctype_name     = rb_intern("on_doctype_name");
-    VALUE id_on_doctype_start    = rb_intern("on_doctype_start");
-    VALUE id_on_doctype_type     = rb_intern("on_doctype_type");
-    VALUE id_on_element_end      = rb_intern("on_element_end");
-    VALUE id_on_element_name     = rb_intern("on_element_name");
-    VALUE id_on_element_ns       = rb_intern("on_element_ns");
-    VALUE id_on_element_open_end = rb_intern("on_element_open_end");
-    VALUE id_on_element_start    = rb_intern("on_element_start");
-    VALUE id_on_proc_ins_end     = rb_intern("on_proc_ins_end");
-    VALUE id_on_proc_ins_name    = rb_intern("on_proc_ins_name");
-    VALUE id_on_proc_ins_start   = rb_intern("on_proc_ins_start");
-    VALUE id_on_string_body      = rb_intern("on_string_body");
-    VALUE id_on_string_dquote    = rb_intern("on_string_dquote");
-    VALUE id_on_string_squote    = rb_intern("on_string_squote");
-    VALUE id_on_text             = rb_intern("on_text");
-    VALUE id_on_xml_decl_end     = rb_intern("on_xml_decl_end");
-    VALUE id_on_xml_decl_start   = rb_intern("on_xml_decl_start");
+    ID id_advance_line        = rb_intern("advance_line");
+    ID id_on_attribute        = rb_intern("on_attribute");
+    ID id_on_attribute_ns     = rb_intern("on_attribute_ns");
+    ID id_on_cdata            = rb_intern("on_cdata");
+    ID id_on_comment          = rb_intern("on_comment");
+    ID id_on_doctype_end      = rb_intern("on_doctype_end");
+    ID id_on_doctype_inline   = rb_intern("on_doctype_inline");
+    ID id_on_doctype_name     = rb_intern("on_doctype_name");
+    ID id_on_doctype_start    = rb_intern("on_doctype_start");
+    ID id_on_doctype_type     = rb_intern("on_doctype_type");
+    ID id_on_element_end      = rb_intern("on_element_end");
+    ID id_on_element_name     = rb_intern("on_element_name");
+    ID id_on_element_ns       = rb_intern("on_element_ns");
+    ID id_on_element_open_end = rb_intern("on_element_open_end");
+    ID id_on_element_start    = rb_intern("on_element_start");
+    ID id_on_proc_ins_end     = rb_intern("on_proc_ins_end");
+    ID id_on_proc_ins_name    = rb_intern("on_proc_ins_name");
+    ID id_on_proc_ins_start   = rb_intern("on_proc_ins_start");
+    ID id_on_string_body      = rb_intern("on_string_body");
+    ID id_on_string_dquote    = rb_intern("on_string_dquote");
+    ID id_on_string_squote    = rb_intern("on_string_squote");
+    ID id_on_text             = rb_intern("on_text");
+    ID id_on_xml_decl_end     = rb_intern("on_xml_decl_end");
+    ID id_on_xml_decl_start   = rb_intern("on_xml_decl_start");
 
     %% write exec;
 

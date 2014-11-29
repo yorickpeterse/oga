@@ -30,10 +30,10 @@
     #
     # The name of the callback to invoke should be an identifier starting with
     # "id_". The identifier should be defined in the associated C and Java code.
-    # In case of C code its value should be a Symbol as a VALUE object, for Java
+    # In case of C code its value should be a Symbol as a ID object, for Java
     # it should be a String. For example:
     #
-    #     VALUE id_foo = rb_intern("foo");
+    #     ID id_foo = rb_intern("foo");
     #
     # And for Java:
     #
