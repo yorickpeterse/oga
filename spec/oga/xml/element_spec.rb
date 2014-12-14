@@ -260,11 +260,13 @@ describe Oga::XML::Element do
       @element.inner_text.should == 'foo'
     end
 
-    example 'remove existing text nodes before inserting new nodes' do
+    example 'remove all existing nodes before inserting a new text node' do
       @element.children << Oga::XML::Text.new(:text => 'foo')
+      @element.children << Oga::XML::Element.new(:name => 'x')
 
       @element.inner_text = 'bar'
-      @element.inner_text.should == 'bar'
+
+      @element.children.length.should == 1
     end
   end
 

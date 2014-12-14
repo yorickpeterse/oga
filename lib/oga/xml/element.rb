@@ -212,11 +212,8 @@ module Oga
       # @param [String] text
       #
       def inner_text=(text)
-        children.each do |child|
-          child.remove if child.is_a?(Text)
-        end
-
-        children << XML::Text.new(:text => text)
+        text_node = XML::Text.new(:text => text)
+        @children = NodeSet.new([text_node])
       end
 
       ##

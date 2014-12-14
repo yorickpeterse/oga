@@ -3,6 +3,16 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 0.3.0 - Unreleased
+
+### Element Inner Text
+
+When setting the inner text of an element using `Oga::XML::Element#inner_text=`
+_all_ child nodes of the element are now removed first, instead of only text
+nodes being removed.
+
+See <https://github.com/YorickPeterse/oga/issues/64> for more information.
+
 ## 0.2.0 - 2014-11-17
 
 ### CSS Selector Support
