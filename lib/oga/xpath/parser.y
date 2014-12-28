@@ -88,9 +88,8 @@ rule
     ;
 
   node_test
-    : node_name           { s(:test, *val[0]) }
-    #| node_name predicate { s(:predicate, s(:test, *val[0]), val[1]) }
-    | type_test           { val[0] }
+    : node_name { s(:test, *val[0]) }
+    | type_test { val[0] }
     ;
 
   type_test
