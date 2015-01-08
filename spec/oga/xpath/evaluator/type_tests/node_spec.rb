@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Oga::XPath::Evaluator do
-  context 'node() tests' do
+  describe 'node() tests' do
     before do
       @document = parse('<a><b>foo</b><!--foo--><![CDATA[bar]]></a>')
 
@@ -11,16 +11,16 @@ describe Oga::XPath::Evaluator do
       @cdata1   = @a1.children[2]
     end
 
-    example 'return a node set containing elements' do
+    it 'returns a node set containing elements' do
       evaluate_xpath(@document, 'node()').should == node_set(@a1)
     end
 
-    example 'return a node set containing elements, comments and CDATA tags' do
+    it 'returns a node set containing elements, comments and CDATA tags' do
       evaluate_xpath(@document, 'a/node()')
         .should == node_set(@b1, @comment1, @cdata1)
     end
 
-    example 'return a node set containing text nodes' do
+    it 'returns a node set containing text nodes' do
       evaluate_xpath(@document, 'a/b/node()').should == node_set(@b1.children[0])
     end
   end

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Oga::XML::Traversal do
-  context '#each_node' do
+  describe '#each_node' do
     before do
       @document = parse(<<-EOF.strip.gsub(/\s+/m, ''))
 <books>
@@ -15,7 +15,7 @@ describe Oga::XML::Traversal do
       EOF
     end
 
-    example 'yield the nodes in document order' do
+    it 'yields the nodes in document order' do
       names = []
 
       @document.each_node do |node|
@@ -25,7 +25,7 @@ describe Oga::XML::Traversal do
       names.should == %w{books book1 title1 Foo book2 title2 Bar}
     end
 
-    example 'skip child nodes when skip_children is thrown' do
+    it 'skips child nodes when skip_children is thrown' do
       names = []
 
       @document.each_node do |node|

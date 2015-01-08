@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Oga::XPath::Lexer do
-  context 'predicates' do
-    example 'lex a simple predicate expression' do
+  describe 'predicates' do
+    it 'lexes a simple predicate expression' do
       lex_xpath('/foo[bar]').should == [
         [:T_SLASH, nil],
         [:T_IDENT, 'foo'],
@@ -12,7 +12,7 @@ describe Oga::XPath::Lexer do
       ]
     end
 
-    example 'lex a predicate that checks for equality' do
+    it 'lexes a predicate that checks for equality' do
       lex_xpath('/foo[@bar="baz"]').should == [
         [:T_SLASH, nil],
         [:T_IDENT, 'foo'],
@@ -25,7 +25,7 @@ describe Oga::XPath::Lexer do
       ]
     end
 
-    example 'lex a predicate that user an integer' do
+    it 'lexes a predicate that user an integer' do
       lex_xpath('/foo[1]').should == [
         [:T_SLASH, nil],
         [:T_IDENT, 'foo'],
@@ -35,7 +35,7 @@ describe Oga::XPath::Lexer do
       ]
     end
 
-    example 'lex a predicate that uses a float' do
+    it 'lexes a predicate that uses a float' do
       lex_xpath('/foo[1.5]').should == [
         [:T_SLASH, nil],
         [:T_IDENT, 'foo'],
@@ -45,7 +45,7 @@ describe Oga::XPath::Lexer do
       ]
     end
 
-    example 'lex a predicate using a function' do
+    it 'lexes a predicate using a function' do
       lex_xpath('/foo[bar()]').should == [
         [:T_SLASH, nil],
         [:T_IDENT, 'foo'],
@@ -57,7 +57,7 @@ describe Oga::XPath::Lexer do
       ]
     end
 
-    example 'lex a predicate expression using the div operator' do
+    it 'lexes a predicate expression using the div operator' do
       lex_xpath('/div[@number=4 div 2]').should == [
         [:T_SLASH, nil],
         [:T_IDENT, 'div'],
@@ -72,7 +72,7 @@ describe Oga::XPath::Lexer do
       ]
     end
 
-    example 'lex a predicate expression using the * operator' do
+    it 'lexes a predicate expression using the * operator' do
       lex_xpath('/div[@number=4 * 2]').should == [
         [:T_SLASH, nil],
         [:T_IDENT, 'div'],
@@ -87,7 +87,7 @@ describe Oga::XPath::Lexer do
       ]
     end
 
-    example 'lex a predicate expression using axes' do
+    it 'lexes a predicate expression using axes' do
       lex_xpath('/div[/foo/bar]').should == [
         [:T_SLASH, nil],
         [:T_IDENT, 'div'],
@@ -100,7 +100,7 @@ describe Oga::XPath::Lexer do
       ]
     end
 
-    example 'lex a predicate expression using a wildcard' do
+    it 'lexes a predicate expression using a wildcard' do
       lex_xpath('/div[/foo/*]').should == [
         [:T_SLASH, nil],
         [:T_IDENT, 'div'],

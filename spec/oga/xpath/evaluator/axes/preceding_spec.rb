@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Oga::XPath::Evaluator do
-  context 'preceding axis' do
+  describe 'preceding axis' do
     before do
       @document = parse(<<-EOF.strip.gsub(/\s+/m, ''))
 <root>
@@ -22,17 +22,17 @@ describe Oga::XPath::Evaluator do
       @baz3 = @document.children[0].children[1]
     end
 
-    example 'return a node set containing preceding nodes of root/foo/baz' do
+    it 'returns a node set containing preceding nodes of root/foo/baz' do
       evaluate_xpath(@document, 'root/foo/baz/preceding::bar')
         .should == node_set(@bar1)
     end
 
-    example 'return a node set containing preceding nodes for root/baz' do
+    it 'returns a node set containing preceding nodes for root/baz' do
       evaluate_xpath(@document, 'root/baz/preceding::baz')
         .should == node_set(@baz1, @baz2)
     end
 
-    example 'return a node set containing preceding nodes relative to root/baz' do
+    it 'returns a node set containing preceding nodes relative to root/baz' do
       evaluate_xpath(@baz3, 'preceding::baz').should == node_set(@baz1, @baz2)
     end
   end

@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Oga::XPath::Parser do
-  context 'operator precedence' do
-    example 'parse "A or B or C"' do
+  describe 'operator precedence' do
+    it 'parses "A or B or C"' do
       parse_xpath('A or B or C').should == s(
         :or,
         s(
@@ -14,7 +14,7 @@ describe Oga::XPath::Parser do
       )
     end
 
-    example 'parse "A and B and C"' do
+    it 'parses "A and B and C"' do
       parse_xpath('A and B and C').should == s(
         :and,
         s(
@@ -26,7 +26,7 @@ describe Oga::XPath::Parser do
       )
     end
 
-    example 'parse "A = B = C"' do
+    it 'parses "A = B = C"' do
       parse_xpath('A = B = C').should == s(
         :eq,
         s(
@@ -38,7 +38,7 @@ describe Oga::XPath::Parser do
       )
     end
 
-    example 'parse "A != B != C"' do
+    it 'parses "A != B != C"' do
       parse_xpath('A != B != C').should == s(
         :neq,
         s(
@@ -50,7 +50,7 @@ describe Oga::XPath::Parser do
       )
     end
 
-    example 'parse "A <= B <= C"' do
+    it 'parses "A <= B <= C"' do
       parse_xpath('A <= B <= C').should == s(
         :lte,
         s(
@@ -62,7 +62,7 @@ describe Oga::XPath::Parser do
       )
     end
 
-    example 'parse "A < B < C"' do
+    it 'parses "A < B < C"' do
       parse_xpath('A < B < C').should == s(
         :lt,
         s(
@@ -74,7 +74,7 @@ describe Oga::XPath::Parser do
       )
     end
 
-    example 'parse "A >= B >= C"' do
+    it 'parses "A >= B >= C"' do
       parse_xpath('A >= B >= C').should == s(
         :gte,
         s(
@@ -86,7 +86,7 @@ describe Oga::XPath::Parser do
       )
     end
 
-    example 'parse "A > B > C"' do
+    it 'parses "A > B > C"' do
       parse_xpath('A > B > C').should == s(
         :gt,
         s(
@@ -98,7 +98,7 @@ describe Oga::XPath::Parser do
       )
     end
 
-    example 'parse "A or B and C"' do
+    it 'parses "A or B and C"' do
       parse_xpath('A or B and C').should == s(
         :or,
         s(:axis, 'child', s(:test, nil, 'A')),
@@ -110,7 +110,7 @@ describe Oga::XPath::Parser do
       )
     end
 
-    example 'parse "A and B = C"' do
+    it 'parses "A and B = C"' do
       parse_xpath('A and B = C').should == s(
         :and,
         s(:axis, 'child', s(:test, nil, 'A')),
@@ -122,7 +122,7 @@ describe Oga::XPath::Parser do
       )
     end
 
-    example 'parse "A = B < C"' do
+    it 'parses "A = B < C"' do
       parse_xpath('A = B < C').should == s(
         :eq,
         s(:axis, 'child', s(:test, nil, 'A')),
@@ -134,7 +134,7 @@ describe Oga::XPath::Parser do
       )
     end
 
-    example 'parse "A < B | C"' do
+    it 'parses "A < B | C"' do
       parse_xpath('A < B | C').should == s(
         :lt,
         s(:axis, 'child', s(:test, nil, 'A')),
@@ -146,7 +146,7 @@ describe Oga::XPath::Parser do
       )
     end
 
-    example 'parse "A > B or C"' do
+    it 'parses "A > B or C"' do
       parse_xpath('A > B or C').should == s(
         :or,
         s(

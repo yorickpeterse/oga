@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Oga::XML::PullParser do
-  context 'processing instructions' do
+  describe 'processing instructions' do
     before :all do
       @parser = described_class.new('<?foo bar ?>')
 
@@ -10,15 +10,15 @@ describe Oga::XML::PullParser do
       @parser.parse { |node| @node = node }
     end
 
-    example 'return a ProcessingInstruction node' do
+    it 'returns a ProcessingInstruction node' do
       @node.is_a?(Oga::XML::ProcessingInstruction).should == true
     end
 
-    example 'set the name of the node' do
+    it 'sets the name of the node' do
       @node.name.should == 'foo'
     end
 
-    example 'set the text of the node' do
+    it 'sets the text of the node' do
       @node.text.should == ' bar '
     end
   end

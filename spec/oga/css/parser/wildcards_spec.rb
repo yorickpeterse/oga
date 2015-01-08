@@ -1,16 +1,16 @@
 require 'spec_helper'
 
 describe Oga::CSS::Parser do
-  context 'wildcards' do
-    example 'parse a wildcard name test' do
+  describe 'wildcards' do
+    it 'parses a wildcard name test' do
       parse_css('*').should == parse_xpath('descendant::*')
     end
 
-    example 'parse a wildcard namespace test' do
+    it 'parses a wildcard namespace test' do
       parse_css('*|foo').should == parse_xpath('descendant::*:foo')
     end
 
-    example 'parse a wildcard namespace and name test' do
+    it 'parses a wildcard namespace and name test' do
       parse_css('*|*').should == parse_xpath('descendant::*:*')
     end
   end

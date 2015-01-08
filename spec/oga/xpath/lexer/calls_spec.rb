@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Oga::XPath::Lexer do
-  context 'function calls' do
-    example 'lex a function call without arguments' do
+  describe 'function calls' do
+    it 'lexes a function call without arguments' do
       lex_xpath('count()').should == [
         [:T_IDENT, 'count'],
         [:T_LPAREN, nil],
@@ -10,7 +10,7 @@ describe Oga::XPath::Lexer do
       ]
     end
 
-    example 'lex a function call with a single argument' do
+    it 'lexes a function call with a single argument' do
       lex_xpath('count(foo)').should == [
         [:T_IDENT, 'count'],
         [:T_LPAREN, nil],
@@ -19,7 +19,7 @@ describe Oga::XPath::Lexer do
       ]
     end
 
-    example 'lex a function call with two arguments' do
+    it 'lexes a function call with two arguments' do
       lex_xpath('count(/foo, "bar")').should == [
         [:T_IDENT, 'count'],
         [:T_LPAREN, nil],

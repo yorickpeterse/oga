@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Oga::XPath::Evaluator do
-  context 'namespace axis' do
+  describe 'namespace axis' do
     before do
       @document = parse('<root xmlns:x="x"><foo xmlns:y="y"></foo></root>')
 
@@ -9,20 +9,20 @@ describe Oga::XPath::Evaluator do
       @ns_y = @document.children[0].children[0].namespaces['y']
     end
 
-    example 'return an empty node set for the document' do
+    it 'returns an empty node set for the document' do
       evaluate_xpath(@document, 'namespace::*').should == node_set
     end
 
-    example 'return a node set containing the namespaces for root' do
+    it 'returns a node set containing the namespaces for root' do
       evaluate_xpath(@document, 'root/namespace::x').should == node_set(@ns_x)
     end
 
-    example 'return a node set containing the namespaces for root/foo' do
+    it 'returns a node set containing the namespaces for root/foo' do
       evaluate_xpath(@document, 'root/foo/namespace::*')
         .should == node_set(@ns_y, @ns_x)
     end
 
-    example 'return a node set containing the namespaces for root using a wildcard' do
+    it 'returns a node set containing the namespaces for root using a wildcard' do
       evaluate_xpath(@document, 'root/namespace::*').should == node_set(@ns_x)
     end
   end

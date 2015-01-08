@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Oga::XPath::Evaluator do
-  context 'text() tests' do
+  describe 'text() tests' do
     before do
       @document = parse('<a>foo<b>bar</b></a>')
 
@@ -9,11 +9,11 @@ describe Oga::XPath::Evaluator do
       @text2 = @document.children[0].children[1].children[0]
     end
 
-    example 'return a node set containing text nodes' do
+    it 'returns a node set containing text nodes' do
       evaluate_xpath(@document, 'a/text()').should == node_set(@text1)
     end
 
-    example 'return a node set containing nested text nodes' do
+    it 'returns a node set containing nested text nodes' do
       evaluate_xpath(@document, 'a/b/text()').should == node_set(@text2)
     end
   end

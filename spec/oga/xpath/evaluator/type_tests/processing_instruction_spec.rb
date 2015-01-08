@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Oga::XPath::Evaluator do
-  context 'processing-instruction() tests' do
+  describe 'processing-instruction() tests' do
     before do
       @document = parse('<a><?a foo ?><b><?b bar ?></b></a>')
 
@@ -9,12 +9,12 @@ describe Oga::XPath::Evaluator do
       @proc_ins2 = @document.children[0].children[1].children[0]
     end
 
-    example 'return a node set containing processing instructions' do
+    it 'returns a node set containing processing instructions' do
       evaluate_xpath(@document, 'a/processing-instruction()')
         .should == node_set(@proc_ins1)
     end
 
-    example 'return a node set containing nested processing instructions' do
+    it 'returns a node set containing nested processing instructions' do
       evaluate_xpath(@document, 'a/b/processing-instruction()')
         .should == node_set(@proc_ins2)
     end

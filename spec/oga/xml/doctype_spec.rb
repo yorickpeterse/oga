@@ -1,12 +1,12 @@
 require 'spec_helper'
 
 describe Oga::XML::Doctype do
-  context 'setting attributes' do
-    example 'set the name via the constructor' do
+  describe 'setting attributes' do
+    it 'sets the name via the constructor' do
       described_class.new(:name => 'html').name.should == 'html'
     end
 
-    example 'set the name via a setter' do
+    it 'sets the name via a setter' do
       instance = described_class.new
       instance.name = 'html'
 
@@ -14,18 +14,18 @@ describe Oga::XML::Doctype do
     end
   end
 
-  context '#to_xml' do
-    example 'generate a bare minimum representation' do
+  describe '#to_xml' do
+    it 'generates a bare minimum representation' do
       described_class.new(:name => 'html').to_xml.should == '<!DOCTYPE html>'
     end
 
-    example 'include the type if present' do
+    it 'includes the type if present' do
       instance = described_class.new(:name => 'html', :type => 'PUBLIC')
 
       instance.to_xml.should == '<!DOCTYPE html PUBLIC>'
     end
 
-    example 'include the public ID if present' do
+    it 'includes the public ID if present' do
       instance = described_class.new(
         :name      => 'html',
         :type      => 'PUBLIC',
@@ -35,7 +35,7 @@ describe Oga::XML::Doctype do
       instance.to_xml.should == '<!DOCTYPE html PUBLIC "foo">'
     end
 
-    example 'include the system ID if present' do
+    it 'includes the system ID if present' do
       instance = described_class.new(
         :name      => 'html',
         :type      => 'PUBLIC',
@@ -46,7 +46,7 @@ describe Oga::XML::Doctype do
       instance.to_xml.should == '<!DOCTYPE html PUBLIC "foo" "bar">'
     end
 
-    example 'include the inline rules if present' do
+    it 'includes the inline rules if present' do
       instance = described_class.new(
         :name         => 'html',
         :inline_rules => '<!ELEMENT foo>'
@@ -56,7 +56,7 @@ describe Oga::XML::Doctype do
     end
   end
 
-  context '#inspect' do
+  describe '#inspect' do
     before do
       @instance = described_class.new(
         :name         => 'html',
@@ -65,7 +65,7 @@ describe Oga::XML::Doctype do
       )
     end
 
-    example 'pretty-print the node' do
+    it 'pretty-prints the node' do
       @instance.inspect.should == <<-EOF.strip
 Doctype(name: "html" type: "PUBLIC" inline_rules: "<!ELEMENT foo>")
       EOF

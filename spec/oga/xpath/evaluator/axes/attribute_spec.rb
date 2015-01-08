@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Oga::XPath::Evaluator do
-  context 'attribute axis' do
+  describe 'attribute axis' do
     before do
       @document = parse('<a foo="bar"></a>')
 
@@ -9,15 +9,15 @@ describe Oga::XPath::Evaluator do
       @attr = @a1.attribute('foo')
     end
 
-    example 'return a node set containing an attribute' do
+    it 'returns a node set containing an attribute' do
       evaluate_xpath(@a1, 'attribute::foo').should == node_set(@attr)
     end
 
-    example 'return a node set containing an attribute using the short form' do
+    it 'returns a node set containing an attribute using the short form' do
       evaluate_xpath(@a1, '@foo').should == node_set(@attr)
     end
 
-    example 'return an empty node set for non existing attributes' do
+    it 'returns an empty node set for non existing attributes' do
       evaluate_xpath(@a1, 'attribute::bar').should == node_set
     end
   end

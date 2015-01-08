@@ -1,12 +1,12 @@
 require 'spec_helper'
 
 describe Oga::XML::XmlDeclaration do
-  context 'setting attributes' do
-    example 'set the version via the constructor' do
+  describe 'setting attributes' do
+    it 'sets the version via the constructor' do
       described_class.new(:version => '1.0').version.should == '1.0'
     end
 
-    example 'set the version via a setter' do
+    it 'sets the version via a setter' do
       instance = described_class.new
       instance.version = '1.0'
 
@@ -14,21 +14,21 @@ describe Oga::XML::XmlDeclaration do
     end
   end
 
-  context 'default attribute values' do
+  describe 'default attribute values' do
     before do
       @instance = described_class.new
     end
 
-    example 'set the default version' do
+    it 'sets the default version' do
       @instance.version.should == '1.0'
     end
 
-    example 'set the default encoding' do
+    it 'sets the default encoding' do
       @instance.encoding.should == 'UTF-8'
     end
   end
 
-  context '#to_xml' do
+  describe '#to_xml' do
     before do
       @instance = described_class.new(
         :version    => '1.0',
@@ -37,18 +37,18 @@ describe Oga::XML::XmlDeclaration do
       )
     end
 
-    example 'generate the corresponding XML' do
+    it 'generates the corresponding XML' do
       @instance.to_xml
         .should == '<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>'
     end
   end
 
-  context '#inspect' do
+  describe '#inspect' do
     before do
       @instance = described_class.new(:version => '1.0')
     end
 
-    example 'pretty-print the node' do
+    it 'pretty-prints the node' do
       @instance.inspect.should == <<-EOF.strip
 XmlDeclaration(version: "1.0" encoding: "UTF-8")
       EOF

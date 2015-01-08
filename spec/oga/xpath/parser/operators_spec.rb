@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Oga::XPath::Parser do
-  context 'operators' do
-    example 'parse the pipe operator' do
+  describe 'operators' do
+    it 'parses the pipe operator' do
       parse_xpath('A | B').should == s(
         :pipe,
         s(:axis, 'child', s(:test, nil, 'A')),
@@ -10,7 +10,7 @@ describe Oga::XPath::Parser do
       )
     end
 
-    example 'parse the pipe operator using two paths' do
+    it 'parses the pipe operator using two paths' do
       parse_xpath('A/B | C/D').should == s(
         :pipe,
         s(
@@ -26,7 +26,7 @@ describe Oga::XPath::Parser do
       )
     end
 
-    example 'parse the and operator' do
+    it 'parses the and operator' do
       parse_xpath('A and B').should == s(
         :and,
         s(:axis, 'child', s(:test, nil, 'A')),
@@ -34,7 +34,7 @@ describe Oga::XPath::Parser do
       )
     end
 
-    example 'parse the or operator' do
+    it 'parses the or operator' do
       parse_xpath('A or B').should == s(
         :or,
         s(:axis, 'child', s(:test, nil, 'A')),
@@ -42,7 +42,7 @@ describe Oga::XPath::Parser do
       )
     end
 
-    example 'parse the plus operator' do
+    it 'parses the plus operator' do
       parse_xpath('A + B').should == s(
         :add,
         s(:axis, 'child', s(:test, nil, 'A')),
@@ -50,7 +50,7 @@ describe Oga::XPath::Parser do
       )
     end
 
-    example 'parse the div operator' do
+    it 'parses the div operator' do
       parse_xpath('A div B').should == s(
         :div,
         s(:axis, 'child', s(:test, nil, 'A')),
@@ -58,7 +58,7 @@ describe Oga::XPath::Parser do
       )
     end
 
-    example 'parse the mod operator' do
+    it 'parses the mod operator' do
       parse_xpath('A mod B').should == s(
         :mod,
         s(:axis, 'child', s(:test, nil, 'A')),
@@ -66,7 +66,7 @@ describe Oga::XPath::Parser do
       )
     end
 
-    example 'parse the equals operator' do
+    it 'parses the equals operator' do
       parse_xpath('A = B').should == s(
         :eq,
         s(:axis, 'child', s(:test, nil, 'A')),
@@ -74,7 +74,7 @@ describe Oga::XPath::Parser do
       )
     end
 
-    example 'parse the not-equals operator' do
+    it 'parses the not-equals operator' do
       parse_xpath('A != B').should == s(
         :neq,
         s(:axis, 'child', s(:test, nil, 'A')),
@@ -82,7 +82,7 @@ describe Oga::XPath::Parser do
       )
     end
 
-    example 'parse the lower-than operator' do
+    it 'parses the lower-than operator' do
       parse_xpath('A < B').should == s(
         :lt,
         s(:axis, 'child', s(:test, nil, 'A')),
@@ -90,7 +90,7 @@ describe Oga::XPath::Parser do
       )
     end
 
-    example 'parse the greater-than operator' do
+    it 'parses the greater-than operator' do
       parse_xpath('A > B').should == s(
         :gt,
         s(:axis, 'child', s(:test, nil, 'A')),
@@ -98,7 +98,7 @@ describe Oga::XPath::Parser do
       )
     end
 
-    example 'parse the lower-or-equal operator' do
+    it 'parses the lower-or-equal operator' do
       parse_xpath('A <= B').should == s(
         :lte,
         s(:axis, 'child', s(:test, nil, 'A')),
@@ -106,7 +106,7 @@ describe Oga::XPath::Parser do
       )
     end
 
-    example 'parse the greater-or-equal operator' do
+    it 'parses the greater-or-equal operator' do
       parse_xpath('A >= B').should == s(
         :gte,
         s(:axis, 'child', s(:test, nil, 'A')),
@@ -114,7 +114,7 @@ describe Oga::XPath::Parser do
       )
     end
 
-    example 'parse the mul operator' do
+    it 'parses the mul operator' do
       parse_xpath('A * B').should == s(
         :mul,
         s(:axis, 'child', s(:test, nil, 'A')),
@@ -122,7 +122,7 @@ describe Oga::XPath::Parser do
       )
     end
 
-    example 'parse the subtraction operator' do
+    it 'parses the subtraction operator' do
       parse_xpath('A - B').should == s(
         :sub,
         s(:axis, 'child', s(:test, nil, 'A')),

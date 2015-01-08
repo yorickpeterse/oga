@@ -1,12 +1,12 @@
 require 'spec_helper'
 
 describe Oga::XML::PullParser do
-  context 'tracking element nesting' do
+  describe 'tracking element nesting' do
     before do
       @parser = described_class.new('<a><b></b></a>')
     end
 
-    example 'set the nesting for the outer element' do
+    it 'sets the nesting for the outer element' do
       @parser.parse do |node|
         @parser.nesting.should == %w{a} if node.name == 'a'
 
@@ -14,7 +14,7 @@ describe Oga::XML::PullParser do
       end
     end
 
-    example 'pop element names after leaving an element' do
+    it 'pops element names after leaving an element' do
       @parser.nesting.should_receive(:pop).twice
 
       @parser.parse { |node| }

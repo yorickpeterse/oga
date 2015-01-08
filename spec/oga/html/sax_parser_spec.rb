@@ -11,7 +11,7 @@ describe Oga::HTML::SaxParser do
     end
   end
 
-  example 'use custom callback methods if defined' do
+  it 'uses custom callback methods if defined' do
     handler = @handler.new
     parser  = described_class.new(handler, '<link>')
 

@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Oga::XPath::Parser do
-  context 'grouping of expressions' do
-    example 'parse "A + (B + C)"' do
+  describe 'grouping of expressions' do
+    it 'parses "A + (B + C)"' do
       parse_xpath('A + (B + C)').should == s(
         :add,
         s(:axis, 'child', s(:test, nil, 'A')),
@@ -14,7 +14,7 @@ describe Oga::XPath::Parser do
       )
     end
 
-    example 'parse "A or (B or C)"' do
+    it 'parses "A or (B or C)"' do
       parse_xpath('A or (B or C)').should == s(
         :or,
         s(:axis, 'child', s(:test, nil, 'A')),
@@ -26,7 +26,7 @@ describe Oga::XPath::Parser do
       )
     end
 
-    example 'parse "(A or B) and C"' do
+    it 'parses "(A or B) and C"' do
       parse_xpath('(A or B) and C').should == s(
         :and,
         s(

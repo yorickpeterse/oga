@@ -1,52 +1,52 @@
 require 'spec_helper'
 
 describe Oga::XML::Element do
-  context 'setting attributes' do
-    example 'set the name via the constructor' do
+  describe 'setting attributes' do
+    it 'sets the name via the constructor' do
       described_class.new(:name => 'p').name.should == 'p'
     end
 
-    example 'set the name via a setter' do
+    it 'sets the name via a setter' do
       instance = described_class.new
       instance.name = 'p'
 
       instance.name.should == 'p'
     end
 
-    example 'set the default attributes' do
+    it 'sets the default attributes' do
       described_class.new.attributes.should == []
     end
   end
 
-  context 'setting namespaces via attributes' do
+  describe 'setting namespaces via attributes' do
     before do
       attr = Oga::XML::Attribute.new(:name => 'foo', :namespace_name => 'xmlns')
 
       @element = described_class.new(:attributes => [attr])
     end
 
-    example 'register the "foo" namespace' do
+    it 'registers the "foo" namespace' do
       @element.namespaces['foo'].is_a?(Oga::XML::Namespace).should == true
     end
 
-    example 'keep the attributes after registering the namespaces' do
+    it 'keeps the attributes after registering the namespaces' do
       @element.attributes.empty?.should == false
     end
   end
 
-  context 'setting the default namespace without a prefix' do
+  describe 'setting the default namespace without a prefix' do
     before do
       attr = Oga::XML::Attribute.new(:name => 'xmlns', :value => 'foo')
 
       @element = described_class.new(:attributes => [attr])
     end
 
-    example 'register the default namespace' do
+    it 'registers the default namespace' do
       @element.namespaces['xmlns'].is_a?(Oga::XML::Namespace).should == true
     end
   end
 
-  context '#attribute' do
+  describe '#attribute' do
     before do
       attributes = [
         Oga::XML::Attribute.new(:name => 'key', :value => 'value'),
@@ -68,90 +68,90 @@ describe Oga::XML::Element do
       )
     end
 
-    example 'return an attribute with only a name' do
+    it 'returns an attribute with only a name' do
       @instance.attribute('key').value.should == 'value'
     end
 
-    example 'return an attribute with only a name when using a Symbol' do
+    it 'returns an attribute with only a name when using a Symbol' do
       @instance.attribute(:key).value.should == 'value'
     end
 
-    example 'return an attribute with a name and namespace' do
+    it 'returns an attribute with a name and namespace' do
       @instance.attribute('x:key').value.should == 'foo'
     end
 
-    example 'return an attribute with a name and namespace when using a Symbol' do
+    it 'returns an attribute with a name and namespace when using a Symbol' do
       @instance.attribute(:'x:key').value.should == 'foo'
     end
 
-    example 'return nil when the name matches but the namespace does not' do
+    it 'returns nil when the name matches but the namespace does not' do
       @instance.attribute('y:key').nil?.should == true
     end
 
-    example 'return nil when the namespace matches but the name does not' do
+    it 'returns nil when the namespace matches but the name does not' do
       @instance.attribute('x:foobar').nil?.should == true
     end
 
-    example 'return nil for a non existing attribute' do
+    it 'returns nil for a non existing attribute' do
       @instance.attribute('foobar').nil?.should == true
     end
 
-    example 'return nil if an attribute has a namespace that is not given' do
+    it 'returns nil if an attribute has a namespace that is not given' do
       @instance.attribute('bar').nil?.should == true
     end
   end
 
-  context '#get' do
+  describe '#get' do
     before do
       attr = Oga::XML::Attribute.new(:name => 'foo', :value => 'bar')
 
       @element = described_class.new(:attributes => [attr])
     end
 
-    example 'return the value of an attribute' do
+    it 'returns the value of an attribute' do
       @element.get('foo').should == 'bar'
     end
   end
 
-  context '#add_attribute' do
+  describe '#add_attribute' do
     before do
       @element   = described_class.new
       @attribute = Oga::XML::Attribute.new(:name => 'foo', :value => 'bar')
     end
 
-    example 'add an Attribute to the element' do
+    it 'adds an Attribute to the element' do
       @element.add_attribute(@attribute)
 
       @element.attribute('foo').should == @attribute
     end
 
-    example 'set the element of the attribute when adding it' do
+    it 'sets the element of the attribute when adding it' do
       @element.add_attribute(@attribute)
 
       @attribute.element.should == @element
     end
   end
 
-  context '#set' do
+  describe '#set' do
     before do
       @element = described_class.new
 
       @element.register_namespace('x', 'test')
     end
 
-    example 'add a new attribute' do
+    it 'adds a new attribute' do
       @element.set('class', 'foo')
 
       @element.get('class').should == 'foo'
     end
 
-    example 'add a new attribute with a namespace' do
+    it 'adds a new attribute with a namespace' do
       @element.set('x:bar', 'foo')
 
       @element.get('x:bar').should == 'foo'
     end
 
-    example 'set the namespace of an attribute' do
+    it 'sets the namespace of an attribute' do
       @element.set('x:bar', 'foo')
 
       attr = @element.attribute('x:bar')
@@ -159,7 +159,7 @@ describe Oga::XML::Element do
       attr.namespace.is_a?(Oga::XML::Namespace).should == true
     end
 
-    example 'overwrite the value of an existing attribute' do
+    it 'overwrites the value of an existing attribute' do
       attr = Oga::XML::Attribute.new(:name => 'foo', :value => 'bar')
 
       @element.add_attribute(attr)
@@ -170,7 +170,7 @@ describe Oga::XML::Element do
     end
   end
 
-  context '#unset' do
+  describe '#unset' do
     before do
       @element = described_class.new
 
@@ -180,21 +180,21 @@ describe Oga::XML::Element do
       @element.set('x:foo', 'bar')
     end
 
-    example 'remove an attribute by its name' do
+    it 'removes an attribute by its name' do
       @element.unset('foo')
 
       @element.get('foo').should be_nil
     end
 
-    example 'remove an attribute using a namespace' do
+    it 'removes an attribute using a namespace' do
       @element.unset('x:foo')
 
       @element.get('x:foo').should be_nil
     end
   end
 
-  context '#namespace' do
-    example 'return the namespace' do
+  describe '#namespace' do
+    it 'returns the namespace' do
       namespace = Oga::XML::Namespace.new(:name => 'x')
       element   = described_class.new(
         :namespace_name => 'x',
@@ -204,7 +204,7 @@ describe Oga::XML::Element do
       element.namespace.should == namespace
     end
 
-    example 'return the default namespace if available' do
+    it 'returns the default namespace if available' do
       namespace = Oga::XML::Namespace.new(:name => 'xmlns')
       element   = described_class.new(
         :namespaces => {'xmlns' => namespace}
@@ -214,7 +214,7 @@ describe Oga::XML::Element do
     end
   end
 
-  context '#text' do
+  describe '#text' do
     before do
       t1 = Oga::XML::Text.new(:text => 'Foo')
       t2 = Oga::XML::Text.new(:text => 'Bar')
@@ -223,16 +223,16 @@ describe Oga::XML::Element do
       @n2 = described_class.new(:children => [@n1, t2])
     end
 
-    example 'return the text of the parent node and its child nodes' do
+    it 'returns the text of the parent node and its child nodes' do
       @n2.text.should == 'FooBar'
     end
 
-    example 'return the text of the child node' do
+    it 'returns the text of the child node' do
       @n1.text.should == 'Foo'
     end
   end
 
-  context '#inner_text' do
+  describe '#inner_text' do
     before do
       t1 = Oga::XML::Text.new(:text => 'Foo')
       t2 = Oga::XML::Text.new(:text => 'Bar')
@@ -241,26 +241,26 @@ describe Oga::XML::Element do
       @n2 = described_class.new(:children => [@n1, t2])
     end
 
-    example 'return the inner text of the parent node' do
+    it 'returns the inner text of the parent node' do
       @n2.inner_text.should == 'Bar'
     end
 
-    example 'return the inner text of the child node' do
+    it 'returns the inner text of the child node' do
       @n1.inner_text.should == 'Foo'
     end
   end
 
-  context '#inner_text=' do
+  describe '#inner_text=' do
     before do
       @element = described_class.new
     end
 
-    example 'set the inner text of an element' do
+    it 'sets the inner text of an element' do
       @element.inner_text = 'foo'
       @element.inner_text.should == 'foo'
     end
 
-    example 'remove all existing nodes before inserting a new text node' do
+    it 'removes all existing nodes before inserting a new text node' do
       @element.children << Oga::XML::Text.new(:text => 'foo')
       @element.children << Oga::XML::Element.new(:name => 'x')
 
@@ -270,7 +270,7 @@ describe Oga::XML::Element do
     end
   end
 
-  context '#text_nodes' do
+  describe '#text_nodes' do
     before do
       @t1 = Oga::XML::Text.new(:text => 'Foo')
       @t2 = Oga::XML::Text.new(:text => 'Bar')
@@ -278,17 +278,17 @@ describe Oga::XML::Element do
       @element = described_class.new(:children => [@t1, @t2])
     end
 
-    example 'return a node set containing the text nodes' do
+    it 'returns a node set containing the text nodes' do
       @element.text_nodes.should == node_set(@t1, @t2)
     end
   end
 
-  context '#to_xml' do
-    example 'generate the corresponding XML' do
+  describe '#to_xml' do
+    it 'generates the corresponding XML' do
       described_class.new(:name => 'p').to_xml.should == '<p />'
     end
 
-    example 'include the namespace if present' do
+    it 'includes the namespace if present' do
       instance = described_class.new(
         :name           => 'p',
         :namespace_name => 'foo',
@@ -299,7 +299,7 @@ describe Oga::XML::Element do
       instance.to_xml.should == '<foo:p>Foo</foo:p>'
     end
 
-    example 'include a single attribute if present' do
+    it 'includes a single attribute if present' do
       instance = described_class.new(
         :name       => 'p',
         :attributes => [
@@ -310,7 +310,7 @@ describe Oga::XML::Element do
       instance.to_xml.should == '<p key="value" />'
     end
 
-    example 'include multiple attributes if present' do
+    it 'includes multiple attributes if present' do
       instance = described_class.new(
         :name       => 'p',
         :attributes => [
@@ -322,7 +322,7 @@ describe Oga::XML::Element do
       instance.to_xml.should == '<p key1="value1" key2="value2" />'
     end
 
-    example 'include the child nodes if present' do
+    it 'includes the child nodes if present' do
       instance = described_class.new(
         :name     => 'p',
         :children => [Oga::XML::Comment.new(:text => 'foo')]
@@ -331,7 +331,7 @@ describe Oga::XML::Element do
       instance.to_xml.should == '<p><!--foo--></p>'
     end
 
-    example 'generate the corresponding XML when using a default namespace' do
+    it 'generates the corresponding XML when using a default namespace' do
       namespace = Oga::XML::Namespace.new(:name => 'xmlns', :uri => 'foo')
       instance  = described_class.new(
         :name       => 'foo',
@@ -341,14 +341,14 @@ describe Oga::XML::Element do
       instance.to_xml.should == '<foo />'
     end
 
-    example 'generate the XML for the HTML <script> element' do
+    it 'generates the XML for the HTML <script> element' do
       element  = described_class.new(:name => 'script')
       document = Oga::XML::Document.new(:type => :html, :children => [element])
 
       element.to_xml.should == '<script></script>'
     end
 
-    example 'generate the XML for the HTML <link> element' do
+    it 'generates the XML for the HTML <link> element' do
       element  = described_class.new(:name => 'link')
       document = Oga::XML::Document.new(:type => :html, :children => [element])
 
@@ -356,14 +356,14 @@ describe Oga::XML::Element do
     end
   end
 
-  context '#inspect' do
-    example 'inspect a node with a name' do
+  describe '#inspect' do
+    it 'inspects a node with a name' do
       node = described_class.new(:name => 'a')
 
       node.inspect.should == 'Element(name: "a")'
     end
 
-    example 'inspect a node with attributes and children' do
+    it 'inspects a node with attributes and children' do
       node = described_class.new(
         :name       => 'p',
         :children   => [Oga::XML::Comment.new(:text => 'foo')],
@@ -374,7 +374,7 @@ describe Oga::XML::Element do
         '[Attribute(name: "x" value: "y")] children: NodeSet(Comment("foo")))'
     end
 
-    example 'inspect a node with a namespace' do
+    it 'inspects a node with a namespace' do
       node = described_class.new(
         :name           => 'p',
         :namespace_name => 'x',
@@ -386,33 +386,33 @@ describe Oga::XML::Element do
     end
   end
 
-  context '#register_namespace' do
+  describe '#register_namespace' do
     before do
       @element = described_class.new
 
       @element.register_namespace('foo', 'http://example.com')
     end
 
-    example 'return a Namespace instance' do
+    it 'returns a Namespace instance' do
       @element.namespaces['foo'].is_a?(Oga::XML::Namespace).should == true
     end
 
-    example 'set the name of the namespace' do
+    it 'sets the name of the namespace' do
       @element.namespaces['foo'].name.should == 'foo'
     end
 
-    example 'set the URI of the namespace' do
+    it 'sets the URI of the namespace' do
       @element.namespaces['foo'].uri.should == 'http://example.com'
     end
 
-    example 'raise ArgumentError if the namespace already exists' do
+    it 'raises ArgumentError if the namespace already exists' do
       block = lambda { @element.register_namespace('foo', 'bar') }
 
       block.should raise_error(ArgumentError)
     end
   end
 
-  context '#available_namespaces' do
+  describe '#available_namespaces' do
     before do
       @parent = described_class.new
       @child  = described_class.new
@@ -428,47 +428,47 @@ describe Oga::XML::Element do
       @child_ns  = @child.available_namespaces
     end
 
-    example 'inherit the "foo" namespace from the parent' do
+    it 'inherits the "foo" namespace from the parent' do
       @child_ns['foo'].uri.should == 'bar'
     end
 
-    example 'overwrite the "baz" namespace in the child' do
+    it 'overwrites the "baz" namespace in the child' do
       @child_ns['baz'].uri.should == 'xxx'
     end
 
-    example 'return the "foo" namespace for the parent' do
+    it 'returns the "foo" namespace for the parent' do
       @parent_ns['foo'].uri.should == 'bar'
     end
 
-    example 'return the "baz" namespace for the parent' do
+    it 'returns the "baz" namespace for the parent' do
       @parent_ns['baz'].uri.should == 'yyy'
     end
 
-    example 'do not modify the list of direct namespaces' do
+    it 'does not modify the list of direct namespaces' do
       @child.namespaces.key?('foo').should == false
     end
   end
 
-  context '#self_closing?' do
-    example 'return true for an empty XML element' do
+  describe '#self_closing?' do
+    it 'returns true for an empty XML element' do
       described_class.new(:name => 'foo').should be_self_closing
     end
 
-    example 'return false for a non empty XML element' do
+    it 'returns false for a non empty XML element' do
       text = Oga::XML::Text.new(:text => 'bar')
       node = described_class.new(:name => 'foo', :children => [text])
 
       node.should_not be_self_closing
     end
 
-    example 'return true for an HTML void element' do
+    it 'returns true for an HTML void element' do
       element  = described_class.new(:name => 'link')
       document = Oga::XML::Document.new(:type => :html, :children => [element])
 
       element.should be_self_closing
     end
 
-    example 'return false for a non empty HTML element' do
+    it 'returns false for a non empty HTML element' do
       text     = Oga::XML::Text.new(:text => 'alert()')
       element  = described_class.new(:name => 'script', :children => [text])
       document = Oga::XML::Document.new(:type => :html, :children => [element])

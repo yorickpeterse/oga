@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'CSS selector evaluation' do
-  context ':only-child pseudo class' do
+  describe ':only-child pseudo class' do
     before do
       @document = parse('<root><a><c /></a><b><c /></b></root>')
 
@@ -10,7 +10,7 @@ describe 'CSS selector evaluation' do
       @c2   = @root.children[1].children[0]
     end
 
-    example 'return a node set containing <c> nodes' do
+    it 'returns a node set containing <c> nodes' do
       evaluate_css(@document, 'root :only-child').should == node_set(@c1, @c2)
     end
   end

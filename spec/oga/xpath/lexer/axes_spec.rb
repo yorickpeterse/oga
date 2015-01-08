@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Oga::XPath::Lexer do
-  context 'full axes' do
-    example 'lex the ancestor axis' do
+  describe 'full axes' do
+    it 'lexes the ancestor axis' do
       lex_xpath('/ancestor::A').should == [
         [:T_SLASH, nil],
         [:T_AXIS, 'ancestor'],
@@ -10,7 +10,7 @@ describe Oga::XPath::Lexer do
       ]
     end
 
-    example 'lex the ancestor-or-self axis' do
+    it 'lexes the ancestor-or-self axis' do
       lex_xpath('/ancestor-or-self::A').should == [
         [:T_SLASH, nil],
         [:T_AXIS, 'ancestor-or-self'],
@@ -18,7 +18,7 @@ describe Oga::XPath::Lexer do
       ]
     end
 
-    example 'lex the attribute axis' do
+    it 'lexes the attribute axis' do
       lex_xpath('/attribute::class').should == [
         [:T_SLASH, nil],
         [:T_AXIS, 'attribute'],
@@ -26,7 +26,7 @@ describe Oga::XPath::Lexer do
       ]
     end
 
-    example 'lex the child axis' do
+    it 'lexes the child axis' do
       lex_xpath('/child::A').should == [
         [:T_SLASH, nil],
         [:T_AXIS, 'child'],
@@ -34,7 +34,7 @@ describe Oga::XPath::Lexer do
       ]
     end
 
-    example 'lex the descendant axis' do
+    it 'lexes the descendant axis' do
       lex_xpath('/descendant::A').should == [
         [:T_SLASH, nil],
         [:T_AXIS, 'descendant'],
@@ -42,7 +42,7 @@ describe Oga::XPath::Lexer do
       ]
     end
 
-    example 'lex the descendant-or-self axis' do
+    it 'lexes the descendant-or-self axis' do
       lex_xpath('/descendant-or-self::A').should == [
         [:T_SLASH, nil],
         [:T_AXIS, 'descendant-or-self'],
@@ -50,7 +50,7 @@ describe Oga::XPath::Lexer do
       ]
     end
 
-    example 'lex the following axis' do
+    it 'lexes the following axis' do
       lex_xpath('/following::A').should == [
         [:T_SLASH, nil],
         [:T_AXIS, 'following'],
@@ -58,7 +58,7 @@ describe Oga::XPath::Lexer do
       ]
     end
 
-    example 'lex the following-sibling axis' do
+    it 'lexes the following-sibling axis' do
       lex_xpath('/following-sibling::A').should == [
         [:T_SLASH, nil],
         [:T_AXIS, 'following-sibling'],
@@ -66,7 +66,7 @@ describe Oga::XPath::Lexer do
       ]
     end
 
-    example 'lex the namespace axis' do
+    it 'lexes the namespace axis' do
       lex_xpath('/namespace::A').should == [
         [:T_SLASH, nil],
         [:T_AXIS, 'namespace'],
@@ -74,7 +74,7 @@ describe Oga::XPath::Lexer do
       ]
     end
 
-    example 'lex the parent axis' do
+    it 'lexes the parent axis' do
       lex_xpath('/parent::A').should == [
         [:T_SLASH, nil],
         [:T_AXIS, 'parent'],
@@ -82,7 +82,7 @@ describe Oga::XPath::Lexer do
       ]
     end
 
-    example 'lex the preceding axis' do
+    it 'lexes the preceding axis' do
       lex_xpath('/preceding::A').should == [
         [:T_SLASH, nil],
         [:T_AXIS, 'preceding'],
@@ -90,7 +90,7 @@ describe Oga::XPath::Lexer do
       ]
     end
 
-    example 'lex the preceding-sibling axis' do
+    it 'lexes the preceding-sibling axis' do
       lex_xpath('/preceding-sibling::A').should == [
         [:T_SLASH, nil],
         [:T_AXIS, 'preceding-sibling'],
@@ -98,7 +98,7 @@ describe Oga::XPath::Lexer do
       ]
     end
 
-    example 'lex the self axis' do
+    it 'lexes the self axis' do
       lex_xpath('/self::A').should == [
         [:T_SLASH, nil],
         [:T_AXIS, 'self'],
@@ -107,8 +107,8 @@ describe Oga::XPath::Lexer do
     end
   end
 
-  context 'short axes' do
-    example 'lex the @attribute axis' do
+  describe 'short axes' do
+    it 'lexes the @attribute axis' do
       lex_xpath('/@A').should == [
         [:T_SLASH, nil],
         [:T_AXIS, 'attribute'],
@@ -116,7 +116,7 @@ describe Oga::XPath::Lexer do
       ]
     end
 
-    example 'lex the // axis' do
+    it 'lexes the // axis' do
       lex_xpath('//A').should == [
         [:T_SLASH, nil],
         [:T_AXIS, 'descendant-or-self'],
@@ -126,7 +126,7 @@ describe Oga::XPath::Lexer do
       ]
     end
 
-    example 'lex the .. axis' do
+    it 'lexes the .. axis' do
       lex_xpath('/..').should == [
         [:T_SLASH, nil],
         [:T_AXIS, 'parent'],
@@ -134,7 +134,7 @@ describe Oga::XPath::Lexer do
       ]
     end
 
-    example 'lex the . axis' do
+    it 'lexes the . axis' do
       lex_xpath('/.').should == [
         [:T_SLASH, nil],
         [:T_AXIS, 'self'],
@@ -142,7 +142,7 @@ describe Oga::XPath::Lexer do
       ]
     end
 
-    example 'lex the . axis followed by a path' do
+    it 'lexes the . axis followed by a path' do
       lex_xpath('./foo').should == [
         [:T_AXIS, 'self'],
         [:T_TYPE_TEST, 'node'],

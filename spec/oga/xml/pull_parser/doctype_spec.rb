@@ -1,12 +1,12 @@
 require 'spec_helper'
 
 describe Oga::XML::PullParser do
-  context 'doctypes' do
+  describe 'doctypes' do
     before :all do
       @parser = described_class.new('<!DOCTYPE html>')
     end
 
-    example 'ignore doctypes' do
+    it 'ignores doctypes' do
       amount = 0
 
       @parser.parse do

@@ -1,92 +1,92 @@
 require 'spec_helper'
 
 describe Oga::XPath::Parser do
-  context 'full axes' do
-    example 'parse the ancestor axis' do
+  describe 'full axes' do
+    it 'parses the ancestor axis' do
       parse_xpath('/ancestor::A').should == s(
         :absolute_path,
         s(:axis, 'ancestor', s(:test, nil, 'A'))
       )
     end
 
-    example 'parse the ancestor-or-self axis' do
+    it 'parses the ancestor-or-self axis' do
       parse_xpath('/ancestor-or-self::A').should == s(
         :absolute_path,
         s(:axis, 'ancestor-or-self', s(:test, nil, 'A'))
       )
     end
 
-    example 'parse the attribute axis' do
+    it 'parses the attribute axis' do
       parse_xpath('/attribute::A').should == s(
         :absolute_path,
         s(:axis, 'attribute', s(:test, nil, 'A'))
       )
     end
 
-    example 'parse the child axis' do
+    it 'parses the child axis' do
       parse_xpath('/child::A').should == s(
         :absolute_path,
         s(:axis, 'child', s(:test, nil, 'A'))
       )
     end
 
-    example 'parse the descendant axis' do
+    it 'parses the descendant axis' do
       parse_xpath('/descendant::A').should == s(
         :absolute_path,
         s(:axis, 'descendant', s(:test, nil, 'A'))
       )
     end
 
-    example 'parse the descendant-or-self axis' do
+    it 'parses the descendant-or-self axis' do
       parse_xpath('/descendant-or-self::A').should == s(
         :absolute_path,
         s(:axis, 'descendant-or-self', s(:test, nil, 'A'))
       )
     end
 
-    example 'parse the following axis' do
+    it 'parses the following axis' do
       parse_xpath('/following::A').should == s(
         :absolute_path,
         s(:axis, 'following', s(:test, nil, 'A'))
       )
     end
 
-    example 'parse the following-sibling axis' do
+    it 'parses the following-sibling axis' do
       parse_xpath('/following-sibling::A').should == s(
         :absolute_path,
         s(:axis, 'following-sibling', s(:test, nil, 'A'))
       )
     end
 
-    example 'parse the namespace axis' do
+    it 'parses the namespace axis' do
       parse_xpath('/namespace::A').should == s(
         :absolute_path,
         s(:axis, 'namespace', s(:test, nil, 'A'))
       )
     end
 
-    example 'parse the parent axis' do
+    it 'parses the parent axis' do
       parse_xpath('/parent::A').should == s(
         :absolute_path,
         s(:axis, 'parent', s(:test, nil, 'A'))
       )
     end
 
-    example 'parse the preceding axis' do
+    it 'parses the preceding axis' do
       parse_xpath('/preceding::A').should == s(
         :absolute_path,
         s(:axis, 'preceding', s(:test, nil, 'A'))
       )
     end
 
-    example 'parse the preceding-sibling axis' do
+    it 'parses the preceding-sibling axis' do
       parse_xpath('/preceding-sibling::A').should == s(
         :absolute_path,
         s(:axis, 'preceding-sibling', s(:test, nil, 'A'))
       )
     end
 
-    example 'parse the self axis' do
+    it 'parses the self axis' do
       parse_xpath('/self::A').should == s(
         :absolute_path,
         s(:axis, 'self', s(:test, nil, 'A'))
@@ -94,15 +94,15 @@ describe Oga::XPath::Parser do
     end
   end
 
-  context 'short axes' do
-    example 'parse the @attribute axis' do
+  describe 'short axes' do
+    it 'parses the @attribute axis' do
       parse_xpath('/@A').should == s(
         :absolute_path,
         s(:axis, 'attribute', s(:test, nil, 'A'))
       )
     end
 
-    example 'parse the // axis' do
+    it 'parses the // axis' do
       parse_xpath('//A').should == s(
         :absolute_path,
         s(:axis, 'descendant-or-self', s(:type_test, 'node')),
@@ -110,14 +110,14 @@ describe Oga::XPath::Parser do
       )
     end
 
-    example 'parse the .. axis' do
+    it 'parses the .. axis' do
       parse_xpath('/..').should == s(
         :absolute_path,
         s(:axis, 'parent', s(:type_test, 'node'))
       )
     end
 
-    example 'parse the . axis' do
+    it 'parses the . axis' do
       parse_xpath('/.').should == s(
         :absolute_path,
         s(:axis, 'self', s(:type_test, 'node'))

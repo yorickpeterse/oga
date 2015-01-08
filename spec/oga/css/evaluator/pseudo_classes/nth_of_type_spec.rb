@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'CSS selector evaluation' do
-  context ':nth-of-type pseudo class' do
+  describe ':nth-of-type pseudo class' do
     before do
       @document = parse(<<-EOF.strip)
 <root>
@@ -21,37 +21,37 @@ describe 'CSS selector evaluation' do
       @a4   = @root.at_xpath('b/a')
     end
 
-    example 'return a node set containing the first child node' do
+    it 'returns a node set containing the first child node' do
       evaluate_css(@document, 'root a:nth-of-type(1)')
         .should == node_set(@a1, @a4)
     end
 
-    example 'return a node set containing even nodes' do
+    it 'returns a node set containing even nodes' do
       evaluate_css(@document, 'root a:nth-of-type(even)')
         .should == node_set(@a2)
     end
 
-    example 'return a node set containing odd nodes' do
+    it 'returns a node set containing odd nodes' do
       evaluate_css(@document, 'root a:nth-of-type(odd)')
         .should == node_set(@a1, @a3, @a4)
     end
 
-    example 'return a node set containing every 2 nodes starting at node 2' do
+    it 'returns a node set containing every 2 nodes starting at node 2' do
       evaluate_css(@document, 'root a:nth-of-type(2n+2)')
         .should == node_set(@a2)
     end
 
-    example 'return a node set containing all nodes' do
+    it 'returns a node set containing all nodes' do
       evaluate_css(@document, 'root a:nth-of-type(n)')
         .should == node_set(@a1, @a2, @a3, @a4)
     end
 
-    example 'return a node set containing the first two nodes' do
+    it 'returns a node set containing the first two nodes' do
       evaluate_css(@document, 'root a:nth-of-type(-n+2)')
         .should == node_set(@a1, @a2, @a4)
     end
 
-    example 'return a node set containing all nodes starting at node 2' do
+    it 'returns a node set containing all nodes starting at node 2' do
       evaluate_css(@document, 'root a:nth-of-type(n+2)')
         .should == node_set(@a2, @a3)
     end

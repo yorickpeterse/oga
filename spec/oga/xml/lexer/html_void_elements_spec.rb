@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Oga::XML::Lexer do
-  context 'HTML void elements' do
-    example 'lex a void element that omits the closing /' do
+  describe 'HTML void elements' do
+    it 'lexes a void element that omits the closing /' do
       lex('<link>', :html => true).should == [
         [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'link', 1],
@@ -10,7 +10,7 @@ describe Oga::XML::Lexer do
       ]
     end
 
-    example 'lex a upper case void element' do
+    it 'lexes a upper case void element' do
       lex('<BR>', :html => true).should == [
         [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, "BR", 1],
@@ -18,7 +18,7 @@ describe Oga::XML::Lexer do
       ]
     end
 
-    example 'lex text after a void element' do
+    it 'lexes text after a void element' do
       lex('<link>foo', :html => true).should == [
         [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'link', 1],
@@ -27,7 +27,7 @@ describe Oga::XML::Lexer do
       ]
     end
 
-    example 'lex a void element inside another element' do
+    it 'lexes a void element inside another element' do
       lex('<head><link></head>', :html => true).should == [
         [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'head', 1],
@@ -38,7 +38,7 @@ describe Oga::XML::Lexer do
       ]
     end
 
-    example 'lex a void element inside another element with whitespace' do
+    it 'lexes a void element inside another element with whitespace' do
       lex("<head><link>\n</head>", :html => true).should == [
         [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'head', 1],

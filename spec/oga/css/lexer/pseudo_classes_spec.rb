@@ -1,15 +1,15 @@
 require 'spec_helper'
 
 describe Oga::CSS::Lexer do
-  context 'pseudo classes' do
-    example 'lex the :root pseudo class' do
+  describe 'pseudo classes' do
+    it 'lexes the :root pseudo class' do
       lex_css(':root').should == [
         [:T_COLON, nil],
         [:T_IDENT, 'root']
       ]
     end
 
-    example 'lex the :nth-child pseudo class' do
+    it 'lexes the :nth-child pseudo class' do
       lex_css(':nth-child(1)').should == [
         [:T_COLON, nil],
         [:T_IDENT, 'nth-child'],
@@ -19,7 +19,7 @@ describe Oga::CSS::Lexer do
       ]
     end
 
-    example 'lex the :nth-child pseudo class with extra whitespace' do
+    it 'lexes the :nth-child pseudo class with extra whitespace' do
       lex_css(':nth-child(  1)').should == [
         [:T_COLON, nil],
         [:T_IDENT, 'nth-child'],
@@ -29,7 +29,7 @@ describe Oga::CSS::Lexer do
       ]
     end
 
-    example 'lex the :nth-child(odd) pseudo class' do
+    it 'lexes the :nth-child(odd) pseudo class' do
       lex_css(':nth-child(odd)').should == [
         [:T_COLON, nil],
         [:T_IDENT, 'nth-child'],
@@ -39,7 +39,7 @@ describe Oga::CSS::Lexer do
       ]
     end
 
-    example 'lex the :nth-child(even) pseudo class' do
+    it 'lexes the :nth-child(even) pseudo class' do
       lex_css(':nth-child(even)').should == [
         [:T_COLON, nil],
         [:T_IDENT, 'nth-child'],
@@ -49,7 +49,7 @@ describe Oga::CSS::Lexer do
       ]
     end
 
-    example 'lex the :nth-child(n) pseudo class' do
+    it 'lexes the :nth-child(n) pseudo class' do
       lex_css(':nth-child(n)').should == [
         [:T_COLON, nil],
         [:T_IDENT, 'nth-child'],
@@ -59,7 +59,7 @@ describe Oga::CSS::Lexer do
       ]
     end
 
-    example 'lex the :nth-child(-n) pseudo class' do
+    it 'lexes the :nth-child(-n) pseudo class' do
       lex_css(':nth-child(-n)').should == [
         [:T_COLON, nil],
         [:T_IDENT, 'nth-child'],
@@ -70,7 +70,7 @@ describe Oga::CSS::Lexer do
       ]
     end
 
-    example 'lex the :nth-child(2n) pseudo class' do
+    it 'lexes the :nth-child(2n) pseudo class' do
       lex_css(':nth-child(2n)').should == [
         [:T_COLON, nil],
         [:T_IDENT, 'nth-child'],
@@ -81,7 +81,7 @@ describe Oga::CSS::Lexer do
       ]
     end
 
-    example 'lex the :nth-child(2n+1) pseudo class' do
+    it 'lexes the :nth-child(2n+1) pseudo class' do
       lex_css(':nth-child(2n+1)').should == [
         [:T_COLON, nil],
         [:T_IDENT, 'nth-child'],
@@ -93,7 +93,7 @@ describe Oga::CSS::Lexer do
       ]
     end
 
-    example 'lex the :nth-child(2n-1) pseudo class' do
+    it 'lexes the :nth-child(2n-1) pseudo class' do
       lex_css(':nth-child(2n-1)').should == [
         [:T_COLON, nil],
         [:T_IDENT, 'nth-child'],
@@ -105,7 +105,7 @@ describe Oga::CSS::Lexer do
       ]
     end
 
-    example 'lex the :nth-child(-2n-1) pseudo class' do
+    it 'lexes the :nth-child(-2n-1) pseudo class' do
       lex_css(':nth-child(-2n-1)').should == [
         [:T_COLON, nil],
         [:T_IDENT, 'nth-child'],
@@ -117,7 +117,7 @@ describe Oga::CSS::Lexer do
       ]
     end
 
-    example 'lex the :lang(fr) pseudo class' do
+    it 'lexes the :lang(fr) pseudo class' do
       lex_css(':lang(fr)').should == [
         [:T_COLON, nil],
         [:T_IDENT, 'lang'],

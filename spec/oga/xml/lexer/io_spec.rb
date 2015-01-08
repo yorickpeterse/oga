@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Oga::XML::Lexer do
-  context 'IO as input' do
-    example 'lex a paragraph element with attributes' do
+  describe 'IO as input' do
+    it 'lexes a paragraph element with attributes' do
       io = StringIO.new("<p class='foo'>\nHello</p>")
 
       lex(io).should == [
@@ -18,7 +18,7 @@ describe Oga::XML::Lexer do
       ]
     end
 
-    example 'rewind input when resetting the lexer' do
+    it 'rewinds input when resetting the lexer' do
       io    = StringIO.new("<p class='foo'>\nHello</p>")
       lexer = described_class.new(io)
 
@@ -26,7 +26,7 @@ describe Oga::XML::Lexer do
       lexer.lex.empty?.should == false
     end
 
-    example 'lex an attribute value starting with a newline' do
+    it 'lexes an attribute value starting with a newline' do
       io    = StringIO.new("<foo bar='\n10'></foo>")
       lexer = described_class.new(io)
 
@@ -42,7 +42,7 @@ describe Oga::XML::Lexer do
       ]
     end
 
-    example 'lex an attribute value split in two by a newline' do
+    it 'lexes an attribute value split in two by a newline' do
       io    = StringIO.new("<foo bar='foo\nbar'></foo>")
       lexer = described_class.new(io)
 

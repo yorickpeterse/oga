@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Oga::XML::Lexer do
-  context 'Enumerator as input' do
+  describe 'Enumerator as input' do
     before do
       @enum = Enumerator.new do |yielder|
         yielder << '<p>foo'
@@ -9,7 +9,7 @@ describe Oga::XML::Lexer do
       end
     end
 
-    example 'lex a paragraph element' do
+    it 'lexes a paragraph element' do
       lex(@enum).should == [
         [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'p', 1],
@@ -18,7 +18,7 @@ describe Oga::XML::Lexer do
       ]
     end
 
-    example 'rewind input when resetting the lexer' do
+    it 'rewinds input when resetting the lexer' do
       lexer = described_class.new(@enum)
 
       lexer.lex.empty?.should == false

@@ -1,15 +1,15 @@
 require 'spec_helper'
 
 describe Oga::XML::Lexer do
-  context 'elements' do
-    example 'lex an opening element' do
+  describe 'elements' do
+    it 'lexes an opening element' do
       lex('<p>').should == [
         [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'p', 1]
       ]
     end
 
-    example 'lex an opening an closing element' do
+    it 'lexes an opening an closing element' do
       lex('<p></p>').should == [
         [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'p', 1],
@@ -17,7 +17,7 @@ describe Oga::XML::Lexer do
       ]
     end
 
-    example 'lex a paragraph element with text inside it' do
+    it 'lexes a paragraph element with text inside it' do
       lex('<p>Hello</p>').should == [
         [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'p', 1],
@@ -26,7 +26,7 @@ describe Oga::XML::Lexer do
       ]
     end
 
-    example 'lex text followed by a paragraph element' do
+    it 'lexes text followed by a paragraph element' do
       lex('Foo<p>').should == [
         [:T_TEXT, 'Foo', 1],
         [:T_ELEM_START, nil, 1],
@@ -34,7 +34,7 @@ describe Oga::XML::Lexer do
       ]
     end
 
-    example 'lex an element with a newline in the open tag' do
+    it 'lexes an element with a newline in the open tag' do
       lex("<p\n></p>").should == [
         [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'p', 1],
@@ -43,8 +43,8 @@ describe Oga::XML::Lexer do
     end
   end
 
-  context 'elements with attributes' do
-    example 'lex an element with an attribute without a value' do
+  describe 'elements with attributes' do
+    it 'lexes an element with an attribute without a value' do
       lex('<p foo></p>').should == [
         [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'p', 1],
@@ -53,7 +53,7 @@ describe Oga::XML::Lexer do
       ]
     end
 
-    example 'lex an element with an attribute with an empty value' do
+    it 'lexes an element with an attribute with an empty value' do
       lex('<p foo=""></p>').should == [
         [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'p', 1],
@@ -64,7 +64,7 @@ describe Oga::XML::Lexer do
       ]
     end
 
-    example 'lex a paragraph element with attributes' do
+    it 'lexes a paragraph element with attributes' do
       lex('<p class="foo">Hello</p>').should == [
         [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'p', 1],
@@ -77,7 +77,7 @@ describe Oga::XML::Lexer do
       ]
     end
 
-    example 'lex a paragraph element with a newline in an attribute' do
+    it 'lexes a paragraph element with a newline in an attribute' do
       lex("<p class=\"\nfoo\">Hello</p>").should == [
         [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'p', 1],
@@ -90,7 +90,7 @@ describe Oga::XML::Lexer do
       ]
     end
 
-    example 'lex a paragraph element with single quoted attributes' do
+    it 'lexes a paragraph element with single quoted attributes' do
       lex("<p class='foo'></p>").should == [
         [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'p', 1],
@@ -102,7 +102,7 @@ describe Oga::XML::Lexer do
       ]
     end
 
-    example 'lex a paragraph element with a namespaced attribute' do
+    it 'lexes a paragraph element with a namespaced attribute' do
       lex('<p foo:bar="baz"></p>').should == [
         [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'p', 1],
@@ -116,8 +116,8 @@ describe Oga::XML::Lexer do
     end
   end
 
-  context 'nested elements' do
-    example 'lex a nested element' do
+  describe 'nested elements' do
+    it 'lexes a nested element' do
       lex('<p><a></a></p>').should == [
         [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'p', 1],
@@ -128,7 +128,7 @@ describe Oga::XML::Lexer do
       ]
     end
 
-    example 'lex nested elements and text nodes' do
+    it 'lexes nested elements and text nodes' do
       lex('<p>Foo<a>bar</a>baz</p>').should == [
         [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'p', 1],
@@ -143,8 +143,8 @@ describe Oga::XML::Lexer do
     end
   end
 
-  context 'void elements' do
-    example 'lex a void element' do
+  describe 'void elements' do
+    it 'lexes a void element' do
       lex('<br />').should == [
         [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'br', 1],
@@ -152,7 +152,7 @@ describe Oga::XML::Lexer do
       ]
     end
 
-    example 'lex a void element with an attribute' do
+    it 'lexes a void element with an attribute' do
       lex('<br class="foo" />').should == [
         [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'br', 1],
@@ -165,8 +165,8 @@ describe Oga::XML::Lexer do
     end
   end
 
-  context 'elements with namespaces' do
-    example 'lex an element with namespaces' do
+  describe 'elements with namespaces' do
+    it 'lexes an element with namespaces' do
       lex('<foo:p></p>').should == [
         [:T_ELEM_START, nil, 1],
         [:T_ELEM_NS, 'foo', 1],
@@ -175,7 +175,7 @@ describe Oga::XML::Lexer do
       ]
     end
 
-    example 'lex an element with a start and end namespace' do
+    it 'lexes an element with a start and end namespace' do
       lex('<foo:p></foo:p>').should == [
         [:T_ELEM_START, nil, 1],
         [:T_ELEM_NS, 'foo', 1],

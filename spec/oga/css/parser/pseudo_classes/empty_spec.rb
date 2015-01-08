@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Oga::CSS::Parser do
-  context ':empty pseudo class' do
-    example 'parse the :empty pseudo class' do
+  describe ':empty pseudo class' do
+    it 'parses the :empty pseudo class' do
       parse_css(':empty').should == parse_xpath('descendant::*[not(node())]')
     end
   end

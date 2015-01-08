@@ -1,16 +1,16 @@
 require 'spec_helper'
 
 describe Oga::XPath::Lexer do
-  context 'general' do
-    example 'lex a simple expression' do
+  describe 'general' do
+    it 'lexes a simple expression' do
       lex_xpath('/foo').should == [[:T_SLASH, nil], [:T_IDENT, 'foo']]
     end
 
-    example 'lex a simple expression with a test starting with an underscore' do
+    it 'lexes a simple expression with a test starting with an underscore' do
       lex_xpath('/_foo').should == [[:T_SLASH, nil], [:T_IDENT, '_foo']]
     end
 
-    example 'lex a node test using a namespace' do
+    it 'lexes a node test using a namespace' do
       lex_xpath('/foo:bar').should == [
         [:T_SLASH, nil],
         [:T_IDENT, 'foo'],
@@ -19,11 +19,11 @@ describe Oga::XPath::Lexer do
       ]
     end
 
-    example 'lex a whildcard node test' do
+    it 'lexes a whildcard node test' do
       lex_xpath('/*').should == [[:T_SLASH, nil], [:T_IDENT, '*']]
     end
 
-    example 'lex a wildcard node test for a namespace' do
+    it 'lexes a wildcard node test for a namespace' do
       lex_xpath('/*:foo').should == [
         [:T_SLASH, nil],
         [:T_IDENT, '*'],
@@ -35,7 +35,7 @@ describe Oga::XPath::Lexer do
     # The following are a bunch of examples taken from Wikipedia and the W3
     # spec to see how the lexer handles them.
 
-    example 'lex an descendant-or-self expression' do
+    it 'lexes an descendant-or-self expression' do
       lex_xpath('/wikimedia//editions').should == [
         [:T_SLASH, nil],
         [:T_IDENT, 'wikimedia'],
@@ -47,7 +47,7 @@ describe Oga::XPath::Lexer do
       ]
     end
 
-    example 'lex a complex expression using predicates and function calls' do
+    it 'lexes a complex expression using predicates and function calls' do
       path = '/wikimedia/projects/project[@name="Wikipedia"]/editions/edition/text()'
 
       lex_xpath(path).should == [

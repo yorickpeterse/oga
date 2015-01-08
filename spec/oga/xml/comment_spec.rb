@@ -1,12 +1,12 @@
 require 'spec_helper'
 
 describe Oga::XML::Comment do
-  context 'setting attributes' do
-    example 'set the text via the constructor' do
+  describe 'setting attributes' do
+    it 'sets the text via the constructor' do
       described_class.new(:text => 'foo').text.should == 'foo'
     end
 
-    example 'set the text via a setter' do
+    it 'sets the text via a setter' do
       instance = described_class.new
       instance.text = 'foo'
 
@@ -14,22 +14,22 @@ describe Oga::XML::Comment do
     end
   end
 
-  context '#to_xml' do
+  describe '#to_xml' do
     before do
       @instance = described_class.new(:text => 'foo')
     end
 
-    example 'generate the corresponding XML' do
+    it 'generates the corresponding XML' do
       @instance.to_xml.should == '<!--foo-->'
     end
   end
 
-  context '#inspect' do
+  describe '#inspect' do
     before do
       @instance = described_class.new(:text => 'foo')
     end
 
-    example 'return the inspect value' do
+    it 'returns the inspect value' do
       @instance.inspect.should == 'Comment("foo")'
     end
   end

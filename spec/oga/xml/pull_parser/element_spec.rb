@@ -1,12 +1,12 @@
 require 'spec_helper'
 
 describe Oga::XML::PullParser do
-  context 'elements' do
+  describe 'elements' do
     before :all do
       @parser = described_class.new('<person>Alice</person>')
     end
 
-    example 'parse an element' do
+    it 'parses an element' do
       name = nil
 
       @parser.parse do |node|
@@ -16,7 +16,7 @@ describe Oga::XML::PullParser do
       name.should == 'person'
     end
 
-    example 'parse the text of an element' do
+    it 'parses the text of an element' do
       text = nil
 
       @parser.parse do |node|

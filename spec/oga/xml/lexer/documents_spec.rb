@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Oga::XML::Lexer do
-  context 'HTML documents' do
-    example 'lex a basic HTML document' do
+  describe 'HTML documents' do
+    it 'lexes a basic HTML document' do
       html = <<-EOF
 <!DOCTYPE html>
 <html>

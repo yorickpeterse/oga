@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Oga::CSS::Lexer do
-  context 'namespaces' do
-    example 'lex a path containing a namespace name' do
+  describe 'namespaces' do
+    it 'lexes a path containing a namespace name' do
       lex_css('foo|bar').should == [
         [:T_IDENT, 'foo'],
         [:T_PIPE, nil],
@@ -10,7 +10,7 @@ describe Oga::CSS::Lexer do
       ]
     end
 
-    example 'lex a path containing a namespace wildcard' do
+    it 'lexes a path containing a namespace wildcard' do
       lex_css('*|foo').should == [
         [:T_IDENT, '*'],
         [:T_PIPE, nil],

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'CSS selector evaluation' do
-  context ':nth-child pseudo class' do
+  describe ':nth-child pseudo class' do
     before do
       @document = parse('<root><a1 /><a2 /><a3 /><a4 /></root>')
 
@@ -12,35 +12,35 @@ describe 'CSS selector evaluation' do
       @a4   = @root.children[3]
     end
 
-    example 'return a node set containing the first child node' do
+    it 'returns a node set containing the first child node' do
       evaluate_css(@document, 'root :nth-child(1)').should == node_set(@a1)
     end
 
-    example 'return a node set containing even nodes' do
+    it 'returns a node set containing even nodes' do
       evaluate_css(@document, 'root :nth-child(even)')
         .should == node_set(@a2, @a4)
     end
 
-    example 'return a node set containing odd nodes' do
+    it 'returns a node set containing odd nodes' do
       evaluate_css(@document, 'root :nth-child(odd)')
         .should == node_set(@a1, @a3)
     end
 
-    example 'return a node set containing every 2 nodes starting at node 2' do
+    it 'returns a node set containing every 2 nodes starting at node 2' do
       evaluate_css(@document, 'root :nth-child(2n+2)')
         .should == node_set(@a2, @a4)
     end
 
-    example 'return a node set containing all nodes' do
+    it 'returns a node set containing all nodes' do
       evaluate_css(@document, 'root :nth-child(n)').should == @root.children
     end
 
-    example 'return a node set containing the first two nodes' do
+    it 'returns a node set containing the first two nodes' do
       evaluate_css(@document, 'root :nth-child(-n+2)')
         .should == node_set(@a1, @a2)
     end
 
-    example 'return a node set containing all nodes starting at node 2' do
+    it 'returns a node set containing all nodes starting at node 2' do
       evaluate_css(@document, 'root :nth-child(n+2)')
         .should == node_set(@a2, @a3, @a4)
     end

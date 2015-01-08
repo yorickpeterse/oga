@@ -16,13 +16,13 @@ describe Oga::XML::SaxParser do
     end
   end
 
-  example 'ignore return values of callback methods' do
+  it 'ignores return values of callback methods' do
     parser = described_class.new(@handler.new, 'foo')
 
     parser.parse.should be_nil
   end
 
-  example 'use custom callback methods if defined' do
+  it 'uses custom callback methods if defined' do
     handler = @handler.new
     parser  = described_class.new(handler, '<foo />')
 
@@ -31,7 +31,7 @@ describe Oga::XML::SaxParser do
     handler.name.should == 'foo'
   end
 
-  example 'always pass element names to after_element' do
+  it 'always passes element names to after_element' do
     handler = @handler.new
     parser  = described_class.new(handler, '<namespace:foo />')
 
@@ -41,7 +41,7 @@ describe Oga::XML::SaxParser do
     handler.after_namespace.should == 'namespace'
   end
 
-  example 'ignore callbacks that are not defined in the handler' do
+  it 'ignores callbacks that are not defined in the handler' do
     parser = described_class.new(@handler.new, '<!--foo-->')
 
     # This would raise if undefined callbacks were _not_ ignored.

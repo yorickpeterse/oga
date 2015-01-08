@@ -1,17 +1,17 @@
 require 'spec_helper'
 
 describe Oga::XML::Attribute do
-  context '#initialize' do
-    example 'set the name' do
+  describe '#initialize' do
+    it 'sets the name' do
       described_class.new(:name => 'a').name.should == 'a'
     end
 
-    example 'set the value' do
+    it 'sets the value' do
       described_class.new(:value => 'a').value.should == 'a'
     end
   end
 
-  context '#namespace' do
+  describe '#namespace' do
     before do
       @namespace = Oga::XML::Namespace.new(:name => 'b')
 
@@ -28,33 +28,33 @@ describe Oga::XML::Attribute do
       @default = described_class.new(:namespace_name => 'xml', :name => 'x')
     end
 
-    example 'return a Namespace instance' do
+    it 'returns a Namespace instance' do
       @attribute.namespace.should == @namespace
     end
 
-    example 'return the default XML namespace when the "xml" prefix is used' do
+    it 'returns the default XML namespace when the "xml" prefix is used' do
       @default.namespace.should == Oga::XML::Attribute::DEFAULT_NAMESPACE
     end
   end
 
-  context '#text' do
-    example 'return an empty String when there is no value' do
+  describe '#text' do
+    it 'returns an empty String when there is no value' do
       described_class.new.text.should == ''
     end
 
-    example 'return the value if it is present' do
+    it 'returns the value if it is present' do
       described_class.new(:value => 'a').text.should == 'a'
     end
   end
 
-  context '#to_xml' do
-    example 'convert an attribute to XML' do
+  describe '#to_xml' do
+    it 'converts an attribute to XML' do
       attr = described_class.new(:name => 'foo', :value => 'bar')
 
       attr.to_xml.should == 'foo="bar"'
     end
 
-    example 'include the namespace when converting an attribute to XML' do
+    it 'includes the namespace when converting an attribute to XML' do
       element = Oga::XML::Element.new
 
       element.register_namespace('foo', 'http://foo')
@@ -69,7 +69,7 @@ describe Oga::XML::Attribute do
       attr.to_xml.should == 'foo:class="10"'
     end
 
-    example 'include the "xmlns" namespace when present but not registered' do
+    it 'includes the "xmlns" namespace when present but not registered' do
       attr = described_class.new(
         :name           => 'class',
         :namespace_name => 'xmlns',
@@ -79,15 +79,15 @@ describe Oga::XML::Attribute do
       attr.to_xml.should == 'xmlns:class=""'
     end
 
-    example 'convert special characters to XML entities' do
+    it 'converts special characters to XML entities' do
       attr = described_class.new(:name => 'href', :value => '&<>')
 
       attr.to_xml.should == 'href="&amp;&lt;&gt;"'
     end
   end
 
-  context '#inspect' do
-    example 'return the inspect value' do
+  describe '#inspect' do
+    it 'returns the inspect value' do
       element = Oga::XML::Element.new(
         :namespaces => {'b' => Oga::XML::Namespace.new(:name => 'b')}
       )

@@ -1,21 +1,21 @@
 require 'spec_helper'
 
 describe Oga::XML::Document do
-  context 'setting attributes' do
-    example 'set the child nodes via the constructor' do
+  describe 'setting attributes' do
+    it 'sets the child nodes via the constructor' do
       child    = Oga::XML::Comment.new(:text => 'foo')
       document = described_class.new(:children => [child])
 
       document.children[0].should == child
     end
 
-    example 'set the document type' do
+    it 'sets the document type' do
       described_class.new(:type => :html).type.should == :html
     end
   end
 
-  context '#children=' do
-    example 'set the child nodes using an Array' do
+  describe '#children=' do
+    it 'sets the child nodes using an Array' do
       child    = Oga::XML::Comment.new(:text => 'foo')
       document = described_class.new
 
@@ -24,7 +24,7 @@ describe Oga::XML::Document do
       document.children[0].should == child
     end
 
-    example 'set the child nodes using a NodeSet' do
+    it 'sets the child nodes using a NodeSet' do
       child    = Oga::XML::Comment.new(:text => 'foo')
       document = described_class.new
 
@@ -34,18 +34,18 @@ describe Oga::XML::Document do
     end
   end
 
-  context '#to_xml' do
+  describe '#to_xml' do
     before do
       child = Oga::XML::Comment.new(:text => 'foo')
       @document = described_class.new(:children => [child])
     end
 
-    example 'generate the corresponding XML' do
+    it 'generates the corresponding XML' do
       @document.to_xml.should == '<!--foo-->'
     end
   end
 
-  context '#to_xml with XML declarations' do
+  describe '#to_xml with XML declarations' do
     before do
       decl     = Oga::XML::XmlDeclaration.new(:version => '5.0')
       children = [Oga::XML::Comment.new(:text => 'foo')]
@@ -56,13 +56,13 @@ describe Oga::XML::Document do
       )
     end
 
-    example 'include the XML of the declaration tag' do
+    it 'includes the XML of the declaration tag' do
       @document.to_xml
         .should == %Q{<?xml version="5.0" encoding="UTF-8" ?>\n<!--foo-->}
     end
   end
 
-  context '#to_xml with doctypes' do
+  describe '#to_xml with doctypes' do
     before do
       doctype  = Oga::XML::Doctype.new(:name => 'html', :type => 'PUBLIC')
       children = [Oga::XML::Comment.new(:text => 'foo')]
@@ -73,12 +73,12 @@ describe Oga::XML::Document do
       )
     end
 
-    example 'include the doctype' do
+    it 'includes the doctype' do
       @document.to_xml.should == %Q{<!DOCTYPE html PUBLIC>\n<!--foo-->}
     end
   end
 
-  context '#to_xml with XML declarations and doctypes' do
+  describe '#to_xml with XML declarations and doctypes' do
     before do
       decl     = Oga::XML::XmlDeclaration.new(:version => '5.0')
       doctype  = Oga::XML::Doctype.new(:name => 'html', :type => 'PUBLIC')
@@ -91,13 +91,13 @@ describe Oga::XML::Document do
       )
     end
 
-    example 'include the doctype and XML declaration' do
+    it 'includes the doctype and XML declaration' do
       @document.to_xml.should == '<?xml version="5.0" encoding="UTF-8" ?>' \
         "\n<!DOCTYPE html PUBLIC>\n<!--foo-->"
     end
   end
 
-  context '#inspect' do
+  describe '#inspect' do
     before do
       @instance = described_class.new(
         :doctype         => Oga::XML::Doctype.new(:name => 'html'),
@@ -106,7 +106,7 @@ describe Oga::XML::Document do
       )
     end
 
-    example 'return the inspect value' do
+    it 'returns the inspect value' do
       @instance.inspect.should == <<-EOF.strip
 Document(
   doctype: Doctype(name: "html")
@@ -116,7 +116,7 @@ Document(
       EOF
     end
 
-    example 'return the inspect value of an empty document' do
+    it 'returns the inspect value of an empty document' do
       described_class.new.inspect.should == <<-EOF.strip
 Document(
   children: NodeSet()

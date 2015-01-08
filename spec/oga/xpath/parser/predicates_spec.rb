@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Oga::XPath::Parser do
-  context 'predicates' do
-    example 'parse a single predicate' do
+  describe 'predicates' do
+    it 'parses a single predicate' do
       parse_xpath('foo[@class="bar"]').should == s(
         :predicate,
         s(:axis, 'child', s(:test, nil, 'foo')),
@@ -14,7 +14,7 @@ describe Oga::XPath::Parser do
       )
     end
 
-    example 'parse a predicate using the or operator' do
+    it 'parses a predicate using the or operator' do
       parse_xpath('foo[@x="bar" or @x="baz"]').should == s(
         :predicate,
         s(:axis, 'child', s(:test, nil, 'foo')),

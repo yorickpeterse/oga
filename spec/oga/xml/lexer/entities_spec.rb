@@ -1,22 +1,22 @@
 require 'spec_helper'
 
 describe Oga::XML::Lexer do
-  context 'converting XML entities in text tokens' do
-    example 'convert &amp; into &' do
+  describe 'converting XML entities in text tokens' do
+    it 'converts &amp; into &' do
       lex('&amp;').should == [[:T_TEXT, '&', 1]]
     end
 
-    example 'convert &lt; into <' do
+    it 'converts &lt; into <' do
       lex('&lt;').should == [[:T_TEXT, '<', 1]]
     end
 
-    example 'convert &gt; into >' do
+    it 'converts &gt; into >' do
       lex('&gt;').should == [[:T_TEXT, '>', 1]]
     end
   end
 
-  context 'converting XML entities in string tokens' do
-    example 'convert &amp; into &' do
+  describe 'converting XML entities in string tokens' do
+    it 'converts &amp; into &' do
       lex('<foo class="&amp;" />').should == [
         [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'foo', 1],
@@ -28,7 +28,7 @@ describe Oga::XML::Lexer do
       ]
     end
 
-    example 'convert &lt; into <' do
+    it 'converts &lt; into <' do
       lex('<foo class="&lt;" />').should == [
         [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'foo', 1],
@@ -40,7 +40,7 @@ describe Oga::XML::Lexer do
       ]
     end
 
-    example 'convert &gt; into >' do
+    it 'converts &gt; into >' do
       lex('<foo class="&gt;" />').should == [
         [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'foo', 1],

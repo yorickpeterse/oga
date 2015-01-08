@@ -6,44 +6,44 @@ describe Oga::XPath::Evaluator do
     @evaluator = described_class.new(@document)
   end
 
-  context '#function_node' do
+  describe '#function_node' do
     before do
       @document    = parse('<root><a>Hello</a></root>')
       @context_set = @document.children
     end
 
-    example 'return the first node in the expression' do
+    it 'returns the first node in the expression' do
       exp  = s(:axis, 'child', s(:test, nil, 'a'))
       node = @evaluator.function_node(@context_set, exp)
 
       node.should == @context_set[0].children[0]
     end
 
-    example 'raise a TypeError if the expression did not return a node set' do
+    it 'raises a TypeError if the expression did not return a node set' do
       exp   = s(:call, 'false')
       block = lambda { @evaluator.function_node(@context_set, exp) }
 
       block.should raise_error(TypeError)
     end
 
-    example 'use the current context node if the expression is empty' do
+    it 'uses the current context node if the expression is empty' do
       @evaluator.function_node(@context_set).should == @context_set[0]
     end
   end
 
-  context '#first_node_text' do
-    example 'return the text of the first node' do
+  describe '#first_node_text' do
+    it 'returns the text of the first node' do
       @evaluator.first_node_text(@document.children).should == 'Hello'
     end
 
-    example 'return an empty string if the node set is empty' do
+    it 'returns an empty string if the node set is empty' do
       set = Oga::XML::NodeSet.new
 
       @evaluator.first_node_text(set).should == ''
     end
   end
 
-  context '#child_nodes' do
+  describe '#child_nodes' do
     before do
       @children = Oga::XML::NodeSet.new([
         Oga::XML::Element.new(:name => 'b'),
@@ -53,7 +53,7 @@ describe Oga::XPath::Evaluator do
       @parent = Oga::XML::Element.new(:name => 'a', :children => @children)
     end
 
-    example "return a node's child nodes" do
+    it "returns a node's child nodes" do
       nodes = @evaluator.child_nodes([@parent])
 
       nodes[0].should == @children[0]
@@ -61,7 +61,7 @@ describe Oga::XPath::Evaluator do
     end
   end
 
-  context '#node_matches?' do
+  describe '#node_matches?' do
     before do
       @name_node    = Oga::XML::Element.new(:name => 'a')
       @name_ns_node = Oga::XML::Element.new(:name => 'b', :namespace_name => 'x')
@@ -69,73 +69,73 @@ describe Oga::XPath::Evaluator do
       @name_ns_node.register_namespace('x', 'y')
     end
 
-    example 'return true if a node is matched by its name' do
+    it 'returns true if a node is matched by its name' do
       @evaluator.node_matches?(@name_node, s(:test, nil, 'a')).should == true
     end
 
-    example 'return true if a node is matched by a wildcard name' do
+    it 'returns true if a node is matched by a wildcard name' do
       @evaluator.node_matches?(@name_node, s(:test, nil, '*')).should == true
     end
 
-    example 'return false if a node is not matched by its name' do
+    it 'returns false if a node is not matched by its name' do
       @evaluator.node_matches?(@name_node, s(:test, nil, 'foo')).should == false
     end
 
-    example 'return true if a node is matched by its name and namespace' do
+    it 'returns true if a node is matched by its name and namespace' do
       @evaluator.node_matches?(@name_ns_node, s(:test, 'x', 'b')).should == true
     end
 
-    example 'return false if a node is not matched by its namespace' do
+    it 'returns false if a node is not matched by its namespace' do
       @evaluator.node_matches?(@name_ns_node, s(:test, 'y', 'b')).should == false
     end
 
-    example 'return true if a node is matched by a wildcard namespace' do
+    it 'returns true if a node is matched by a wildcard namespace' do
       @evaluator.node_matches?(@name_ns_node, s(:test, '*', 'b')).should == true
     end
 
-    example 'return true if a node is matched by a full wildcard search' do
+    it 'returns true if a node is matched by a full wildcard search' do
       @evaluator.node_matches?(@name_ns_node, s(:test, '*', '*')).should == true
     end
 
-    example 'return true if a node is matched without having a namespace' do
+    it 'returns true if a node is matched without having a namespace' do
       @evaluator.node_matches?(@name_node, s(:test, '*', 'a')).should == true
     end
 
-    example 'return false when trying to match an XML::Text instance' do
+    it 'returns false when trying to match an XML::Text instance' do
       text = Oga::XML::Text.new(:text => 'Foobar')
 
       @evaluator.node_matches?(text, s(:test, nil, 'a')).should == false
     end
 
-    example 'return false when the node has a namespace that is not given' do
+    it 'returns false when the node has a namespace that is not given' do
       @evaluator.node_matches?(@name_ns_node, s(:test, nil, 'b')).should == false
     end
 
-    example 'return true if a node with a namespace is matched using a wildcard' do
+    it 'returns true if a node with a namespace is matched using a wildcard' do
       @evaluator.node_matches?(@name_ns_node, s(:test, nil, '*')).should == true
     end
 
-    example 'return true if the node type matches' do
+    it 'returns true if the node type matches' do
       @evaluator.node_matches?(@name_node, s(:type_test, 'node')).should == true
     end
   end
 
-  context '#type_matches?' do
+  describe '#type_matches?' do
     before do
       @element = Oga::XML::Element.new(:name => 'a')
       @ns      = Oga::XML::Namespace.new(:name => 'a')
     end
 
-    example 'return true if the type matches' do
+    it 'returns true if the type matches' do
       @evaluator.type_matches?(@element, s(:type_test, 'node')).should == true
     end
 
-    example 'return false if the type does not match' do
+    it 'returns false if the type does not match' do
       @evaluator.type_matches?(@ns, s(:type_test, 'node')).should == false
     end
   end
 
-  context '#has_parent?' do
+  describe '#has_parent?' do
     before do
       @parent = Oga::XML::Element.new
       @child  = Oga::XML::Element.new
@@ -143,31 +143,31 @@ describe Oga::XPath::Evaluator do
       set = Oga::XML::NodeSet.new([@child], @parent)
     end
 
-    example 'return true if a node has a parent node' do
+    it 'returns true if a node has a parent node' do
       @evaluator.has_parent?(@child).should == true
     end
 
-    example 'return false if a node has no parent node' do
+    it 'returns false if a node has no parent node' do
       @evaluator.has_parent?(@parent).should == false
     end
   end
 
-  context '#to_string' do
-    example 'convert a float to a string' do
+  describe '#to_string' do
+    it 'converts a float to a string' do
       @evaluator.to_string(10.5).should == '10.5'
     end
 
-    example 'convert a float without decimals to a string' do
+    it 'converts a float without decimals to a string' do
       @evaluator.to_string(10.0).should == '10'
     end
   end
 
-  context '#to_float' do
-    example 'convert a string to a float' do
+  describe '#to_float' do
+    it 'converts a string to a float' do
       @evaluator.to_float('10').should == 10.0
     end
 
-    example "return NaN for values that can't be converted to floats" do
+    it "returns NaN for values that can't be converted to floats" do
       @evaluator.to_float('a').should be_nan
     end
   end
