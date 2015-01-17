@@ -6,12 +6,12 @@ namespace :doc do
 
   desc 'Generates and uploads the documentation'
   task :upload => :build do
-    root_dir    = "/srv/http/code.yorickpeterse.com/public/oga"
-    version_dir = File.join(root_dir, Oga::VERSION)
+    version     = GEMSPEC.version.to_s
+    bucket      = 's3://code.yorickpeterse.com'
+    directory   = GEMSPEC.name
 
-    sh "scp -r yardoc europa:#{version_dir}"
-
-    sh "ssh europa 'rm -f #{root_dir}/latest " \
-      "&& ln -s #{version_dir} #{root_dir}/latest'"
+    sh "aws s3 rm --recursive #{bucket}/#{directory}/latest"
+    sh "aws s3 sync yardoc #{bucket}/#{directory}/#{version}"
+    sh "aws s3 sync yardoc #{bucket}/#{directory}/latest"
   end
 end
