@@ -1,0 +1,136 @@
+%name Oga::XML::Parser;
+
+%terminals T_TEXT T_STRING_SQUOTE T_STRING_DQUOTE T_STRING_BODY;
+%terminals T_DOCTYPE_START T_DOCTYPE_END T_DOCTYPE_TYPE T_DOCTYPE_NAME;
+%terminals T_DOCTYPE_INLINE T_CDATA T_COMMENT;
+%terminals T_ELEM_START T_ELEM_NAME T_ELEM_NS T_ELEM_END T_ATTR T_ATTR_NS;
+%terminals T_XML_DECL_START T_XML_DECL_END;
+%terminals T_PROC_INS_START T_PROC_INS_NAME T_PROC_INS_END;
+
+document
+  = expressions
+  | _
+  ;
+
+expressions
+  = expression expressions
+  | _
+  ;
+
+expression
+  = doctype
+  ;
+
+# Doctypes
+#
+# This parses the following:
+#
+#     <!DOCTYPE html>
+#     <!DOCTYPE html PUBLIC>
+#     <!DOCTYPE html PUBLIC "foo">
+#     <!DOCTYPE html PUBLIC "foo" "bar">
+#     <!DOCTYPE html PUBLIC "foo" "bar">
+#     <!DOCTYPE html [ ... ]>
+doctype
+  = T_DOCTYPE_START T_DOCTYPE_NAME doctype_follow
+    {
+      val[2]
+    }
+  ;
+
+# Returns: [T_DOCTYPE_TYPE, string, string, doctype_inline]
+doctype_follow
+  = T_DOCTYPE_END                { [] }
+  | T_DOCTYPE_TYPE doctype_types { [val[0], *val[1]] }
+  | doctype_inline T_DOCTYPE_END { [nil, nil, nil, val[0]] }
+  ;
+
+doctype_inline
+  = T_DOCTYPE_INLINE doctype_inline_follow { val[0] + val[1] }
+  ;
+
+doctype_inline_follow
+  = doctype_inline { val[0] }
+  | _              { '' }
+  ;
+
+doctype_types
+  = string doctype_types_follow { [val[0], val[1]] }
+  ;
+
+doctype_types_follow
+  = string T_DOCTYPE_END { val[0] }
+  | T_DOCTYPE_END        { nil }
+  ;
+
+# Strings
+
+string
+  = T_STRING_DQUOTE string_dquote_follow { val[1] }
+  | T_STRING_SQUOTE string_squote_follow { val[1] }
+  ;
+
+string_dquote_follow
+  = T_STRING_DQUOTE             { '' }
+  | string_body T_STRING_DQUOTE { val[0] }
+  ;
+
+string_squote_follow
+  = T_STRING_SQUOTE             { '' }
+  | string_body T_STRING_SQUOTE { val[0] }
+  ;
+
+string_body
+  = T_STRING_BODY string_body_follow { val[0] + val[1] }
+  ;
+
+string_body_follow
+  = T_STRING_BODY string_body { val[0] + val[1] }
+  | _                         { '' }
+  ;
+
+%inner
+{
+  ##
+  # @param [String|IO] data The input to parse.
+  # @param [Hash] options
+  # @see [Oga::XML::Lexer#initialize]
+  #
+  def initialize(data, options = {})
+    @data  = data
+    @lexer = Lexer.new(data, options)
+
+    reset
+  end
+
+  ##
+  # Resets the internal state of the parser.
+  #
+  def reset
+    @line = 1
+
+    @lexer.reset
+  end
+
+  ##
+  # Yields the next token from the lexer.
+  #
+  # @yieldparam [Array]
+  #
+  def each_token
+    @lexer.advance do |type, value, line|
+      @line = line if line
+
+      yield [type, value]
+    end
+
+    yield [-1, -1]
+  end
+
+  ##
+  # @param [Hash] options
+  #
+  def on_doctype(options = {})
+    return Doctype.new(options)
+  end
+}
