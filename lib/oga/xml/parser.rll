@@ -1,3 +1,25 @@
+%header
+{
+##
+# DOM parser for both XML and HTML.
+#
+# This parser does not produce a dedicated AST, instead it emits XML nodes
+# directly. Basic usage of this parser is as following:
+#
+#     parser   = Oga::XML::Parser.new('<foo></foo>')
+#     document = parser.parse
+#
+# To enable HTML parsing you'd use the following instead:
+#
+#     parser   = Oga::XML::Parser.new('<foo></foo>', :html => true)
+#     document = parser.parse
+#
+# In both cases you can use either a String or an IO as the parser input. IO
+# instances will result in lower memory overhead, especially when parsing large
+# files.
+#
+}
+
 %name Oga::XML::Parser;
 
 %terminals T_TEXT T_STRING_SQUOTE T_STRING_DQUOTE T_STRING_BODY;
@@ -8,12 +30,12 @@
 %terminals T_PROC_INS_START T_PROC_INS_NAME T_PROC_INS_END;
 
 document
-  = expressions
-  | _
+  = expressions { on_document(val[0]) }
+  | _           { on_document }
   ;
 
 expressions
-  = expression expressions
+  = expression expressions { val[0] + val[1] }
   | _
   ;
 
@@ -31,10 +53,20 @@ expression
 #     <!DOCTYPE html PUBLIC "foo" "bar">
 #     <!DOCTYPE html PUBLIC "foo" "bar">
 #     <!DOCTYPE html [ ... ]>
+
 doctype
   = T_DOCTYPE_START T_DOCTYPE_NAME doctype_follow
     {
-      val[2]
+      name   = val[1]
+      follow = val[2]
+
+      on_doctype(
+        :name         => name,
+        :type         => follow[0],
+        :public_id    => follow[1],
+        :system_id    => follow[2],
+        :inline_rules => follow[3]
+      )
     }
   ;
 
@@ -56,6 +88,7 @@ doctype_inline_follow
 
 doctype_types
   = string doctype_types_follow { [val[0], val[1]] }
+  | T_DOCTYPE_END               { nil }
   ;
 
 doctype_types_follow
@@ -64,6 +97,8 @@ doctype_types_follow
   ;
 
 # Strings
+#
+# This parses both (empty) single and double quoted strings.
 
 string
   = T_STRING_DQUOTE string_dquote_follow { val[1] }
@@ -85,8 +120,8 @@ string_body
   ;
 
 string_body_follow
-  = T_STRING_BODY string_body { val[0] + val[1] }
-  | _                         { '' }
+  = T_STRING_BODY string_body_follow { val[0] + val[1] }
+  | _                                { '' }
   ;
 
 %inner
@@ -132,5 +167,27 @@ string_body_follow
   #
   def on_doctype(options = {})
     return Doctype.new(options)
+  end
+
+  ##
+  # @param [Array] children
+  # @return [Oga::XML::Document]
+  #
+  def on_document(children = [])
+    document = Document.new(:type => @lexer.html ? :html : :xml)
+
+    children.each do |child|
+      if child.is_a?(Doctype)
+        document.doctype = child
+
+      elsif child.is_a?(XmlDeclaration)
+        document.xml_declaration = child
+
+      else
+        document.children << child
+      end
+    end
+
+    return document
   end
 }
