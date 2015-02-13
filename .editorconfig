@@ -5,7 +5,7 @@ end_of_line = lf
 indent_style = spaces
 trim_trailing_whitespace = true
 
-[*.{y,rb,rl}]
+[*.{y,rb,rl,rll}]
 indent_size = 2
 
 [*.{h,c,java}]
