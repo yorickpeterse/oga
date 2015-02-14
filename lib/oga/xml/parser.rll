@@ -175,12 +175,8 @@ attribute_follow
   ;
 
 attribute_name
-  = T_ATTR { Attribute.new(:name => val[0]) }
-
-  | T_ATTR_NS T_ATTR
-    {
-      Attribute.new(:namespace_name => val[0], :name => val[1])
-    }
+  = T_ATTR           { on_attribute(val[0]) }
+  | T_ATTR_NS T_ATTR { on_attribute(val[1], val[0]) }
   ;
 
 # XML declarations
@@ -382,5 +378,14 @@ string_body_follow
   #
   def after_element(element)
     return element
+  end
+
+  ##
+  # @param [String] name
+  # @param [String] ns_name
+  # @return [Oga::XML::Attribute]
+  #
+  def on_attribute(name, ns_name = nil)
+    return Attribute.new(:namespace_name => ns_name, :name => name)
   end
 }
