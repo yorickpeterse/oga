@@ -41,6 +41,12 @@ expressions
 
 expression
   = doctype
+  | cdata
+  | comment
+  | proc_ins
+  | text
+  | element
+  | xml_decl
   ;
 
 # Doctypes
@@ -95,6 +101,100 @@ doctype_types_follow
   = string T_DOCTYPE_END { val[0] }
   | T_DOCTYPE_END        { nil }
   ;
+
+# CDATA tags
+
+cdata = T_CDATA { on_cdata(val[0]) };
+
+# Comments
+
+comment = T_COMMENT { on_comment(val[0]) };
+
+# Processing Instructions
+
+proc_ins
+  = T_PROC_INS_START T_PROC_INS_NAME proc_ins_follow
+    {
+      on_proc_ins(val[1], val[2])
+    }
+  ;
+
+proc_ins_follow
+  = T_PROC_INS_END        { nil }
+  | T_TEXT T_PROC_INS_END { val[0] }
+  ;
+
+# Elements
+
+element_open = T_ELEM_START element_name_ns { val[1] };
+
+element_name_ns
+  = T_ELEM_NAME           { [nil, val[0]] }
+  | T_ELEM_NS T_ELEM_NAME { val}
+  ;
+
+element_start
+  = element_open attributes { on_element(val[0][0], val[0][1], val[1]) }
+  ;
+
+element
+  = element_start expressions T_ELEM_END
+    {
+      if val[0]
+        on_element_children(val[0], val[1])
+      end
+
+      after_element(val[0])
+    }
+  ;
+
+# Attributes
+
+attributes
+  = attributes_ { val[0] }
+  | _
+  ;
+
+attributes_
+  = attribute attributes { [val[0]] + val[1] }
+  | _
+  ;
+
+attribute
+  = attribute_name attribute_follow
+    {
+      val[0].value = val[1]
+
+      val[0]
+    }
+  ;
+
+attribute_follow
+  = string { val[0] }
+  | _      { nil }
+  ;
+
+attribute_name
+  = T_ATTR { Attribute.new(:name => val[0]) }
+
+  | T_ATTR_NS T_ATTR
+    {
+      Attribute.new(:namespace_name => val[0], :name => val[1])
+    }
+  ;
+
+# XML declarations
+
+xml_decl
+  = T_XML_DECL_START attributes T_XML_DECL_END
+    {
+      on_xml_decl(val[1])
+    }
+  ;
+
+# Plain text
+
+text = T_TEXT { on_text(val[0]) };
 
 # Strings
 #
@@ -163,13 +263,6 @@ string_body_follow
   end
 
   ##
-  # @param [Hash] options
-  #
-  def on_doctype(options = {})
-    return Doctype.new(options)
-  end
-
-  ##
   # @param [Array] children
   # @return [Oga::XML::Document]
   #
@@ -189,5 +282,94 @@ string_body_follow
     end
 
     return document
+  end
+
+  ##
+  # @param [Hash] options
+  #
+  def on_doctype(options = {})
+    return Doctype.new(options)
+  end
+
+  ##
+  # @param [String] text
+  # @return [Oga::XML::Cdata]
+  #
+  def on_cdata(text = nil)
+    return Cdata.new(:text => text)
+  end
+
+  ##
+  # @param [String] text
+  # @return [Oga::XML::Comment]
+  #
+  def on_comment(text = nil)
+    return Comment.new(:text => text)
+  end
+
+  ##
+  # @param [String] name
+  # @param [String] text
+  # @return [Oga::XML::ProcessingInstruction]
+  #
+  def on_proc_ins(name, text = nil)
+    return ProcessingInstruction.new(:name => name, :text => text)
+  end
+
+  ##
+  # @param [Array] attributes
+  # @return [Oga::XML::XmlDeclaration]
+  #
+  def on_xml_decl(attributes = [])
+    options = {}
+
+    attributes.each do |attr|
+      options[attr.name.to_sym] = attr.value
+    end
+
+    return XmlDeclaration.new(options)
+  end
+
+  ##
+  # @param [String] text
+  # @return [Oga::XML::Text]
+  #
+  def on_text(text)
+    return Text.new(:text => text)
+  end
+
+  ##
+  # @param [String] namespace
+  # @param [String] name
+  # @param [Hash] attributes
+  # @return [Oga::XML::Element]
+  #
+  def on_element(namespace, name, attributes = {})
+    element = Element.new(
+      :namespace_name => namespace,
+      :name           => name,
+      :attributes     => attributes
+    )
+
+    return element
+  end
+
+  ##
+  # @param [Oga::XML::Element] element
+  # @param [Array] children
+  # @return [Oga::XML::Element]
+  #
+  def on_element_children(element, children = [])
+    element.children = children
+
+    return element
+  end
+
+  ##
+  # @param [Oga::XML::Element] element
+  # @return [Oga::XML::Element]
+  #
+  def after_element(element)
+    return element
   end
 }
