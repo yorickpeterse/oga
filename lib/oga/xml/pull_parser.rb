@@ -84,9 +84,7 @@ module Oga
       def parse(&block)
         @block = block
 
-        yyparse(self, :yield_next_token)
-
-        reset
+        super
 
         return
       end

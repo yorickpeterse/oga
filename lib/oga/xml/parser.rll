@@ -263,6 +263,17 @@ string_body_follow
   end
 
   ##
+  # @see [LL::Driver#parse]
+  #
+  def parse
+    retval = super
+
+    reset
+
+    return retval
+  end
+
+  ##
   # @param [Array] children
   # @return [Oga::XML::Document]
   #
