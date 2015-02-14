@@ -35,18 +35,22 @@ document
   ;
 
 expressions
-  = expression expressions { val[0] + val[1] }
+  = expression expressions
+    {
+      val[1].unshift(val[0])
+      val[1]
+    }
   | _
   ;
 
 expression
-  = doctype
-  | cdata
-  | comment
-  | proc_ins
-  | text
-  | element
-  | xml_decl
+  = doctype  { val[0] }
+  | cdata    { val[0] }
+  | comment  { val[0] }
+  | proc_ins { val[0] }
+  | text     { val[0] }
+  | element  { val[0] }
+  | xml_decl { val[0] }
   ;
 
 # Doctypes
@@ -156,7 +160,11 @@ attributes
   ;
 
 attributes_
-  = attribute attributes { [val[0]] + val[1] }
+  = attribute attributes
+    {
+      val[1].unshift(val[0])
+      val[1]
+    }
   | _
   ;
 
@@ -182,10 +190,7 @@ attribute_name
 # XML declarations
 
 xml_decl
-  = T_XML_DECL_START attributes T_XML_DECL_END
-    {
-      on_xml_decl(val[1])
-    }
+  = T_XML_DECL_START attributes T_XML_DECL_END { on_xml_decl(val[1]) }
   ;
 
 # Plain text
