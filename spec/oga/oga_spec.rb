@@ -33,7 +33,7 @@ describe Oga do
     end
 
     it 'parses an HTML document using the SAX parser' do
-      Oga.sax_parse_xml(@handler, '<link>')
+      Oga.sax_parse_html(@handler, '<link>')
 
       @handler.name.should == 'link'
     end
