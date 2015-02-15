@@ -223,6 +223,35 @@ string_body_follow
 %inner
 {
   ##
+  # Hash mapping token types and dedicated error labels.
+  #
+  # @return [Hash]
+  #
+  TOKEN_ERROR_MAPPING = {
+    :T_STRING         => 'string',
+    :T_TEXT           => 'text',
+    :T_DOCTYPE_START  => 'doctype start',
+    :T_DOCTYPE_END    => 'doctype closing tag',
+    :T_DOCTYPE_TYPE   => 'doctype type',
+    :T_DOCTYPE_NAME   => 'doctype name',
+    :T_DOCTYPE_INLINE => 'inline doctype rules',
+    :T_CDATA          => 'CDATA',
+    :T_COMMENT        => 'comment',
+    :T_ELEM_START     => 'element start',
+    :T_ELEM_NAME      => 'element name',
+    :T_ELEM_NS        => 'element namespace',
+    :T_ELEM_END       => 'element closing tag',
+    :T_ATTR           => 'attribute',
+    :T_ATTR_NS        => 'attribute namespace',
+    :T_XML_DECL_START => 'XML declaration start',
+    :T_XML_DECL_END   => 'XML declaration end',
+    :T_PROC_INS_START => 'processing-instruction start',
+    :T_PROC_INS_NAME  => 'processing-instruction name',
+    :T_PROC_INS_END   => 'processing-instruction closing tag',
+    -1                => 'end of input'
+  }
+
+  ##
   # @param [String|IO] data The input to parse.
   # @param [Hash] options
   # @see [Oga::XML::Lexer#initialize]
@@ -256,6 +285,30 @@ string_body_follow
     end
 
     yield [-1, -1]
+  end
+
+  ##
+  # @param [Fixnum] stack_type
+  # @param [Fixnum] stack_value
+  # @param [Symbol] token_type
+  # @param [String] token_value
+  #
+  def parser_error(stack_type, stack_value, token_type, token_value)
+    case id_to_type(stack_type)
+    when :rule
+      message = "Unexpected #{token_type} for rule #{stack_value}"
+    when :terminal
+      expected = id_to_terminal(stack_value)
+      expected = TOKEN_ERROR_MAPPING[expected]   || expected
+      got      = TOKEN_ERROR_MAPPING[token_type] || token_type
+      message  = "Unexpected #{got}, expected #{expected} instead"
+    when :eof
+      message = 'Unexpected end of input'
+    end
+
+    message += " on line #{@line}"
+
+    raise LL::ParserError, message
   end
 
   ##

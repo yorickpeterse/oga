@@ -93,7 +93,7 @@ module Oga
     #
     def parse_error(xml)
       parse(xml)
-    rescue Racc::ParseError => error
+    rescue LL::ParserError => error
       return error.message
     end
   end # ParsingHelpers

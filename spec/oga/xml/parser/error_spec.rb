@@ -12,8 +12,8 @@ describe Oga::XML::Parser do
       EOF
     end
 
-    it 'raises a Racc::ParseError' do
-      expect { parse(@invalid_xml) }.to raise_error(Racc::ParseError)
+    it 'raises a LL::ParserError' do
+      expect { parse(@invalid_xml) }.to raise_error(LL::ParserError)
     end
 
     it 'includes the line number when using a String as input' do
@@ -25,7 +25,8 @@ describe Oga::XML::Parser do
     end
 
     it 'uses more friendly error messages when available' do
-      parse_error('</foo>').should =~ /Unexpected element closing tag/
+      parse_error('<foo>').should ==
+        'Unexpected end of input, expected element closing tag instead on line 1'
     end
   end
 end
