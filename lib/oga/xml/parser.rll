@@ -154,15 +154,12 @@ element
 
 # Attributes
 
-attributes
-  = attributes_ { val[0] }
-  | _
-  ;
+attributes = attributes_ { on_attributes(val[0]) };
 
 attributes_
-  = attribute attributes
+  = attribute attributes_
     {
-      val[1].unshift(val[0])
+      val[1].unshift(val[0]) if val[0]
       val[1]
     }
   | _
@@ -171,9 +168,7 @@ attributes_
 attribute
   = attribute_name attribute_follow
     {
-      val[0].value = val[1]
-
-      val[0]
+      on_attribute(val[0][1], val[0][0], val[1])
     }
   ;
 
@@ -183,8 +178,8 @@ attribute_follow
   ;
 
 attribute_name
-  = T_ATTR           { on_attribute(val[0]) }
-  | T_ATTR_NS T_ATTR { on_attribute(val[1], val[0]) }
+  = T_ATTR { [nil, val[0]] }
+  | T_ATTR_NS T_ATTR
   ;
 
 # XML declarations
@@ -388,9 +383,21 @@ string_body_follow
   ##
   # @param [String] name
   # @param [String] ns_name
+  # @param [String] value
   # @return [Oga::XML::Attribute]
   #
-  def on_attribute(name, ns_name = nil)
-    return Attribute.new(:namespace_name => ns_name, :name => name)
+  def on_attribute(name, ns_name = nil, value = nil)
+    return Attribute.new(
+      :namespace_name => ns_name,
+      :name           => name,
+      :value          => value
+    )
+  end
+
+  ##
+  # @param [Array] attrs
+  #
+  def on_attributes(attrs)
+    return attrs
   end
 }

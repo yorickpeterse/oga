@@ -17,6 +17,8 @@ module Oga
     # * `on_text`
     # * `on_element`
     # * `on_element_children`
+    # * `on_attribute`
+    # * `on_attributes`
     # * `after_element`
     #
     # For example:
@@ -57,6 +59,14 @@ module Oga
     #       end
     #     end
     #
+    # ## Attributes
+    #
+    # Attributes returned by `on_attribute` are passed as an Hash as the 3rd
+    # argument of the `on_element` callback. The keys of this Hash are the
+    # attribute names (optionally prefixed by their namespace) and their values.
+    # You can overwrite `on_attribute` to control individual attributes and
+    # `on_attributes` to control the final set.
+    #
     class SaxParser < Parser
       ##
       # @param [Object] handler The SAX handler to delegate callbacks to.
@@ -86,7 +96,7 @@ module Oga
       # @see [Oga::XML::Parser#on_element]
       # @return [Array]
       #
-      def on_element(namespace, name, attrs = {})
+      def on_element(namespace, name, attrs = [])
         run_callback(:on_element, namespace, name, attrs)
 
         return namespace, name
@@ -101,6 +111,45 @@ module Oga
       #
       def after_element(namespace_with_name)
         run_callback(:after_element, *namespace_with_name)
+
+        return
+      end
+
+      ##
+      # Manually overwrite this method since for this one we _do_ want the
+      # return value so it can be passed to `on_element`.
+      #
+      # @see [Oga::XML::Parser#on_attribute]
+      #
+      def on_attribute(name, ns = nil, value = nil)
+        if @handler.respond_to?(:on_attribute)
+          return run_callback(:on_attribute, name, ns, value)
+        end
+
+        key = ns ? "#{ns}:#{name}" : name
+
+        return {key => value}
+      end
+
+      ##
+      # Merges the attributes together into a Hash.
+      #
+      # @param [Array] attrs
+      # @return [Hash]
+      #
+      def on_attributes(attrs)
+        if @handler.respond_to?(:on_attributes)
+          return run_callback(:on_attributes, attrs)
+        end
+
+        merged = {}
+
+        attrs.each do |pair|
+          # Hash#merge requires an extra allocation, this doesn't.
+          pair.each { |key, value| merged[key] = value }
+        end
+
+        return merged
       end
 
       private
