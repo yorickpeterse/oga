@@ -25,13 +25,6 @@ describe Oga::XML::NodeSet do
 
       node.node_set.should == set
     end
-
-    it 'only store unique nodes' do
-      n1  = Oga::XML::Element.new(:name => 'a')
-      set = described_class.new([n1, n1])
-
-      set.length.should == 1
-    end
   end
 
   describe '#each' do

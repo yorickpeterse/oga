@@ -44,7 +44,7 @@ module Oga
       # @param [Oga::XML::NodeSet] owner The owner of the set.
       #
       def initialize(nodes = [], owner = nil)
-        @nodes = nodes.uniq
+        @nodes = nodes
         @owner = owner
 
         @nodes.each { |node| take_ownership(node) } if owner
