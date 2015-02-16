@@ -47,7 +47,7 @@ module Oga
         @nodes = nodes.uniq
         @owner = owner
 
-        @nodes.each { |node| take_ownership(node) }
+        @nodes.each { |node| take_ownership(node) } if owner
       end
 
       ##
