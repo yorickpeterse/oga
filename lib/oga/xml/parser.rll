@@ -212,12 +212,18 @@ string_squote_follow
   ;
 
 string_body
-  = T_STRING_BODY string_body_follow { val[0] + val[1] }
+  = T_STRING_BODY string_body_follow
+    {
+      val[1] ? val[0] + val[1] : val[0]
+    }
   ;
 
 string_body_follow
-  = T_STRING_BODY string_body_follow { val[0] + val[1] }
-  | _                                { '' }
+  = T_STRING_BODY string_body_follow
+    {
+      val[1] ? val[0] + val[1] : val[0]
+    }
+  | _ { nil }
   ;
 
 %inner
