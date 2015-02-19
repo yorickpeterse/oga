@@ -130,15 +130,16 @@ proc_ins_follow
 
 # Elements
 
-element_open = T_ELEM_START element_name_ns { val[1] };
-
 element_name_ns
   = T_ELEM_NAME           { [nil, val[0]] }
-  | T_ELEM_NS T_ELEM_NAME { val}
+  | T_ELEM_NS T_ELEM_NAME { val }
   ;
 
 element_start
-  = element_open attributes { on_element(val[0][0], val[0][1], val[1]) }
+  = T_ELEM_START element_name_ns attributes
+    {
+      on_element(val[1][0], val[1][1], val[2])
+    }
   ;
 
 element
@@ -166,20 +167,22 @@ attributes_
   ;
 
 attribute
-  = attribute_name attribute_follow
+  # x:foo="bar"
+  = T_ATTR_NS T_ATTR attribute_follow
     {
-      on_attribute(val[0][1], val[0][0], val[1])
+      on_attribute(val[1], val[0], val[2])
+    }
+
+  # foo="bar"
+  | T_ATTR attribute_follow
+    {
+      on_attribute(val[0], nil, val[1])
     }
   ;
 
 attribute_follow
   = string { val[0] }
   | _      { nil }
-  ;
-
-attribute_name
-  = T_ATTR { [nil, val[0]] }
-  | T_ATTR_NS T_ATTR
   ;
 
 # XML declarations
