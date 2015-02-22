@@ -26,7 +26,3 @@ notifications:
     on_failure: change
 
 cache: bundler
-
-branches:
-  only:
-    - master
