@@ -164,16 +164,10 @@ attributes_
 
 attribute
   # x:foo="bar"
-  = T_ATTR_NS T_ATTR attribute_follow
-    {
-      on_attribute(val[1], val[0], val[2])
-    }
+  = T_ATTR_NS T_ATTR attribute_follow { on_attribute(val[1], val[0], val[2]) }
 
   # foo="bar"
-  | T_ATTR attribute_follow
-    {
-      on_attribute(val[0], nil, val[1])
-    }
+  | T_ATTR attribute_follow { on_attribute(val[0], nil, val[1]) }
   ;
 
 attribute_follow
@@ -211,18 +205,12 @@ string_squote_follow
   ;
 
 string_body
-  = T_STRING_BODY string_body_follow
-    {
-      val[1] ? val[0] + val[1] : val[0]
-    }
+  = T_STRING_BODY string_body_follow { val[1] ? val[0] + val[1] : val[0] }
   ;
 
 string_body_follow
-  = T_STRING_BODY string_body_follow
-    {
-      val[1] ? val[0] + val[1] : val[0]
-    }
-  | _ { nil }
+  = T_STRING_BODY string_body_follow { val[1] ? val[0] + val[1] : val[0] }
+  | _                                { nil }
   ;
 
 %inner
