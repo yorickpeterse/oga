@@ -158,11 +158,7 @@ element
 attributes = attributes_ { on_attributes(val[0]) };
 
 attributes_
-  = attribute attributes_
-    {
-      val[1].unshift(val[0]) if val[0]
-      val[1]
-    }
+  = attribute attributes_ { val[0] ? [val[0], *val[1]] : val[1] }
   | _
   ;
 
