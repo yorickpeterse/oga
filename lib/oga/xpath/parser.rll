@@ -1,0 +1,208 @@
+%header
+{
+##
+# AST parser for XPath expressions. The AST is built using {AST::Node}
+# instances.
+#
+# Unlike {Oga::XML::Parser} this parser only takes String instances as input.
+#
+}
+
+%name Oga::XPath::Parser;
+
+%terminals T_AXIS T_COLON T_COMMA T_FLOAT T_INT T_IDENT T_TYPE_TEST;
+%terminals T_LBRACK T_RBRACK T_LPAREN T_RPAREN T_SLASH T_STRING;
+%terminals T_PIPE T_AND T_OR T_ADD T_DIV T_MOD T_EQ T_NEQ T_LT T_GT T_LTE T_GTE;
+%terminals T_SUB T_MUL T_VAR;
+
+xpath
+  = expression { val[0] }
+  | _          { nil }
+  ;
+
+expression
+  = expression_member operator
+    {
+      val[1] ? s(val[1][0], val[0], val[1][1]) : val[0]
+    }
+  ;
+
+expression_member
+  = relative_path { val[0] }
+  | absolute_path { val[0] }
+  | string        { val[0] }
+  | number        { val[0] }
+  | variable      { val[0] }
+  ;
+
+# A, A/B, etc
+relative_path
+  = path_steps { val[0].length > 1 ? s(:path, *val[0]) : val[0][0] }
+  ;
+
+path_steps
+  = path_step_or_axis path_steps_follow { [val[0], *val[1]] }
+  ;
+
+path_steps_follow
+  = T_SLASH path_steps { val[1] }
+  | _
+  ;
+
+# /A, /A/B, etc
+absolute_path
+  = T_SLASH absolute_path_follow { s(:absolute_path, *val[1]) }
+  ;
+
+absolute_path_follow
+  = path_steps { val[0] }
+  | _
+  ;
+
+path_step_or_axis
+  = path_step { val[0] }
+  | axis      { val[0] }
+  ;
+
+# A, A(), A(X), etc
+path_step
+  = T_IDENT path_step_follow
+    {
+      type = val[1][0]
+      args = val[1][1]
+      pred = val[1][2]
+
+      if type == :test
+        # Whenever a bare test is used (e.g. just "A") this actually means
+        # "child::A". Handling this on parser level is the easiest.
+        if args
+          node = s(:axis, 'child', s(:test, val[0], args))
+        else
+          node = s(:axis, 'child', s(:test, nil, val[0]))
+        end
+      else
+        node = s(type, val[0], *args)
+      end
+
+      if pred
+        node = s(:predicate, node, pred)
+      end
+
+      node
+    }
+  | type_test { s(:axis, 'child', val[0]) }
+  ;
+
+path_step_follow
+  = T_LPAREN call_args T_RPAREN { [:call, val[1]] }
+  | T_COLON T_IDENT predicate   { [:test, val[1], val[2]] }
+  | predicate                   { [:test, nil, val[0]] }
+  ;
+
+predicate
+  = T_LBRACK expression T_RBRACK { val[1] }
+  | _                            { nil }
+  ;
+
+type_test
+  = T_TYPE_TEST { s(:type_test, val[0]) }
+  ;
+
+# Regular test (e.g. tests used as axis values)
+test
+  = T_IDENT test_follow
+    {
+      val[1] ? s(:test, val[0], val[1]) : s(:test, nil, val[0])
+    }
+  ;
+
+test_follow
+  = T_COLON T_IDENT { val[1] }
+  | _               { nil }
+  ;
+
+call_args
+  = expression call_args_follow { [val[0], *val[1]] }
+  | _
+  ;
+
+call_args_follow
+  = T_COMMA call_args { val[1] }
+  | _
+  ;
+
+# child::foo, descendant-or-self::foo, etc
+axis
+  = T_AXIS axis_follow { s(:axis, val[0], *val[1]) }
+  ;
+
+axis_follow
+  = test
+  | type_test
+  | _
+  ;
+
+operator
+  = T_PIPE expression { [:pipe, val[1]] }
+  | T_AND  expression { [:and,  val[1]] }
+  | T_OR   expression { [:or,   val[1]] }
+  | T_ADD  expression { [:add,  val[1]] }
+  | T_DIV  expression { [:div,  val[1]] }
+  | T_MOD  expression { [:mod,  val[1]] }
+  | T_EQ   expression { [:eq,   val[1]] }
+  | T_NEQ  expression { [:neq,  val[1]] }
+  | T_LT   expression { [:lt,   val[1]] }
+  | T_GT   expression { [:gt,   val[1]] }
+  | T_LTE  expression { [:lte,  val[1]] }
+  | T_GTE  expression { [:gte,  val[1]] }
+  | T_MUL  expression { [:mul,  val[1]] }
+  | T_SUB  expression { [:sub,  val[1]] }
+  | _                 { nil }
+  ;
+
+string
+  = T_STRING { s(:string, val[0]) };
+
+number
+  = T_INT   { s(:int, val[0]) }
+  | T_FLOAT { s(:float, val[0]) }
+  ;
+
+variable
+  = T_VAR { s(:var, val[0]) };
+
+%inner
+{
+  ##
+  # @param [String] data The input to parse.
+  #
+  def initialize(data)
+    @lexer = Lexer.new(data)
+  end
+
+  ##
+  # Creates a new XPath node.
+  #
+  # @param [Symbol] type
+  # @param [Array] children
+  # @return [AST::Node]
+  #
+  def s(type, *children)
+    return AST::Node.new(type, children)
+  end
+
+  ##
+  # Yields the next token from the lexer.
+  #
+  # @yieldparam [Array]
+  #
+  def each_token
+    @lexer.advance do |type, value, line|
+      @line = line if line
+
+      yield [type, value]
+    end
+
+    yield [-1, -1]
+  end
+}
