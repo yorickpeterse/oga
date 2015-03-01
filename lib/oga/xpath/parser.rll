@@ -21,18 +21,53 @@ xpath
   ;
 
 expression
-  = expression_member operator
+  = expression_or_operator optional_operator_recurse
+    {
+      val[1] ? s(val[1][0], val[0], val[1][1]) : val[0]
+    }
+  ;
+
+expression_or_operator
+  = expression_member optional_operator
     {
       val[1] ? s(val[1][0], val[0], val[1][1]) : val[0]
     }
   ;
 
 expression_member
-  = relative_path { val[0] }
-  | absolute_path { val[0] }
-  | string        { val[0] }
-  | number        { val[0] }
-  | variable      { val[0] }
+  = relative_path                { val[0] }
+  | absolute_path                { val[0] }
+  | string                       { val[0] }
+  | number                       { val[0] }
+  | variable                     { val[0] }
+  | T_LPAREN expression T_RPAREN { val[1] }
+  ;
+
+optional_operator_recurse
+  = operator expression_or_operator
+  | _ { nil }
+  ;
+
+optional_operator
+  = operator expression_member
+  | _ { nil }
+  ;
+
+operator
+  = T_PIPE { :pipe }
+  | T_AND  { :and  }
+  | T_OR   { :or   }
+  | T_ADD  { :add  }
+  | T_DIV  { :div  }
+  | T_MOD  { :mod  }
+  | T_EQ   { :eq   }
+  | T_NEQ  { :neq  }
+  | T_LT   { :lt   }
+  | T_GT   { :gt   }
+  | T_LTE  { :lte  }
+  | T_GTE  { :gte  }
+  | T_MUL  { :mul  }
+  | T_SUB  { :sub  }
   ;
 
 # A, A/B, etc
@@ -140,24 +175,6 @@ axis_follow
   = test
   | type_test
   | _
-  ;
-
-operator
-  = T_PIPE expression { [:pipe, val[1]] }
-  | T_AND  expression { [:and,  val[1]] }
-  | T_OR   expression { [:or,   val[1]] }
-  | T_ADD  expression { [:add,  val[1]] }
-  | T_DIV  expression { [:div,  val[1]] }
-  | T_MOD  expression { [:mod,  val[1]] }
-  | T_EQ   expression { [:eq,   val[1]] }
-  | T_NEQ  expression { [:neq,  val[1]] }
-  | T_LT   expression { [:lt,   val[1]] }
-  | T_GT   expression { [:gt,   val[1]] }
-  | T_LTE  expression { [:lte,  val[1]] }
-  | T_GTE  expression { [:gte,  val[1]] }
-  | T_MUL  expression { [:mul,  val[1]] }
-  | T_SUB  expression { [:sub,  val[1]] }
-  | _                 { nil }
   ;
 
 string
