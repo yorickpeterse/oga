@@ -3,7 +3,27 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
-## 0.3.0 - Unreleased
+## 0.2.1 - Unreleased
+
+### Proper HTML serializing support for script tags
+
+When serializing an HTML document back to HTML (as a String) the contents of
+`<script>` tags are serialized correctly. Previously XML unsafe characters
+(e.g. `<`) would be converted to XML entities, which results in invalid
+Javascript syntax. This has been changed so that `<script>` tags in HTML
+documents _don't_ have their contents converted, ensuring proper Javascript
+syntax upon output.
+
+See commit 874d7124af540f0bc78e6c586868bbffb4310c5d and issue
+<https://github.com/YorickPeterse/oga/issues/79> for more information.
+
+### Proper lexing support for script tags
+
+When lexing HTML documents the XML lexer is now capable of lexing the contents
+of `<script>` tags properly. Previously input such as `<script>x >y</script>`
+would result in incorrect tokens being emitted. See commit
+ba2177e2cfda958ea12c5b04dbf60907aaa8816d and issue
+<https://github.com/YorickPeterse/oga/issues/70> for more information.
 
 ### Element Inner Text
 
@@ -12,6 +32,23 @@ _all_ child nodes of the element are now removed first, instead of only text
 nodes being removed.
 
 See <https://github.com/YorickPeterse/oga/issues/64> for more information.
+
+### Support for extra XML entities
+
+Support for encoding/decoding extra XML entities was added by Dmitry
+Krasnoukhov. This includes entities such as `&#60`, `&#34`, etc. See commit
+26baf89440d97bd9dd5e50ec3d6d9b7ab3bdf737 for more information.
+
+### Support for inline doctypes with newlines in IO input
+
+The XML lexer (and thus the parser) can now handle inline doctypes containing
+newlines when using an IO object as the input. For example:
+
+    <!DOCTYPE html[foo
+    bar]>
+
+Previously this would result in incorrect tokens being emitted by the lexer. See
+commit cbb2815146a79805b8da483d2ef48d17e2959e72 for more information.
 
 ## 0.2.0 - 2014-11-17
 
