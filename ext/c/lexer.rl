@@ -16,12 +16,6 @@ on `ts` and `te`) so the macro ignores this argument.
 #define callback_simple(name) \
     liboga_xml_lexer_callback_simple(self, name);
 
-#define oga_ivar_get(owner, name) \
-    rb_ivar_get(owner, rb_intern(name))
-
-#define oga_ivar_set(owner, name, value) \
-    rb_ivar_set(owner, rb_intern(name), value)
-
 #define advance_line(amount) \
     rb_funcall(self, rb_intern("advance_line"), 1, INT2NUM(amount));
 
