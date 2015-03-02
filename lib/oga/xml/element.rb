@@ -307,7 +307,7 @@ module Oga
         self_closing = children.empty?
         root         = root_node
 
-        if root.is_a?(Document) and root.type == :html \
+        if root.is_a?(Document) and root.html? \
         and !HTML_VOID_ELEMENTS.include?(name)
           self_closing = false
         end

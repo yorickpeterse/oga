@@ -97,6 +97,16 @@ describe Oga::XML::Document do
     end
   end
 
+  describe '#html?' do
+    it 'returns false for an XML document' do
+      described_class.new(:type => :xml).html?.should == false
+    end
+
+    it 'returns true for an HTML document' do
+      described_class.new(:type => :html).html?.should == true
+    end
+  end
+
   describe '#inspect' do
     before do
       @instance = described_class.new(

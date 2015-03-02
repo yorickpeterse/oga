@@ -78,6 +78,13 @@ module Oga
       end
 
       ##
+      # @return [TrueClass|FalseClass]
+      #
+      def html?
+        return type == :html
+      end
+
+      ##
       # Inspects the document and its child nodes. Child nodes are indented for
       # each nesting level.
       #
