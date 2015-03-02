@@ -3,7 +3,7 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
-## 0.2.1 - Unreleased
+## 0.2.1 - 2015-03-02
 
 ### Proper HTML serializing support for script tags
 
