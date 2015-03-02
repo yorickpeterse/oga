@@ -9,7 +9,15 @@ module Oga
       # @see [Oga::XML::CharacterNode#to_xml]
       #
       def to_xml
-        return Entities.encode(super)
+        node = parent
+        root = root_node
+
+        if root.is_a?(Document) and node.is_a?(Element) \
+        and node.name == Lexer::SCRIPT_TAG and root.html?
+          return super
+        else
+          return Entities.encode(super)
+        end
       end
     end # Text
   end # XML

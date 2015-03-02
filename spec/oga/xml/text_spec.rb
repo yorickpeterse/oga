@@ -26,6 +26,32 @@ describe Oga::XML::Text do
 
       node.to_xml.should == '&amp;&lt;&gt;'
     end
+
+    describe 'inside an XML document' do
+      it 'encodes special characters as XML entities' do
+        document = Oga::XML::Document.new
+        script   = Oga::XML::Element.new(:name => 'script')
+        text     = described_class.new(:text => 'x > y')
+
+        script.children   << text
+        document.children << script
+
+        text.to_xml.should == 'x &gt; y'
+      end
+    end
+
+    describe 'inside an HTML <script> element' do
+      it 'does not encode special characters as XML entities' do
+        document = Oga::XML::Document.new(:type => :html)
+        script   = Oga::XML::Element.new(:name => 'script')
+        text     = described_class.new(:text => 'x > y')
+
+        script.children   << text
+        document.children << script
+
+        text.to_xml.should == 'x > y'
+      end
+    end
   end
 
   describe '#inspect' do
