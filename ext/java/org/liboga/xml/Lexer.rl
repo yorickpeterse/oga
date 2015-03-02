@@ -185,6 +185,17 @@ public class Lexer extends RubyObject
 
         this.callMethod(context, "advance_line", lines);
     }
+
+    /**
+     * Returns true if we're in an HTML script tag. See
+     * Oga::XML::Lexer#inside_html_script? for more information.
+     */
+    public Boolean inside_html_script_p()
+    {
+        ThreadContext context = this.runtime.getCurrentContext();
+
+        return this.callMethod(context, "inside_html_script?").isTrue();
+    }
 }
 
 %%{

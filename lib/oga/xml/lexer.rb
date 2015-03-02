@@ -41,6 +41,14 @@ module Oga
       attr_reader :html
 
       ##
+      # Element name used to determine if a tag being processed is a Javascript
+      # tag.
+      #
+      # @return [String]
+      #
+      SCRIPT_TAG = 'script'.freeze
+
+      ##
       # @param [String|IO] data The data to lex. This can either be a String or
       #  an IO instance.
       #
@@ -179,6 +187,15 @@ module Oga
       #
       def current_element
         return @elements.last
+      end
+
+      ##
+      # Returns true if the current element is the HTML `<script>` element.
+      #
+      # @return [TrueClass|FalseClass]
+      #
+      def inside_html_script?
+        return html? && current_element == SCRIPT_TAG
       end
 
       ##

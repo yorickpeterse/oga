@@ -17,7 +17,13 @@ on `ts` and `te`) so the macro ignores this argument.
     liboga_xml_lexer_callback_simple(self, name);
 
 #define advance_line(amount) \
-    rb_funcall(self, rb_intern("advance_line"), 1, INT2NUM(amount));
+    rb_funcall(self, id_advance_line, 1, INT2NUM(amount));
+
+#define inside_html_script_p() \
+    rb_funcall(self, id_inside_html_script_p, 0) == Qtrue
+
+ID id_advance_line;
+ID id_inside_html_script_p;
 
 %%machine c_lexer;
 
@@ -166,6 +172,9 @@ void Init_liboga_xml_lexer()
     VALUE mOga   = rb_const_get(rb_cObject, rb_intern("Oga"));
     VALUE mXML   = rb_const_get(mOga, rb_intern("XML"));
     VALUE cLexer = rb_define_class_under(mXML, "Lexer", rb_cObject);
+
+    id_advance_line         = rb_intern("advance_line");
+    id_inside_html_script_p = rb_intern("inside_html_script?");
 
     rb_define_method(cLexer, "advance_native", oga_xml_lexer_advance, 1);
     rb_define_method(cLexer, "reset_native", oga_xml_lexer_reset, 0);

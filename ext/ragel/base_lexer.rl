@@ -327,7 +327,17 @@
         # We're done with the open tag of the element.
         '>' => {
             callback_simple(id_on_element_open_end);
-            fnext main;
+
+            if ( inside_html_script_p() )
+            {
+                mark = ts + 1;
+
+                fnext script_text;
+            }
+            else
+            {
+                fnext main;
+            }
         };
 
         # Self closing tags.
@@ -389,6 +399,30 @@
 
             fnext main;
         };
+    *|;
+
+    # <script> tags in HTML can contain basically anything except for the
+    # literal "</script>". As a result of this we can't use the regular text
+    # machine.
+    script_text := |*
+        '</script>' => {
+            callback(id_on_text, data, encoding, mark, ts);
+
+            mark = 0;
+
+            if ( lines > 0 )
+            {
+                advance_line(lines);
+
+                lines = 0;
+            }
+
+            callback_simple(id_on_element_end);
+
+            fnext main;
+        };
+
+        any $count_newlines;
     *|;
 
     # The main machine aka the entry point of Ragel.
