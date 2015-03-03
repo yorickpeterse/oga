@@ -187,14 +187,13 @@ public class Lexer extends RubyObject
     }
 
     /**
-     * Returns true if we're in an HTML script tag. See
-     * Oga::XML::Lexer#inside_html_script? for more information.
+     * See * Oga::XML::Lexer#literal_html_element? for more information.
      */
-    public Boolean inside_html_script_p()
+    public Boolean literal_html_element_p()
     {
         ThreadContext context = this.runtime.getCurrentContext();
 
-        return this.callMethod(context, "inside_html_script?").isTrue();
+        return this.callMethod(context, "literal_html_element?").isTrue();
     }
 }
 

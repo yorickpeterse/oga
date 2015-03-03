@@ -12,8 +12,8 @@ module Oga
         node = parent
         root = root_node
 
-        if root.is_a?(Document) and node.is_a?(Element) \
-        and node.name == Lexer::SCRIPT_TAG and root.html?
+        if root.is_a?(Document) and node.is_a?(Element) and root.html? \
+        and Lexer::LITERAL_HTML_ELEMENTS.include?(node.name)
           return super
         else
           return Entities.encode(super)

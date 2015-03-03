@@ -41,12 +41,11 @@ module Oga
       attr_reader :html
 
       ##
-      # Element name used to determine if a tag being processed is a Javascript
-      # tag.
+      # Names of HTML tags of which the content should be lexed as-is.
       #
-      # @return [String]
+      # @return [Array]
       #
-      SCRIPT_TAG = 'script'.freeze
+      LITERAL_HTML_ELEMENTS = %w{script style}
 
       ##
       # @param [String|IO] data The data to lex. This can either be a String or
@@ -190,12 +189,12 @@ module Oga
       end
 
       ##
-      # Returns true if the current element is the HTML `<script>` element.
+      # Returns true if the current element's content should be lexed as-is.
       #
       # @return [TrueClass|FalseClass]
       #
-      def inside_html_script?
-        return html? && current_element == SCRIPT_TAG
+      def literal_html_element?
+        return html? && LITERAL_HTML_ELEMENTS.include?(current_element)
       end
 
       ##

@@ -328,11 +328,11 @@
         '>' => {
             callback_simple(id_on_element_open_end);
 
-            if ( inside_html_script_p() )
+            if ( literal_html_element_p() )
             {
                 mark = ts + 1;
 
-                fnext script_text;
+                fnext literal_html_element;
             }
             else
             {
@@ -401,11 +401,11 @@
         };
     *|;
 
-    # <script> tags in HTML can contain basically anything except for the
-    # literal "</script>". As a result of this we can't use the regular text
-    # machine.
-    script_text := |*
-        '</script>' => {
+    # Certain tags in HTML can contain basically anything except for the literal
+    # closing tag. Two examples are script and style tags.  As a result of this
+    # we can't use the regular text machine.
+    literal_html_element := |*
+        '</script>' | '</style>' => {
             callback(id_on_text, data, encoding, mark, ts);
 
             mark = 0;

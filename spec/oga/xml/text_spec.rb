@@ -52,6 +52,19 @@ describe Oga::XML::Text do
         text.to_xml.should == 'x > y'
       end
     end
+
+    describe 'inside an HTML <style> element' do
+      it 'does not encode special characters as XML entities' do
+        document = Oga::XML::Document.new(:type => :html)
+        style    = Oga::XML::Element.new(:name => 'style')
+        text     = described_class.new(:text => 'x > y')
+
+        style.children    << text
+        document.children << style
+
+        text.to_xml.should == 'x > y'
+      end
+    end
   end
 
   describe '#inspect' do
