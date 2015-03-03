@@ -213,7 +213,7 @@ module Oga
       #
       def inner_text=(text)
         text_node = XML::Text.new(:text => text)
-        @children = NodeSet.new([text_node])
+        @children = NodeSet.new([text_node], self)
       end
 
       ##

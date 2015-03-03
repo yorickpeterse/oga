@@ -268,6 +268,12 @@ describe Oga::XML::Element do
 
       @element.children.length.should == 1
     end
+
+    it 'sets the parent node of the newly inserted text node' do
+      @element.inner_text = 'foo'
+
+      @element.children[0].parent.should == @element
+    end
   end
 
   describe '#text_nodes' do
