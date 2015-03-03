@@ -38,7 +38,7 @@ ID id_literal_html_element_p;
  */
 void liboga_xml_lexer_callback(
     VALUE self,
-    VALUE name,
+    ID name,
     rb_encoding *encoding,
     const char *ts,
     const char *te
