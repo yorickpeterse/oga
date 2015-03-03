@@ -3,6 +3,19 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 0.2.2 - 2015-03-03
+
+This release fixes a bug where setting the text of an element using
+`Oga::XML::Element#inner_text=` would not set the parent element of the newly
+created text node. This would result in the following:
+
+    some_element.inner_text = 'foo'
+
+    some_element.children[0].parent # => nil
+
+Here `parent` is supposed to return `some_element` instead. See commit
+142b467277dc9864df8279347ba737ddf60f4836 for more information.
+
 ## 0.2.1 - 2015-03-02
 
 ### Proper HTML serializing support for script tags
