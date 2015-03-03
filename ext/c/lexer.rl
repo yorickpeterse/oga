@@ -73,13 +73,12 @@ void liboga_xml_lexer_callback_simple(VALUE self, VALUE name)
 VALUE oga_xml_lexer_advance(VALUE self, VALUE data_block)
 {
     OgaLexerState *state;
+    int lines;
 
     /* Make sure that all data passed back to Ruby has the proper encoding. */
     rb_encoding *encoding = rb_enc_get(data_block);
 
     char *data_str_val = StringValueCStr(data_block);
-
-    Data_Get_Struct(self, OgaLexerState, state);
 
     const char *p    = data_str_val;
     const char *pe   = data_str_val + strlen(data_str_val);
@@ -87,8 +86,6 @@ VALUE oga_xml_lexer_advance(VALUE self, VALUE data_block)
     const char *ts   = 0;
     const char *te   = 0;
     const char *mark = 0;
-
-    int lines = state->lines;
 
     ID id_advance_line        = rb_intern("advance_line");
     ID id_on_attribute        = rb_intern("on_attribute");
@@ -114,6 +111,10 @@ VALUE oga_xml_lexer_advance(VALUE self, VALUE data_block)
     ID id_on_text             = rb_intern("on_text");
     ID id_on_xml_decl_end     = rb_intern("on_xml_decl_end");
     ID id_on_xml_decl_start   = rb_intern("on_xml_decl_start");
+
+    Data_Get_Struct(self, OgaLexerState, state);
+
+    lines = state->lines;
 
     %% write exec;
 
