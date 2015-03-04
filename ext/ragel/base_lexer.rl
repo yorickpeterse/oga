@@ -330,8 +330,6 @@
 
             if ( literal_html_element_p() )
             {
-                mark = ts + 1;
-
                 fnext literal_html_element;
             }
             else
@@ -404,10 +402,25 @@
     # Certain tags in HTML can contain basically anything except for the literal
     # closing tag. Two examples are script and style tags.  As a result of this
     # we can't use the regular text machine.
-    literal_html_element := |*
-        '</script>' | '</style>' => {
-            callback(id_on_text, data, encoding, mark, ts);
+    literal_html_closing_tags = '</script>' | '</style>';
+    literal_html_allowed = (any* -- literal_html_closing_tags) $count_newlines;
 
+    literal_html_element := |*
+        literal_html_allowed => {
+            callback(id_on_text, data, encoding, ts, te);
+
+            if ( lines > 0 )
+            {
+                advance_line(lines);
+
+                lines = 0;
+            }
+        };
+
+        literal_html_allowed %{ mark = p; } literal_html_closing_tags => {
+            callback(id_on_text, data, encoding, ts, mark);
+
+            p    = mark - 1;
             mark = 0;
 
             if ( lines > 0 )
@@ -417,12 +430,8 @@
                 lines = 0;
             }
 
-            callback_simple(id_on_element_end);
-
             fnext main;
         };
-
-        any $count_newlines;
     *|;
 
     # The main machine aka the entry point of Ragel.
