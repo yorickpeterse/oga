@@ -28,7 +28,7 @@ end
 # @return [String]
 #
 def read_html
-  return File.read(File.expand_path('../fixtures/gist.html', __FILE__))
+  return File.read(File.expand_path('../fixtures/with_entities.html', __FILE__))
 end
 
 ##
