@@ -3,6 +3,15 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 0.2.3 - 2015-03-04
+
+This release adds support for lexing HTML `<style>` tags similar to how
+`<script>` tags are handled. This ensures that the contents of these tags are
+treated as-is without any HTML entity conversion being applied.
+
+See commits 78e40b55c0e5941bee5791a5014260e9c2cf8aad and
+3b2055a30b128aa679a83332dfdfa68314271b24 for more information.
+
 ## 0.2.2 - 2015-03-03
 
 This release fixes a bug where setting the text of an element using
