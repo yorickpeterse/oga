@@ -3,6 +3,7 @@ gem 'racc'
 require 'ast'
 require 'set'
 require 'stringio'
+require 'thread'
 
 require_relative 'oga/version'
 require_relative 'oga/oga'
@@ -43,6 +44,7 @@ require_relative 'oga/xml/pull_parser'
 
 require_relative 'oga/html/parser'
 require_relative 'oga/html/sax_parser'
+require_relative 'oga/html/entities'
 
 require_relative 'oga/xpath/lexer'
 require_relative 'oga/xpath/parser'

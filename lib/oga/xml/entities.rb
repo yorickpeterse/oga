@@ -1,5 +1,9 @@
 module Oga
   module XML
+    ##
+    # Module for encoding/decoding XML and HTML entities. The mapping of HTML
+    # entities can be found in {Oga::HTML::Entities::DECODE_MAPPING}.
+    #
     module Entities
       ##
       # Hash containing XML entities and the corresponding characters.
@@ -11,15 +15,10 @@ module Oga
       #
       DECODE_MAPPING = {
         '&lt;'   => '<',
-        '&#60;'  => '<',
         '&gt;'   => '>',
-        '&#62;'  => '>',
         '&apos;' => "'",
-        '&#39;'  => "'",
         '&quot;' => '"',
-        '&#34;'  => '"',
         '&amp;'  => '&',
-        '&#38;'  => '&',
       }
 
       ##
@@ -36,15 +35,45 @@ module Oga
       }
 
       ##
+      # @return [String]
+      #
+      AMPERSAND = '&'.freeze
+
+      ##
+      # Regexp for matching XML/HTML entities such as "&nbsp;".
+      #
+      # @return [Regexp]
+      #
+      REGULAR_ENTITY = /&[a-zA-Z]+;/
+
+      ##
+      # Regexp for matching XML/HTML entities such as "&#38;".
+      #
+      # @return [Regexp]
+      #
+      CODEPOINT_ENTITY = /&#(x)?([a-zA-Z0-9]+);/
+
+      ##
+      # @return [Regexp]
+      #
+      ENCODE_REGEXP = Regexp.new(ENCODE_MAPPING.keys.join('|'))
+
+      ##
       # Decodes XML entities.
       #
       # @param [String] input
+      # @param [Array] keys
+      # @param [Hash] mapping
       # @return [String]
       #
-      def self.decode(input)
-        if input.include?('&')
-          DECODE_MAPPING.each do |find, replace|
-            input = input.gsub(find, replace)
+      def self.decode(input, mapping = DECODE_MAPPING)
+        return input unless input.include?(AMPERSAND)
+
+        input = input.gsub(REGULAR_ENTITY, mapping)
+
+        if input.include?(AMPERSAND)
+          input = input.gsub(CODEPOINT_ENTITY) do |match|
+            [$1 ? Integer($2, 16) : Integer($2)].pack('U')
           end
         end
 
@@ -55,14 +84,11 @@ module Oga
       # Encodes special characters as XML entities.
       #
       # @param [String] input
+      # @param [Hash] mapping
       # @return [String]
       #
-      def self.encode(input)
-        ENCODE_MAPPING.each do |from, to|
-          input = input.gsub(from, to) if input.include?(from)
-        end
-
-        return input
+      def self.encode(input, mapping = ENCODE_MAPPING)
+        return input.gsub(ENCODE_REGEXP, mapping)
       end
     end # Entities
   end # XML

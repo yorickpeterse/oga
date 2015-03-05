@@ -65,6 +65,10 @@ describe Oga::XML::Entities do
     it 'decodes &amp;&amp;lt; into &<' do
       described_class.decode('&amp;&amp;lt;').should == '&&lt;'
     end
+
+    it 'decodes &#x3C; into <' do
+      described_class.decode('&#x3C;').should == '<'
+    end
   end
 
   describe 'encode' do
