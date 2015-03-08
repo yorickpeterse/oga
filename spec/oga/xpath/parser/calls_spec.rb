@@ -71,5 +71,13 @@ describe Oga::XPath::Parser do
         s(:call, 'bar')
       )
     end
+
+    it 'parses a function call inside a predicate' do
+      parse_xpath('A[foo()]').should == s(
+        :predicate,
+        s(:axis, 'child', s(:test, nil, 'A')),
+        s(:call, 'foo')
+      )
+    end
   end
 end
