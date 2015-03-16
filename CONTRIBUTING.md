@@ -9,7 +9,7 @@ should follow. These are as following:
   value(s) should be documented.
 * Wrap lines at 80 characters per line.
 * Git commits should have a <= 50 character summary, optionally followed by a
-  blank line and a more in depth description of 80 characters per line.
+  blank line and a more in depth description of 72 characters per line.
 
 ## Editor Setup
 
