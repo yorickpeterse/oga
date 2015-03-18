@@ -16,58 +16,93 @@
 %terminals T_SUB T_MUL T_VAR;
 
 xpath
-  = expression { val[0] }
-  | _          { nil }
+  = expression
+  | _ { nil }
   ;
+
+# Expressions And Operators
+#
+# Operators are handled by using a mixture of iteration (in the form of the *
+# operator), recursion and priorities. Priorities are handled by recursing into
+# certain rules before processing others.
+#
+# These rules are largely based on the following resources:
+#
+# * http://www.w3.org/TR/xquery-xpath-parsing/#XPath-EBNF
+# * http://blog.jwbroek.com/2010/07/antlr-grammar-for-parsing-xpath-10.html
+#
 
 expression
-  = expression_or_operator optional_operator_recurse
-    {
-      val[1] ? s(val[1][0], val[0], val[1][1]) : val[0]
-    }
+  = and_expr expression_follow* { combine_operators(val) }
   ;
 
-expression_or_operator
-  = expression_member optional_operator
-    {
-      val[1] ? s(val[1][0], val[0], val[1][1]) : val[0]
-    }
+expression_follow
+  = T_OR and_expr { [:or, val[1]] }
+  ;
+
+and_expr
+  = equality_expr and_expr_follow* { combine_operators(val) }
+  ;
+
+and_expr_follow
+  = T_AND equality_expr { [:and, val[1]] }
+  ;
+
+equality_expr
+  = relational_expr equality_expr_follow* { combine_operators(val) }
+  ;
+
+equality_expr_follow
+  = T_EQ  relational_expr { [:eq, val[1]] }
+  | T_NEQ relational_expr { [:neq, val[1]] }
+  ;
+
+relational_expr
+  = additive_expr relational_expr_follow* { combine_operators(val) }
+  ;
+
+relational_expr_follow
+  = T_LT  additive_expr { [:lt, val[1]] }
+  | T_GT  additive_expr { [:gt, val[1]] }
+  | T_LTE additive_expr { [:lte, val[1]] }
+  | T_GTE additive_expr { [:gte, val[1]] }
+  ;
+
+additive_expr
+  = mult_expr additive_expr_follow* { combine_operators(val) }
+  ;
+
+additive_expr_follow
+  = T_ADD mult_expr { [:add, val[1]] }
+  | T_SUB mult_expr { [:sub, val[1]] }
+  ;
+
+mult_expr
+  = union_expr mult_expr_follow { combine_optional_operator(val) }
+  ;
+
+mult_expr_follow
+  = T_DIV mult_expr { [:div, val[1]] }
+  | T_MOD mult_expr { [:mod, val[1]] }
+  | T_MUL mult_expr { [:mul, val[1]] }
+  | _               { nil }
+  ;
+
+union_expr
+  = expression_member union_expr_follow* { combine_operators(val) }
+  ;
+
+union_expr_follow
+  = T_PIPE expression_member { [:pipe, val[1]] }
   ;
 
 expression_member
-  = relative_path                { val[0] }
-  | absolute_path                { val[0] }
-  | string                       { val[0] }
-  | number                       { val[0] }
-  | variable                     { val[0] }
+  = relative_path
+  | absolute_path
+  | string
+  | number
+  | variable
   | T_LPAREN expression T_RPAREN { val[1] }
-  ;
-
-optional_operator_recurse
-  = operator expression_or_operator
-  | _ { nil }
-  ;
-
-optional_operator
-  = operator expression_member
-  | _ { nil }
-  ;
-
-operator
-  = T_PIPE { :pipe }
-  | T_AND  { :and  }
-  | T_OR   { :or   }
-  | T_ADD  { :add  }
-  | T_DIV  { :div  }
-  | T_MOD  { :mod  }
-  | T_EQ   { :eq   }
-  | T_NEQ  { :neq  }
-  | T_LT   { :lt   }
-  | T_GT   { :gt   }
-  | T_LTE  { :lte  }
-  | T_GTE  { :gte  }
-  | T_MUL  { :mul  }
-  | T_SUB  { :sub  }
   ;
 
 # A, A/B, etc
@@ -90,13 +125,13 @@ absolute_path
   ;
 
 absolute_path_follow
-  = path_steps { val[0] }
+  = path_steps
   | _
   ;
 
 path_step_or_axis
-  = path_step { val[0] }
-  | axis      { val[0] }
+  = path_step
+  | axis
   ;
 
 # A, A(), A(X), etc
@@ -168,13 +203,21 @@ call_args_follow
 
 # child::foo, descendant-or-self::foo, etc
 axis
-  = T_AXIS axis_follow { s(:axis, val[0], *val[1]) }
+  = T_AXIS axis_value predicate
+    {
+      ret = s(:axis, val[0], val[1])
+
+      if val[2]
+        ret = s(:predicate, ret, val[2])
+      end
+
+      ret
+    }
   ;
 
-axis_follow
+axis_value
   = test
   | type_test
-  | _
   ;
 
 string
@@ -186,7 +229,8 @@ number
   ;
 
 variable
-  = T_VAR { s(:var, val[0]) };
+  = T_VAR { s(:var, val[0]) }
+  ;
 
 %inner
 {
@@ -221,5 +265,31 @@ variable
     end
 
     yield [-1, -1]
+  end
+
+  ##
+  # @param [Array] val
+  #
+  def combine_operators(val)
+    ret = val[0]
+
+    val[1].each do |expr|
+      ret = s(expr[0], ret, expr[1])
+    end
+
+    return ret
+  end
+
+  ##
+  # @param [Array] val
+  #
+  def combine_optional_operator(val)
+    ret = val[0]
+
+    if val[1]
+      ret = s(val[1][0], ret, val[1][1])
+    end
+
+    ret
   end
 }
