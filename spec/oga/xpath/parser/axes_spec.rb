@@ -9,6 +9,13 @@ describe Oga::XPath::Parser do
       )
     end
 
+    it 'parses the ancestor axis with a predicate' do
+      parse_xpath('/ancestor::A[1]').should == s(
+        :absolute_path,
+        s(:predicate, s(:axis, 'ancestor', s(:test, nil, 'A')), s(:int, 1))
+      )
+    end
+
     it 'parses the ancestor-or-self axis' do
       parse_xpath('/ancestor-or-self::A').should == s(
         :absolute_path,
