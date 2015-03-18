@@ -31,26 +31,20 @@
 
 document
   = expressions { on_document(val[0]) }
-  | _           { on_document }
   ;
 
 expressions
-  = expression expressions
-    {
-      val[1].unshift(val[0])
-      val[1]
-    }
-  | _
+  = expression*
   ;
 
 expression
-  = doctype  { val[0] }
-  | cdata    { val[0] }
-  | comment  { val[0] }
-  | proc_ins { val[0] }
-  | text     { val[0] }
-  | element  { val[0] }
-  | xml_decl { val[0] }
+  = doctype
+  | cdata
+  | comment
+  | proc_ins
+  | text
+  | element
+  | xml_decl
   ;
 
 # Doctypes
@@ -88,12 +82,7 @@ doctype_follow
   ;
 
 doctype_inline
-  = T_DOCTYPE_INLINE doctype_inline_follow { val[0] + val[1] }
-  ;
-
-doctype_inline_follow
-  = doctype_inline { val[0] }
-  | _              { '' }
+  = T_DOCTYPE_INLINE+ { val[0].inject(:+) }
   ;
 
 doctype_types
@@ -108,11 +97,15 @@ doctype_types_follow
 
 # CDATA tags
 
-cdata = T_CDATA { on_cdata(val[0]) };
+cdata
+  = T_CDATA { on_cdata(val[0]) }
+  ;
 
 # Comments
 
-comment = T_COMMENT { on_comment(val[0]) };
+comment
+  = T_COMMENT { on_comment(val[0]) }
+  ;
 
 # Processing Instructions
 
@@ -155,11 +148,8 @@ element
 
 # Attributes
 
-attributes = attributes_ { on_attributes(val[0]) };
-
-attributes_
-  = attribute attributes_ { val[0] ? [val[0], *val[1]] : val[1] }
-  | _
+attributes
+  = attribute* { on_attributes(val[0]) }
   ;
 
 attribute
@@ -183,34 +173,21 @@ xml_decl
 
 # Plain text
 
-text = T_TEXT { on_text(val[0]) };
+text
+  = T_TEXT { on_text(val[0]) }
+  ;
 
 # Strings
 #
 # This parses both (empty) single and double quoted strings.
 
 string
-  = T_STRING_DQUOTE string_dquote_follow { val[1] }
-  | T_STRING_SQUOTE string_squote_follow { val[1] }
-  ;
-
-string_dquote_follow
-  = T_STRING_DQUOTE             { '' }
-  | string_body T_STRING_DQUOTE { val[0] }
-  ;
-
-string_squote_follow
-  = T_STRING_SQUOTE             { '' }
-  | string_body T_STRING_SQUOTE { val[0] }
+  = T_STRING_DQUOTE string_body T_STRING_DQUOTE { val[1] }
+  | T_STRING_SQUOTE string_body T_STRING_SQUOTE { val[1] }
   ;
 
 string_body
-  = T_STRING_BODY string_body_follow { val[1] ? val[0] + val[1] : val[0] }
-  ;
-
-string_body_follow
-  = T_STRING_BODY string_body_follow { val[1] ? val[0] + val[1] : val[0] }
-  | _                                { nil }
+  = T_STRING_BODY* { val[0].inject(:+) || '' }
   ;
 
 %inner
