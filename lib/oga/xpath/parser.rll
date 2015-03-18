@@ -111,12 +111,11 @@ relative_path
   ;
 
 path_steps
-  = path_step_or_axis path_steps_follow { [val[0], *val[1]] }
+  = path_step_or_axis path_steps_follow* { [val[0], *val[1]] }
   ;
 
 path_steps_follow
-  = T_SLASH path_steps { val[1] }
-  | _
+  = T_SLASH path_step_or_axis { val[1] }
   ;
 
 # /A, /A/B, etc
@@ -192,13 +191,12 @@ test_follow
   ;
 
 call_args
-  = expression call_args_follow { [val[0], *val[1]] }
+  = expression call_args_follow* { [val[0], *val[1]] }
   | _
   ;
 
 call_args_follow
-  = T_COMMA call_args { val[1] }
-  | _
+  = T_COMMA expression { val[1] }
   ;
 
 # child::foo, descendant-or-self::foo, etc
