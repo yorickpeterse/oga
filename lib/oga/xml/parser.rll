@@ -86,13 +86,8 @@ doctype_inline
   ;
 
 doctype_types
-  = string doctype_types_follow { [val[0], val[1]] }
-  | T_DOCTYPE_END               { nil }
-  ;
-
-doctype_types_follow
-  = string T_DOCTYPE_END { val[0] }
-  | T_DOCTYPE_END        { nil }
+  = string string? T_DOCTYPE_END { [val[0], val[1]] }
+  | T_DOCTYPE_END                { nil }
   ;
 
 # CDATA tags
@@ -110,15 +105,10 @@ comment
 # Processing Instructions
 
 proc_ins
-  = T_PROC_INS_START T_PROC_INS_NAME proc_ins_follow
+  = T_PROC_INS_START T_PROC_INS_NAME T_TEXT? T_PROC_INS_END
     {
       on_proc_ins(val[1], val[2])
     }
-  ;
-
-proc_ins_follow
-  = T_PROC_INS_END        { nil }
-  | T_TEXT T_PROC_INS_END { val[0] }
   ;
 
 # Elements
@@ -154,15 +144,10 @@ attributes
 
 attribute
   # x:foo="bar"
-  = T_ATTR_NS T_ATTR attribute_follow { on_attribute(val[1], val[0], val[2]) }
+  = T_ATTR_NS T_ATTR string? { on_attribute(val[1], val[0], val[2]) }
 
   # foo="bar"
-  | T_ATTR attribute_follow { on_attribute(val[0], nil, val[1]) }
-  ;
-
-attribute_follow
-  = string { val[0] }
-  | _      { nil }
+  | T_ATTR string? { on_attribute(val[0], nil, val[1]) }
   ;
 
 # XML declarations
