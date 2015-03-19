@@ -16,8 +16,7 @@
 %terminals T_SUB T_MUL T_VAR;
 
 xpath
-  = expression
-  | _ { nil }
+  = expression?
   ;
 
 # Expressions And Operators
@@ -78,14 +77,13 @@ additive_expr_follow
   ;
 
 mult_expr
-  = union_expr mult_expr_follow { combine_optional_operator(val) }
+  = union_expr mult_expr_follow? { combine_optional_operator(val) }
   ;
 
 mult_expr_follow
   = T_DIV mult_expr { [:div, val[1]] }
   | T_MOD mult_expr { [:mod, val[1]] }
   | T_MUL mult_expr { [:mul, val[1]] }
-  | _               { nil }
   ;
 
 union_expr
@@ -120,12 +118,7 @@ path_steps_follow
 
 # /A, /A/B, etc
 absolute_path
-  = T_SLASH absolute_path_follow { s(:absolute_path, *val[1]) }
-  ;
-
-absolute_path_follow
-  = path_steps
-  | _
+  = T_SLASH path_steps? { s(:absolute_path, *val[1]) }
   ;
 
 path_step_or_axis
@@ -164,13 +157,12 @@ path_step
 
 path_step_follow
   = T_LPAREN call_args T_RPAREN { [:call, val[1]] }
-  | T_COLON T_IDENT predicate   { [:test, val[1], val[2]] }
-  | predicate                   { [:test, nil, val[0]] }
+  | T_COLON T_IDENT predicate?  { [:test, val[1], val[2]] }
+  | predicate?                  { [:test, nil, val[0]] }
   ;
 
 predicate
   = T_LBRACK expression T_RBRACK { val[1] }
-  | _                            { nil }
   ;
 
 type_test
@@ -179,7 +171,7 @@ type_test
 
 # Regular test (e.g. tests used as axis values)
 test
-  = T_IDENT test_follow
+  = T_IDENT test_follow?
     {
       val[1] ? s(:test, val[0], val[1]) : s(:test, nil, val[0])
     }
@@ -187,7 +179,6 @@ test
 
 test_follow
   = T_COLON T_IDENT { val[1] }
-  | _               { nil }
   ;
 
 call_args
@@ -201,7 +192,7 @@ call_args_follow
 
 # child::foo, descendant-or-self::foo, etc
 axis
-  = T_AXIS axis_value predicate
+  = T_AXIS axis_value predicate?
     {
       ret = s(:axis, val[0], val[1])
 
