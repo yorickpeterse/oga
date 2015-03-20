@@ -1,0 +1,696 @@
+%header
+{
+##
+# AST parser for CSS expressions.
+#
+# This parser does _not_ build a CSS specific AST, instead it directly produces
+# an XPath AST. This removes the need to transform the AST or generate
+# corresponding XPath expressions as a String.
+#
+# Similar to {Oga::XPath::Parser} this parser only takes String instances as
+# input.
+#
+}
+
+%name Oga::CSS::Parser;
+
+%terminals T_IDENT T_PIPE T_LBRACK T_RBRACK T_COLON T_SPACE T_LPAREN T_RPAREN;
+%terminals T_MINUS T_EQ T_SPACE_IN T_STARTS_WITH T_ENDS_WITH T_IN T_HYPHEN_IN;
+%terminals T_GREATER T_TILDE T_PLUS T_NTH T_INT T_STRING T_ODD T_EVEN T_DOT;
+%terminals T_HASH;
+
+css
+  = selectors
+  | _ { nil }
+  ;
+
+selectors
+  = selector selectors_follow*
+    {
+      # Single selector
+      if val[1].empty?
+        ret = val[0]
+
+        if ret.is_a?(Array)
+          ret = s(:path, *ret)
+        end
+
+      # Multiple selectors
+      else
+        steps = [val[0]]
+
+        val[1].each do |step|
+          # "+ foo" is broken up into two steps.
+          if step.is_a?(Array)
+            # Using Array#+ or Array#| would require allocating an extra Array
+            step.each { |sub| steps << sub }
+          else
+            steps << step
+          end
+        end
+
+        ret = s(:path, *steps)
+      end
+
+      ret
+    }
+  ;
+
+selectors_follow
+  = T_SPACE selector { val[1] }
+  ;
+
+selector
+  = descendant_or_self predicates?
+    {
+      val[1] ? s(:predicate, val[0], val[1]) : val[0]
+    }
+  | axis predicates?
+    {
+      val[1] ? s(:predicate, val[0], val[1]) : val[0]
+    }
+  | predicates
+    {
+      s(:predicate, s(:axis, 'descendant', on_test(nil, '*')), val[0])
+    }
+  ;
+
+descendant_or_self
+  = node_test { s(:axis, 'descendant', val[0]) }
+  ;
+
+axis
+  # > foo
+  = T_GREATER axis_selector
+    {
+      s(:axis, 'child', val[1])
+    }
+
+  # ~ foo
+  | T_TILDE axis_selector
+    {
+      s(:axis, 'following-sibling', val[1])
+    }
+
+  # + foo
+  | T_PLUS axis_selector
+    {
+      [
+        s(
+          :predicate,
+          s(:axis, 'following-sibling', on_test(nil, '*')),
+          s(:int, 1)
+        ),
+        s(:axis, 'self', val[1])
+      ]
+    }
+  ;
+
+axis_selector
+  = node_test
+  | axis
+  ;
+
+node_test
+  = node_name { on_test(*val[0]) }
+  ;
+
+node_name
+  = T_IDENT node_name_pipe? { val[1] ? [val[0], val[1]] : [nil, val[0]] }
+  ;
+
+node_name_pipe
+  = T_PIPE T_IDENT { val[1] }
+  ;
+
+predicates
+  = predicate predicate*
+    {
+      ret = val[0]
+
+      val[1].each do |pred|
+        ret = s(:and, ret, pred)
+      end
+
+      ret
+    }
+  ;
+
+predicate
+  = class
+  | id
+  | pseudo_class
+  | attribute_predicate
+  ;
+
+attribute_predicate
+  = T_LBRACK attribute_predicate_members T_RBRACK { val[1] }
+  ;
+
+attribute_predicate_members
+  = attribute_or_operator
+  ;
+
+attribute
+  = node_name { s(:axis, 'attribute', on_test(*val[0])) }
+  ;
+
+attribute_or_operator
+  = attribute (operator_type string)?
+    {
+      op_type = val[1] ? val[1][0] : nil
+
+      case op_type
+      # a="b"
+      when :eq
+        on_op_eq(val[0], val[1][1])
+
+      # a~="b"
+      when :space_in
+        on_op_space_in(val[0], val[1][1])
+
+      # a^="b"
+      when :starts_with
+        on_op_starts_with(val[0], val[1][1])
+
+      # a$="b"
+      when :ends_with
+        on_op_ends_with(val[0], val[1][1])
+
+      # a*="b"
+      when :in
+        on_op_in(val[0], val[1][1])
+
+      # a|="b"
+      when :hyphen_in
+        on_op_hyphen_in(val[0], val[1][1])
+
+      else
+        val[0]
+      end
+    }
+  ;
+
+operator_type
+  = T_EQ          { :eq }
+  | T_SPACE_IN    { :space_in }
+  | T_STARTS_WITH { :starts_with }
+  | T_ENDS_WITH   { :ends_with }
+  | T_IN          { :in }
+  | T_HYPHEN_IN   { :hyphen_in }
+  ;
+
+class
+  = T_DOT T_IDENT
+    {
+      axis = s(:axis, 'attribute', s(:test, nil, 'class'))
+
+      s(
+        :call,
+        'contains',
+        s(:call, 'concat', s(:string, ' '), axis, s(:string, ' ')),
+        s(:string, " #{val[1]} ")
+      )
+    }
+  ;
+
+id
+  = T_HASH T_IDENT
+    {
+      s(
+        :eq,
+        s(:axis, 'attribute', s(:test, nil, 'id')),
+        s(:string, val[1])
+      )
+    }
+  ;
+
+pseudo_class
+  = pseudo_name pseudo_args?  { on_pseudo_class(val[0], val[1]) }
+  ;
+
+pseudo_name
+  = T_COLON T_IDENT { val[1] }
+  ;
+
+pseudo_args
+  = T_LPAREN pseudo_arg T_RPAREN { val[1] }
+  ;
+
+pseudo_arg
+  = odd
+  | even
+  | nth_or_integer
+  | selector
+  ;
+
+string
+  = T_STRING { s(:string, val[0]) }
+  ;
+
+integer
+  = T_INT { s(:int, val[0].to_i) }
+  ;
+
+# These AST nodes are _not_ the final AST nodes. Instead they are used by
+# on_pseudo_class_nth_child() to determine what the final AST should be.
+
+nth_or_integer
+  # n, n+2
+  = nth integer?
+    {
+      val[1] ? s(:nth, s(:int, 1), val[1]) : s(:nth, s(:int, 1))
+    }
+
+  # -n, -n+2, -n-2
+  | T_MINUS nth integer?
+    {
+      val[2] ? s(:nth, s(:int, -1), val[2]) : s(:nth, s(:int, 1))
+    }
+
+  # 2, 2n, 2n+1, 2n-1
+  | integer nth? integer?
+    {
+      # 2n+1
+      if val[1] and val[2]
+        a = val[0]
+        b = val[2]
+
+        # 2n-1 gets turned into 2n+1
+        if b.children[0] < 0
+          b = s(:int, a.children[0] - (b.children[0] % a.children[0]))
+        end
+
+        s(:nth, a, b)
+
+      # 2n
+      elsif val[1]
+        s(:nth, val[0])
+
+      # 2
+      else
+        val[0]
+      end
+    }
+  ;
+
+# T_NTH has a nil value, meaning you can't use it with the "?" operator combined
+# with an if statement (as nil evaluates to false).
+nth
+  = T_NTH { :nth }
+  ;
+
+odd
+  = T_ODD { s(:nth, s(:int, 2), s(:int, 1)) }
+  ;
+
+even
+  = T_EVEN { s(:nth, s(:int, 2)) }
+  ;
+
+%inner
+{
+  ##
+  # @param [String] data The input to parse.
+  #
+  def initialize(data)
+    @lexer = Lexer.new(data)
+  end
+
+  ##
+  # Resets the internal state of the parser.
+  #
+  def reset
+    @current_element = nil
+  end
+
+  ##
+  # @param [Symbol] type
+  # @param [Array] children
+  # @return [AST::Node]
+  #
+  def s(type, *children)
+    return AST::Node.new(type, children)
+  end
+
+  ##
+  # Yields the next token from the lexer.
+  #
+  # @yieldparam [Array]
+  #
+  def each_token
+    @lexer.advance do |*args|
+      yield args
+    end
+
+    yield [-1, -1]
+  end
+
+  ##
+  # Returns the node test for the current element.
+  #
+  # @return [AST::Node]
+  #
+  def current_element
+    return @current_element ||= s(:test, nil, '*')
+  end
+
+  ##
+  # Parses the input and returns the corresponding AST.
+  #
+  # @example
+  #  parser = Oga::CSS::Parser.new('foo.bar')
+  #  ast    = parser.parse
+  #
+  # @return [AST::Node]
+  #
+  def parse
+    reset
+
+    return super
+  end
+
+  ##
+  # Generates the AST for a node test.
+  #
+  # @param [String] namespace
+  # @param [String] name
+  # @return [AST::Node]
+  #
+  def on_test(namespace, name)
+    @current_element = s(:test, namespace, name)
+
+    return @current_element
+  end
+
+  ##
+  # @param [String] name
+  # @param [AST::Node] arg
+  # @return [AST::Node]
+  #
+  def on_pseudo_class(name, arg = nil)
+    handler = "on_pseudo_class_#{name.gsub('-', '_')}"
+
+    return arg ? send(handler, arg) : send(handler)
+  end
+
+  ##
+  # Generates the AST for the `root` pseudo class.
+  #
+  # @return [AST::Node]
+  #
+  def on_pseudo_class_root
+    return s(:call, 'not', s(:axis, 'parent', s(:test, nil, '*')))
+  end
+
+  ##
+  # Generates the AST for the `nth-child` pseudo class.
+  #
+  # @param [AST::Node] arg
+  # @return [AST::Node]
+  #
+  def on_pseudo_class_nth_child(arg)
+    return generate_nth_child('preceding-sibling', arg)
+  end
+
+  ##
+  # Generates the AST for the `nth-last-child` pseudo class.
+  #
+  # @param [AST::Node] arg
+  # @return [AST::Node]
+  #
+  def on_pseudo_class_nth_last_child(arg)
+    return generate_nth_child('following-sibling', arg)
+  end
+
+  ##
+  # Generates the AST for the `nth-of-type` pseudo class.
+  #
+  # @param [AST::Node] arg
+  # @return [AST::Node]
+  #
+  def on_pseudo_class_nth_of_type(arg)
+    return generate_nth_child('preceding-sibling', arg, current_element)
+  end
+
+  ##
+  # Generates the AST for the `nth-last-of-type` pseudo class.
+  #
+  # @param [AST::Node] arg
+  # @return [AST::Node]
+  #
+  def on_pseudo_class_nth_last_of_type(arg)
+    return generate_nth_child('following-sibling', arg, current_element)
+  end
+
+  ##
+  # Generates the AST for the `:first-child` selector.
+  #
+  # @return [AST::Node]
+  #
+  def on_pseudo_class_first_child
+    return generate_no_siblings('preceding-sibling')
+  end
+
+  ##
+  # Generates the AST for the `:last-child` selector.
+  #
+  # @return [AST::Node]
+  #
+  def on_pseudo_class_last_child
+    return generate_no_siblings('following-sibling')
+  end
+
+  ##
+  # Generates the AST for the `:first-of-type` selector.
+  #
+  # @return [AST::Node]
+  #
+  def on_pseudo_class_first_of_type
+    return generate_no_siblings('preceding-sibling', current_element)
+  end
+
+  ##
+  # Generates the AST for the `:last-of-type` selector.
+  #
+  # @return [AST::Node]
+  #
+  def on_pseudo_class_last_of_type
+    return generate_no_siblings('following-sibling', current_element)
+  end
+
+  ##
+  # Generates the AST for the `:only-child` selector.
+  #
+  # @return [AST::Node]
+  #
+  def on_pseudo_class_only_child
+    return s(:and, on_pseudo_class_first_child, on_pseudo_class_last_child)
+  end
+
+  ##
+  # Generates the AST for the `:only-of-type` selector.
+  #
+  # @return [AST::Node]
+  #
+  def on_pseudo_class_only_of_type
+    return s(:and, on_pseudo_class_first_of_type, on_pseudo_class_last_of_type)
+  end
+
+  ##
+  # Generates the AST for the `:empty` selector.
+  #
+  # @return [AST::Node]
+  #
+  def on_pseudo_class_empty
+    return s(:call, 'not', s(:axis, 'child', s(:type_test, 'node')))
+  end
+
+  ##
+  # Generates the AST for the `=` operator.
+  #
+  # @param [AST::Node] attr
+  # @param [AST::Node] value
+  # @return [AST::Node]
+  #
+  def on_op_eq(attr, value)
+    return s(:eq, attr, value)
+  end
+
+  ##
+  # Generates the AST for the `~=` operator.
+  #
+  # @param [AST::Node] attr
+  # @param [AST::Node] value
+  # @return [AST::Node]
+  #
+  def on_op_space_in(attr, value)
+    return s(
+      :call,
+      'contains',
+      s(:call, 'concat', s(:string, ' '), attr, s(:string, ' ')),
+      s(:call, 'concat', s(:string, ' '), value, s(:string, ' '))
+    )
+  end
+
+  ##
+  # Generates the AST for the `^=` operator.
+  #
+  # @param [AST::Node] attr
+  # @param [AST::Node] value
+  # @return [AST::Node]
+  #
+  def on_op_starts_with(attr, value)
+    return s(:call, 'starts-with', attr, value)
+  end
+
+  ##
+  # Generates the AST for the `$=` operator.
+  #
+  # @param [AST::Node] attr
+  # @param [AST::Node] value
+  # @return [AST::Node]
+  #
+  def on_op_ends_with(attr, value)
+    return s(
+      :eq,
+      s(
+        :call,
+        'substring',
+        attr,
+        s(
+          :add,
+          s(
+            :sub,
+            s(:call, 'string-length', attr),
+            s(:call, 'string-length', value)
+          ),
+          s(:int, 1)
+        ),
+        s(:call, 'string-length', value)
+      ),
+      value
+    )
+  end
+
+  ##
+  # Generates the AST for the `*=` operator.
+  #
+  # @param [AST::Node] attr
+  # @param [AST::Node] value
+  # @return [AST::Node]
+  #
+  def on_op_in(attr, value)
+    return s(:call, 'contains', attr, value)
+  end
+
+  ##
+  # Generates the AST for the `|=` operator.
+  #
+  # @param [AST::Node] attr
+  # @param [AST::Node] value
+  # @return [AST::Node]
+  #
+  def on_op_hyphen_in(attr, value)
+    return s(
+      :or,
+      s(:eq, attr, value),
+      s(
+        :call,
+        'starts-with',
+        attr,
+        s(:call, 'concat', value, s(:string, '-'))
+      )
+    )
+  end
+
+  private
+
+  ##
+  # @param [String] count_axis
+  # @param [AST::Node] arg
+  # @param [AST::Node] count_test
+  # @return [AST::Node]
+  #
+  def generate_nth_child(count_axis, arg, count_test = s(:test, nil, '*'))
+    count_call = s(:call, 'count', s(:axis, count_axis, count_test))
+
+   # literal 2, 4, etc
+    if int_node?(arg)
+      node = s(:eq, count_call, s(:int, arg.children[0] - 1))
+    else
+      step, offset = *arg
+      before_count = s(:add, count_call, s(:int, 1))
+      compare      = step_comparison(step)
+
+      # 2n+2, 2n-4, etc
+      if offset
+        mod_val = step_modulo_value(step)
+        node    = s(
+          :and,
+          s(compare, before_count, offset),
+          s(:eq, s(:mod, s(:sub, before_count, offset), mod_val), s(:int, 0))
+        )
+
+      # 2n, n, -2n
+      else
+        node = s(:eq, s(:mod, before_count, step), s(:int, 0))
+      end
+    end
+
+    return node
+  end
+
+  ##
+  # @param [String] axis
+  # @param [AST::Node] test
+  # @return [AST::Node]
+  #
+  def generate_no_siblings(axis, test = s(:test, nil, '*'))
+    return s(:eq, s(:call, 'count', s(:axis, axis, test)), s(:int, 0))
+  end
+
+  ##
+  # @param [AST::Node] node
+  # @return [TrueClass|FalseClass]
+  #
+  def int_node?(node)
+    return node.type == :int
+  end
+
+  ##
+  # @param [AST::Node] node
+  # @return [TrueClass|FalseClass]
+  #
+  def non_positive_number?(node)
+    return node.children[0] <= 0
+  end
+
+  ##
+  # @param [AST::Node] node
+  # @return [Symbol]
+  #
+  def step_comparison(node)
+    return node.children[0] >= 0 ? :gte : :lte
+  end
+
+  ##
+  # @param [AST::Node] step
+  # @return [AST::Node]
+  #
+  def step_modulo_value(step)
+    # -2n
+    if step and non_positive_number?(step)
+      mod_val = s(:int, -step.children[0])
+
+    # 2n
+    elsif step
+      mod_val = step
+
+    else
+      mod_val = s(:int, 1)
+    end
+
+    return mod_val
+  end
+}
