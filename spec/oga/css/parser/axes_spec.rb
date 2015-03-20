@@ -28,6 +28,12 @@ describe Oga::CSS::Parser do
       )
     end
 
+    it 'parses the + axis with an identifier only at the right-hand side' do
+      parse_css('+ y').should == parse_xpath(
+        'following-sibling::*[1]/self::y'
+      )
+    end
+
     it 'parses the + axis called on another + axis' do
       parse_css('a + b + c').should == parse_xpath(
         'descendant::a/following-sibling::*[1]/self::b/' \
