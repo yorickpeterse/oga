@@ -76,15 +76,45 @@ Parse a string of XML using the SAX parser:
 
 Querying a document using XPath:
 
-    document = Oga.parse_xml('<people><person>Alice</person></people>')
+    document = Oga.parse_xml <<-EOF
+    <people>
+      <person id="1">
+        <name>Alice</name>
+        <age>28</name>
+      </person>
+    </people>
+    EOF
 
-    document.xpath('string(people/person)') # => "Alice"
+    # The "xpath" method returns an enumerable (Oga::XML::NodeSet) that you can
+    # iterate over.
+    document.xpath('people/person').each do |person|
+      puts person.get('id') # => "1"
 
-Querying a document using CSS:
+      # The "at_xpath" method returns a single node from a set, it's the same as
+      # person.xpath('name').first.
+      puts person.at_xpath('name').text # => "Alice"
+    end
 
-    document = Oga.parse_xml('<people><person>Alice</person></people>')
+Querying the same document using CSS:
 
-    document.css('people person') # => NodeSet(Element(name: "person" ...))
+    document = Oga.parse_xml <<-EOF
+    <people>
+      <person id="1">
+        <name>Alice</name>
+        <age>28</name>
+      </person>
+    </people>
+    EOF
+
+    # The "css" method returns an enumerable (Oga::XML::NodeSet) that you can
+    # iterate over.
+    document.css('people person').each do |person|
+      puts person.get('id') # => "1"
+
+      # The "at_css" method returns a single node from a set, it's the same as
+      # person.css('name').first.
+      puts person.at_css('name').text # => "Alice"
+    end
 
 Modifying a document and serializing it back to XML:
 
