@@ -1,3 +1,4 @@
+require 'bundler'
 require 'bundler/gem_tasks'
 require 'digest/sha2'
 require 'rake/clean'
