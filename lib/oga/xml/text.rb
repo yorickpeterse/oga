@@ -8,7 +8,6 @@ module Oga
       def initialize(*args)
         super
 
-        @mutex   = Mutex.new
         @decoded = false
       end
 
@@ -16,11 +15,8 @@ module Oga
       # @param [String] value
       #
       def text=(value)
-        # In case of concurrent text/text= calls.
-        @mutex.synchronize do
-          @decoded = false
-          @text    = value
-        end
+        @decoded = false
+        @text    = value
       end
 
       ##
@@ -30,12 +26,10 @@ module Oga
       # @return [String]
       #
       def text
-        @mutex.synchronize do
-          unless @decoded
-            decoder  = html? ? HTML::Entities : Entities
-            @text    = decoder.decode(@text)
-            @decoded = true
-          end
+        unless @decoded
+          decoder  = html? ? HTML::Entities : Entities
+          @text    = decoder.decode(@text)
+          @decoded = true
         end
 
         return @text
