@@ -5,6 +5,7 @@ require 'thread'
 
 require_relative 'oga/version'
 require_relative 'oga/oga'
+require_relative 'oga/lru'
 
 # Load these first so that the native extensions don't have to define the
 # Oga::XML namespace.
