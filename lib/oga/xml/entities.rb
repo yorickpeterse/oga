@@ -62,7 +62,6 @@ module Oga
       # Decodes XML entities.
       #
       # @param [String] input
-      # @param [Array] keys
       # @param [Hash] mapping
       # @return [String]
       #

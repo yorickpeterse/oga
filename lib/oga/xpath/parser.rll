@@ -1,7 +1,7 @@
 %header
 {
 ##
-# AST parser for XPath expressions. The AST is built using {AST::Node}
+# AST parser for XPath expressions. The AST is built using `AST::Node`
 # instances.
 #
 # Unlike {Oga::XML::Parser} this parser only takes String instances as input.
