@@ -224,6 +224,19 @@ variable
 %inner
 {
   ##
+  # @return [Oga::LRU]
+  #
+  CACHE = LRU.new
+
+  ##
+  # @param [String] data
+  # @return [AST::Node]
+  #
+  def self.parse_with_cache(data)
+    return CACHE.get_or_set(data) { new(data).parse }
+  end
+
+  ##
   # @param [String] data The input to parse.
   #
   def initialize(data)
