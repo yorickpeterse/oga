@@ -39,6 +39,17 @@ You can compile the various parsers/extensions by running:
 
 For more information about the available tasks, run `rake -T`.
 
+## Continuous Integration
+
+Two continuous integration services are used to ensure the tests of Oga pass
+at all times:
+
+* Travis CI: <https://travis-ci.org/YorickPeterse/oga>
+* AppVeyor (Windows): <https://ci.appveyor.com/project/YorickPeterse/oga>
+
+Please note that I will not accept patches that break any tests unless stated
+otherwise.
+
 ## Extension Setup
 
 Oga uses native extensions for the XML lexer. This is due to Ruby sadly not
