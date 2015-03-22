@@ -6,8 +6,8 @@ if ENV['COVERAGE']
 end
 
 require_relative '../lib/oga'
-require_relative 'support/parsing'
-require_relative 'support/evaluation'
+require_relative 'support/parsing_helpers'
+require_relative 'support/evaluation_helpers'
 
 RSpec.configure do |config|
   config.color = true
