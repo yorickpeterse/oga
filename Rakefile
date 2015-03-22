@@ -3,6 +3,18 @@ require 'bundler/gem_tasks'
 require 'digest/sha2'
 require 'rake/clean'
 
+if Gem.win_platform?
+  task :devkit do
+    begin
+      require 'devkit'
+    rescue LoadError
+      warn 'Failed to load devkit, installation might fail'
+    end
+  end
+
+  task :compile => [:devkit]
+end
+
 GEMSPEC = Gem::Specification.load('oga.gemspec')
 
 if RUBY_PLATFORM == 'java'
