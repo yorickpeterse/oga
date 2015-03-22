@@ -1,6 +1,34 @@
 require 'spec_helper'
 
 describe Oga::LRU do
+  describe '#maximum=' do
+    it 'sets the maximum amount of keys' do
+      cache = described_class.new(10)
+
+      cache.maximum = 20
+
+      cache.maximum.should == 20
+    end
+
+    it 'resizes the cache when needed' do
+      cache = described_class.new(2)
+
+      cache[:a] = 10
+      cache[:b] = 20
+
+      cache.maximum = 1
+
+      cache.size.should == 1
+      cache.keys.should == [:b]
+    end
+  end
+
+  describe '#maximum' do
+    it 'returns the maximum amount of keys' do
+      described_class.new(5).maximum.should == 5
+    end
+  end
+
   describe '#[]' do
     it 'returns nil for a non existing key' do
       described_class.new[:a].should be_nil

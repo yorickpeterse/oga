@@ -34,6 +34,24 @@ module Oga
     end
 
     ##
+    # @param [Fixnum] value
+    #
+    def maximum=(value)
+      synchronize do
+        @maximum = value
+
+        resize
+      end
+    end
+
+    ##
+    # @return [Fixnum]
+    #
+    def maximum
+      return synchronize { @maximum }
+    end
+
+    ##
     # Returns the value of the key.
     #
     # @param [Mixed] key
