@@ -35,7 +35,7 @@ module Oga
       # @see [Oga::XPath::Evaluator#initialize]
       #
       def css(expression)
-        ast = CSS::Parser.new(expression).parse
+        ast = CSS::Parser.parse_with_cache(expression)
 
         return XPath::Evaluator.new(self).evaluate_ast(ast)
       end

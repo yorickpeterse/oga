@@ -82,7 +82,7 @@ module Oga
       # @return [Mixed]
       #
       def evaluate(string)
-        ast = Parser.new(string).parse
+        ast = Parser.parse_with_cache(string)
 
         return evaluate_ast(ast)
       end
