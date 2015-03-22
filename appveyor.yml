@@ -1,0 +1,37 @@
+---
+version: "{build}"
+
+install:
+  # Binary taken from http://w858rkbfg.homepage.t-online.de/index.php/software/ragel-windows/,
+  # rehosted on AWS so it doesn't randomly vanish.
+  - appveyor DownloadFile http://downloads.yorickpeterse.com/files/ragel-68-visualstudio2012.7z -FileName C:\ragel.7z
+  - 7z e C:\ragel.7z -oC:\ragel -y > nul
+  - SET PATH=C:\Ruby%ruby_version%\bin;%PATH%
+  - SET PATH=C:\ragel;%PATH%
+  - ruby --version
+  - gem --version
+  - gem install bundler --no-ri --no-rdoc --quiet
+  - bundle install
+
+build: off
+
+test_script:
+  - rake
+
+environment:
+  matrix:
+    - ruby_version: "193"
+    - ruby_version: "200"
+    - ruby_version: "21"
+    - ruby_version: "21-x64"
+    - ruby_version: "22"
+    - ruby_version: "22-x64"
+
+skip_tags: true
+
+notifications:
+  -
+    provider: Email
+    on_build_success: false
+    on_build_failure: false
+    on_build_status_changed: true
