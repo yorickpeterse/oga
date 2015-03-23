@@ -1,6 +1,6 @@
 require 'mkmf'
 
-if RbConfig::CONFIG['cc'] =~ /clang|gcc/
+if RbConfig::CONFIG['CC'] =~ /clang|gcc/
   $CFLAGS << ' -pedantic'
 end
 
