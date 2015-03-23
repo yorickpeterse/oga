@@ -10,8 +10,9 @@ install:
   - SET PATH=C:\ragel;%PATH%
   - ruby --version
   - gem --version
-  - gem install bundler --no-ri --no-rdoc --quiet
-  - bundle install
+  - appveyor DownloadFile https://rubygems.org/downloads/bundler-1.9.0.gem -FileName bundler-1.9.0.gem
+  - gem install bundler-1.9.0.gem --local --quiet --no-ri --no-rdoc
+  - bundle install --retry 3
 
 build: off
 
