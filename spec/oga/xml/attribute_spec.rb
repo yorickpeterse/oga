@@ -33,7 +33,7 @@ describe Oga::XML::Attribute do
     end
 
     it 'returns the default XML namespace when the "xml" prefix is used' do
-      @default.namespace.should == Oga::XML::DEFAULT_NAMESPACE
+      @default.namespace.should == Oga::XML::Attribute::DEFAULT_NAMESPACE
     end
   end
 
