@@ -37,6 +37,14 @@ module Oga
       def inspect
         return "Namespace(name: #{name.inspect} uri: #{uri.inspect})"
       end
+
+      ##
+      # @param [Oga::XML::Namespace] other
+      # @return [TrueClass|FalseClass]
+      #
+      def ==(other)
+        return other.is_a?(self.class) && name == other.name && uri == other.uri
+      end
     end # Namespace
   end # XML
 end # Oga
