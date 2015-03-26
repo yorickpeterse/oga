@@ -204,4 +204,36 @@ describe Oga::XML::Node do
       @container.children[1].should == other
     end
   end
+
+  describe '#html?' do
+    it 'returns true if the node resides within an HTML document' do
+      node     = described_class.new
+      document = Oga::XML::Document.new(:children => [node], :type => :html)
+
+      node.html?.should == true
+    end
+
+    it 'returns false if the node resides within an XML document' do
+      node     = described_class.new
+      document = Oga::XML::Document.new(:children => [node], :type => :xml)
+
+      node.html?.should == false
+    end
+  end
+
+  describe '#xml?' do
+    it 'returns true if the node resides within an XML document' do
+      node     = described_class.new
+      document = Oga::XML::Document.new(:children => [node], :type => :xml)
+
+      node.xml?.should == true
+    end
+
+    it 'returns false if the node resides within an HTML document' do
+      node     = described_class.new
+      document = Oga::XML::Document.new(:children => [node], :type => :html)
+
+      node.xml?.should == false
+    end
+  end
 end

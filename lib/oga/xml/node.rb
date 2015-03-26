@@ -163,6 +163,22 @@ module Oga
 
         node_set.insert(index, other)
       end
+
+      ##
+      # @return [TrueClass|FalseClass]
+      #
+      def html?
+        root = root_node
+
+        return root.is_a?(Document) && root.html?
+      end
+
+      ##
+      # @return [TrueClass|FalseClass]
+      #
+      def xml?
+        return !html?
+      end
     end # Element
   end # XML
 end # Oga

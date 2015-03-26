@@ -48,17 +48,6 @@ module Oga
 
         return Entities.encode(super)
       end
-
-      private
-
-      ##
-      # @return [TrueClass|FalseClass]
-      #
-      def html?
-        root = root_node
-
-        return root.is_a?(Document) && root.html?
-      end
     end # Text
   end # XML
 end # Oga
