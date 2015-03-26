@@ -23,7 +23,9 @@ module Oga
     class Element < Node
       include Querying
 
-      attr_accessor :name, :namespace_name, :attributes, :namespaces
+      attr_accessor :name, :namespace_name, :attributes
+
+      attr_writer :namespaces
 
       ##
       # The attribute prefix/namespace used for registering element namespaces.
@@ -167,6 +169,16 @@ module Oga
       end
 
       ##
+      # Returns the namespaces registered on this element, or an empty Hash in
+      # case of an HTML element.
+      #
+      # @return [Hash]
+      #
+      def namespaces
+        return html? ? {} : @namespaces
+      end
+
+      ##
       # Returns true if the current element resides in the default XML
       # namespace.
       #
@@ -294,6 +306,8 @@ module Oga
       # @return [Hash]
       #
       def available_namespaces
+        return {} if html? # HTML(5) completely ignores namespaces
+
         merged = namespaces.dup
         node   = parent
 

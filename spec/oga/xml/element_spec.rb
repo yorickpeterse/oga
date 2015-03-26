@@ -10,9 +10,12 @@ describe Oga::XML::Element do
       described_class.new.attributes.should == []
     end
 
-    describe 'setting namespaces' do
+    describe 'with a namespace' do
       before do
-        attr = Oga::XML::Attribute.new(:name => 'foo', :namespace_name => 'xmlns')
+        attr = Oga::XML::Attribute.new(
+          :name           => 'foo',
+          :namespace_name => 'xmlns'
+        )
 
         @element = described_class.new(:attributes => [attr])
       end
@@ -26,7 +29,7 @@ describe Oga::XML::Element do
       end
     end
 
-    describe 'setting the default namespace without a prefix' do
+    describe 'with a default namespace' do
       before do
         attr = Oga::XML::Attribute.new(:name => 'xmlns', :value => 'foo')
 
@@ -204,6 +207,38 @@ describe Oga::XML::Element do
       )
 
       element.namespace.should == namespace
+    end
+
+    describe 'in an HTML document' do
+      it 'returns nil' do
+        ns  = Oga::XML::Namespace.new(:name => 'xmlns')
+        el  = described_class.new(:namespaces => {'xmlns' => ns})
+        doc = Oga::XML::Document.new(:type => :html, :children => [el])
+
+        el.namespace.should be_nil
+      end
+    end
+  end
+
+  describe '#namespaces' do
+    it 'returns the registered namespaces as a Hash' do
+      namespace = Oga::XML::Namespace.new(:name => 'x')
+      element   = described_class.new(
+        :namespace_name => 'x',
+        :namespaces     => {'x' => namespace}
+      )
+
+      element.namespaces.should == {'x' => namespace}
+    end
+
+    describe 'in an HTML document' do
+      it 'returns an empty Hash' do
+        ns  = Oga::XML::Namespace.new(:name => 'xmlns')
+        el  = described_class.new(:namespaces => {'xmlns' => ns})
+        doc = Oga::XML::Document.new(:type => :html, :children => [el])
+
+        el.namespaces.should == {}
+      end
     end
   end
 
@@ -468,6 +503,16 @@ describe Oga::XML::Element do
 
     it 'does not modify the list of direct namespaces' do
       @child.namespaces.key?('foo').should == false
+    end
+
+    describe 'in an HTML document' do
+      it 'returns an empty Hash' do
+        ns  = Oga::XML::Namespace.new(:name => 'xmlns')
+        el  = described_class.new(:namespaces => {'xmlns' => ns})
+        doc = Oga::XML::Document.new(:type => :html, :children => [el])
+
+        el.available_namespaces.should == {}
+      end
     end
   end
 
