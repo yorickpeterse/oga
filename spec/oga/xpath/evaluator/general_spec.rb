@@ -62,61 +62,89 @@ describe Oga::XPath::Evaluator do
   end
 
   describe '#node_matches?' do
-    before do
-      @name_node    = Oga::XML::Element.new(:name => 'a')
-      @name_ns_node = Oga::XML::Element.new(:name => 'b', :namespace_name => 'x')
+    describe 'without a namespace' do
+      before do
+        @node = Oga::XML::Element.new(:name => 'a')
+      end
 
-      @name_ns_node.register_namespace('x', 'y')
+      it 'returns true if a node is matched by its name' do
+        @evaluator.node_matches?(@node, s(:test, nil, 'a')).should == true
+      end
+
+      it 'returns true if a node is matched by a wildcard name' do
+        @evaluator.node_matches?(@node, s(:test, nil, '*')).should == true
+      end
+
+      it 'returns false if a node is not matched by its name' do
+        @evaluator.node_matches?(@node, s(:test, nil, 'foo')).should == false
+      end
+
+      it 'returns true if a node is matched without having a namespace' do
+        @evaluator.node_matches?(@node, s(:test, '*', 'a')).should == true
+      end
+
+      it 'returns true if the node type matches' do
+        @evaluator.node_matches?(@node, s(:type_test, 'node')).should == true
+      end
+
+      it 'returns false when trying to match an XML::Text instance' do
+        text = Oga::XML::Text.new(:text => 'Foobar')
+
+        @evaluator.node_matches?(text, s(:test, nil, 'a')).should == false
+      end
     end
 
-    it 'returns true if a node is matched by its name' do
-      @evaluator.node_matches?(@name_node, s(:test, nil, 'a')).should == true
+    describe 'with a custom namespace' do
+      before do
+        @node = Oga::XML::Element.new(:name => 'b', :namespace_name => 'x')
+
+        @node.register_namespace('x', 'y')
+      end
+
+      it 'returns true if a node is matched by its name and namespace' do
+        @evaluator.node_matches?(@node, s(:test, 'x', 'b')).should == true
+      end
+
+      it 'returns false if a node is not matched by its namespace' do
+        @evaluator.node_matches?(@node, s(:test, 'y', 'b')).should == false
+      end
+
+      it 'returns true if a node is matched by a wildcard namespace' do
+        @evaluator.node_matches?(@node, s(:test, '*', 'b')).should == true
+      end
+
+      it 'returns true if a node is matched by a full wildcard search' do
+        @evaluator.node_matches?(@node, s(:test, '*', '*')).should == true
+      end
+
+      it 'returns false when the node has a namespace that is not given' do
+        @evaluator.node_matches?(@node, s(:test, nil, 'b')).should == false
+      end
+
+      it 'returns true if a node with a namespace is matched using a wildcard' do
+        @evaluator.node_matches?(@node, s(:test, nil, '*')).should == true
+      end
     end
 
-    it 'returns true if a node is matched by a wildcard name' do
-      @evaluator.node_matches?(@name_node, s(:test, nil, '*')).should == true
-    end
+    describe 'using the default XML namespace' do
+      before do
+        @node = Oga::XML::Element.new(:name => 'a')
+        ns    = Oga::XML::DEFAULT_NAMESPACE
 
-    it 'returns false if a node is not matched by its name' do
-      @evaluator.node_matches?(@name_node, s(:test, nil, 'foo')).should == false
-    end
+        @node.register_namespace(ns.name, ns.uri)
+      end
 
-    it 'returns true if a node is matched by its name and namespace' do
-      @evaluator.node_matches?(@name_ns_node, s(:test, 'x', 'b')).should == true
-    end
+      it 'returns true when the node name matches' do
+        @evaluator.node_matches?(@node, s(:test, nil, 'a')).should == true
+      end
 
-    it 'returns false if a node is not matched by its namespace' do
-      @evaluator.node_matches?(@name_ns_node, s(:test, 'y', 'b')).should == false
-    end
+      it 'returns true when the namespace prefix and node name match' do
+        @evaluator.node_matches?(@node, s(:test, 'xmlns', 'a')).should == true
+      end
 
-    it 'returns true if a node is matched by a wildcard namespace' do
-      @evaluator.node_matches?(@name_ns_node, s(:test, '*', 'b')).should == true
-    end
-
-    it 'returns true if a node is matched by a full wildcard search' do
-      @evaluator.node_matches?(@name_ns_node, s(:test, '*', '*')).should == true
-    end
-
-    it 'returns true if a node is matched without having a namespace' do
-      @evaluator.node_matches?(@name_node, s(:test, '*', 'a')).should == true
-    end
-
-    it 'returns false when trying to match an XML::Text instance' do
-      text = Oga::XML::Text.new(:text => 'Foobar')
-
-      @evaluator.node_matches?(text, s(:test, nil, 'a')).should == false
-    end
-
-    it 'returns false when the node has a namespace that is not given' do
-      @evaluator.node_matches?(@name_ns_node, s(:test, nil, 'b')).should == false
-    end
-
-    it 'returns true if a node with a namespace is matched using a wildcard' do
-      @evaluator.node_matches?(@name_ns_node, s(:test, nil, '*')).should == true
-    end
-
-    it 'returns true if the node type matches' do
-      @evaluator.node_matches?(@name_node, s(:type_test, 'node')).should == true
+      it 'returns false when the node name does not match' do
+        @evaluator.node_matches?(@node, s(:test, nil, 'b')).should == false
+      end
     end
   end
 

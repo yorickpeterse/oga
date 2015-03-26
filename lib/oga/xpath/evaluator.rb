@@ -1657,6 +1657,11 @@ module Oga
           ns_matches = true
         end
 
+        if !ns and !ns_matches
+          ns_matches = xml_node.respond_to?(:default_namespace?) &&
+            xml_node.default_namespace?
+        end
+
         return name_matches && ns_matches
       end
 
