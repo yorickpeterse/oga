@@ -167,6 +167,16 @@ module Oga
       end
 
       ##
+      # Returns true if the current element resides in the default XML
+      # namespace.
+      #
+      # @return [TrueClass|FalseClass]
+      #
+      def default_namespace?
+        return namespace == DEFAULT_NAMESPACE || namespace.nil?
+      end
+
+      ##
       # Returns the text of all child nodes joined together.
       #
       # @return [String]

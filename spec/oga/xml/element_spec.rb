@@ -1,48 +1,41 @@
 require 'spec_helper'
 
 describe Oga::XML::Element do
-  describe 'setting attributes' do
+  describe '#initialize' do
     it 'sets the name via the constructor' do
       described_class.new(:name => 'p').name.should == 'p'
-    end
-
-    it 'sets the name via a setter' do
-      instance = described_class.new
-      instance.name = 'p'
-
-      instance.name.should == 'p'
     end
 
     it 'sets the default attributes' do
       described_class.new.attributes.should == []
     end
-  end
 
-  describe 'setting namespaces via attributes' do
-    before do
-      attr = Oga::XML::Attribute.new(:name => 'foo', :namespace_name => 'xmlns')
+    describe 'setting namespaces' do
+      before do
+        attr = Oga::XML::Attribute.new(:name => 'foo', :namespace_name => 'xmlns')
 
-      @element = described_class.new(:attributes => [attr])
+        @element = described_class.new(:attributes => [attr])
+      end
+
+      it 'registers the "foo" namespace' do
+        @element.namespaces['foo'].is_a?(Oga::XML::Namespace).should == true
+      end
+
+      it 'keeps the attributes after registering the namespaces' do
+        @element.attributes.empty?.should == false
+      end
     end
 
-    it 'registers the "foo" namespace' do
-      @element.namespaces['foo'].is_a?(Oga::XML::Namespace).should == true
-    end
+    describe 'setting the default namespace without a prefix' do
+      before do
+        attr = Oga::XML::Attribute.new(:name => 'xmlns', :value => 'foo')
 
-    it 'keeps the attributes after registering the namespaces' do
-      @element.attributes.empty?.should == false
-    end
-  end
+        @element = described_class.new(:attributes => [attr])
+      end
 
-  describe 'setting the default namespace without a prefix' do
-    before do
-      attr = Oga::XML::Attribute.new(:name => 'xmlns', :value => 'foo')
-
-      @element = described_class.new(:attributes => [attr])
-    end
-
-    it 'registers the default namespace' do
-      @element.namespaces['xmlns'].is_a?(Oga::XML::Namespace).should == true
+      it 'registers the default namespace' do
+        @element.namespaces['xmlns'].is_a?(Oga::XML::Namespace).should == true
+      end
     end
   end
 
@@ -211,6 +204,29 @@ describe Oga::XML::Element do
       )
 
       element.namespace.should == namespace
+    end
+  end
+
+  describe '#default_namespace?' do
+    it 'returns true when an element has no explicit namespace' do
+      described_class.new(:name => 'a').default_namespace?.should == true
+    end
+
+    it 'returns true when an element has an explicit default namespace' do
+      element   = described_class.new(:name => 'a')
+      namespace = Oga::XML::DEFAULT_NAMESPACE
+
+      element.register_namespace(namespace.name, namespace.uri)
+
+      element.default_namespace?.should == true
+    end
+
+    it 'returns false when an element resides in a custom namespace' do
+      element = described_class.new(:name => 'a')
+
+      element.register_namespace('xmlns', 'foo')
+
+      element.default_namespace?.should == false
     end
   end
 
