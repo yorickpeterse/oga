@@ -10,8 +10,16 @@ describe Oga::XML::Lexer do
       lex(' ').should == [[:T_TEXT, ' ', 1]]
     end
 
-    it 'lexes a newline' do
+    it 'lexes a Unix newline' do
       lex("\n").should == [[:T_TEXT, "\n", 1]]
+    end
+
+    it 'lexes a Windows newline' do
+      lex("\r\n").should == [[:T_TEXT, "\r\n", 1]]
+    end
+
+    it 'lexes a carriage return' do
+      lex("\r").should == [[:T_TEXT, "\r", 1]]
     end
 
     it 'lexes text followed by a newline' do

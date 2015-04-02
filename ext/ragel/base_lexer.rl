@@ -46,7 +46,7 @@
     # stack.
     #
 
-    newline = '\n' | '\r\n';
+    newline = '\r\n' | '\n' | '\r';
 
     action count_newlines {
         if ( fc == '\n' ) lines++;

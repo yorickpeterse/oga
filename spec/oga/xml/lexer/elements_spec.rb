@@ -41,6 +41,14 @@ describe Oga::XML::Lexer do
         [:T_ELEM_END, nil, 2]
       ]
     end
+
+    it 'lexes an element with a carriage return in the open tag' do
+      lex("<p\r></p>").should == [
+        [:T_ELEM_START, nil, 1],
+        [:T_ELEM_NAME, 'p', 1],
+        [:T_ELEM_END, nil, 2]
+      ]
+    end
   end
 
   describe 'elements with attributes' do
