@@ -3,6 +3,102 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 0.3.0 - 2015-04-03
+
+### Lexing of carriage returns
+
+Oga can now lex and parse XML documents using carriage returns for newlines.
+This was added in commit 0800654c962c20fb139a389245359bca9952dcd1.
+
+### Improved handling of HTML namespaces
+
+Oga now ignores any declared namespaces when parsing HTML documents as HTML5
+does not allow one to register custom namespaces.
+
+See commit 31764593070b29fcd16040a6a0bd553e464324cd for more information.
+
+### Improved handling of explicitly declared default XML namespaces
+
+In the past explicitly defining the default XML namespace in a document would
+lead to Oga's XPath evaluator not being able to match any nodes. This has been
+fixed in commit 5adeae18d0e53fda3bcfb883b414dee8e3a9d87d.
+
+### Caching of XPath/CSS expressions
+
+The CSS and XPath parsers now cache the ASTs of an expression used when querying
+a document using CSS or XPath. This can give a pretty noticable speed
+improvement, especially when running the same expression in a loop (or just many
+different times).
+
+Parsed expressions are stored in an LRU to prevent memory from growing forever.
+Currently the capacity is set to 1024 values but this can be changed as
+following:
+
+    Oga::XPath::Parser::CACHE.maximum = 2048
+    Oga::CSS::Parser::CACHE.maximum   = 2048
+
+The LRU synchronizes method calls to allow safe usage from multiple threads.
+
+See the following commits for more info:
+
+* 66fa9f62ef1f5e2e447cdc724b42f2e1d58b0753
+* 12aa21fb502a044d660cc53557d0a1208eb8e61d
+* 2c4e490614528dc873f8275fe10c34ae489cfee5
+* 67d7d9af88787a8a810273e3451b194a6284b1ef
+
+### Windows support
+
+While Oga for the most part already supported Windows a few changes for the
+extension compilation process were required to allow users to install Oga on
+Windows. Tests are run on AppVeyor (a continuous integration service for Windows
+platforms).
+
+Oga requires devkit (<http://rubyinstaller.org/add-ons/devkit/>) to be installed
+on non Cygwin/MinGW environments. Cygwin/MinGW environments probably already
+work, although I do not run any tests on these environments.
+
+### SAX parsing of XML attributes
+
+Parsing of XML attributes using the SAX API was overhauled quite a bit. As these
+changes are not backwards compatible it's likely that existing SAX parsers will
+break.
+
+See commit d8b9725b82f93d92b10170612446fbbef6190fda for more information.
+
+### Parser callbacks for XML attributes
+
+The XML parser has an extra callback method called `on_attribute` which is used
+to create a new attribute. This callback can be used in custom SAX parsers just
+like the other callbacks.
+
+### Parser rewritten using ruby-ll
+
+The XML, CSS and XPath parsers have been re-written using ruby-ll
+(<https://github.com/yorickpeterse/ruby-ll>). While Racc served its purpose
+(until now) it has three main problems:
+
+1. Performance is not as good as it should be.
+2. The codebase is dated and generally hard to deal with, as such it's quite
+   difficult to optimize in reasonable time.
+3. LALR parser errors can be incredibly painful to debug.
+
+For this reason I wrote ruby-ll and replaced Oga's Racc based parsers with
+ruby-ll parsers. These parsers are LL(1) parsers which makes them a lot easier
+to debug. Performance is currently a tiny bit faster than the old Racc parsers,
+but this will be improved in the coming releases of both Oga and ruby-ll.
+
+See pull request <https://github.com/YorickPeterse/oga/pull/78> for more
+information.
+
+### Lazy decoding of XML/HTML entities
+
+In the past XML/HTML entities were decoded in the lexer, adding overhead even
+when not needed. This has been changed so that the decoding of entities only
+occurs when calling `XML::Text#text`. With this particular change also comes
+support for HTML entities and codepoint based XML/HTML entities.
+
+See commit 2ec91f130fcdfee918578d045b07367aec434260 for more information.
+
 ## 0.2.3 - 2015-03-04
 
 This release adds support for lexing HTML `<style>` tags similar to how
