@@ -10,16 +10,12 @@ module Oga
     # @!attribute [rw] namespace_name
     #  @return [String]
     #
-    # @!attribute [rw] value
-    #  The value of the attribute.
-    #  @return [String]
-    #
     # @!attribute [r] element
     #  The element this attribute belongs to.
     #  @return [Oga::XML::Element]
     #
     class Attribute
-      attr_accessor :name, :namespace_name, :element, :value
+      attr_accessor :name, :namespace_name, :element
 
       ##
       # The default namespace available to all attributes. This namespace can
@@ -67,8 +63,28 @@ module Oga
       end
 
       ##
-      # Returns the value of the attribute.
+      # @param [String] value
       #
+      def value=(value)
+        @value   = value
+        @decoded = false
+      end
+
+      ##
+      # Returns the value of the attribute or nil if no explicit value was set.
+      #
+      # @return [String|NilClass]
+      #
+      def value
+        if !@decoded and @value
+          @value   = EntityDecoder.try_decode(@value, html?)
+          @decoded = true
+        end
+
+        return @value
+      end
+
+      ##
       # @return [String]
       #
       def text
@@ -107,6 +123,15 @@ module Oga
         end
 
         return "Attribute(#{segments.join(' ')})"
+      end
+
+      private
+
+      ##
+      # @return [TrueClass|FalseClass]
+      #
+      def html?
+        return !!@element && @element.html?
       end
     end # Attribute
   end # XML

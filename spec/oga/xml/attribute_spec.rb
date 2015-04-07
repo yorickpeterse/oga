@@ -37,6 +37,66 @@ describe Oga::XML::Attribute do
     end
   end
 
+  describe '#value=' do
+    it 'sets the value of an attribute' do
+      attr = described_class.new
+
+      attr.value = 'foo'
+
+      attr.value.should == 'foo'
+    end
+
+    it 'flushes the decoded cache when setting a new value' do
+      attr = described_class.new(:value => '&lt;')
+
+      attr.value.should == Oga::XML::Entities::DECODE_MAPPING['&lt;']
+
+      attr.value = '&gt;'
+
+      attr.value.should == Oga::XML::Entities::DECODE_MAPPING['&gt;']
+    end
+  end
+
+  describe '#value' do
+    it 'returns the value of an attribute' do
+      described_class.new(:value => 'foo').value.should == 'foo'
+    end
+
+    describe 'using an XML document' do
+      before do
+        @el  = Oga::XML::Element.new(:name => 'a')
+        @doc = Oga::XML::Document.new(:children => [@el], :type => :xml)
+      end
+
+      it 'returns a String with decoded XML entities' do
+        attr = described_class.new(
+          :name    => 'class',
+          :value   => '&lt;',
+          :element => @el
+        )
+
+        attr.value.should == '<'
+      end
+    end
+
+    describe 'using HTML documents' do
+      before do
+        @el  = Oga::XML::Element.new(:name => 'a')
+        @doc = Oga::XML::Document.new(:children => [@el], :type => :html)
+      end
+
+      it 'returns a String with decoded HTML entities' do
+        attr = described_class.new(
+          :name    => 'class',
+          :value   => '&copy;',
+          :element => @el
+        )
+
+        attr.value.should == Oga::HTML::Entities::DECODE_MAPPING['&copy;']
+      end
+    end
+  end
+
   describe '#text' do
     it 'returns an empty String when there is no value' do
       described_class.new.text.should == ''
