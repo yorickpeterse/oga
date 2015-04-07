@@ -27,8 +27,7 @@ module Oga
       #
       def text
         unless @decoded
-          decoder  = html? ? HTML::Entities : Entities
-          @text    = decoder.decode(@text)
+          @text    = EntityDecoder.try_decode(@text, html?)
           @decoded = true
         end
 
