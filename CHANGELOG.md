@@ -3,6 +3,19 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 0.3.1 - 2015-04-08
+
+Oga no longer decodes any HTML entities that appear inside the body of a
+`<script>` or `<style>` tag. For example, this HTML:
+
+    <script>foo&bar;</script>
+
+Would effectively be turned into:
+
+    <script>foo</script>
+
+See commit 4bdc8a3fdcc3111c1e2f7de983faaaf5bb6fffb1 for more information.
+
 ## 0.3.0 - 2015-04-03
 
 ### Lexing of carriage returns
