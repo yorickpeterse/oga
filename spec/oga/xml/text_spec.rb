@@ -85,6 +85,38 @@ describe Oga::XML::Text do
         node.text.should == [160].pack('U')
       end
     end
+
+    describe 'inside an HTML script element' do
+      before do
+        @element  = Oga::XML::Element.new(:name => 'script')
+        @document = Oga::XML::Document.new(
+          :type     => :html,
+          :children => [@element]
+        )
+      end
+
+      it 'does not decode any entities' do
+        @element.inner_text = '&foo;'
+
+        @element.inner_text.should == '&foo;'
+      end
+    end
+
+    describe 'inside an HTML style element' do
+      before do
+        @element  = Oga::XML::Element.new(:name => 'style')
+        @document = Oga::XML::Document.new(
+          :type     => :html,
+          :children => [@element]
+        )
+      end
+
+      it 'does not decode any entities' do
+        @element.inner_text = '&foo;'
+
+        @element.inner_text.should == '&foo;'
+      end
+    end
   end
 
   describe '#to_xml' do

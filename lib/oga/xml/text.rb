@@ -26,7 +26,7 @@ module Oga
       # @return [String]
       #
       def text
-        unless @decoded
+        if decode_entities?
           @text    = EntityDecoder.try_decode(@text, html?)
           @decoded = true
         end
@@ -38,14 +38,28 @@ module Oga
       # @see [Oga::XML::CharacterNode#to_xml]
       #
       def to_xml
-        node = parent
-
-        if node.is_a?(Element) and html? \
-        and Lexer::LITERAL_HTML_ELEMENTS.include?(node.name)
-          return super
-        end
+        return super if inside_literal_html?
 
         return Entities.encode(super)
+      end
+
+      private
+
+      ##
+      # @return [TrueClass|FalseClass]
+      #
+      def decode_entities?
+        return !@decoded && !inside_literal_html?
+      end
+
+      ##
+      # @return [TrueClass|FalseClass]
+      #
+      def inside_literal_html?
+        node = parent
+
+        return node.is_a?(Element) && html? &&
+          Lexer::LITERAL_HTML_ELEMENTS.include?(node.name)
       end
     end # Text
   end # XML
