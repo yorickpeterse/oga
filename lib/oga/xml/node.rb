@@ -5,13 +5,13 @@ module Oga
     # {Oga::XML::NodeSet} and can be used to query surrounding and parent
     # nodes.
     #
-    # @!attribute [rw] node_set
+    # @!attribute [r] node_set
     #  @return [Oga::XML::NodeSet]
     #
     class Node
       include Traversal
 
-      attr_accessor :node_set
+      attr_reader :node_set
 
       ##
       # @param [Hash] options
@@ -23,9 +23,17 @@ module Oga
       #  the current node.
       #
       def initialize(options = {})
-        @node_set = options[:node_set]
-
+        self.node_set = options[:node_set]
         self.children = options[:children] if options[:children]
+      end
+
+      ##
+      # @param [Oga::XML::NodeSet] set
+      #
+      def node_set=(set)
+        @node_set  = set
+        @root_node = nil
+        @html_p    = nil
       end
 
       ##
@@ -120,17 +128,21 @@ module Oga
       # @return [Oga::XML::Document|Oga::XML::Node]
       #
       def root_node
-        node = self
+        unless @root_node
+          node = self
 
-        loop do
-          if !node.is_a?(Document) and node.node_set
-            node = node.node_set.owner
-          else
-            break
+          loop do
+            if !node.is_a?(Document) and node.node_set
+              node = node.node_set.owner
+            else
+              break
+            end
           end
+
+          @root_node = node
         end
 
-        return node
+        return @root_node
       end
 
       ##
@@ -168,9 +180,13 @@ module Oga
       # @return [TrueClass|FalseClass]
       #
       def html?
-        root = root_node
+        if @html_p.nil?
+          root = root_node
 
-        return root.is_a?(Document) && root.html?
+          @html_p = root.is_a?(Document) && root.html?
+        end
+
+        return @html_p
       end
 
       ##

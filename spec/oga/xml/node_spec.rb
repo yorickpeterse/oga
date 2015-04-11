@@ -144,12 +144,18 @@ describe Oga::XML::Node do
       @doc = Oga::XML::Document.new(:children => [@n1])
     end
 
-    it 'returns the root document of an element' do
+    it 'returns the root document of a Node' do
       @n2.root_node.should == @doc
     end
 
-    it 'returns the root element of another element' do
+    it 'returns the root Node of another Node' do
       @n4.root_node.should == @n3
+    end
+
+    it 'flushes the cache when changing the NodeSet of a Node' do
+      @n1.children << @n4
+
+      @n4.root_node.should == @doc
     end
   end
 
@@ -218,6 +224,18 @@ describe Oga::XML::Node do
       document = Oga::XML::Document.new(:children => [node], :type => :xml)
 
       node.html?.should == false
+    end
+
+    it 'flushes the cache when changing the NodeSet of a Node' do
+      node     = described_class.new
+      html_doc = Oga::XML::Document.new(:type => :html)
+      xml_doc  = Oga::XML::Document.new(:type => :xml, :children => [node])
+
+      node.html?.should == false
+
+      html_doc.children << node
+
+      node.html?.should == true
     end
   end
 

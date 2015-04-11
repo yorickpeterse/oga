@@ -12,7 +12,7 @@ module Oga
     #  The XML declaration of the document.
     #  @return [Oga::XML::XmlDeclaration]
     #
-    # @!attribute [rw] type
+    # @!attribute [r] type
     #  The document type, either `:xml` or `:html`.
     #  @return [Symbol]
     #
@@ -20,7 +20,9 @@ module Oga
       include Querying
       include Traversal
 
-      attr_accessor :doctype, :xml_declaration, :type
+      attr_accessor :doctype, :xml_declaration
+
+      attr_reader :type
 
       ##
       # @param [Hash] options
