@@ -8,7 +8,7 @@ module Oga
     #  The name of the element.
     #  @return [String]
     #
-    # @!attribute [ww] namespace_name
+    # @!attribute [r] namespace_name
     #  The name of the namespace.
     #  @return [String]
     #
@@ -23,7 +23,9 @@ module Oga
     class Element < Node
       include Querying
 
-      attr_accessor :name, :namespace_name, :attributes
+      attr_reader :namespace_name
+
+      attr_accessor :name, :attributes
 
       attr_writer :namespaces
 
@@ -54,6 +56,14 @@ module Oga
 
         link_attributes
         register_namespaces_from_attributes
+      end
+
+      ##
+      # @param [String] name
+      #
+      def namespace_name=(name)
+        @namespace_name = name
+        @namespace      = nil
       end
 
       ##

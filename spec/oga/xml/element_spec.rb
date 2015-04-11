@@ -42,6 +42,16 @@ describe Oga::XML::Element do
     end
   end
 
+  describe '#namespace_name=' do
+    it 'sets the namepace name' do
+      element = described_class.new(:name => 'a')
+
+      element.namespace_name = 'foo'
+
+      element.namespace_name.should == 'foo'
+    end
+  end
+
   describe '#attribute' do
     before do
       attributes = [
@@ -207,6 +217,17 @@ describe Oga::XML::Element do
       )
 
       element.namespace.should == namespace
+    end
+
+    it 'flushes the cache when changing the namespace name' do
+      namespace = Oga::XML::Namespace.new(:name => 'bar')
+      element   = described_class.new(
+        :namespaces => {'bar' => namespace}
+      )
+
+      element.namespace_name = 'foo'
+
+      element.namespace.should be_nil
     end
 
     describe 'in an HTML document' do
