@@ -488,6 +488,25 @@ describe Oga::XML::Element do
 
       block.should raise_error(ArgumentError)
     end
+
+    it 'flushes the cache when registering a namespace' do
+      @element.available_namespaces.should == {
+        'foo' => @element.namespaces['foo']
+      }
+
+      @element.register_namespace('bar', 'http://exmaple.com')
+
+      @element.available_namespaces.should == {
+        'foo' => @element.namespaces['foo'],
+        'bar' => @element.namespaces['bar']
+      }
+    end
+
+    it 'does not flush the cache when "flush" is set to false' do
+      @element.should_not receive(:flush_namespaces_cache)
+
+      @element.register_namespace('bar', 'http://example.com', false)
+    end
   end
 
   describe '#available_namespaces' do
@@ -562,6 +581,31 @@ describe Oga::XML::Element do
       document = Oga::XML::Document.new(:type => :html, :children => [element])
 
       element.should_not be_self_closing
+    end
+  end
+
+  describe '#flush_namespaces_cache' do
+    it 'flushes the namespaces cache of the current element' do
+      element = described_class.new(:name => 'a')
+
+      element.available_namespaces.should == {}
+
+      element.register_namespace('foo', 'bar', false)
+
+      element.flush_namespaces_cache
+
+      element.available_namespaces.should == {
+        'foo' => element.namespaces['foo']
+      }
+    end
+
+    it 'flushes the namespace cache of all child elements' do
+      child  = described_class.new(:name => 'b')
+      parent = described_class.new(:name => 'a', :children => [child])
+
+      child.should_receive(:flush_namespaces_cache)
+
+      parent.flush_namespaces_cache
     end
   end
 end

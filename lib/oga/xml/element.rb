@@ -299,14 +299,17 @@ module Oga
       #
       # @param [String] name
       # @param [String] uri
+      # @param [TrueClass|FalseClass] flush
       # @see [Oga::XML::Namespace#initialize]
       #
-      def register_namespace(name, uri)
+      def register_namespace(name, uri, flush = true)
         if namespaces[name]
           raise ArgumentError, "The namespace #{name.inspect} already exists"
         end
 
         namespaces[name] = Namespace.new(:name => name, :uri => uri)
+
+        flush_namespaces_cache if flush
       end
 
       ##
@@ -316,20 +319,25 @@ module Oga
       # @return [Hash]
       #
       def available_namespaces
-        return {} if html? # HTML(5) completely ignores namespaces
+        # HTML(5) completely ignores namespaces
+        if html?
+          return @available_namespaces ||= {}
+        elsif !@available_namespaces
+          merged = namespaces.dup
+          node   = parent
 
-        merged = namespaces.dup
-        node   = parent
+          while node && node.respond_to?(:namespaces)
+            node.namespaces.each do |prefix, ns|
+              merged[prefix] = ns unless merged[prefix]
+            end
 
-        while node && node.respond_to?(:namespaces)
-          node.namespaces.each do |prefix, ns|
-            merged[prefix] = ns unless merged[prefix]
+            node = node.parent
           end
 
-          node = node.parent
+          @available_namespaces = merged
         end
 
-        return merged
+        return @available_namespaces
       end
 
       ##
@@ -349,19 +357,40 @@ module Oga
         return self_closing
       end
 
+      ##
+      # Flushes the namespaces cache of the current element and all its child
+      # elements.
+      #
+      def flush_namespaces_cache
+        @available_namespaces = nil
+        @namespace            = nil
+
+        children.each do |child|
+          child.flush_namespaces_cache if child.is_a?(Element)
+        end
+      end
+
       private
 
       ##
       # Registers namespaces based on any "xmlns" attributes.
       #
       def register_namespaces_from_attributes
+        flush = false
+
         attributes.each do |attr|
           # We're using `namespace_name` opposed to `namespace.name` as "xmlns"
           # is not a registered namespace.
           if attr.name == XMLNS_PREFIX or attr.namespace_name == XMLNS_PREFIX
-            register_namespace(attr.name, attr.value)
+            flush = true
+
+            # Ensures we only flush the cache once instead of flushing it on
+            # every register_namespace call.
+            register_namespace(attr.name, attr.value, false)
           end
         end
+
+        flush_namespaces_cache if flush
       end
 
       ##
