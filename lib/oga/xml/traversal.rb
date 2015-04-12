@@ -39,7 +39,9 @@ module Oga
           catch :skip_children do
             yield current
 
-            visit = current.children.to_a + visit
+            current.children.to_a.reverse_each do |child|
+              visit.unshift(child)
+            end
           end
         end
       end
