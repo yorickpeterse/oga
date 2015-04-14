@@ -67,11 +67,34 @@
 
     comment_start = '<!--';
     comment_end   = '-->';
-    comment       = comment_start (any* -- comment_end) comment_end;
+
+    # Everything except "-" OR a single "-"
+    comment_allowed = (^'-'+ | '-') $count_newlines;
 
     action start_comment {
-        callback(id_on_comment, data, encoding, ts + 4, te - 3);
+        callback_simple(id_on_comment_start);
+
+        fnext comment_body;
     }
+
+    comment_body := |*
+        comment_allowed => {
+            callback(id_on_comment_body, data, encoding, ts, te);
+
+            if ( lines > 0 )
+            {
+                advance_line(lines);
+
+                lines = 0;
+            }
+        };
+
+        comment_end => {
+            callback_simple(id_on_comment_end);
+
+            fnext main;
+        };
+    *|;
 
     # CDATA
     #
@@ -461,7 +484,7 @@
     main := |*
         doctype_start  => start_doctype;
         xml_decl_start => start_xml_decl;
-        comment        => start_comment;
+        comment_start  => start_comment;
         cdata_start    => start_cdata;
         proc_ins_start => start_proc_ins;
         element_start  => start_element;

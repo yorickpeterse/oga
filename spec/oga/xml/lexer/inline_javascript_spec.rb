@@ -20,7 +20,9 @@ describe Oga::XML::Lexer do
         [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'script', 1],
         [:T_TEXT, @javascript, 1],
-        [:T_COMMENT, 'foo', 1],
+        [:T_COMMENT_START, nil, 1],
+        [:T_COMMENT_BODY, 'foo', 1],
+        [:T_COMMENT_END, nil, 1],
         [:T_ELEM_END, nil, 1]
       ]
     end

@@ -107,7 +107,9 @@ public class Lexer extends RubyObject
         String id_on_cdata_start      = "on_cdata_start";
         String id_on_cdata_body       = "on_cdata_body";
         String id_on_cdata_end        = "on_cdata_end";
-        String id_on_comment          = "on_comment";
+        String id_on_comment_start    = "on_comment_start";
+        String id_on_comment_body     = "on_comment_body";
+        String id_on_comment_end      = "on_comment_end";
         String id_on_doctype_end      = "on_doctype_end";
         String id_on_doctype_inline   = "on_doctype_inline";
         String id_on_doctype_name     = "on_doctype_name";

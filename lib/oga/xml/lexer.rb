@@ -285,12 +285,26 @@ module Oga
       end
 
       ##
+      # Called on the open comment tag.
+      #
+      def on_comment_start
+        add_token(:T_COMMENT_START)
+      end
+
+      ##
+      # Called on the closing comment tag.
+      #
+      def on_comment_end
+        add_token(:T_COMMENT_END)
+      end
+
+      ##
       # Called on a comment.
       #
       # @param [String] value
       #
-      def on_comment(value)
-        add_token(:T_COMMENT, value)
+      def on_comment_body(value)
+        add_token(:T_COMMENT_BODY, value)
       end
 
       ##
