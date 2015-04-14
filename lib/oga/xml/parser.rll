@@ -189,7 +189,8 @@ string
   ;
 
 string_body
-  = T_STRING_BODY* { val[0].inject(:+) || '' }
+  = T_STRING_BODY string_body { val[0] + val[1] }
+  | _                         { '' }
   ;
 
 %inner
