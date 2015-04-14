@@ -24,7 +24,8 @@
 
 %terminals T_TEXT T_STRING_SQUOTE T_STRING_DQUOTE T_STRING_BODY;
 %terminals T_DOCTYPE_START T_DOCTYPE_END T_DOCTYPE_TYPE T_DOCTYPE_NAME;
-%terminals T_DOCTYPE_INLINE T_CDATA T_COMMENT;
+%terminals T_DOCTYPE_INLINE T_COMMENT;
+%terminals T_CDATA_START T_CDATA_BODY T_CDATA_END;
 %terminals T_ELEM_START T_ELEM_NAME T_ELEM_NS T_ELEM_END T_ATTR T_ATTR_NS;
 %terminals T_XML_DECL_START T_XML_DECL_END;
 %terminals T_PROC_INS_START T_PROC_INS_NAME T_PROC_INS_END;
@@ -93,7 +94,12 @@ doctype_types
 # CDATA tags
 
 cdata
-  = T_CDATA { on_cdata(val[0]) }
+  = T_CDATA_START cdata_body T_CDATA_END { on_cdata(val[1]) }
+  ;
+
+cdata_body
+  = T_CDATA_BODY cdata_body { val[0] + val[1] }
+  | _                       { '' }
   ;
 
 # Comments

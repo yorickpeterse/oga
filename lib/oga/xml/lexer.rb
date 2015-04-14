@@ -262,10 +262,26 @@ module Oga
       end
 
       ##
-      # Called on a CDATA tag.
+      # Called on the open CDATA tag.
       #
-      def on_cdata(value)
-        add_token(:T_CDATA, value)
+      def on_cdata_start
+        add_token(:T_CDATA_START)
+      end
+
+      ##
+      # Called on the closing CDATA tag.
+      #
+      def on_cdata_end
+        add_token(:T_CDATA_END)
+      end
+
+      ##
+      # Called for the body of a CDATA tag.
+      #
+      # @param [String] value
+      #
+      def on_cdata_body(value)
+        add_token(:T_CDATA_BODY, value)
       end
 
       ##

@@ -30,6 +30,13 @@ module Oga
     end
 
     ##
+    # @see [#lex]
+    #
+    def lex_stringio(input, options = {})
+      return lex(StringIO.new(input), options)
+    end
+
+    ##
     # Lexes an XPath expression.
     #
     # @param [String] input

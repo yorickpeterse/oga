@@ -83,11 +83,34 @@
 
     cdata_start = '<![CDATA[';
     cdata_end   = ']]>';
-    cdata       = cdata_start (any* -- cdata_end) cdata_end;
+
+    # Everything except "]" OR a single "]"
+    cdata_allowed = (^']'+ | ']') $count_newlines;
 
     action start_cdata {
-        callback(id_on_cdata, data, encoding, ts + 9, te - 3);
+        callback_simple(id_on_cdata_start);
+
+        fnext cdata_body;
     }
+
+    cdata_body := |*
+        cdata_allowed => {
+            callback(id_on_cdata_body, data, encoding, ts, te);
+
+            if ( lines > 0 )
+            {
+                advance_line(lines);
+
+                lines = 0;
+            }
+        };
+
+        cdata_end => {
+            callback_simple(id_on_cdata_end);
+
+            fnext main;
+        };
+    *|;
 
     # Processing Instructions
     #
@@ -439,7 +462,7 @@
         doctype_start  => start_doctype;
         xml_decl_start => start_xml_decl;
         comment        => start_comment;
-        cdata          => start_cdata;
+        cdata_start    => start_cdata;
         proc_ins_start => start_proc_ins;
         element_start  => start_element;
         element_end    => close_element;

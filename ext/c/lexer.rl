@@ -90,7 +90,9 @@ VALUE oga_xml_lexer_advance(VALUE self, VALUE data_block)
     ID id_advance_line        = rb_intern("advance_line");
     ID id_on_attribute        = rb_intern("on_attribute");
     ID id_on_attribute_ns     = rb_intern("on_attribute_ns");
-    ID id_on_cdata            = rb_intern("on_cdata");
+    ID id_on_cdata_start      = rb_intern("on_cdata_start");
+    ID id_on_cdata_body       = rb_intern("on_cdata_body");
+    ID id_on_cdata_end        = rb_intern("on_cdata_end");
     ID id_on_comment          = rb_intern("on_comment");
     ID id_on_doctype_end      = rb_intern("on_doctype_end");
     ID id_on_doctype_inline   = rb_intern("on_doctype_inline");
