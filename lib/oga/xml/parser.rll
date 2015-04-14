@@ -29,7 +29,7 @@
 %terminals T_CDATA_START T_CDATA_BODY T_CDATA_END;
 %terminals T_ELEM_START T_ELEM_NAME T_ELEM_NS T_ELEM_END T_ATTR T_ATTR_NS;
 %terminals T_XML_DECL_START T_XML_DECL_END;
-%terminals T_PROC_INS_START T_PROC_INS_NAME T_PROC_INS_END;
+%terminals T_PROC_INS_START T_PROC_INS_NAME T_PROC_INS_BODY T_PROC_INS_END;
 
 document
   = expressions { on_document(val[0]) }
@@ -117,10 +117,15 @@ comment_body
 # Processing Instructions
 
 proc_ins
-  = T_PROC_INS_START T_PROC_INS_NAME T_TEXT? T_PROC_INS_END
+  = T_PROC_INS_START T_PROC_INS_NAME proc_ins_body T_PROC_INS_END
     {
       on_proc_ins(val[1], val[2])
     }
+  ;
+
+proc_ins_body
+  = T_PROC_INS_BODY proc_ins_body { val[0] + val[1] }
+  | _                             { '' }
   ;
 
 # Elements

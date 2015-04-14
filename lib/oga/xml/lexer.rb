@@ -345,6 +345,15 @@ module Oga
       end
 
       ##
+      # Called on the body of a processing instruction.
+      #
+      # @param [String] value
+      #
+      def on_proc_ins_body(value)
+        add_token(:T_PROC_INS_BODY, value)
+      end
+
+      ##
       # Called on the end of a processing instruction.
       #
       def on_proc_ins_end

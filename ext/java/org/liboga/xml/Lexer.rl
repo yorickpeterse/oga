@@ -123,6 +123,7 @@ public class Lexer extends RubyObject
         String id_on_proc_ins_end     = "on_proc_ins_end";
         String id_on_proc_ins_name    = "on_proc_ins_name";
         String id_on_proc_ins_start   = "on_proc_ins_start";
+        String id_on_proc_ins_body    = "on_proc_ins_body";
         String id_on_string_body      = "on_string_body";
         String id_on_string_dquote    = "on_string_dquote";
         String id_on_string_squote    = "on_string_squote";

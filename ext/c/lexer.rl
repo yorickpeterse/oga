@@ -109,6 +109,7 @@ VALUE oga_xml_lexer_advance(VALUE self, VALUE data_block)
     ID id_on_proc_ins_end     = rb_intern("on_proc_ins_end");
     ID id_on_proc_ins_name    = rb_intern("on_proc_ins_name");
     ID id_on_proc_ins_start   = rb_intern("on_proc_ins_start");
+    ID id_on_proc_ins_body    = rb_intern("on_proc_ins_body");
     ID id_on_string_body      = rb_intern("on_string_body");
     ID id_on_string_dquote    = rb_intern("on_string_dquote");
     ID id_on_string_squote    = rb_intern("on_string_squote");

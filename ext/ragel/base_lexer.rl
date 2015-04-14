@@ -149,26 +149,33 @@
     proc_ins_start = '<?' identifier;
     proc_ins_end   = '?>';
 
+    # Everything except "?" OR a single "?"
+    proc_ins_allowed = (^'?'+ | '?') $count_newlines;
+
     action start_proc_ins {
         callback_simple(id_on_proc_ins_start);
         callback(id_on_proc_ins_name, data, encoding, ts + 2, te);
-
-        mark = te;
 
         fnext proc_ins_body;
     }
 
     proc_ins_body := |*
-        proc_ins_end => {
-            callback(id_on_text, data, encoding, mark, ts);
-            callback_simple(id_on_proc_ins_end);
+        proc_ins_allowed => {
+            callback(id_on_proc_ins_body, data, encoding, ts, te);
 
-            mark = 0;
+            if ( lines > 0 )
+            {
+                advance_line(lines);
+
+                lines = 0;
+            }
+        };
+
+        proc_ins_end => {
+            callback_simple(id_on_proc_ins_end);
 
             fnext main;
         };
-
-        any;
     *|;
 
     # Strings
