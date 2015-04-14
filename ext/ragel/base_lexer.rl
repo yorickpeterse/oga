@@ -52,6 +52,11 @@
         if ( fc == '\n' ) lines++;
     }
 
+    action hold_and_return {
+        fhold;
+        fret;
+    }
+
     whitespace = [ \t];
     ident_char = [a-zA-Z0-9\-_];
     identifier = ident_char+;
@@ -370,10 +375,42 @@
         };
     *|;
 
+    # Characters that can be used for unquoted HTML attribute values.
+    # See https://html.spec.whatwg.org/multipage/introduction.html#intro-early-example
+    # for more info.
+    html_unquoted_value = ^(
+        squote | dquote | '`' | '=' | '<' | '>' | whitespace | newline
+    )+;
+
+    # Machine used for processing HTML attribute values.
+    html_attribute_value := |*
+        squote => start_string_squote;
+        dquote => start_string_dquote;
+
+        # Unquoted attribute values are lexed as if they were single quoted
+        # strings.
+        html_unquoted_value => {
+            callback_simple(id_on_string_squote);
+
+            callback(id_on_string_body, data, encoding, ts, te);
+
+            callback_simple(id_on_string_squote);
+        };
+
+        any => hold_and_return;
+    *|;
+
+    # Machine used for processing XML attribute values.
+    xml_attribute_value := |*
+        squote => start_string_squote;
+        dquote => start_string_dquote;
+        any    => hold_and_return;
+    *|;
+
     # Machine used for processing the contents of an element's starting tag.
     # This includes the name, namespace and attributes.
     element_head := |*
-        whitespace | '=';
+        whitespace;
 
         newline => {
             callback_simple(id_advance_line);
@@ -389,8 +426,16 @@
         };
 
         # Attribute values.
-        squote => start_string_squote;
-        dquote => start_string_dquote;
+        '=' => {
+            if ( html_p )
+            {
+                fcall html_attribute_value;
+            }
+            else
+            {
+                fcall xml_attribute_value;
+            }
+        };
 
         # We're done with the open tag of the element.
         '>' => {

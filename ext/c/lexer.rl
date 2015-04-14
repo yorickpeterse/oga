@@ -24,6 +24,7 @@ on `ts` and `te`) so the macro ignores this argument.
 
 ID id_advance_line;
 ID id_literal_html_element_p;
+ID id_html;
 
 %%machine c_lexer;
 
@@ -74,6 +75,9 @@ VALUE oga_xml_lexer_advance(VALUE self, VALUE data_block)
 {
     OgaLexerState *state;
     int lines;
+
+    /* Whether or not HTML mode is enabled */
+    int html_p = rb_funcall(self, id_html, 0) == Qtrue;
 
     /* Make sure that all data passed back to Ruby has the proper encoding. */
     rb_encoding *encoding = rb_enc_get(data_block);
@@ -181,6 +185,7 @@ void Init_liboga_xml_lexer()
 
     id_advance_line           = rb_intern("advance_line");
     id_literal_html_element_p = rb_intern("literal_html_element?");
+    id_html                   = rb_intern("html");
 
     rb_define_method(cLexer, "advance_native", oga_xml_lexer_advance, 1);
     rb_define_method(cLexer, "reset_native", oga_xml_lexer_reset, 0);

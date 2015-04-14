@@ -37,6 +37,13 @@ module Oga
     end
 
     ##
+    # @see [#lex]
+    #
+    def lex_html(input)
+      return Oga::XML::Lexer.new(input, :html => true).lex
+    end
+
+    ##
     # Lexes an XPath expression.
     #
     # @param [String] input

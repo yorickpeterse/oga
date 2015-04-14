@@ -89,6 +89,8 @@ public class Lexer extends RubyObject
     @JRubyMethod
     public IRubyObject advance_native(ThreadContext context, RubyString rb_str)
     {
+        Boolean html_p = this.callMethod(context, "html").isTrue();
+
         Encoding encoding = rb_str.getEncoding();
 
         byte[] data = rb_str.getBytes();
