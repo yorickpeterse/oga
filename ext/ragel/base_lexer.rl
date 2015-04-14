@@ -306,19 +306,34 @@
     # Machine that processes the contents of an XML declaration tag.
     xml_decl := |*
         xml_decl_end => {
+            if ( lines > 0 )
+            {
+                advance_line(lines);
+
+                lines = 0;
+            }
+
             callback_simple(id_on_xml_decl_end);
+
             fnext main;
         };
 
         # Attributes and their values (e.g. version="1.0").
         identifier => {
+            if ( lines > 0 )
+            {
+                advance_line(lines);
+
+                lines = 0;
+            }
+
             callback(id_on_attribute, data, encoding, ts, te);
         };
 
         squote => start_string_squote;
         dquote => start_string_dquote;
 
-        any;
+        any $count_newlines;
     *|;
 
     # Elements
