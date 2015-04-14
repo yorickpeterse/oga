@@ -52,11 +52,6 @@
         if ( fc == '\n' ) lines++;
     }
 
-    action hold_and_return {
-        fhold;
-        fret;
-    }
-
     whitespace = [ \t];
     ident_char = [a-zA-Z0-9\-_];
     identifier = ident_char+;
@@ -375,6 +370,11 @@
         };
     *|;
 
+    action hold_start_element_head {
+        fhold;
+        fnext element_head;
+    }
+
     # Characters that can be used for unquoted HTML attribute values.
     # See https://html.spec.whatwg.org/multipage/introduction.html#intro-early-example
     # for more info.
@@ -384,8 +384,10 @@
 
     # Machine used for processing HTML attribute values.
     html_attribute_value := |*
-        squote => start_string_squote;
-        dquote => start_string_dquote;
+        squote | dquote => {
+            fhold;
+            fnext html_attribute_value_quoted;
+        };
 
         # Unquoted attribute values are lexed as if they were single quoted
         # strings.
@@ -397,14 +399,23 @@
             callback_simple(id_on_string_squote);
         };
 
-        any => hold_and_return;
+        any => hold_start_element_head;
+    *|;
+
+    # Machine specifically used when dealing with quoted HTML attributes. This
+    # ensures that input such as <a href="foo"/> doesn't result in "/" being
+    # considered part of the attribute value.
+    html_attribute_value_quoted := |*
+        squote => start_string_squote;
+        dquote => start_string_dquote;
+        any    => hold_start_element_head;
     *|;
 
     # Machine used for processing XML attribute values.
     xml_attribute_value := |*
         squote => start_string_squote;
         dquote => start_string_dquote;
-        any    => hold_and_return;
+        any    => hold_start_element_head;
     *|;
 
     # Machine used for processing the contents of an element's starting tag.
@@ -429,11 +440,11 @@
         '=' => {
             if ( html_p )
             {
-                fcall html_attribute_value;
+                fnext html_attribute_value;
             }
             else
             {
-                fcall xml_attribute_value;
+                fnext xml_attribute_value;
             }
         };
 
