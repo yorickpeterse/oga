@@ -386,7 +386,7 @@
     html_attribute_value := |*
         squote | dquote => {
             fhold;
-            fnext html_attribute_value_quoted;
+            fnext xml_attribute_value;
         };
 
         # Unquoted attribute values are lexed as if they were single quoted
@@ -400,15 +400,6 @@
         };
 
         any => hold_start_element_head;
-    *|;
-
-    # Machine specifically used when dealing with quoted HTML attributes. This
-    # ensures that input such as <a href="foo"/> doesn't result in "/" being
-    # considered part of the attribute value.
-    html_attribute_value_quoted := |*
-        squote => start_string_squote;
-        dquote => start_string_dquote;
-        any    => hold_start_element_head;
     *|;
 
     # Machine used for processing XML attribute values.
