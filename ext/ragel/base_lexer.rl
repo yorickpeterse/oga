@@ -68,9 +68,9 @@
 
     # Comments
     #
-    # http://www.w3.org/TR/html-markup/syntax.html#comments
+    # http://www.w3.org/TR/html/syntax.html#comments
     #
-    # Unlike the W3 specification these rules *do* allow character sequences
+    # Unlike the W3C specification these rules *do* allow character sequences
     # such as `--` and `->`. Putting extra checks in for these sequences would
     # actually make the rules/actions more complex.
     #
@@ -108,7 +108,7 @@
 
     # CDATA
     #
-    # http://www.w3.org/TR/html-markup/syntax.html#cdata-sections
+    # http://www.w3.org/TR/html/syntax.html#cdata-sections
     #
     # In HTML CDATA tags have no meaning/are not supported. Oga does
     # support them but treats their contents as plain text.
@@ -242,7 +242,7 @@
 
     # DOCTYPES
     #
-    # http://www.w3.org/TR/html-markup/syntax.html#doctype-syntax
+    # http://www.w3.org/TR/html/syntax.html#the-doctype
     #
     # These rules support the 3 flavours of doctypes:
     #
@@ -356,7 +356,7 @@
 
     # Elements
     #
-    # http://www.w3.org/TR/html-markup/syntax.html#syntax-elements
+    # http://www.w3.org/TR/html/syntax.html#syntax-elements
     #
     # Lexing of elements is broken up into different machines that handle the
     # name/namespace, contents of the open tag and the body of an element. The
@@ -487,7 +487,7 @@
     # Text
     #
     # http://www.w3.org/TR/xml/#syntax
-    # http://www.w3.org/TR/html-markup/syntax.html#text-syntax
+    # http://www.w3.org/TR/html/syntax.html#text
     #
     # Text content is everything leading up to certain special tags such as "</"
     # and "<?".
