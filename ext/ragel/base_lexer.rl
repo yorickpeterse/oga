@@ -61,6 +61,11 @@
         advance_line(1)
     }
 
+    action hold_and_return {
+        fhold;
+        fret;
+    }
+
     # Comments
     #
     # http://www.w3.org/TR/html-markup/syntax.html#comments
@@ -383,11 +388,6 @@
         };
     *|;
 
-    action hold_start_element_head {
-        fhold;
-        fnext element_head;
-    }
-
     # Characters that can be used for unquoted HTML attribute values.
     # See https://html.spec.whatwg.org/multipage/introduction.html#intro-early-example
     # for more info.
@@ -412,21 +412,32 @@
             callback_simple(id_on_string_squote);
         };
 
-        any => hold_start_element_head;
+        any => hold_and_return;
     *|;
 
     # Machine used for processing XML attribute values.
     xml_attribute_value := |*
-        squote => start_string_squote;
-        dquote => start_string_dquote;
-        any    => hold_start_element_head;
+        # The following two actions use "fnext" instead of "fcall". Combined
+        # with "element_head" using "fcall" to jump to this machine this means
+        # we can return back to "element_head" after processing a single string.
+        squote => {
+            callback_simple(id_on_string_squote);
+
+            fnext string_squote;
+        };
+
+        dquote => {
+            callback_simple(id_on_string_dquote);
+
+            fnext string_dquote;
+        };
+
+        any => hold_and_return;
     *|;
 
     # Machine used for processing the contents of an element's starting tag.
     # This includes the name, namespace and attributes.
     element_head := |*
-        whitespace;
-
         newline => advance_newline;
 
         # Attribute names and namespaces.
@@ -442,11 +453,11 @@
         '=' => {
             if ( html_p )
             {
-                fnext html_attribute_value;
+                fcall html_attribute_value;
             }
             else
             {
-                fnext xml_attribute_value;
+                fcall xml_attribute_value;
             }
         };
 
@@ -469,6 +480,8 @@
             callback_simple(id_on_element_end);
             fnext main;
         };
+
+        any;
     *|;
 
     # Text
