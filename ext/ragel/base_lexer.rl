@@ -46,15 +46,20 @@
     # stack.
     #
 
-    newline = '\r\n' | '\n' | '\r';
+    newline    = '\r\n' | '\n' | '\r';
+    whitespace = [ \t];
+    ident_char = [a-zA-Z0-9\-_];
+    identifier = ident_char+;
+
+    whitespace_or_newline = whitespace | newline;
 
     action count_newlines {
         if ( fc == '\n' ) lines++;
     }
 
-    whitespace = [ \t];
-    ident_char = [a-zA-Z0-9\-_];
-    identifier = ident_char+;
+    action advance_newline {
+        advance_line(1)
+    }
 
     # Comments
     #
@@ -240,10 +245,18 @@
     # 2. Deprecated doctypes, the more verbose ones used prior to HTML5.
     # 3. Legacy doctypes
     #
-    doctype_start = '<!DOCTYPE'i whitespace+;
+    doctype_start = '<!DOCTYPE'i (whitespace_or_newline+ $count_newlines);
 
     action start_doctype {
         callback_simple(id_on_doctype_start);
+
+        if ( lines > 0 )
+        {
+            advance_line(lines);
+
+            lines = 0;
+        }
+
         fnext doctype;
     }
 
@@ -277,10 +290,6 @@
         squote => start_string_squote;
         dquote => start_string_dquote;
 
-        # Whitespace inside doctypes is ignored since there's no point in
-        # including it.
-        whitespace;
-
         identifier => {
             callback(id_on_doctype_name, data, encoding, ts, te);
         };
@@ -289,6 +298,10 @@
             callback_simple(id_on_doctype_end);
             fnext main;
         };
+
+        newline => advance_newline;
+
+        whitespace;
     *|;
 
     # XML declaration tags
@@ -379,7 +392,7 @@
     # See https://html.spec.whatwg.org/multipage/introduction.html#intro-early-example
     # for more info.
     html_unquoted_value = ^(
-        squote | dquote | '`' | '=' | '<' | '>' | whitespace | newline
+        squote | dquote | '`' | '=' | '<' | '>' | whitespace_or_newline
     )+;
 
     # Machine used for processing HTML attribute values.
@@ -414,9 +427,7 @@
     element_head := |*
         whitespace;
 
-        newline => {
-            callback_simple(id_advance_line);
-        };
+        newline => advance_newline;
 
         # Attribute names and namespaces.
         identifier ':' => {

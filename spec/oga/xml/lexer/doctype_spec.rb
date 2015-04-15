@@ -10,6 +10,23 @@ describe Oga::XML::Lexer do
       ]
     end
 
+    it 'lexes a doctype containing a newline before the doctype name' do
+      lex("<!DOCTYPE\nhtml>").should == [
+        [:T_DOCTYPE_START, nil, 1],
+        [:T_DOCTYPE_NAME, 'html', 2],
+        [:T_DOCTYPE_END, nil, 2]
+      ]
+    end
+
+    it 'lexes a doctype with a public ID preceded by a newline' do
+      lex("<!DOCTYPE html\nPUBLIC>").should == [
+        [:T_DOCTYPE_START, nil, 1],
+        [:T_DOCTYPE_NAME, 'html', 1],
+        [:T_DOCTYPE_TYPE, 'PUBLIC', 2],
+        [:T_DOCTYPE_END, nil, 2]
+      ]
+    end
+
     it 'lexes a doctype with a public and system ID' do
       lex('<!DOCTYPE HTML PUBLIC "foobar" "baz">').should == [
         [:T_DOCTYPE_START, nil, 1],
