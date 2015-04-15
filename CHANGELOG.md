@@ -3,6 +3,75 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 0.3.2 - 2015-04-15
+
+### Support for unquoted HTML attribute values
+
+Oga can now lex/parse HTML attribute values that don't use quotes. For example,
+the following is valid HTML:
+
+    <a href=foo>Foo</a>
+
+And so is this:
+
+    <a href=foo/bar>Foo/bar</a>
+
+See Github issue <https://github.com/YorickPeterse/oga/issues/94> and the
+following commits for more information:
+
+* bc9b9bc9537d9dc614b47323e0a6727a4ec2dd04
+* d892ce97874ed0f1382df993c40a452530025f02
+* afbb5858122d5aece252b957b3988787ed76168f
+* 23a441933ac659933646418ed62ba188bb20ff65
+
+### Counting newlines in XML declarations
+
+The XML lexer has been adjusted so that it counts newlines when processing
+XML declarations. While these newlines are not exposed to the resulting
+`Oga::XML::*` instances they are used when reporting errors. Previously the
+lexer wouldn't count newlines in XML declarations, leading to error messages
+referring to incorrect line numbers.
+
+This was fixed in commit e942086f2df0204fc7756c3df260297f5cadc7c2.
+
+### Better lexer support for CDATA, comments and processing instructions
+
+The XML lexer has been tweaked so it can handle multi-line CDATA tags, comments
+and processing instructions, both when using a String and IO (or similar) as
+input.
+
+See Github issue <https://github.com/YorickPeterse/oga/issues/93> and the
+following commits for more information:
+
+* b2ea20ba615953254554565e0c8b11587ac4f59c
+* ea8b4aa92fe746a9da19e94c3edf68b41495d992
+* 8acc7fc743c9492eed2d9c885c22c1b5bec06d0f
+
+### Performance Improvements
+
+To improve performance of the XPath evaluator (as well as generic code using
+Oga) the following methods now cache their return values:
+
+* `Oga::XML::Element#available_namespaces`
+* `Oga::XML::Element#namespace`
+* `Oga::XML::Node#html?`
+
+These cache of these methods is flushed automatically when needed. For example,
+registering a new namespace will flush the cache for
+`Element#available_namespaces` and `Element#namespace`.
+
+The performance of `Oga::XML::Traversal#each_node` has also been optimized,
+cutting down the amount of object allocations significantly.
+
+Combined these improvements should make XPath evaluation roughly 4 times faster.
+
+See the following commits for more information:
+
+* 739e3b474cb562f774a0e80f5f33b3b18ec7d8c5
+* b42f9aaf322c6bb67a3ddfd2b350d72a45c1fd8f
+* fa838154fc19c938355e1d96c5e2dd4d8c299ba3
+* b0359b37e536aef172b95b54dea91198b9512e15
+
 ## 0.3.1 - 2015-04-08
 
 Oga no longer decodes any HTML entities that appear inside the body of a
