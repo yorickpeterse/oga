@@ -176,7 +176,17 @@ xml_decl
 # Plain text
 
 text
-  = T_TEXT { on_text(val[0]) }
+  = T_TEXT text_follow
+    {
+      text = val[1] ? val[0] + val[1] : val[0]
+
+      on_text(text)
+    }
+  ;
+
+text_follow
+  = T_TEXT text_follow { val[1] ? val[0] + val[1] : val[0] }
+  | _                  { nil }
   ;
 
 # Strings

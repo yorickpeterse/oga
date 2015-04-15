@@ -40,12 +40,18 @@ module Oga
     class Lexer
       attr_reader :html
 
+      # @return [String]
+      HTML_SCRIPT = 'script'
+
+      # @return [String]
+      HTML_STYLE = 'style'
+
       ##
       # Names of HTML tags of which the content should be lexed as-is.
       #
       # @return [Array]
       #
-      LITERAL_HTML_ELEMENTS = %w{script style}
+      LITERAL_HTML_ELEMENTS = [HTML_SCRIPT, HTML_STYLE]
 
       ##
       # @param [String|IO] data The data to lex. This can either be a String or
@@ -189,12 +195,17 @@ module Oga
       end
 
       ##
-      # Returns true if the current element's content should be lexed as-is.
-      #
       # @return [TrueClass|FalseClass]
       #
-      def literal_html_element?
-        return html? && LITERAL_HTML_ELEMENTS.include?(current_element)
+      def html_script?
+        return html? && current_element == HTML_SCRIPT
+      end
+
+      ##
+      # @return [TrueClass|FalseClass]
+      #
+      def html_style?
+        return html? && current_element == HTML_STYLE
       end
 
       ##

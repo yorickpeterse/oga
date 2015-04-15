@@ -58,7 +58,7 @@
     }
 
     action advance_newline {
-        advance_line(1)
+        advance_line(1);
     }
 
     action hold_and_return {
@@ -376,6 +376,12 @@
         callback_simple(id_on_element_end);
     }
 
+    action close_element_fnext_main {
+        callback_simple(id_on_element_end);
+
+        fnext main;
+    }
+
     # Machine used for lexing the name/namespace of an element.
     element_name := |*
         identifier ':' => {
@@ -465,9 +471,13 @@
         '>' => {
             callback_simple(id_on_element_open_end);
 
-            if ( literal_html_element_p() )
+            if ( html_script_p() )
             {
-                fnext literal_html_element;
+                fnext html_script;
+            }
+            else if ( html_style_p() )
+            {
+                fnext html_style;
             }
             else
             {
@@ -506,6 +516,17 @@
     terminate_text = '</' | '<!' | '<?' | element_start;
     allowed_text   = (any* -- terminate_text) $count_newlines;
 
+    action emit_text {
+        callback(id_on_text, data, encoding, ts, te);
+
+        if ( lines > 0 )
+        {
+            advance_line(lines);
+
+            lines = 0;
+        }
+    }
+
     text := |*
         terminate_text | allowed_text => {
             callback(id_on_text, data, encoding, ts, te);
@@ -541,36 +562,17 @@
     # Certain tags in HTML can contain basically anything except for the literal
     # closing tag. Two examples are script and style tags.  As a result of this
     # we can't use the regular text machine.
-    literal_html_closing_tags = '</script>' | '</style>';
-    literal_html_allowed = (any* -- literal_html_closing_tags) $count_newlines;
 
-    literal_html_element := |*
-        literal_html_allowed => {
-            callback(id_on_text, data, encoding, ts, te);
+    literal_html_allowed = (^'<'+ | '<'+) $count_newlines;
 
-            if ( lines > 0 )
-            {
-                advance_line(lines);
+    html_script := |*
+        literal_html_allowed => emit_text;
+        '</script>'          => close_element_fnext_main;
+    *|;
 
-                lines = 0;
-            }
-        };
-
-        literal_html_allowed %{ mark = p; } literal_html_closing_tags => {
-            callback(id_on_text, data, encoding, ts, mark);
-
-            p    = mark - 1;
-            mark = 0;
-
-            if ( lines > 0 )
-            {
-                advance_line(lines);
-
-                lines = 0;
-            }
-
-            fnext main;
-        };
+    html_style := |*
+        literal_html_allowed => emit_text;
+        '</style>'           => close_element_fnext_main;
     *|;
 
     # The main machine aka the entry point of Ragel.

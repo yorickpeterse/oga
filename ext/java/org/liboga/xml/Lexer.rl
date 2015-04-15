@@ -194,13 +194,23 @@ public class Lexer extends RubyObject
     }
 
     /**
-     * See * Oga::XML::Lexer#literal_html_element? for more information.
+     * @see Oga::XML::Lexer#html_script?
      */
-    public Boolean literal_html_element_p()
+    public Boolean html_script_p()
     {
         ThreadContext context = this.runtime.getCurrentContext();
 
-        return this.callMethod(context, "literal_html_element?").isTrue();
+        return this.callMethod(context, "html_script?").isTrue();
+    }
+
+    /**
+     * @see Oga::XML::Lexer#html_style?
+     */
+    public Boolean html_style_p()
+    {
+        ThreadContext context = this.runtime.getCurrentContext();
+
+        return this.callMethod(context, "html_style?").isTrue();
     }
 }
 
