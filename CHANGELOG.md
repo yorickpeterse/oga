@@ -3,6 +3,43 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 0.3.3 - 2015-04-18
+
+### Improved lexer support for script/style tags
+
+Commit 73fbbfbdbdecafcf5f873b8a27e81c19a2e2ed0c improved support for lexing
+HTML script and style tags, ensuring that HTML such as the following is
+processed correctly:
+
+    <script>
+    var foo = "</style>"
+    </script>
+
+    <style>
+    /* </script> */
+    </style>
+
+### Lexing of extra quotes
+
+The XML lexer can now handle stray quotes that reside in the open tag of an
+element, for example:
+
+    <a href="foo""></a>
+
+While technically invalid HTML certain websites such as <http://yahoo.com>
+contain HTML like this.
+
+See commit 6b779d788384b89ba30ef60c17a156216ba5b333 for more information.
+
+### Lexing of doctypes containing newlines
+
+The XML lexer is now capable of lexing doctypes that contain newlines such as:
+
+    <!DOCTYPE
+        html>
+
+See commit 9a0e31d0ae9fc8bbf9fdacb13100a7327d09157a for more information.
+
 ## 0.3.2 - 2015-04-15
 
 ### Support for unquoted HTML attribute values
