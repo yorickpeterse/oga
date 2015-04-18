@@ -162,6 +162,20 @@ module Oga
         return !!html
       end
 
+      ##
+      # @return [TrueClass|FalseClass]
+      #
+      def html_script?
+        return html? && current_element == HTML_SCRIPT
+      end
+
+      ##
+      # @return [TrueClass|FalseClass]
+      #
+      def html_style?
+        return html? && current_element == HTML_STYLE
+      end
+
       private
 
       ##
@@ -192,20 +206,6 @@ module Oga
       #
       def current_element
         return @elements.last
-      end
-
-      ##
-      # @return [TrueClass|FalseClass]
-      #
-      def html_script?
-        return html? && current_element == HTML_SCRIPT
-      end
-
-      ##
-      # @return [TrueClass|FalseClass]
-      #
-      def html_style?
-        return html? && current_element == HTML_STYLE
       end
 
       ##

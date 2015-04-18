@@ -58,6 +58,42 @@ describe Oga::XML::SaxParser do
 
       handler.attrs.should == {'b' => '10', 'x:c' => '20'}
     end
+
+    describe 'when parsing XML documents' do
+      it 'decodes XML entities in text nodes' do
+        handler = Class.new do
+          attr_reader :text
+
+          def on_text(text)
+            @text = text
+          end
+        end.new
+
+        parser = described_class.new(handler, '&lt;')
+
+        parser.parse
+
+        handler.text.should == '<'
+      end
+    end
+
+    describe 'when parsing HTML documents' do
+      it 'decodes HTML entities in text nodes' do
+        handler = Class.new do
+          attr_reader :text
+
+          def on_text(text)
+            @text = text
+          end
+        end.new
+
+        parser = described_class.new(handler, '&nbsp;', :html => true)
+
+        parser.parse
+
+        handler.text.should == Oga::HTML::Entities::DECODE_MAPPING['&nbsp;']
+      end
+    end
   end
 
   describe '#on_attribute' do
@@ -84,6 +120,29 @@ describe Oga::XML::SaxParser do
 
       hash.should == {'FOO' => 'bar'}
     end
+
+    describe 'when parsing an XML document' do
+      it 'decodes XML entities' do
+        parser = described_class.new(@handler_without, '<a a="&lt;" />')
+        hash   = parser.on_attribute('a', nil, '&lt;')
+
+        hash.should == {'a' => '<'}
+      end
+    end
+
+    describe 'when parsing an HTML document' do
+      it 'decodes HTML entities' do
+        parser = described_class.new(
+          @handler_without,
+          '<a a="&nbsp;" />',
+          :html => true
+        )
+
+        hash = parser.on_attribute('a', nil, '&nbsp;')
+
+        hash.should == {'a' => Oga::HTML::Entities::DECODE_MAPPING['&nbsp;']}
+      end
+    end
   end
 
   describe '#on_attributes' do
@@ -109,6 +168,81 @@ describe Oga::XML::SaxParser do
       retval = parser.on_attributes([{'a' => 'b'}, {'c' => 'd'}])
 
       retval.should == %w{Alice Bob}
+    end
+  end
+
+  describe '#on_text' do
+    it 'invokes a custom on_text callback if defined' do
+      handler = Class.new do
+        attr_reader :text
+
+        def on_text(text)
+          @text = text.upcase
+        end
+      end.new
+
+      parser = described_class.new(handler, nil)
+
+      parser.on_text('foo')
+
+      handler.text.should == 'FOO'
+    end
+
+    describe 'when parsing an XML document' do
+      before do
+        @handler = Class.new do
+          attr_reader :text
+
+          def on_text(text)
+            @text = text
+          end
+        end.new
+
+        @parser = described_class.new(@handler, nil)
+      end
+
+      it 'decodes XML entities' do
+        @parser.on_text('&lt;')
+
+        @handler.text.should == '<'
+      end
+    end
+
+    describe 'when parsing an HTML document' do
+      before do
+        @handler = Class.new do
+          attr_reader :text
+
+          def on_text(text)
+            @text = text
+          end
+        end.new
+
+        @parser = described_class.new(@handler, nil, :html => true)
+      end
+
+      it 'decodes HTML entities' do
+        @parser.on_text('&nbsp;')
+
+        @handler.text.should ==
+          Oga::HTML::Entities::DECODE_MAPPING['&nbsp;']
+      end
+
+      it 'does not decode HTML entities of script tags' do
+        @parser.stub(:inside_literal_html?).and_return(true)
+
+        @parser.on_text('&nbsp;')
+
+        @handler.text.should == '&nbsp;'
+      end
+
+      it 'does not decode HTML entities of style tags' do
+        @parser.stub(:inside_literal_html?).and_return(true)
+
+        @parser.on_text('&nbsp;')
+
+        @handler.text.should == '&nbsp;'
+      end
     end
   end
 end

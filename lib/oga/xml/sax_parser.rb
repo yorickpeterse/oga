@@ -128,6 +128,10 @@ module Oga
 
         key = ns ? "#{ns}:#{name}" : name
 
+        if value
+          value = EntityDecoder.try_decode(value, @lexer.html?)
+        end
+
         return {key => value}
       end
 
@@ -152,7 +156,29 @@ module Oga
         return merged
       end
 
+      ##
+      # @param [String] text
+      #
+      def on_text(text)
+        if @handler.respond_to?(:on_text)
+          unless inside_literal_html?
+            text = EntityDecoder.try_decode(text, @lexer.html?)
+          end
+
+          run_callback(:on_text, text)
+        end
+
+        return
+      end
+
       private
+
+      ##
+      # @return [TrueClass|FalseClass]
+      #
+      def inside_literal_html?
+        return @lexer.html_script? || @lexer.html_style?
+      end
 
       ##
       # @param [Symbol] method
