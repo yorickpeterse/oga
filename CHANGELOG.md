@@ -3,6 +3,13 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 0.3.4 - 2015-04-19
+
+XML and HTML entities are decoded in the SAX parser before data is passed to a
+custom handler class.
+
+See commit da62fcd75d0889e4539e7390777a906a914a78c0 for more information.
+
 ## 0.3.3 - 2015-04-18
 
 ### Improved lexer support for script/style tags
