@@ -5,21 +5,24 @@ describe Oga::XML::Lexer do
     it 'lexes an opening element' do
       lex('<p>').should == [
         [:T_ELEM_START, nil, 1],
-        [:T_ELEM_NAME, 'p', 1]
+        [:T_ELEM_NAME, 'p', 1],
+        [:T_ELEM_END, nil, 1]
       ]
     end
 
     it 'lexes an opening element with a stray double quote' do
       lex('<p">').should == [
         [:T_ELEM_START, nil, 1],
-        [:T_ELEM_NAME, 'p', 1]
+        [:T_ELEM_NAME, 'p', 1],
+        [:T_ELEM_END, nil, 1]
       ]
     end
 
     it 'lexes an opening element with a stray double quoted string' do
       lex('<p"">').should == [
         [:T_ELEM_START, nil, 1],
-        [:T_ELEM_NAME, 'p', 1]
+        [:T_ELEM_NAME, 'p', 1],
+        [:T_ELEM_END, nil, 1]
       ]
     end
 
@@ -60,7 +63,8 @@ describe Oga::XML::Lexer do
       lex('Foo<p>').should == [
         [:T_TEXT, 'Foo', 1],
         [:T_ELEM_START, nil, 1],
-        [:T_ELEM_NAME, 'p', 1]
+        [:T_ELEM_NAME, 'p', 1],
+        [:T_ELEM_END, nil, 1]
       ]
     end
 

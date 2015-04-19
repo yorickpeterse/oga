@@ -151,6 +151,11 @@ module Oga
         read_data do |chunk|
           advance_native(chunk)
         end
+
+        # Add any missing closing tags
+        unless @elements.empty?
+          @elements.length.times { on_element_end }
+        end
       ensure
         @block = nil
       end
@@ -377,7 +382,7 @@ module Oga
       # @param [String] name The name of the element, including namespace.
       #
       def on_element_name(name)
-        @elements << name if html?
+        @elements << name
 
         add_token(:T_ELEM_NAME, name)
       end
@@ -410,9 +415,11 @@ module Oga
       # Called on the closing tag of an element.
       #
       def on_element_end
+        return if @elements.empty?
+
         add_token(:T_ELEM_END)
 
-        @elements.pop if html?
+        @elements.pop
       end
 
       ##
