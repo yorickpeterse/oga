@@ -69,6 +69,10 @@ describe Oga::XML::Entities do
     it 'decodes &#x3C; into <' do
       described_class.decode('&#x3C;').should == '<'
     end
+
+    it 'decodes numeric entities starting with a 0' do
+      described_class.decode('&#038;').should == '&'
+    end
   end
 
   describe 'encode' do

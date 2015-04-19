@@ -72,7 +72,7 @@ module Oga
 
         if input.include?(AMPERSAND)
           input = input.gsub(CODEPOINT_ENTITY) do |match|
-            [$1 ? Integer($2, 16) : Integer($2)].pack('U')
+            [$1 ? Integer($2, 16) : Integer($2, 10)].pack('U*')
           end
         end
 
