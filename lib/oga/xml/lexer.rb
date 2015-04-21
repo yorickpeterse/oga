@@ -40,18 +40,52 @@ module Oga
     class Lexer
       attr_reader :html
 
-      # @return [String]
-      HTML_SCRIPT = 'script'
+      # These are all constant/frozen to remove the need for String allocations
+      # every time they are referenced in the lexer.
+      HTML_SCRIPT = 'script'.freeze
+      HTML_STYLE  = 'style'.freeze
 
-      # @return [String]
-      HTML_STYLE = 'style'
+      # Elements that should be closed automatically before a new opening tag is
+      # processed.
+      HTML_CLOSE_SELF = {
+        'html'     => NodeNameSet.new(%w{html}),
+        'head'     => NodeNameSet.new(%w{head}),
+        'body'     => NodeNameSet.new(%w{body}),
+        'base'     => NodeNameSet.new(%w{base}),
+        'link'     => NodeNameSet.new(%w{link}),
+        'meta'     => NodeNameSet.new(%w{meta}),
+        'noscript' => NodeNameSet.new(%w{noscript}),
+        'template' => NodeNameSet.new(%w{template}),
+        'title'    => NodeNameSet.new(%w{title}),
+        'li'       => NodeNameSet.new(%w{li}),
+        'dt'       => NodeNameSet.new(%w{dt dd}),
+        'dd'       => NodeNameSet.new(%w{dd dt}),
+        'rb'       => NodeNameSet.new(%w{rb rt rtc rp}),
+        'rt'       => NodeNameSet.new(%w{rb rt rtc rp}),
+        'rtc'      => NodeNameSet.new(%w{rb rtc rp}),
+        'rp'       => NodeNameSet.new(%w{rb rt rtc rp}),
+        'optgroup' => NodeNameSet.new(%w{optgroup}),
+        'option'   => NodeNameSet.new(%w{option optgroup}),
+        'thead'    => NodeNameSet.new(%w{tbody tfoot}),
+        'tbody'    => NodeNameSet.new(%w{tbody tfoot}),
+        'tfoot'    => NodeNameSet.new(%w{tbody}),
+        'tr'       => NodeNameSet.new(%w{tr}),
+        'td'       => NodeNameSet.new(%w{td th}),
+        'th'       => NodeNameSet.new(%w{td th}),
+        'p'        => NodeNameSet.new(%w{
+          address article aside blockquote div dl fieldset footer form h1 h2 h3
+          h4 h5 h6 header hgroup hr main nav ol p pre section table ul
+        })
+      }
+
+      HTML_CLOSE_SELF.keys.each do |key|
+        HTML_CLOSE_SELF[key.upcase] = HTML_CLOSE_SELF[key]
+      end
 
       ##
       # Names of HTML tags of which the content should be lexed as-is.
       #
-      # @return [Array]
-      #
-      LITERAL_HTML_ELEMENTS = [HTML_SCRIPT, HTML_STYLE]
+      LITERAL_HTML_ELEMENTS = NodeNameSet.new([HTML_SCRIPT, HTML_STYLE])
 
       ##
       # @param [String|IO] data The data to lex. This can either be a String or
@@ -375,6 +409,28 @@ module Oga
       # @param [String] name The name of the element, including namespace.
       #
       def on_element_name(name)
+        before_html_element_name(name) if html?
+
+        add_element(name)
+      end
+
+      ##
+      # Handles inserting of any missing tags whenever a new HTML tag is opened.
+      #
+      # @param [String] name
+      #
+      def before_html_element_name(name)
+        close_current = HTML_CLOSE_SELF[current_element]
+
+        if close_current and close_current.include?(name)
+          on_element_end
+        end
+      end
+
+      ##
+      # @param [String] name
+      #
+      def add_element(name)
         @elements << name
 
         add_token(:T_ELEM_NAME, name)
