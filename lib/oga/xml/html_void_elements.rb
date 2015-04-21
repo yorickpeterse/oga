@@ -4,9 +4,9 @@ module Oga
     # Names of the HTML void elements that should be handled when HTML lexing
     # is enabled.
     #
-    # @return [Set]
+    # @return [Oga::NodeNameSet]
     #
-    HTML_VOID_ELEMENTS = Set.new([
+    HTML_VOID_ELEMENTS = NodeNameSet.new([
       'area',
       'base',
       'br',
@@ -24,7 +24,5 @@ module Oga
       'track',
       'wbr'
     ])
-
-    HTML_VOID_ELEMENTS.merge(HTML_VOID_ELEMENTS.map { |name| name.upcase })
   end # XML
 end # Oga
