@@ -37,12 +37,10 @@ describe Oga::XML::Lexer do
 
     it 'lexes two CDATA tags following each other' do
       lex('<a><![CDATA[foo]]><b><![CDATA[bar]]></b></a>').should == [
-        [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'a', 1],
         [:T_CDATA_START, nil, 1],
         [:T_CDATA_BODY, 'foo', 1],
         [:T_CDATA_END, nil, 1],
-        [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'b', 1],
         [:T_CDATA_START, nil, 1],
         [:T_CDATA_BODY, 'bar', 1],

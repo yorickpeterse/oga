@@ -8,7 +8,6 @@ describe Oga::XML::Lexer do
 
     it 'lexes inline Javascript' do
       lex("<script>#{@javascript}</script>").should == [
-        [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'script', 1],
         [:T_TEXT, @javascript, 1],
         [:T_ELEM_END, nil, 1]
@@ -17,7 +16,6 @@ describe Oga::XML::Lexer do
 
     it 'lexes inline Javascript containing an XML comment' do
       lex("<script>#{@javascript}<!--foo--></script>").should == [
-        [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'script', 1],
         [:T_TEXT, @javascript, 1],
         [:T_COMMENT_START, nil, 1],
@@ -29,7 +27,6 @@ describe Oga::XML::Lexer do
 
     it 'lexes inline Javascript containing a CDATA tag' do
       lex("<script>#{@javascript}<![CDATA[foo]]></script>").should == [
-        [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'script', 1],
         [:T_TEXT, @javascript, 1],
         [:T_CDATA_START, nil, 1],
@@ -41,7 +38,6 @@ describe Oga::XML::Lexer do
 
     it 'lexes inline Javascript containing a processing instruction' do
       lex("<script>#{@javascript}<?foo?></script>").should == [
-        [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'script', 1],
         [:T_TEXT, @javascript, 1],
         [:T_PROC_INS_START, nil, 1],
@@ -53,10 +49,8 @@ describe Oga::XML::Lexer do
 
     it 'lexes inline Javascript containing another element' do
       lex("<script>#{@javascript}<p></p></script>").should == [
-        [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'script', 1],
         [:T_TEXT, @javascript, 1],
-        [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'p', 1],
         [:T_ELEM_END, nil, 1],
         [:T_ELEM_END, nil, 1]

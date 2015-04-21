@@ -6,7 +6,6 @@ describe Oga::XML::Lexer do
       io = StringIO.new("<p class='foo'>\nHello</p>")
 
       lex(io).should == [
-        [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'p', 1],
         [:T_ATTR, 'class', 1],
         [:T_STRING_SQUOTE, nil, 1],
@@ -31,7 +30,6 @@ describe Oga::XML::Lexer do
       lexer = described_class.new(io)
 
       lexer.lex.should == [
-        [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'foo', 1],
         [:T_ATTR, 'bar', 1],
         [:T_STRING_SQUOTE, nil, 1],
@@ -47,7 +45,6 @@ describe Oga::XML::Lexer do
       lexer = described_class.new(io)
 
       lexer.lex.should == [
-        [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'foo', 1],
         [:T_ATTR, 'bar', 1],
         [:T_STRING_SQUOTE, nil, 1],

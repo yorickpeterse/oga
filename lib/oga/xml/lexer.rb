@@ -338,13 +338,6 @@ module Oga
       end
 
       ##
-      # Called on the start of an element.
-      #
-      def on_element_start
-        add_token(:T_ELEM_START)
-      end
-
-      ##
       # Called on the start of a processing instruction.
       #
       def on_proc_ins_start

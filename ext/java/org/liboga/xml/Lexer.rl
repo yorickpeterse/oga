@@ -121,7 +121,6 @@ public class Lexer extends RubyObject
         String id_on_element_name     = "on_element_name";
         String id_on_element_ns       = "on_element_ns";
         String id_on_element_open_end = "on_element_open_end";
-        String id_on_element_start    = "on_element_start";
         String id_on_proc_ins_end     = "on_proc_ins_end";
         String id_on_proc_ins_name    = "on_proc_ins_name";
         String id_on_proc_ins_start   = "on_proc_ins_start";

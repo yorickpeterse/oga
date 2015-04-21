@@ -113,7 +113,6 @@ VALUE oga_xml_lexer_advance(VALUE self, VALUE data_block)
     ID id_on_element_name     = rb_intern("on_element_name");
     ID id_on_element_ns       = rb_intern("on_element_ns");
     ID id_on_element_open_end = rb_intern("on_element_open_end");
-    ID id_on_element_start    = rb_intern("on_element_start");
     ID id_on_proc_ins_end     = rb_intern("on_proc_ins_end");
     ID id_on_proc_ins_name    = rb_intern("on_proc_ins_name");
     ID id_on_proc_ins_start   = rb_intern("on_proc_ins_start");

@@ -367,7 +367,6 @@
     element_end   = '</' identifier (':' identifier)* '>';
 
     action start_element {
-        callback_simple(id_on_element_start);
         fhold;
         fnext element_name;
     }

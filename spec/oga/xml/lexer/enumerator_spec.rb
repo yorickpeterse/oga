@@ -11,7 +11,6 @@ describe Oga::XML::Lexer do
 
     it 'lexes a paragraph element' do
       lex(@enum).should == [
-        [:T_ELEM_START, nil, 1],
         [:T_ELEM_NAME, 'p', 1],
         [:T_TEXT, 'foo', 1],
         [:T_ELEM_END, nil, 1]

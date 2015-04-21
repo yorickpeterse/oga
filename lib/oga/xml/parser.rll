@@ -27,7 +27,7 @@
 %terminals T_DOCTYPE_INLINE;
 %terminals T_COMMENT_START T_COMMENT_BODY T_COMMENT_END;
 %terminals T_CDATA_START T_CDATA_BODY T_CDATA_END;
-%terminals T_ELEM_START T_ELEM_NAME T_ELEM_NS T_ELEM_END T_ATTR T_ATTR_NS;
+%terminals T_ELEM_NAME T_ELEM_NS T_ELEM_END T_ATTR T_ATTR_NS;
 %terminals T_XML_DECL_START T_XML_DECL_END;
 %terminals T_PROC_INS_START T_PROC_INS_NAME T_PROC_INS_BODY T_PROC_INS_END;
 
@@ -136,9 +136,9 @@ element_name_ns
   ;
 
 element_start
-  = T_ELEM_START element_name_ns attributes
+  = element_name_ns attributes
     {
-      on_element(val[1][0], val[1][1], val[2])
+      on_element(val[0][0], val[0][1], val[1])
     }
   ;
 
