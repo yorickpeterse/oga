@@ -221,6 +221,29 @@ When using this you can still restrict the query to the correct namespace URI:
 In the future I might add an API to ease this process, although at this time I
 have little interest in providing an API similar to Nokogiri.
 
+## HTML5 Support
+
+Oga fully supports HTML5 including the omission of certain tags. For example,
+the following is parsed just fine:
+
+    <li>Hello
+    <li>World
+
+This is effectively parsed into:
+
+    <li>Hello</li>
+    <li>World</li>
+
+One exception Oga makes is that it does _not_ automatically insert `html`,
+`head` and `body` tags. Automatically inserting these tags requires a
+distinction between documents and fragments as a user might not always want
+these tags to be inserted if left out. This complicates the user facing API as
+well as complicating the parsing internals of Oga. As a result I have decided
+that Oga _does not_ insert these tags left out.
+
+A more in depth explanation can be found here:
+<https://github.com/YorickPeterse/oga/issues/98#issuecomment-96833066>.
+
 ## Documentation
 
 The documentation is best viewed [on the documentation website][doc-website].
