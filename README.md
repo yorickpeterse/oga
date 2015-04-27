@@ -239,7 +239,7 @@ One exception Oga makes is that it does _not_ automatically insert `html`,
 distinction between documents and fragments as a user might not always want
 these tags to be inserted if left out. This complicates the user facing API as
 well as complicating the parsing internals of Oga. As a result I have decided
-that Oga _does not_ insert these tags left out.
+that Oga _does not_ insert these tags when left out.
 
 A more in depth explanation can be found here:
 <https://github.com/YorickPeterse/oga/issues/98#issuecomment-96833066>.
