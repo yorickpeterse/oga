@@ -49,8 +49,8 @@ module Oga
       # processed.
       HTML_CLOSE_SELF = {
         'html'     => NodeNameSet.new(%w{html}),
-        'head'     => NodeNameSet.new(%w{head}),
-        'body'     => NodeNameSet.new(%w{body}),
+        'head'     => NodeNameSet.new(%w{head body}),
+        'body'     => NodeNameSet.new(%w{body head}),
         'base'     => NodeNameSet.new(%w{base}),
         'link'     => NodeNameSet.new(%w{link}),
         'meta'     => NodeNameSet.new(%w{meta}),
@@ -66,6 +66,8 @@ module Oga
         'rp'       => NodeNameSet.new(%w{rb rt rtc rp}),
         'optgroup' => NodeNameSet.new(%w{optgroup}),
         'option'   => NodeNameSet.new(%w{option optgroup}),
+        'colgrop'  => NodeNameSet.new(%w{thead tbody tfoot}),
+        'caption'  => NodeNameSet.new(%w{thead tbody tfoot}),
         'thead'    => NodeNameSet.new(%w{tbody tfoot}),
         'tbody'    => NodeNameSet.new(%w{tbody tfoot}),
         'tfoot'    => NodeNameSet.new(%w{tbody}),
