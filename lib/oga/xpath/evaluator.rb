@@ -59,6 +59,9 @@ module Oga
     #     evaluator.evaluate('$number') # => 10
     #
     class Evaluator
+      # Wildcard for node names/namespace prefixes.
+      STAR = '*'
+
       ##
       # @param [Oga::XML::Document|Oga::XML::Node] document
       # @param [Hash] variables Hash containing variables to expose to the XPath
@@ -534,7 +537,7 @@ module Oga
           next unless context_node.respond_to?(:available_namespaces)
 
           context_node.available_namespaces.each do |_, namespace|
-            if namespace.name == name or name == '*'
+            if namespace.name == name or name == STAR
               nodes << namespace
             end
           end
@@ -1643,8 +1646,8 @@ module Oga
 
         # If only the name is given and is a wildcard then we'll also want to
         # match the namespace as a wildcard.
-        if !ns and name == '*'
-          ns = '*'
+        if !ns and name == STAR
+          ns = STAR
         end
 
         name_matches = name_matches?(xml_node, name)
@@ -1686,7 +1689,7 @@ module Oga
       def name_matches?(xml_node, name)
         return false unless xml_node.respond_to?(:name)
 
-        return xml_node.name == name || name == '*'
+        return name == STAR ? true : xml_node.name == name
       end
 
       ##
@@ -1699,7 +1702,7 @@ module Oga
       def namespace_matches?(xml_node, ns)
         return false unless xml_node.respond_to?(:namespace)
 
-        return xml_node.namespace.to_s == ns || ns == '*'
+        return ns == STAR ? true : xml_node.namespace.to_s == ns
       end
 
       ##
