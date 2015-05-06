@@ -1702,7 +1702,9 @@ module Oga
       def namespace_matches?(xml_node, ns)
         return false unless xml_node.respond_to?(:namespace)
 
-        return ns == STAR ? true : xml_node.namespace.to_s == ns
+        return true if ns == STAR
+
+        return xml_node.namespace && xml_node.namespace.name == ns
       end
 
       ##
