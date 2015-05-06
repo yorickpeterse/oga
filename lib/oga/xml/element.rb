@@ -320,21 +320,23 @@ module Oga
       #
       def available_namespaces
         # HTML(5) completely ignores namespaces
-        if html?
-          return @available_namespaces ||= {}
-        elsif !@available_namespaces
-          merged = namespaces.dup
-          node   = parent
+        unless @available_namespaces
+          if html?
+            @available_namespaces = {}
+          else
+            merged = namespaces.dup
+            node   = parent
 
-          while node && node.respond_to?(:namespaces)
-            node.namespaces.each do |prefix, ns|
-              merged[prefix] = ns unless merged[prefix]
+            while node && node.respond_to?(:namespaces)
+              node.namespaces.each do |prefix, ns|
+                merged[prefix] = ns unless merged[prefix]
+              end
+
+              node = node.parent
             end
 
-            node = node.parent
+            @available_namespaces = merged
           end
-
-          @available_namespaces = merged
         end
 
         return @available_namespaces
