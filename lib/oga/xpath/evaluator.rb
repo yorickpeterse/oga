@@ -1640,7 +1640,7 @@ module Oga
       def node_matches?(xml_node, ast_node)
         ns, name = *ast_node.children
 
-        if ast_node.type == :type_test
+        if ast_node.type.equal?(:type_test)
           return type_matches?(xml_node, ast_node)
         end
 

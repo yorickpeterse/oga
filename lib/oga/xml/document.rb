@@ -83,7 +83,7 @@ module Oga
       # @return [TrueClass|FalseClass]
       #
       def html?
-        return type == :html
+        return type.equal?(:html)
       end
 
       ##

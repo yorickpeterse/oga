@@ -134,7 +134,7 @@ path_step
       args = val[1][1]
       pred = val[1][2]
 
-      if type == :test
+      if type.equal?(:test)
         # Whenever a bare test is used (e.g. just "A") this actually means
         # "child::A". Handling this on parser level is the easiest.
         if args

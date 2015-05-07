@@ -668,7 +668,7 @@ even
   # @return [TrueClass|FalseClass]
   #
   def int_node?(node)
-    return node.type == :int
+    return node.type.equal?(:int)
   end
 
   ##
