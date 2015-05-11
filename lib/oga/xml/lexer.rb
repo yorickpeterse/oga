@@ -66,14 +66,14 @@ module Oga
         'rp'       => NodeNameSet.new(%w{rb rt rtc rp}),
         'optgroup' => NodeNameSet.new(%w{optgroup}),
         'option'   => NodeNameSet.new(%w{option optgroup}),
-        'colgrop'  => NodeNameSet.new(%w{thead tbody tfoot}),
+        'colgroup' => NodeNameSet.new(%w{thead tbody tfoot}),
         'caption'  => NodeNameSet.new(%w{thead tbody tfoot}),
-        'thead'    => NodeNameSet.new(%w{tbody tfoot}),
-        'tbody'    => NodeNameSet.new(%w{tbody tfoot}),
-        'tfoot'    => NodeNameSet.new(%w{tbody}),
-        'tr'       => NodeNameSet.new(%w{tr}),
-        'td'       => NodeNameSet.new(%w{td th}),
-        'th'       => NodeNameSet.new(%w{td th}),
+        'thead'    => NodeNameSet.new(%w{thead tbody tfoot}),
+        'tbody'    => NodeNameSet.new(%w{thead tbody tfoot}),
+        'tfoot'    => NodeNameSet.new(%w{thead tbody tfoot}),
+        'tr'       => NodeNameSet.new(%w{tr tbody thead tfoot}),
+        'td'       => NodeNameSet.new(%w{td th tbody thead tfoot tr}),
+        'th'       => NodeNameSet.new(%w{td th tbody thead tfoot tr}),
         'p'        => NodeNameSet.new(%w{
           address article aside blockquote div dl fieldset footer form h1 h2 h3
           h4 h5 h6 header hgroup hr main nav ol p pre section table ul
@@ -426,6 +426,17 @@ module Oga
 
         if close_current and close_current.include?(name)
           on_element_end
+        end
+
+        # Close remaining parent elements. This for example ensures that a
+        # "<tbody>" not only closes an unclosed "<th>" but also the surrounding,
+        # unclosed "<tr>".
+        while close_current = HTML_CLOSE_SELF[current_element]
+          if close_current.include?(name)
+            on_element_end
+          else
+            break
+          end
         end
       end
 
