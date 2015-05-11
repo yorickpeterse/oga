@@ -16,6 +16,10 @@ From [Wikipedia][oga-wikipedia]:
 > power saws. One person stood on a raised platform, with the board below him,
 > and the other person stood underneath them.
 
+Oga uses [Semantic Versioning 2.0][semver] as its versioning scheme. All
+classes, modules and methods are part of the public API _unless_ they are
+declared as private using Ruby's `private` keyword or YARD's `@api private` tag.
+
 ## Examples
 
 Parsing a simple string of XML:
@@ -303,3 +307,4 @@ in the root directory of this repository.
 [oga-wikipedia]: https://en.wikipedia.org/wiki/Japanese_saw#Other_Japanese_saws
 [ox]: https://github.com/ohler55/ox
 [doc-website]: http://code.yorickpeterse.com/oga/latest/
+[semver]: http://semver.org/spec/v2.0.0.html

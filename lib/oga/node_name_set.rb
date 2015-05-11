@@ -3,6 +3,8 @@ module Oga
   # Class for storing (HTML) element names in a set and automatically adding
   # their uppercase equivalents.
   #
+  # @api private
+  #
   class NodeNameSet < Set
     ##
     # @param [Array] values

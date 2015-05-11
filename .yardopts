@@ -3,7 +3,6 @@
 -M kramdown
 -o yardoc
 -r ./README.md
---private
 --protected
 --asset ./doc/css/common.css:css/common.css
 --verbose

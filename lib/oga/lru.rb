@@ -21,6 +21,8 @@ module Oga
   #
   #     cache.keys # => [:b, :c, :d]
   #
+  # @api private
+  #
   class LRU
     ##
     # @param [Fixnum] maximum

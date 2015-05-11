@@ -6,6 +6,8 @@
 #
 # Unlike {Oga::XML::Parser} this parser only takes String instances as input.
 #
+# @api private
+#
 }
 
 %name Oga::XPath::Parser;

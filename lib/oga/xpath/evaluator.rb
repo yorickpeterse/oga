@@ -58,6 +58,8 @@ module Oga
     #
     #     evaluator.evaluate('$number') # => 10
     #
+    # @api private
+    #
     class Evaluator
       # Wildcard for node names/namespace prefixes.
       STAR = '*'

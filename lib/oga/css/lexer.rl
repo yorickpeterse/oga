@@ -16,6 +16,8 @@ module Oga
     # multiple threads. However, no global state is used so you can use separate
     # instances in threads just fine.
     #
+    # @api private
+    #
     class Lexer
       %% write data;
 

@@ -32,6 +32,8 @@ module Oga
     # use separate instances per thread as there is no global (= class level)
     # shared state.
     #
+    # @api private
+    #
     class Lexer
       %% write data;
 

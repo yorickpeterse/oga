@@ -10,6 +10,8 @@
 # Similar to {Oga::XPath::Parser} this parser only takes String instances as
 # input.
 #
+# @api private
+#
 }
 
 %name Oga::CSS::Parser;
