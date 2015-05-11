@@ -3,6 +3,75 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 1.0.0 - Unreleased
+
+This marks the first stable release (API wise) for Oga. It's been quite the ride
+since the very first commit from February 26, 2014. In the releases following
+1.0 I plan to focus mainly on performance as both XMl/HTML parsing and XPath
+evaluation performance is not quite as fast as I'd like it to be.
+
+### XPath Performance Improvements
+
+With 1.0 the evaluator received further performance improvements that should be
+especially noticable when querying large XML/HTML documents. Improving XPath
+performance is an ongoing task so expect similar improvements in upcoming
+releases.
+
+See the following commits for more information:
+
+* ecdeeacd767ec974e7cf2306f30d62bf7c3120b8
+* 5c7c4a6110d9fc7142bccc367f8b77b98532eac4
+* 0298e7068c79a46aef6dc8256ccc25348d2bdf1d
+* b9145d83f8ac97d813cabc3837488a0d732893fd
+* b5e63dc50eb8423a1839fbfb815521e8f3a1e378
+
+### Full HTML5 Support
+
+With 1.0 Oga finally supports parsing of HTML5 according to the official
+specification. This means that Oga is now capable of parsing HTML such as the
+following:
+
+    <p>Hello, this is a list:</p>
+
+    <ul>
+        <li>First item
+        </li>Second item
+    </ul>
+
+This would be parsed as if the HTML were as following instead:
+
+    <p>Hello, this is a list:</p>
+
+    <ul>
+        <li>First item</li>
+        </li>Second item</li>
+    </ul>
+
+See the following commits for more information:
+
+* 69180ff686553958eeedecf1d89a9e6a56d7571e
+* 4b1c296936c02854247fbc0814a005f05b7eec0e
+* 4b21a2fadc8684446663d92c7b73be46595323c1
+* 8135074a62c38b039fbee2d916a196e1e43039f3
+
+### Handling of invalid XML/HTML
+
+Oga can now handle most forms of invalid XML/HTML by automatically inserting
+missing closing tags and ignoring stray opening tags where possible. This allows
+Oga to parse XML such as the following:
+
+    <root>
+        <person>
+            <name>Alice</name>
+        </person>
+
+See commit 13e2c3d82ffb9f32b863cb47f6808cf061e07095 for more information.
+
+### Decoding zero padded XML/HTML entities
+
+Oga can now decode zero padded XML/HTML entities such as `&#038;`. See commit
+853d804f3468c9f54c222568a7faedf736f8dc1a for more information.
+
 ## 0.3.4 - 2015-04-19
 
 XML and HTML entities are decoded in the SAX parser before data is passed to a
