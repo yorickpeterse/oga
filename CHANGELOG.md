@@ -49,6 +49,7 @@ This would be parsed as if the HTML were as following instead:
 
 See the following commits for more information:
 
+* 1e0b7feb026d95f2b04706391a868d64b7e5de6e
 * 69180ff686553958eeedecf1d89a9e6a56d7571e
 * 4b1c296936c02854247fbc0814a005f05b7eec0e
 * 4b21a2fadc8684446663d92c7b73be46595323c1
