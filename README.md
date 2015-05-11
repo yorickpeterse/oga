@@ -16,6 +16,8 @@ From [Wikipedia][oga-wikipedia]:
 > power saws. One person stood on a raised platform, with the board below him,
 > and the other person stood underneath them.
 
+The name is a pun on [Nokogiri][nokogiri].
+
 Oga uses [Semantic Versioning 2.0][semver] as its versioning scheme. All
 classes, modules and methods are part of the public API _unless_ they are
 declared as private using Ruby's `private` keyword or YARD's `@api private` tag.
