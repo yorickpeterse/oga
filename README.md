@@ -255,21 +255,6 @@ The documentation is best viewed [on the documentation website][doc-website].
 * {Oga::XML::SaxParser XML SAX Parser}
 * {file:xml\_namespaces XML Namespaces}
 
-## Native Extension Setup
-
-The native extensions can be found in `ext/` and are divided into a C and Java
-extension. These extensions are only used for the XML lexer built using Ragel.
-The grammar for this lexer is shared between C and Java and can be found in
-`ext/ragel/base_lexer.rl`.
-
-The extensions delegate most of their work back to Ruby code. As a result of
-this maintenance of this codebase is much easier. If one wants to change the
-grammar they only have to do so in one place and they don't have to worry about
-C and/or Java specific details.
-
-For more details on calling Ruby methods from Ragel see the source
-documentation in `ext/ragel/base_lexer.rl`.
-
 ## Why Another HTML/XML parser?
 
 Currently there are a few existing parser out there, the most famous one being
