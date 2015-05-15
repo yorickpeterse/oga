@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.summary     = 'Oga is an XML/HTML parser written in Ruby.'
   s.homepage    = 'https://github.com/yorickpeterse/oga/'
   s.description = s.summary
-  s.license     = 'MIT'
+  s.license     = 'MPL-2.0'
 
   s.files = Dir.glob([
     'checkum/**/*',
