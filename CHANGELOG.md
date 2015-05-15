@@ -10,6 +10,13 @@ since the very first commit from February 26, 2014. In the releases following
 1.0 I plan to focus mainly on performance as both XMl/HTML parsing and XPath
 evaluation performance is not quite as fast as I'd like it to be.
 
+### License Change
+
+Up until 1.0.0 Oga was licensed under the MIT license. Since this license does
+fairly little to protect authors (especially regarding patents) I've decided to
+change the license to the Mozilla Public License 2.0. More information on this
+can be found in commit 0a7242aed44fcd7ef18327cc5b10263fd9807a35.
+
 ### XPath Performance Improvements
 
 With 1.0 the evaluator received further performance improvements that should be
