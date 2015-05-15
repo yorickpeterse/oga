@@ -117,11 +117,5 @@ submitting a change, feel free to contact me. You can either open an issue,
 send a tweet to [@yorickpeterse][twitter] or send an Email to
 <yorickpeterse@gmail.com>.
 
-## Legal
-
-By contributing to Oga you agree with both the Developer's Certificate of
-origin, found in `doc/DCO.md` and the license, found in `LICENSE`. This applies
-to all content in this repository unless stated otherwise.
-
 [editorconfig]:http://editorconfig.org/
 [twitter]: https://twitter.com/yorickpeterse

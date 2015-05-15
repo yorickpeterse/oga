@@ -301,9 +301,9 @@ easier for other Ruby developers to contribute.
 
 ## License
 
-All source code in this repository is licensed under the MIT license unless
-specified otherwise. A copy of this license can be found in the file "LICENSE"
-in the root directory of this repository.
+All source code in this repository is subject to the terms of the Mozilla Public
+License, version 2.0 unless stated otherwise. A copy of this license can be
+found the file "LICENSE" or at <https://www.mozilla.org/MPL/2.0/>.
 
 [nokogiri]: https://github.com/sparklemotion/nokogiri
 [oga-wikipedia]: https://en.wikipedia.org/wiki/Japanese_saw#Other_Japanese_saws
