@@ -45,39 +45,38 @@ module Oga
       HTML_SCRIPT = 'script'.freeze
       HTML_STYLE  = 'style'.freeze
 
+      # Elements that are allowed directly in a <table> element.
+      HTML_TABLE_ALLOWED = Whitelist.new(
+        %w{thead tbody tfoot tr caption colgroup col}
+      )
+
       # Elements that should be closed automatically before a new opening tag is
       # processed.
       HTML_CLOSE_SELF = {
-        'html'     => NodeNameSet.new(%w{html}),
-        'head'     => NodeNameSet.new(%w{head body}),
-        'body'     => NodeNameSet.new(%w{body head}),
-        'base'     => NodeNameSet.new(%w{base}),
-        'link'     => NodeNameSet.new(%w{link}),
-        'meta'     => NodeNameSet.new(%w{meta}),
-        'noscript' => NodeNameSet.new(%w{noscript}),
-        'template' => NodeNameSet.new(%w{template}),
-        'title'    => NodeNameSet.new(%w{title}),
-        'li'       => NodeNameSet.new(%w{li}),
-        'dt'       => NodeNameSet.new(%w{dt dd}),
-        'dd'       => NodeNameSet.new(%w{dd dt}),
-        'rb'       => NodeNameSet.new(%w{rb rt rtc rp}),
-        'rt'       => NodeNameSet.new(%w{rb rt rtc rp}),
-        'rtc'      => NodeNameSet.new(%w{rb rtc rp}),
-        'rp'       => NodeNameSet.new(%w{rb rt rtc rp}),
-        'optgroup' => NodeNameSet.new(%w{optgroup}),
-        'option'   => NodeNameSet.new(%w{option optgroup}),
-        'colgroup' => NodeNameSet.new(%w{thead tbody tfoot colgroup tr}),
-        'caption'  => NodeNameSet.new(%w{thead tbody tfoot colgroup tr caption}),
-        'thead'    => NodeNameSet.new(%w{thead tbody tfoot}),
-        'tbody'    => NodeNameSet.new(%w{thead tbody tfoot}),
-        'tfoot'    => NodeNameSet.new(%w{thead tbody tfoot}),
-        'tr'       => NodeNameSet.new(%w{tr tbody thead tfoot}),
-        'td'       => NodeNameSet.new(%w{td th tbody thead tfoot tr}),
-        'th'       => NodeNameSet.new(%w{td th tbody thead tfoot tr}),
-        'p'        => NodeNameSet.new(%w{
+        'head' => Blacklist.new(%w{head body}),
+        'body' => Blacklist.new(%w{head body}),
+        'li'   => Blacklist.new(%w{li}),
+        'dt'   => Blacklist.new(%w{dt dd}),
+        'dd'   => Blacklist.new(%w{dt dd}),
+        'p'    => Blacklist.new(%w{
           address article aside blockquote div dl fieldset footer form h1 h2 h3
           h4 h5 h6 header hgroup hr main nav ol p pre section table ul
-        })
+        }),
+        'rb'       => Blacklist.new(%w{rb rt rtc rp}),
+        'rt'       => Blacklist.new(%w{rb rt rtc rp}),
+        'rtc'      => Blacklist.new(%w{rb rtc}),
+        'rp'       => Blacklist.new(%w{rb rt rtc rp}),
+        'optgroup' => Blacklist.new(%w{optgroup}),
+        'option'   => Blacklist.new(%w{optgroup option}),
+        'colgroup' => Whitelist.new(%w{col template}),
+        'caption'  => HTML_TABLE_ALLOWED.to_blacklist,
+        'table'    => HTML_TABLE_ALLOWED,
+        'thead'    => Whitelist.new(%w{tr}),
+        'tbody'    => Whitelist.new(%w{tr}),
+        'tfoot'    => Whitelist.new(%w{tr}),
+        'tr'       => Whitelist.new(%w{td th}),
+        'td'       => Blacklist.new(%w{td th}) + HTML_TABLE_ALLOWED,
+        'th'       => Blacklist.new(%w{td th}) + HTML_TABLE_ALLOWED
       }
 
       HTML_CLOSE_SELF.keys.each do |key|
@@ -424,7 +423,7 @@ module Oga
       def before_html_element_name(name)
         close_current = HTML_CLOSE_SELF[current_element]
 
-        if close_current and close_current.include?(name)
+        if close_current and !close_current.allow?(name)
           on_element_end
         end
 
@@ -432,10 +431,10 @@ module Oga
         # "<tbody>" not only closes an unclosed "<th>" but also the surrounding,
         # unclosed "<tr>".
         while close_current = HTML_CLOSE_SELF[current_element]
-          if close_current.include?(name)
-            on_element_end
-          else
+          if close_current.allow?(name)
             break
+          else
+            on_element_end
           end
         end
       end
