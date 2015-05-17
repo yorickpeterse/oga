@@ -7,7 +7,6 @@ require_relative 'oga/version'
 require_relative 'oga/oga'
 require_relative 'oga/lru'
 require_relative 'oga/entity_decoder'
-require_relative 'oga/node_name_set'
 require_relative 'oga/blacklist'
 require_relative 'oga/whitelist'
 
