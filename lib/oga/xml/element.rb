@@ -352,7 +352,7 @@ module Oga
         root         = root_node
 
         if root.is_a?(Document) and root.html? \
-        and !HTML_VOID_ELEMENTS.include?(name)
+        and !HTML_VOID_ELEMENTS.allow?(name)
           self_closing = false
         end
 

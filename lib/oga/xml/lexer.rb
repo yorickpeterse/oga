@@ -466,8 +466,8 @@ module Oga
 
         # Only downcase the name if we can't find an all lower/upper version of
         # the element name. This can save us a *lot* of String allocations.
-        if HTML_VOID_ELEMENTS.include?(current_element) \
-        or HTML_VOID_ELEMENTS.include?(current_element.downcase)
+        if HTML_VOID_ELEMENTS.allow?(current_element) \
+        or HTML_VOID_ELEMENTS.allow?(current_element.downcase)
           add_token(:T_ELEM_END)
           @elements.pop
         end
