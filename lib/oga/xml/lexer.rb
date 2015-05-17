@@ -87,7 +87,7 @@ module Oga
       ##
       # Names of HTML tags of which the content should be lexed as-is.
       #
-      LITERAL_HTML_ELEMENTS = NodeNameSet.new([HTML_SCRIPT, HTML_STYLE])
+      LITERAL_HTML_ELEMENTS = Whitelist.new([HTML_SCRIPT, HTML_STYLE])
 
       ##
       # @param [String|IO] data The data to lex. This can either be a String or

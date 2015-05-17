@@ -59,7 +59,7 @@ module Oga
         node = parent
 
         return node.is_a?(Element) && html? &&
-          Lexer::LITERAL_HTML_ELEMENTS.include?(node.name)
+          Lexer::LITERAL_HTML_ELEMENTS.allow?(node.name)
       end
     end # Text
   end # XML
