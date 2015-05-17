@@ -4,6 +4,7 @@ module Oga
     # Names of the HTML void elements that should be handled when HTML lexing
     # is enabled.
     #
+    # @api private
     # @return [Oga::Whitelist]
     #
     HTML_VOID_ELEMENTS = Whitelist.new(%w{
