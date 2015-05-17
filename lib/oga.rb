@@ -8,6 +8,8 @@ require_relative 'oga/oga'
 require_relative 'oga/lru'
 require_relative 'oga/entity_decoder'
 require_relative 'oga/node_name_set'
+require_relative 'oga/blacklist'
+require_relative 'oga/whitelist'
 
 # Load these first so that the native extensions don't have to define the
 # Oga::XML namespace.
