@@ -24,7 +24,7 @@ describe Oga::XML::Lexer do
       ]
     end
 
-    it 'lexes a <title> followed an unclosed <head> as a child element' do
+    it 'lexes a <title> following an unclosed <head> as a child element' do
       lex_html('<head><title>foo</title>').should == [
         [:T_ELEM_NAME, 'head', 1],
         [:T_ELEM_NAME, 'title', 1],
