@@ -1,0 +1,37 @@
+require 'spec_helper'
+
+describe Oga::XML::Lexer do
+  describe 'using HTML <tbody> elements' do
+    it 'lexes two unclosed <tbody> elements following each other as separate elements' do
+      lex_html('<tbody>foo<tbody>bar').should == [
+        [:T_ELEM_NAME, 'tbody', 1],
+        [:T_TEXT, 'foo', 1],
+        [:T_ELEM_END, nil, 1],
+        [:T_ELEM_NAME, 'tbody', 1],
+        [:T_TEXT, 'bar', 1],
+        [:T_ELEM_END, nil, 1]
+      ]
+    end
+
+    it 'lexes an unclosed <tbody> followed by a <tfoot> as separate elements' do
+      lex_html('<tbody>foo<tfoot>bar').should == [
+        [:T_ELEM_NAME, 'tbody', 1],
+        [:T_TEXT, 'foo', 1],
+        [:T_ELEM_END, nil, 1],
+        [:T_ELEM_NAME, 'tfoot', 1],
+        [:T_TEXT, 'bar', 1],
+        [:T_ELEM_END, nil, 1]
+      ]
+    end
+
+    it 'lexes a <tr> following an unclosed <tbody> as a child element' do
+      lex_html('<tbody><tr>foo').should == [
+        [:T_ELEM_NAME, 'tbody', 1],
+        [:T_ELEM_NAME, 'tr', 1],
+        [:T_TEXT, 'foo', 1],
+        [:T_ELEM_END, nil, 1],
+        [:T_ELEM_END, nil, 1]
+      ]
+    end
+  end
+end
