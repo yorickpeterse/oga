@@ -24,8 +24,15 @@ the required settings for you.
 
 ## Hacking on Oga
 
-Assuming you have a local Git clone of Oga, the first step should be to install
-all the required Gems:
+Before you start hacking on Oga make sure the following libraries/tools are
+installed:
+
+* Ragel 6.x (6.9 recommended)
+* gunzip (to unpack the fixtures)
+* javac (only when using JRuby)
+
+Assuming you have the above tools installed and a local Git clone of Oga, lets
+install the required Gems:
 
     bundle install
 
