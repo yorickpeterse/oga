@@ -3,7 +3,7 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
-## 1.0.0 - Unreleased
+## 1.0.0 - 2015-05-20
 
 This marks the first stable release (API wise) for Oga. It's been quite the ride
 since the very first commit from February 26, 2014. In the releases following
