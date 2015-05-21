@@ -59,8 +59,9 @@ module Oga
         'dt'   => Blacklist.new(%w{dt dd}),
         'dd'   => Blacklist.new(%w{dt dd}),
         'p'    => Blacklist.new(%w{
-          address article aside blockquote div dl fieldset footer form h1 h2 h3
-          h4 h5 h6 header hgroup hr main nav ol p pre section table ul
+          address article aside blockquote details div dl fieldset figcaption
+          figure footer form h1 h2 h3 h4 h5 h6 header hgroup hr main menu nav
+          ol p pre section table ul
         }),
         'rb'       => Blacklist.new(%w{rb rt rtc rp}),
         'rt'       => Blacklist.new(%w{rb rt rtc rp}),
