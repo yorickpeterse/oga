@@ -80,12 +80,12 @@ describe Oga::XML::Entities do
       described_class.encode('&').should == '&amp;'
     end
 
-    it 'encodes " as &quot;' do
-      described_class.encode('"').should == '&quot;'
+    it 'does not encode double quotes' do
+      described_class.encode('"').should == '"'
     end
 
-    it "encodes ' as &apos;" do
-      described_class.encode("'").should == '&apos;'
+    it 'does not encode single quotes' do
+      described_class.encode("'").should == "'"
     end
 
     it 'encodes < as &lt;' do

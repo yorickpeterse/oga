@@ -28,8 +28,6 @@ module Oga
       #
       ENCODE_MAPPING = {
         '&' => '&amp;',
-        '"' => '&quot;',
-        "'" => '&apos;',
         '>' => '&gt;',
         '<' => '&lt;',
       }
