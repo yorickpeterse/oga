@@ -3,6 +3,19 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 1.0.1 - 2015-05-21
+
+### Encoding quotes in XML
+
+Oga no longer encodes single/double quotes as XML entities when serializing a
+document back to XML. This ensures that input such as `<foo>a"b</foo>` doesn't
+get turned into `<foo>a&quot;b</foo>`.
+
+### HTML Entity Encoding
+
+HTML entities are now generated using `pack('U*')` instead of `pack('U')`
+ensuring the correct characters/codepoints are produced.
+
 ## 1.0.0 - 2015-05-20
 
 This marks the first stable release (API wise) for Oga. It's been quite the ride
