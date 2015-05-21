@@ -11,7 +11,7 @@ namespace :doc do
     directory   = GEMSPEC.name
 
     sh "aws s3 rm --recursive #{bucket}/#{directory}/latest"
-    sh "aws s3 sync yardoc #{bucket}/#{directory}/#{version}"
-    sh "aws s3 sync yardoc #{bucket}/#{directory}/latest"
+    sh "aws s3 sync yardoc #{bucket}/#{directory}/#{version} --acl public-read"
+    sh "aws s3 sync yardoc #{bucket}/#{directory}/latest --acl public-read"
   end
 end
