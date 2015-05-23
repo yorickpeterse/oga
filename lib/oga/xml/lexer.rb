@@ -476,8 +476,18 @@ module Oga
       ##
       # Called on the closing tag of an element.
       #
-      def on_element_end
+      # @param [String] ns_name The name of the element (minus namespace
+      #  prefix). This is not set for self closing tags.
+      #
+      def on_element_end(name = nil)
         return if @elements.empty?
+
+        if html? and name and @elements.include?(name)
+          while current_element != name
+            add_token(:T_ELEM_END)
+            @elements.pop
+          end
+        end
 
         add_token(:T_ELEM_END)
 

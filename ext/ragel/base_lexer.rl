@@ -363,16 +363,15 @@
     # body of an element is lexed using the `main` machine.
     #
 
-    element_start = '<' ident_char;
-    element_end   = '</' identifier (':' identifier)* '>';
-
     action start_element {
         fhold;
         fnext element_name;
     }
 
     action close_element {
-        callback_simple(id_on_element_end);
+        callback(id_on_element_end, data, encoding, mark, te - 1);
+
+        mark = 0;
     }
 
     action close_element_fnext_main {
@@ -380,6 +379,12 @@
 
         fnext main;
     }
+
+    element_start = '<' ident_char;
+
+    element_end = '</' %{ mark = p; } identifier '>'
+                | '</' identifier ':' %{ mark = p; } identifier '>'
+                ;
 
     # Machine used for lexing the name/namespace of an element.
     element_name := |*
