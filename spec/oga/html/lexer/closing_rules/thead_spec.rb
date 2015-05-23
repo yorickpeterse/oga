@@ -33,5 +33,25 @@ describe Oga::XML::Lexer do
         [:T_ELEM_END, nil, 1]
       ]
     end
+
+    it 'lexes a <thead> element containing a <script> element' do
+      lex_html('<thead><script>foo</script></thead>').should == [
+        [:T_ELEM_NAME, 'thead', 1],
+        [:T_ELEM_NAME, 'script', 1],
+        [:T_TEXT, 'foo', 1],
+        [:T_ELEM_END, nil, 1],
+        [:T_ELEM_END, nil, 1]
+      ]
+    end
+
+    it 'lexes a <thead> element containing a <template> element' do
+      lex_html('<thead><template>foo</template></thead>').should == [
+        [:T_ELEM_NAME, 'thead', 1],
+        [:T_ELEM_NAME, 'template', 1],
+        [:T_TEXT, 'foo', 1],
+        [:T_ELEM_END, nil, 1],
+        [:T_ELEM_END, nil, 1]
+      ]
+    end
   end
 end

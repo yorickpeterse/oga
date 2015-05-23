@@ -50,6 +50,10 @@ module Oga
         %w{thead tbody tfoot tr caption colgroup col}
       )
 
+      HTML_SCRIPT_ELEMENTS = Whitelist.new(%w{script template})
+
+      HTML_TABLE_ROW_ELEMENTS = Whitelist.new(%w{tr}) + HTML_SCRIPT_ELEMENTS
+
       # Elements that should be closed automatically before a new opening tag is
       # processed.
       HTML_CLOSE_SELF = {
@@ -71,11 +75,11 @@ module Oga
         'option'   => Blacklist.new(%w{optgroup option}),
         'colgroup' => Whitelist.new(%w{col template}),
         'caption'  => HTML_TABLE_ALLOWED.to_blacklist,
-        'table'    => HTML_TABLE_ALLOWED,
-        'thead'    => Whitelist.new(%w{tr}),
-        'tbody'    => Whitelist.new(%w{tr}),
-        'tfoot'    => Whitelist.new(%w{tr}),
-        'tr'       => Whitelist.new(%w{td th}),
+        'table'    => HTML_TABLE_ALLOWED + HTML_SCRIPT_ELEMENTS,
+        'thead'    => HTML_TABLE_ROW_ELEMENTS,
+        'tbody'    => HTML_TABLE_ROW_ELEMENTS,
+        'tfoot'    => HTML_TABLE_ROW_ELEMENTS,
+        'tr'       => Whitelist.new(%w{td th}) + HTML_SCRIPT_ELEMENTS,
         'td'       => Blacklist.new(%w{td th}) + HTML_TABLE_ALLOWED,
         'th'       => Blacklist.new(%w{td th}) + HTML_TABLE_ALLOWED
       }
