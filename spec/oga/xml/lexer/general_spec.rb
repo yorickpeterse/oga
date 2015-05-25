@@ -30,10 +30,6 @@ describe Oga::XML::Lexer do
       lex('>').should == [[:T_TEXT, '>', 1]]
     end
 
-    it 'lexes </ as regular text' do
-      lex('</').should == [[:T_TEXT, '</', 1]]
-    end
-
     it 'lexes <! as regular text' do
       lex('<!').should == [[:T_TEXT, '<!', 1]]
     end

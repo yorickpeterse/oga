@@ -368,10 +368,12 @@
         fnext element_name;
     }
 
-    action close_element {
-        callback(id_on_element_end, data, encoding, mark, te - 1);
+    action start_close_element {
+        fnext element_close;
+    }
 
-        mark = 0;
+    action close_element {
+        callback(id_on_element_end, data, encoding, ts, te);
     }
 
     action close_element_fnext_main {
@@ -381,10 +383,7 @@
     }
 
     element_start = '<' ident_char;
-
-    element_end = '</' %{ mark = p; } identifier '>'
-                | '</' identifier ':' %{ mark = p; } identifier '>'
-                ;
+    element_end   = '</';
 
     # Machine used for lexing the name/namespace of an element.
     element_name := |*
@@ -396,6 +395,28 @@
             callback(id_on_element_name, data, encoding, ts, te);
             fnext element_head;
         };
+    *|;
+
+    # Machine used for lexing the closing tag of an element
+    element_close := |*
+        # namespace prefixes, currently not used but allows the rule below it
+        # to be used for the actual element name.
+        identifier ':';
+
+        identifier => close_element;
+
+        '>' => {
+            if ( lines > 0 )
+            {
+                advance_line(lines);
+
+                lines = 0;
+            }
+
+            fnext main;
+        };
+
+        any $count_newlines;
     *|;
 
     # Characters that can be used for unquoted HTML attribute values.
@@ -587,7 +608,7 @@
         cdata_start    => start_cdata;
         proc_ins_start => start_proc_ins;
         element_start  => start_element;
-        element_end    => close_element;
+        element_end    => start_close_element;
         any            => start_text;
     *|;
 }%%

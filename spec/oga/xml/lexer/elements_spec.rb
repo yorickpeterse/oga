@@ -73,6 +73,30 @@ describe Oga::XML::Lexer do
         [:T_ELEM_END, nil, 2]
       ]
     end
+
+    it 'lexes an element with a space in the closing tag' do
+      lex("<foo></foo >bar").should == [
+        [:T_ELEM_NAME, 'foo', 1],
+        [:T_ELEM_END, nil, 1],
+        [:T_TEXT, 'bar', 1]
+      ]
+    end
+
+    it 'lexes an element with a newline in the closing tag' do
+      lex("<foo></foo\n>bar").should == [
+        [:T_ELEM_NAME, 'foo', 1],
+        [:T_ELEM_END, nil, 1],
+        [:T_TEXT, 'bar', 2]
+      ]
+    end
+
+    it 'lexes an element with a newline in the closing tag using an IO as input' do
+      lex(StringIO.new("<foo></foo\n>bar")).should == [
+        [:T_ELEM_NAME, 'foo', 1],
+        [:T_ELEM_END, nil, 1],
+        [:T_TEXT, 'bar', 2]
+      ]
+    end
   end
 
   describe 'elements with attributes' do
