@@ -3,6 +3,43 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 1.0.2 - 2015-06-03
+
+### Fix for requiring extensions on certain platforms
+
+The loading of files has been changed to use `require` so that native extensions
+are loaded properly even when a platform decides not to store in in the lib
+directory.
+
+See commit 4bfeea2590682ce7bf721c1305cb7c7a5707faac for more information.
+
+### Better closing of HTML tags
+
+Closing of HTML tags has been improved so Oga can parse HTML such as this:
+
+    <div>
+        <ul>
+            <li>foo
+        </ul>
+        inside div
+    </div>
+    outside div
+
+See the following commits for more information:
+
+* d0d597e2d93035c35b6b653d181f550d9dd522fd
+* 5182d0c488759efb96d85a399de29550faea3efe
+* 3c6263d8de30b91aac7c3b16b65f00407b88fc13
+
+### Whitespace support in closing tags
+
+Oga can now lex HTML/XML such as the following:
+
+    <p>hello<p
+    >
+
+See commit d2523a1082b5ab601724e02fa4c613a9d9d9e3c6 for more information.
+
 ## 1.0.1 - 2015-05-21
 
 ### Encoding quotes in XML
