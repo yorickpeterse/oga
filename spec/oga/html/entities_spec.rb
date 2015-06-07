@@ -11,5 +11,9 @@ describe Oga::HTML::Entities do
     it 'decodes &lambda; into λ' do
       described_class.decode('&lambda;').should == 'λ'
     end
+
+    it 'decodes &frac12; into ½' do
+      described_class.decode('&frac12;').should == '½'
+    end
   end
 end

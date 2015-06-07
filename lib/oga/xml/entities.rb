@@ -42,7 +42,7 @@ module Oga
       #
       # @return [Regexp]
       #
-      REGULAR_ENTITY = /&[a-zA-Z]+;/
+      REGULAR_ENTITY = /&[a-zA-Z0-9]+;/
 
       ##
       # Regexp for matching XML/HTML entities such as "&#38;".
