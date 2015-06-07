@@ -12,6 +12,37 @@ one should follow.
 * Use `raise` for raising errors instead of `fail`. You're raising errors after
   all, not failing them.
 
+## Submitting Changes
+
+Before making any big changes it's best to open a Github issue to discuss the
+matter, this saves you from potentially spending hours on something that might
+ultimately be rejected.
+
+When making changes please stick to the existing style and patterns as this
+keeps the codebase consistent. If a certain pattern or style is getting in your
+way please open a separate issue about this so it can be discussed.
+
+Every commit and every pull request made is carefully reviewed. Chances are I'll
+spend more time reviewing it than the time an author spent on their changes.
+This should ensure that Oga's codebase is stable, of high quality and easy to
+maintain. As such _please_ take my feedback into consideration (or discuss it in
+a civilized manner) instead of just dismissing it with comments such as "But I
+fixed the problem so your feedback is irrelevant" or "This is my way of doing
+things".
+
+Finally, and this will sound harsh: I will _not_ merge pull requests if the
+author(s) simply disregard the feedback I've given them or if there are other
+problems with the pull request. Do not expect me to just blindly accept whatever
+changes are submitted.
+
+Some examples of good pull request:
+
+* https://github.com/YorickPeterse/oga/pull/96
+* https://github.com/YorickPeterse/oga/pull/67
+* https://github.com/YorickPeterse/ffi-aspell/pull/21
+* https://github.com/YorickPeterse/ffi-aspell/pull/20
+* https://github.com/YorickPeterse/ruby-ll/pull/16
+
 ## Git
 
 Git commits should have a <= 50 character summary, optionally followed by a
