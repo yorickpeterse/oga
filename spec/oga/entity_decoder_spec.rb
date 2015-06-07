@@ -48,27 +48,27 @@ describe Oga::EntityDecoder do
       context "Given an invalid argument" do
         context "of nil" do
           let(:entity) { nil }
-          it "decodes it" do
+          it "fails" do
             expect{ described_class.decode(entity, true) }.to raise_error(ArgumentError)
           end
         end
         context "of &&&&" do
           let(:entity) { "&&&&" }
-          it "decodes it" do
+          it "returns it unchanged" do
             described_class.decode(entity, true)
               .should == entity
           end
         end
         context "of 999" do
           let(:entity) { "999" }
-          it "decodes it" do
+          it "returns it unchanged" do
             described_class.decode(entity, true)
               .should == entity
           end
         end
         context "of and_copy;" do
           let(:entity) { "and_copy;" }
-          it "decodes it" do
+          it "returns it unchanged" do
             described_class.decode(entity, true)
               .should == entity
           end
