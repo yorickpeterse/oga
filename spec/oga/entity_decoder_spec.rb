@@ -45,6 +45,35 @@ describe Oga::EntityDecoder do
           it_behaves_like "an HTML decoder"
         end
       end
+      context "Given an invalid argument" do
+        context "of nil" do
+          let(:entity) { nil }
+          it "decodes it" do
+            expect{ described_class.decode(entity, true) }.to raise_error(ArgumentError)
+          end
+        end
+        context "of &&&&" do
+          let(:entity) { "&&&&" }
+          it "decodes it" do
+            described_class.decode(entity, true)
+              .should == entity
+          end
+        end
+        context "of 999" do
+          let(:entity) { "999" }
+          it "decodes it" do
+            described_class.decode(entity, true)
+              .should == entity
+          end
+        end
+        context "of and_copy;" do
+          let(:entity) { "and_copy;" }
+          it "decodes it" do
+            described_class.decode(entity, true)
+              .should == entity
+          end
+        end
+      end
     end
   end
 end
