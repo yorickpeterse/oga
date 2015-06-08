@@ -426,6 +426,32 @@
         squote | dquote | '`' | '=' | '<' | '>' | whitespace_or_newline
     )+;
 
+    # Machine used after matching the "=" of an attribute and just before moving
+    # into the actual attribute value.
+    attribute_pre := |*
+        whitespace_or_newline $count_newlines;
+
+        any => {
+            fhold;
+
+            if ( lines > 0 )
+            {
+                advance_line(lines);
+
+                lines = 0;
+            }
+
+            if ( html_p )
+            {
+                fnext html_attribute_value;
+            }
+            else
+            {
+                fnext xml_attribute_value;
+            }
+        };
+    *|;
+
     # Machine used for processing HTML attribute values.
     html_attribute_value := |*
         squote | dquote => {
@@ -482,14 +508,7 @@
 
         # Attribute values.
         '=' => {
-            if ( html_p )
-            {
-                fcall html_attribute_value;
-            }
-            else
-            {
-                fcall xml_attribute_value;
-            }
+            fcall attribute_pre;
         };
 
         # We're done with the open tag of the element.

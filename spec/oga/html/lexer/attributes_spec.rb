@@ -57,5 +57,38 @@ describe Oga::XML::Lexer do
         [:T_ELEM_END, nil, 1]
       ]
     end
+
+    it 'lexes an element with spaces around the attribute equal sign' do
+      lex_html('<p foo = "bar"></p>').should == [
+        [:T_ELEM_NAME, 'p', 1],
+        [:T_ATTR, 'foo', 1],
+        [:T_STRING_DQUOTE, nil, 1],
+        [:T_STRING_BODY, 'bar', 1],
+        [:T_STRING_DQUOTE, nil, 1],
+        [:T_ELEM_END, nil, 1]
+      ]
+    end
+
+    it 'lexes an element with a newline following the equals sign' do
+      lex_html(%Q{<p foo =\n"bar"></p>}).should == [
+        [:T_ELEM_NAME, 'p', 1],
+        [:T_ATTR, 'foo', 1],
+        [:T_STRING_DQUOTE, nil, 2],
+        [:T_STRING_BODY, 'bar', 2],
+        [:T_STRING_DQUOTE, nil, 2],
+        [:T_ELEM_END, nil, 2]
+      ]
+    end
+
+    it 'lexes an element with a newline following the equals sign using an IO as input' do
+      lex_stringio(%Q{<p foo =\n"bar"></p>}, :html => true).should == [
+        [:T_ELEM_NAME, 'p', 1],
+        [:T_ATTR, 'foo', 1],
+        [:T_STRING_DQUOTE, nil, 2],
+        [:T_STRING_BODY, 'bar', 2],
+        [:T_STRING_DQUOTE, nil, 2],
+        [:T_ELEM_END, nil, 2]
+      ]
+    end
   end
 end
