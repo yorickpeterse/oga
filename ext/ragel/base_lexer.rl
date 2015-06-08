@@ -422,9 +422,9 @@
     # Characters that can be used for unquoted HTML attribute values.
     # See https://html.spec.whatwg.org/multipage/introduction.html#intro-early-example
     # for more info.
-    html_unquoted_value = ^(
-        squote | dquote | '`' | '=' | '<' | '>' | whitespace_or_newline
-    )+;
+    html_unquoted_value =
+        ^(squote | dquote | whitespace_or_newline)
+        ^('`' | '=' | '<' | '>' | whitespace_or_newline)+;
 
     # Machine used after matching the "=" of an attribute and just before moving
     # into the actual attribute value.
