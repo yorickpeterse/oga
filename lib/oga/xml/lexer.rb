@@ -37,6 +37,8 @@ module Oga
     # @!attribute [r] html
     #  @return [TrueClass|FalseClass]
     #
+    # @private
+    #
     class Lexer
       attr_reader :html
 
