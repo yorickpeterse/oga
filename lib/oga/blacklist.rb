@@ -26,7 +26,7 @@ module Oga
     # @return [TrueClass|FalseClass]
     #
     def allow?(name)
-      return !names.include?(name)
+      !names.include?(name)
     end
 
     ##
@@ -34,7 +34,7 @@ module Oga
     # @return [Oga::Blacklist]
     #
     def +(other)
-      return self.class.new(names + other.names)
+      self.class.new(names + other.names)
     end
   end # Blacklist
 end # Oga

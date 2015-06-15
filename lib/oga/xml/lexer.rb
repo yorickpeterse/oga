@@ -175,7 +175,7 @@ module Oga
 
         reset
 
-        return tokens
+        tokens
       end
 
       ##
@@ -216,28 +216,28 @@ module Oga
       # @return [TrueClass|FalseClass]
       #
       def html?
-        return @html == true
+        @html == true
       end
 
       ##
       # @return [TrueClass|FalseClass]
       #
       def strict?
-        return @strict
+        @strict
       end
 
       ##
       # @return [TrueClass|FalseClass]
       #
       def html_script?
-        return html? && current_element == HTML_SCRIPT
+        html? && current_element == HTML_SCRIPT
       end
 
       ##
       # @return [TrueClass|FalseClass]
       #
       def html_style?
-        return html? && current_element == HTML_STYLE
+        html? && current_element == HTML_STYLE
       end
 
       private
@@ -269,7 +269,7 @@ module Oga
       # @return [String]
       #
       def current_element
-        return @elements.last
+        @elements.last
       end
 
       ##

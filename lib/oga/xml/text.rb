@@ -31,7 +31,7 @@ module Oga
           @decoded = true
         end
 
-        return @text
+        @text
       end
 
       ##
@@ -40,7 +40,7 @@ module Oga
       def to_xml
         return super if inside_literal_html?
 
-        return Entities.encode(super)
+        Entities.encode(super)
       end
 
       private
@@ -49,7 +49,7 @@ module Oga
       # @return [TrueClass|FalseClass]
       #
       def decode_entities?
-        return !@decoded && !inside_literal_html?
+        !@decoded && !inside_literal_html?
       end
 
       ##
@@ -58,7 +58,7 @@ module Oga
       def inside_literal_html?
         node = parent
 
-        return node.is_a?(Element) && html? &&
+        node.is_a?(Element) && html? &&
           Lexer::LITERAL_HTML_ELEMENTS.allow?(node.name)
       end
     end # Text

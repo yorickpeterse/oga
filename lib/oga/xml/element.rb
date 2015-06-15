@@ -95,7 +95,7 @@ module Oga
       def get(name)
         found = attribute(name)
 
-        return found ? found.value : nil
+        found ? found.value : nil
       end
 
       ##
@@ -165,7 +165,7 @@ module Oga
           @namespace = available[namespace_name] || available[XMLNS_PREFIX]
         end
 
-        return @namespace
+        @namespace
       end
 
       ##
@@ -175,7 +175,7 @@ module Oga
       # @return [Hash]
       #
       def namespaces
-        return html? ? {} : @namespaces
+        html? ? {} : @namespaces
       end
 
       ##
@@ -185,7 +185,7 @@ module Oga
       # @return [TrueClass|FalseClass]
       #
       def default_namespace?
-        return namespace == DEFAULT_NAMESPACE || namespace.nil?
+        namespace == DEFAULT_NAMESPACE || namespace.nil?
       end
 
       ##
@@ -194,7 +194,7 @@ module Oga
       # @return [String]
       #
       def text
-        return children.text
+        children.text
       end
 
       ##
@@ -209,7 +209,7 @@ module Oga
           text << node.text
         end
 
-        return text
+        text
       end
 
       ##
@@ -225,7 +225,7 @@ module Oga
           nodes << child if child.is_a?(Text)
         end
 
-        return nodes
+        nodes
       end
 
       ##
@@ -280,7 +280,7 @@ module Oga
           segments << "#{attr}: #{value.inspect}"
         end
 
-        return "Element(#{segments.join(' ')})"
+        "Element(#{segments.join(' ')})"
       end
 
       ##
@@ -329,7 +329,7 @@ module Oga
           end
         end
 
-        return @available_namespaces
+        @available_namespaces
       end
 
       ##
@@ -346,7 +346,7 @@ module Oga
           self_closing = false
         end
 
-        return self_closing
+        self_closing
       end
 
       ##
@@ -401,7 +401,7 @@ module Oga
       def split_name(name)
         segments = name.to_s.split(':')
 
-        return segments.pop, segments.pop
+        [segments.pop, segments.pop]
       end
 
       ##
@@ -421,7 +421,7 @@ module Oga
           ns_matches = true
         end
 
-        return name_matches && ns_matches
+        name_matches && ns_matches
       end
     end # Element
   end # XML

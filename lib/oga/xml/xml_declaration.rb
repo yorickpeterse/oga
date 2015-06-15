@@ -41,7 +41,7 @@ module Oga
           pairs << %Q{#{getter}="#{value}"} if value
         end
 
-        return "<?xml #{pairs.join(' ')} ?>"
+        "<?xml #{pairs.join(' ')} ?>"
       end
 
       ##
@@ -58,7 +58,7 @@ module Oga
           end
         end
 
-        return "XmlDeclaration(#{segments.join(' ')})"
+        "XmlDeclaration(#{segments.join(' ')})"
       end
     end # XmlDeclaration
   end # XML

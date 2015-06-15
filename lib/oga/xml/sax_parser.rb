@@ -99,7 +99,7 @@ module Oga
       def on_element(namespace, name, attrs = [])
         run_callback(:on_element, namespace, name, attrs)
 
-        return namespace, name
+        [namespace, name]
       end
 
       ##
@@ -132,7 +132,7 @@ module Oga
           value = EntityDecoder.try_decode(value, @lexer.html?)
         end
 
-        return {key => value}
+        {key => value}
       end
 
       ##
@@ -153,7 +153,7 @@ module Oga
           pair.each { |key, value| merged[key] = value }
         end
 
-        return merged
+        merged
       end
 
       ##
@@ -177,7 +177,7 @@ module Oga
       # @return [TrueClass|FalseClass]
       #
       def inside_literal_html?
-        return @lexer.html_script? || @lexer.html_style?
+        @lexer.html_script? || @lexer.html_style?
       end
 
       ##

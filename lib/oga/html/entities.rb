@@ -2143,7 +2143,7 @@ module Oga
       # @see [decode]
       #
       def self.decode(input)
-        return XML::Entities.decode(input, DECODE_MAPPING)
+        XML::Entities.decode(input, DECODE_MAPPING)
       end
     end # Entities
   end # HTML

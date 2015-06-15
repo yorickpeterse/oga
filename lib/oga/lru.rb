@@ -50,7 +50,7 @@ module Oga
     # @return [Fixnum]
     #
     def maximum
-      return synchronize { @maximum }
+      synchronize { @maximum }
     end
 
     ##
@@ -60,7 +60,7 @@ module Oga
     # @return [Mixed]
     #
     def [](key)
-      return synchronize { @cache[key] }
+      synchronize { @cache[key] }
     end
 
     ##
@@ -90,14 +90,14 @@ module Oga
     # @return [Mixed]
     #
     def get_or_set(key)
-      return synchronize { self[key] ||= yield }
+      synchronize { self[key] ||= yield }
     end
 
     ##
     # @return [Array]
     #
     def keys
-      return synchronize { @keys }
+      synchronize { @keys }
     end
 
     ##
@@ -105,7 +105,7 @@ module Oga
     # @return [TrueClass|FalseClass]
     #
     def key?(key)
-      return synchronize { @cache.key?(key) }
+      synchronize { @cache.key?(key) }
     end
 
     ##
@@ -122,7 +122,7 @@ module Oga
     # @return [Fixnum]
     #
     def size
-      return synchronize { @cache.size }
+      synchronize { @cache.size }
     end
 
     alias_method :length, :size

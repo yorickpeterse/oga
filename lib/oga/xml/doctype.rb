@@ -56,7 +56,7 @@ module Oga
         segments << %Q{ "#{system_id}"} if system_id
         segments << " [#{inline_rules}]" if inline_rules
 
-        return segments + '>'
+        segments + '>'
       end
 
       ##
@@ -75,7 +75,7 @@ module Oga
           end
         end
 
-        return "Doctype(#{segments.join(' ')})"
+        "Doctype(#{segments.join(' ')})"
       end
     end # Doctype
   end # XML

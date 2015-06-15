@@ -63,7 +63,7 @@ module Oga
       # @return [Oga::XML::Node]
       #
       def last
-        return @nodes[-1]
+        @nodes[-1]
       end
 
       ##
@@ -72,7 +72,7 @@ module Oga
       # @return [TrueClass|FalseClass]
       #
       def empty?
-        return @nodes.empty?
+        @nodes.empty?
       end
 
       ##
@@ -81,7 +81,7 @@ module Oga
       # @return [Fixnum]
       #
       def length
-        return @nodes.length
+        @nodes.length
       end
 
       alias_method :count, :length
@@ -94,7 +94,7 @@ module Oga
       # @return [Fixnum]
       #
       def index(node)
-        return @nodes.index(node)
+        @nodes.index(node)
       end
 
       ##
@@ -135,7 +135,7 @@ module Oga
 
         remove_ownership(node)
 
-        return node
+        node
       end
 
       ##
@@ -148,7 +148,7 @@ module Oga
 
         remove_ownership(node)
 
-        return node
+        node
       end
 
       ##
@@ -172,7 +172,7 @@ module Oga
       # @return [Oga::XML::Node]
       #
       def [](index)
-        return @nodes[index]
+        @nodes[index]
       end
 
       ##
@@ -181,7 +181,7 @@ module Oga
       # @return [Array]
       #
       def to_a
-        return @nodes
+        @nodes
       end
 
       ##
@@ -192,7 +192,7 @@ module Oga
       # @return [Oga::XML::NodeSet]
       #
       def +(other)
-        return self.class.new(to_a | other.to_a)
+        self.class.new(to_a | other.to_a)
       end
 
       ##
@@ -202,7 +202,7 @@ module Oga
       # @param [Oga::XML::NodeSet] other
       #
       def ==(other)
-        return other.is_a?(NodeSet) && other.equal_nodes?(@nodes)
+        other.is_a?(NodeSet) && other.equal_nodes?(@nodes)
       end
 
       ##
@@ -214,7 +214,7 @@ module Oga
       # @param [Array<Oga::XML::Node>] nodes
       #
       def equal_nodes?(nodes)
-        return @nodes == nodes
+        @nodes == nodes
       end
 
       ##
@@ -259,7 +259,7 @@ module Oga
 
         remove_ownership(removed) if removed
 
-        return removed
+        removed
       end
 
       ##
@@ -277,7 +277,7 @@ module Oga
           end
         end
 
-        return values
+        values
       end
 
       alias_method :attr, :attribute
@@ -296,7 +296,7 @@ module Oga
           end
         end
 
-        return text
+        text
       end
 
       ##
@@ -305,7 +305,7 @@ module Oga
       def inspect
         values = @nodes.map(&:inspect).join(', ')
 
-        return "NodeSet(#{values})"
+        "NodeSet(#{values})"
       end
 
       private

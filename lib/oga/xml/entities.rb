@@ -74,7 +74,7 @@ module Oga
           end
         end
 
-        return input
+        input
       end
 
       ##
@@ -85,7 +85,7 @@ module Oga
       # @return [String]
       #
       def self.encode(input, mapping = ENCODE_MAPPING)
-        return input.gsub(ENCODE_REGEXP, mapping)
+        input.gsub(ENCODE_REGEXP, mapping)
       end
     end # Entities
   end # XML

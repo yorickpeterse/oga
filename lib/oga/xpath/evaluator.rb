@@ -89,7 +89,7 @@ module Oga
       def evaluate(string)
         ast = Parser.parse_with_cache(string)
 
-        return evaluate_ast(ast)
+        evaluate_ast(ast)
       end
 
       ##
@@ -101,7 +101,7 @@ module Oga
       def evaluate_ast(ast)
         context = XML::NodeSet.new([@document])
 
-        return process(ast, context)
+        process(ast, context)
       end
 
       ##
@@ -119,7 +119,7 @@ module Oga
       def process(ast_node, context)
         handler = "on_#{ast_node.type}"
 
-        return send(handler, ast_node, context)
+        send(handler, ast_node, context)
       end
 
       ##
@@ -137,7 +137,7 @@ module Oga
         end
 
         # If the expression is just "/" we'll just return the current context.
-        return ast_node.children.empty? ? context : on_path(ast_node, context)
+        ast_node.children.empty? ? context : on_path(ast_node, context)
       end
 
       ##
@@ -164,7 +164,7 @@ module Oga
           end
         end
 
-        return nodes
+        nodes
       end
 
       ##
@@ -181,7 +181,7 @@ module Oga
           nodes << xml_node if node_matches?(xml_node, ast_node)
         end
 
-        return nodes
+        nodes
       end
 
       ##
@@ -221,7 +221,7 @@ module Oga
           end
         end
 
-        return final_nodes
+        final_nodes
       end
 
       ##
@@ -238,7 +238,7 @@ module Oga
 
         handler = name.gsub('-', '_')
 
-        return send("on_axis_#{handler}", test, context)
+        send("on_axis_#{handler}", test, context)
       end
 
       ##
@@ -266,7 +266,7 @@ module Oga
           end
         end
 
-        return nodes
+        nodes
       end
 
       ##
@@ -288,7 +288,7 @@ module Oga
           end
         end
 
-        return nodes
+        nodes
       end
 
       ##
@@ -312,7 +312,7 @@ module Oga
           nodes += on_test(ast_node, xml_node.attributes)
         end
 
-        return nodes
+        nodes
       end
 
       ##
@@ -324,7 +324,7 @@ module Oga
       # @return [Oga::XML::NodeSet]
       #
       def on_axis_child(ast_node, context)
-        return process(ast_node, child_nodes(context))
+        process(ast_node, child_nodes(context))
       end
 
       ##
@@ -344,7 +344,7 @@ module Oga
           end
         end
 
-        return nodes
+        nodes
       end
 
       ##
@@ -359,7 +359,7 @@ module Oga
 
         nodes.concat(on_axis_descendant(ast_node, context))
 
-        return nodes
+        nodes
       end
 
       ##
@@ -390,7 +390,7 @@ module Oga
           end
         end
 
-        return nodes
+        nodes
       end
 
       ##
@@ -428,7 +428,7 @@ module Oga
           end
         end
 
-        return nodes
+        nodes
       end
 
       ##
@@ -449,7 +449,7 @@ module Oga
           nodes << parent if node_matches?(parent, ast_node)
         end
 
-        return nodes
+        nodes
       end
 
       ##
@@ -476,7 +476,7 @@ module Oga
           end
         end
 
-        return nodes
+        nodes
       end
 
       ##
@@ -504,7 +504,7 @@ module Oga
           end
         end
 
-        return nodes
+        nodes
       end
 
       ##
@@ -521,7 +521,7 @@ module Oga
           nodes << context_node if node_matches?(context_node, ast_node)
         end
 
-        return nodes
+        nodes
       end
 
       ##
@@ -545,7 +545,7 @@ module Oga
           end
         end
 
-        return nodes
+        nodes
       end
 
       ##
@@ -560,7 +560,7 @@ module Oga
 
         handler = name.gsub('-', '_')
 
-        return send("on_type_test_#{handler}", test, context)
+        send("on_type_test_#{handler}", test, context)
       end
 
       ##
@@ -579,7 +579,7 @@ module Oga
           end
         end
 
-        return nodes
+        nodes
       end
 
       ##
@@ -596,7 +596,7 @@ module Oga
           nodes << node if node.is_a?(XML::Text)
         end
 
-        return nodes
+        nodes
       end
 
       ##
@@ -613,7 +613,7 @@ module Oga
           nodes << node if node.is_a?(XML::Comment)
         end
 
-        return nodes
+        nodes
       end
 
       ##
@@ -631,7 +631,7 @@ module Oga
           nodes << node if node.is_a?(XML::ProcessingInstruction)
         end
 
-        return nodes
+        nodes
       end
 
       ##
@@ -645,7 +645,7 @@ module Oga
       def on_pipe(ast_node, context)
         left, right = *ast_node.children
 
-        return process(left, context) + process(right, context)
+        process(left, context) + process(right, context)
       end
 
       ##
@@ -662,7 +662,7 @@ module Oga
       def on_and(ast_node, context)
         left, right = *ast_node.children
 
-        return on_call_boolean(context, left) && on_call_boolean(context, right)
+        on_call_boolean(context, left) && on_call_boolean(context, right)
       end
 
       ##
@@ -679,7 +679,7 @@ module Oga
       def on_or(ast_node, context)
         left, right = *ast_node.children
 
-        return on_call_boolean(context, left) || on_call_boolean(context, right)
+        on_call_boolean(context, left) || on_call_boolean(context, right)
       end
 
       ##
@@ -695,7 +695,7 @@ module Oga
       def on_add(ast_node, context)
         left, right = *ast_node.children
 
-        return on_call_number(context, left) + on_call_number(context, right)
+        on_call_number(context, left) + on_call_number(context, right)
       end
 
       ##
@@ -711,7 +711,7 @@ module Oga
       def on_div(ast_node, context)
         left, right = *ast_node.children
 
-        return on_call_number(context, left) / on_call_number(context, right)
+        on_call_number(context, left) / on_call_number(context, right)
       end
 
       ##
@@ -727,7 +727,7 @@ module Oga
       def on_mod(ast_node, context)
         left, right = *ast_node.children
 
-        return on_call_number(context, left) % on_call_number(context, right)
+        on_call_number(context, left) % on_call_number(context, right)
       end
 
       ##
@@ -743,7 +743,7 @@ module Oga
       def on_mul(ast_node, context)
         left, right = *ast_node.children
 
-        return on_call_number(context, left) * on_call_number(context, right)
+        on_call_number(context, left) * on_call_number(context, right)
       end
 
       ##
@@ -759,7 +759,7 @@ module Oga
       def on_sub(ast_node, context)
         left, right = *ast_node.children
 
-        return on_call_number(context, left) - on_call_number(context, right)
+        on_call_number(context, left) - on_call_number(context, right)
       end
 
       ##
@@ -795,7 +795,7 @@ module Oga
           right = to_string(right)
         end
 
-        return left == right
+        left == right
       end
 
       ##
@@ -807,7 +807,7 @@ module Oga
       # @see [#on_eq]
       #
       def on_neq(ast_node, context)
-        return !on_eq(ast_node, context)
+        !on_eq(ast_node, context)
       end
 
       ##
@@ -823,7 +823,7 @@ module Oga
       def on_lt(ast_node, context)
         left, right = *ast_node.children
 
-        return on_call_number(context, left) < on_call_number(context, right)
+        on_call_number(context, left) < on_call_number(context, right)
       end
 
       ##
@@ -839,7 +839,7 @@ module Oga
       def on_gt(ast_node, context)
         left, right = *ast_node.children
 
-        return on_call_number(context, left) > on_call_number(context, right)
+        on_call_number(context, left) > on_call_number(context, right)
       end
 
       ##
@@ -856,7 +856,7 @@ module Oga
       def on_lte(ast_node, context)
         left, right = *ast_node.children
 
-        return on_call_number(context, left) <= on_call_number(context, right)
+        on_call_number(context, left) <= on_call_number(context, right)
       end
 
       ##
@@ -873,7 +873,7 @@ module Oga
       def on_gte(ast_node, context)
         left, right = *ast_node.children
 
-        return on_call_number(context, left) >= on_call_number(context, right)
+        on_call_number(context, left) >= on_call_number(context, right)
       end
 
       ##
@@ -894,7 +894,7 @@ module Oga
 
         handler = name.gsub('-', '_')
 
-        return send("on_call_#{handler}", context, *args)
+        send("on_call_#{handler}", context, *args)
       end
 
       ##
@@ -906,7 +906,7 @@ module Oga
       #
       def on_call_last(context)
         # XPath uses indexes 1 to N instead of 0 to N.
-        return current_node_set.length.to_f
+        current_node_set.length.to_f
       end
 
       ##
@@ -919,7 +919,7 @@ module Oga
       def on_call_position(context)
         index = current_node_set.index(context.first) + 1
 
-        return index.to_f
+        index.to_f
       end
 
       ##
@@ -937,7 +937,7 @@ module Oga
           raise TypeError, 'count() can only operate on NodeSet instances'
         end
 
-        return retval.length.to_f
+        retval.length.to_f
       end
 
       ##
@@ -977,7 +977,7 @@ module Oga
           end
         end
 
-        return nodes
+        nodes
       end
 
       ##
@@ -995,7 +995,7 @@ module Oga
       def on_call_local_name(context, expression = nil)
         node = function_node(context, expression)
 
-        return node.respond_to?(:name) ? node.name : ''
+        node.respond_to?(:name) ? node.name : ''
       end
 
       ##
@@ -1113,7 +1113,7 @@ module Oga
           convert = context.first.text
         end
 
-        return to_float(convert)
+        to_float(convert)
       end
 
       ##
@@ -1135,7 +1135,7 @@ module Oga
           retval << on_call_string(context, arg)
         end
 
-        return retval
+        retval
       end
 
       ##
@@ -1157,7 +1157,7 @@ module Oga
         needle_str   = on_call_string(context, needle)
 
         # https://github.com/jruby/jruby/issues/1923
-        return needle_str.empty? || haystack_str.start_with?(needle_str)
+        needle_str.empty? || haystack_str.start_with?(needle_str)
       end
 
       ##
@@ -1178,7 +1178,7 @@ module Oga
         haystack_str = on_call_string(context, haystack)
         needle_str   = on_call_string(context, needle)
 
-        return haystack_str.include?(needle_str)
+        haystack_str.include?(needle_str)
       end
 
       ##
@@ -1202,7 +1202,7 @@ module Oga
 
         before, sep, after = haystack_str.partition(needle_str)
 
-        return sep.empty? ? sep : before
+        sep.empty? ? sep : before
       end
 
       ##
@@ -1226,7 +1226,7 @@ module Oga
 
         before, sep, after = haystack_str.partition(needle_str)
 
-        return sep.empty? ? sep : after
+        sep.empty? ? sep : after
       end
 
       ##
@@ -1265,7 +1265,7 @@ module Oga
           stop_index = -1
         end
 
-        return haystack_str[start_index..stop_index]
+        haystack_str[start_index..stop_index]
       end
 
       ##
@@ -1281,7 +1281,7 @@ module Oga
       # @return [Float]
       #
       def on_call_string_length(context, expression = nil)
-        return on_call_string(context, expression).length.to_f
+        on_call_string(context, expression).length.to_f
       end
 
       ##
@@ -1301,7 +1301,7 @@ module Oga
       def on_call_normalize_space(context, expression = nil)
         str = on_call_string(context, expression)
 
-        return str.strip.gsub(/\s+/, ' ')
+        str.strip.gsub(/\s+/, ' ')
       end
 
       ##
@@ -1330,7 +1330,7 @@ module Oga
           replaced     = replaced.gsub(char, replace_with)
         end
 
-        return replaced
+        replaced
       end
 
       ##
@@ -1360,7 +1360,7 @@ module Oga
           bool = !retval.respond_to?(:empty?) || !retval.empty?
         end
 
-        return bool
+        bool
       end
 
       ##
@@ -1375,7 +1375,7 @@ module Oga
       # @return [TrueClass|FalseClass]
       #
       def on_call_not(context, expression)
-        return !on_call_boolean(context, expression)
+        !on_call_boolean(context, expression)
       end
 
       ##
@@ -1387,7 +1387,7 @@ module Oga
       # @return [TrueClass]
       #
       def on_call_true(context)
-        return true
+        true
       end
 
       ##
@@ -1399,7 +1399,7 @@ module Oga
       # @return [FalseClass]
       #
       def on_call_false(context)
-        return false
+        false
       end
 
       ##
@@ -1428,7 +1428,7 @@ module Oga
           node = node.parent
         end
 
-        return false
+        false
       end
 
       ##
@@ -1462,7 +1462,7 @@ module Oga
           sum += node.text.to_f
         end
 
-        return sum
+        sum
       end
 
       ##
@@ -1478,7 +1478,7 @@ module Oga
       def on_call_floor(context, expression)
         number = on_call_number(context, expression)
 
-        return number.nan? ? number : number.floor.to_f
+        number.nan? ? number : number.floor.to_f
       end
 
       ##
@@ -1494,7 +1494,7 @@ module Oga
       def on_call_ceiling(context, expression)
         number = on_call_number(context, expression)
 
-        return number.nan? ? number : number.ceil.to_f
+        number.nan? ? number : number.ceil.to_f
       end
 
       ##
@@ -1510,7 +1510,7 @@ module Oga
       def on_call_round(context, expression)
         number = on_call_number(context, expression)
 
-        return number.nan? ? number : number.round.to_f
+        number.nan? ? number : number.round.to_f
       end
 
       ##
@@ -1521,7 +1521,7 @@ module Oga
       # @return [Float]
       #
       def on_int(ast_node, context)
-        return ast_node.children[0].to_f
+        ast_node.children[0].to_f
       end
 
       ##
@@ -1532,7 +1532,7 @@ module Oga
       # @return [Float]
       #
       def on_float(ast_node, context)
-        return ast_node.children[0]
+        ast_node.children[0]
       end
 
       ##
@@ -1543,7 +1543,7 @@ module Oga
       # @return [String]
       #
       def on_string(ast_node, context)
-        return ast_node.children[0]
+        ast_node.children[0]
       end
 
       ##
@@ -1586,7 +1586,7 @@ module Oga
           node = context.first
         end
 
-        return node
+        node
       end
 
       ##
@@ -1597,7 +1597,7 @@ module Oga
       # @return [String]
       #
       def first_node_text(set)
-        return set[0].respond_to?(:text) ? set[0].text : ''
+        set[0].respond_to?(:text) ? set[0].text : ''
       end
 
       ##
@@ -1614,7 +1614,7 @@ module Oga
           children.concat(xml_node.children)
         end
 
-        return children
+        children
       end
 
       ##
@@ -1667,7 +1667,7 @@ module Oga
             xml_node.default_namespace?
         end
 
-        return name_matches && ns_matches
+        name_matches && ns_matches
       end
 
       ##
@@ -1678,7 +1678,7 @@ module Oga
       def type_matches?(xml_node, ast_node)
         context = XML::NodeSet.new([xml_node])
 
-        return process(ast_node, context).length > 0
+        process(ast_node, context).length > 0
       end
 
       ##
@@ -1691,7 +1691,7 @@ module Oga
       def name_matches?(xml_node, name)
         return false unless xml_node.respond_to?(:name)
 
-        return name == STAR ? true : xml_node.name == name
+        name == STAR ? true : xml_node.name == name
       end
 
       ##
@@ -1706,7 +1706,7 @@ module Oga
 
         return true if ns == STAR
 
-        return xml_node.namespace && xml_node.namespace.name == ns
+        xml_node.namespace && xml_node.namespace.name == ns
       end
 
       ##
@@ -1714,7 +1714,7 @@ module Oga
       # @return [TrueClass|FalseClass]
       #
       def has_parent?(ast_node)
-        return ast_node.respond_to?(:parent) && !!ast_node.parent
+        ast_node.respond_to?(:parent) && !!ast_node.parent
       end
 
       ##
@@ -1743,7 +1743,7 @@ module Oga
           value = value.to_i
         end
 
-        return value.to_s
+        value.to_s
       end
 
       ##
@@ -1764,14 +1764,14 @@ module Oga
 
         @node_sets.pop
 
-        return retval
+        retval
       end
 
       ##
       # @return [Oga::XML::NodeSet]
       #
       def current_node_set
-        return @node_sets.last
+        @node_sets.last
       end
 
       ##
@@ -1781,7 +1781,7 @@ module Oga
       # @return [Oga::XML::Node|Oga::XML::Document]
       #
       def root_node(node)
-        return node.respond_to?(:root_node) ? node.root_node : node
+        node.respond_to?(:root_node) ? node.root_node : node
       end
 
       ##
@@ -1791,7 +1791,7 @@ module Oga
       # @return [Oga::XML::Node|Oga::XML::Document]
       #
       def parent_node(node)
-        return node.respond_to?(:parent) ? node.parent : node
+        node.respond_to?(:parent) ? node.parent : node
       end
     end # Evaluator
   end # XPath

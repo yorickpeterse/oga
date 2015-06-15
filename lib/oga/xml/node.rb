@@ -40,7 +40,7 @@ module Oga
       # @return [Oga::XML::NodeSet]
       #
       def children
-        return @children ||= NodeSet.new([], self)
+        @children ||= NodeSet.new([], self)
       end
 
       ##
@@ -63,7 +63,7 @@ module Oga
       # @return [Oga::XML::Node]
       #
       def parent
-        return node_set ? node_set.owner : nil
+        node_set ? node_set.owner : nil
       end
 
       ##
@@ -74,7 +74,7 @@ module Oga
       def previous
         index = node_set.index(self) - 1
 
-        return index >= 0 ? node_set[index] : nil
+        index >= 0 ? node_set[index] : nil
       end
 
       ##
@@ -86,7 +86,7 @@ module Oga
         index  = node_set.index(self) + 1
         length = node_set.length
 
-        return index <= length ? node_set[index] : nil
+        index <= length ? node_set[index] : nil
       end
 
       ##
@@ -140,7 +140,7 @@ module Oga
           @root_node = node
         end
 
-        return @root_node
+        @root_node
       end
 
       ##
@@ -184,14 +184,14 @@ module Oga
           @html_p = root.is_a?(Document) && root.html?
         end
 
-        return @html_p
+        @html_p
       end
 
       ##
       # @return [TrueClass|FalseClass]
       #
       def xml?
-        return !html?
+        !html?
       end
     end # Element
   end # XML

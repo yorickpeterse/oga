@@ -38,7 +38,7 @@ module Oga
       # @return [Oga::XML::NodeSet]
       #
       def children
-        return @children ||= NodeSet.new([], self)
+        @children ||= NodeSet.new([], self)
       end
 
       ##
@@ -70,14 +70,14 @@ module Oga
           xml = xml_declaration.to_xml + "\n" + xml.strip
         end
 
-        return xml
+        xml
       end
 
       ##
       # @return [TrueClass|FalseClass]
       #
       def html?
-        return type.equal?(:html)
+        type.equal?(:html)
       end
 
       ##
@@ -97,7 +97,7 @@ module Oga
           end
         end
 
-        return <<-EOF.strip
+        <<-EOF.strip
 Document(
   #{segments.join("\n  ")}
 )

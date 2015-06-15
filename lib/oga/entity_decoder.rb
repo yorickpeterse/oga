@@ -4,7 +4,7 @@ module Oga
     # @see [decode]
     #
     def self.try_decode(input, html = false)
-      return input ? decode(input, html) : nil
+      input ? decode(input, html) : nil
     end
 
     ##
@@ -15,7 +15,7 @@ module Oga
     def self.decode(input, html = false)
       decoder = html ? HTML::Entities : XML::Entities
 
-      return decoder.decode(input)
+      decoder.decode(input)
     end
   end # EntityDecoder
 end # Oga

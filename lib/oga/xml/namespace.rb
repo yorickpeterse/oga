@@ -26,14 +26,14 @@ module Oga
       # @return [String]
       #
       def to_s
-        return name.to_s
+        name.to_s
       end
 
       ##
       # @return [String]
       #
       def inspect
-        return "Namespace(name: #{name.inspect} uri: #{uri.inspect})"
+        "Namespace(name: #{name.inspect} uri: #{uri.inspect})"
       end
 
       ##
@@ -41,7 +41,7 @@ module Oga
       # @return [TrueClass|FalseClass]
       #
       def ==(other)
-        return other.is_a?(self.class) && name == other.name && uri == other.uri
+        other.is_a?(self.class) && name == other.name && uri == other.uri
       end
     end # Namespace
   end # XML

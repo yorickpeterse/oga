@@ -23,14 +23,14 @@ module Oga
       # @return [String]
       #
       def to_xml
-        return text.to_s
+        text.to_s
       end
 
       ##
       # @return [String]
       #
       def inspect
-        return "#{self.class.to_s.split('::').last}(#{text.inspect})"
+        "#{self.class.to_s.split('::').last}(#{text.inspect})"
       end
     end # CharacterNode
   end # XML

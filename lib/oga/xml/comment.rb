@@ -10,7 +10,7 @@ module Oga
       # @return [String]
       #
       def to_xml
-        return "<!--#{text}-->"
+        "<!--#{text}-->"
       end
     end # Comment
   end # XML

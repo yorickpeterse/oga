@@ -10,7 +10,7 @@ module Oga
   # @return [Oga::XML::Document]
   #
   def self.parse_xml(xml, options = {})
-    return XML::Parser.new(xml, options).parse
+    XML::Parser.new(xml, options).parse
   end
 
   ##
@@ -24,7 +24,7 @@ module Oga
   # @return [Oga::XML::Document]
   #
   def self.parse_html(html, options = {})
-    return HTML::Parser.new(html, options).parse
+    HTML::Parser.new(html, options).parse
   end
 
   ##

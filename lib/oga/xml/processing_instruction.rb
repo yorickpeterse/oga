@@ -23,14 +23,14 @@ module Oga
       # @return [String]
       #
       def to_xml
-        return "<?#{name}#{text}?>"
+        "<?#{name}#{text}?>"
       end
 
       ##
       # @return [String]
       #
       def inspect
-        return "ProcessingInstruction(name: #{name.inspect} text: #{text.inspect})"
+        "ProcessingInstruction(name: #{name.inspect} text: #{text.inspect})"
       end
     end # ProcessingInstruction
   end # XML

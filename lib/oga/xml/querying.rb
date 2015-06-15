@@ -13,7 +13,7 @@ module Oga
       # @see [Oga::XPath::Evaluator#initialize]
       #
       def xpath(expression, variables = {})
-        return XPath::Evaluator.new(self, variables).evaluate(expression)
+        XPath::Evaluator.new(self, variables).evaluate(expression)
       end
 
       ##
@@ -25,7 +25,7 @@ module Oga
       def at_xpath(*args)
         result = xpath(*args)
 
-        return result.is_a?(XML::NodeSet) ? result.first : result
+        result.is_a?(XML::NodeSet) ? result.first : result
       end
 
       ##
@@ -37,7 +37,7 @@ module Oga
       def css(expression)
         ast = CSS::Parser.parse_with_cache(expression)
 
-        return XPath::Evaluator.new(self).evaluate_ast(ast)
+        XPath::Evaluator.new(self).evaluate_ast(ast)
       end
 
       ##
@@ -49,7 +49,7 @@ module Oga
       def at_css(*args)
         result = css(*args)
 
-        return result.is_a?(XML::NodeSet) ? result.first : result
+        result.is_a?(XML::NodeSet) ? result.first : result
       end
     end # Querying
   end # XML

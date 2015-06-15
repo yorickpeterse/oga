@@ -10,7 +10,7 @@ module Oga
       # @return [String]
       #
       def to_xml
-        return "<![CDATA[#{text}]]>"
+        "<![CDATA[#{text}]]>"
       end
     end # Cdata
   end # XML

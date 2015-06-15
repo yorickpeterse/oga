@@ -57,7 +57,7 @@ module Oga
           end
         end
 
-        return @namespace
+        @namespace
       end
 
       ##
@@ -79,14 +79,14 @@ module Oga
           @decoded = true
         end
 
-        return @value
+        @value
       end
 
       ##
       # @return [String]
       #
       def text
-        return value.to_s
+        value.to_s
       end
 
       alias_method :to_s, :text
@@ -103,7 +103,7 @@ module Oga
 
         enc_value = value ? Entities.encode(value) : nil
 
-        return %Q(#{full_name}="#{enc_value}")
+        %Q(#{full_name}="#{enc_value}")
       end
 
       ##
@@ -120,7 +120,7 @@ module Oga
           end
         end
 
-        return "Attribute(#{segments.join(' ')})"
+        "Attribute(#{segments.join(' ')})"
       end
 
       private
@@ -129,7 +129,7 @@ module Oga
       # @return [TrueClass|FalseClass]
       #
       def html?
-        return !!@element && @element.html?
+        !!@element && @element.html?
       end
     end # Attribute
   end # XML
