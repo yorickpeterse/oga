@@ -310,7 +310,7 @@ string_body
   # @return [Oga::XML::Document]
   #
   def on_document(children = [])
-    document = Document.new(:type => @lexer.html ? :html : :xml)
+    document = Document.new(:type => @lexer.html? ? :html : :xml)
 
     children.each do |child|
       if child.is_a?(Doctype)

@@ -34,14 +34,10 @@ module Oga
     # However, it is perfectly save to use different instances per thread.
     # There is no _global_ state used by this lexer.
     #
-    # @!attribute [r] html
-    #  @return [TrueClass|FalseClass]
     #
     # @private
     #
     class Lexer
-      attr_reader :html
-
       # These are all constant/frozen to remove the need for String allocations
       # every time they are referenced in the lexer.
       HTML_SCRIPT = 'script'.freeze
@@ -206,7 +202,7 @@ module Oga
       # @return [TrueClass|FalseClass]
       #
       def html?
-        return !!html
+        return @html == true
       end
 
       ##
