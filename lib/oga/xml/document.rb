@@ -4,24 +4,18 @@ module Oga
     # Class used for storing information about an entire XML document. This
     # includes the doctype, XML declaration, child nodes and more.
     #
-    # @!attribute [rw] doctype
-    #  The doctype of the document.
-    #  @return [Oga::XML::Doctype]
-    #
-    # @!attribute [rw] xml_declaration
-    #  The XML declaration of the document.
-    #  @return [Oga::XML::XmlDeclaration]
-    #
-    # @!attribute [r] type
-    #  The document type, either `:xml` or `:html`.
-    #  @return [Symbol]
-    #
     class Document
       include Querying
       include Traversal
 
-      attr_accessor :doctype, :xml_declaration
+      # @return [Oga::XML::Doctype]
+      attr_accessor :doctype
 
+      # @return [Oga::XML::XmlDeclaration]
+      attr_accessor :xml_declaration
+
+      # The document type, either `:xml` or `:html`.
+      # @return [Symbol]
       attr_reader :type
 
       ##

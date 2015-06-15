@@ -4,29 +4,19 @@ module Oga
     # Class that contains information about an XML element such as the name,
     # attributes and child nodes.
     #
-    # @!attribute [rw] name
-    #  The name of the element.
-    #  @return [String]
-    #
-    # @!attribute [r] namespace_name
-    #  The name of the namespace.
-    #  @return [String]
-    #
-    # @!attribute [rw] attributes
-    #  The attributes of the element.
-    #  @return [Array<Oga::XML::Attribute>]
-    #
-    # @!attribute [rw] namespaces
-    #  The registered namespaces.
-    #  @return [Hash]
-    #
     class Element < Node
       include Querying
 
+      # @return [String]
       attr_reader :namespace_name
 
-      attr_accessor :name, :attributes
+      # @return [String]
+      attr_accessor :name
 
+      # @return [Array<Oga::XML::Attribute>]
+      attr_accessor :attributes
+
+      # @return [Hash]
       attr_writer :namespaces
 
       ##

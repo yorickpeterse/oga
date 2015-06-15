@@ -5,12 +5,10 @@ module Oga
     # {Oga::XML::NodeSet} and can be used to query surrounding and parent
     # nodes.
     #
-    # @!attribute [r] node_set
-    #  @return [Oga::XML::NodeSet]
-    #
     class Node
       include Traversal
 
+      # @return [Oga::XML::NodeSet]
       attr_reader :node_set
 
       ##

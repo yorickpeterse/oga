@@ -3,28 +3,26 @@ module Oga
     ##
     # Class used for storing information about Doctypes.
     #
-    # @!attribute [rw] name
-    #  The name of the doctype (e.g. "HTML").
-    #  @return [String]
-    #
-    # @!attribute [rw] type
-    #  The type of the doctype (e.g. "PUBLIC").
-    #  @return [String]
-    #
-    # @!attribute [rw] public_id
-    #  The public ID of the doctype.
-    #  @return [String]
-    #
-    # @!attribute [rw] system_id
-    #  The system ID of the doctype.
-    #  @return [String]
-    #
-    # @!attribute [rw] inline_rules
-    #  The inline doctype rules.
-    #  @return [String]
-    #
     class Doctype
-      attr_accessor :name, :type, :public_id, :system_id, :inline_rules
+      # The name of the doctype (e.g. "HTML").
+      # @return [String]
+      attr_accessor :name
+
+      # The type of the doctype (e.g. "PUBLIC").
+      # @return [String]
+      attr_accessor :type
+
+      # The public ID of the doctype.
+      # @return [String]
+      attr_accessor :public_id
+
+      # The system ID of the doctype.
+      # @return [String]
+      attr_accessor :system_id
+
+      # The inline doctype rules.
+      # @return [String]
+      attr_accessor :inline_rules
 
       ##
       # @example

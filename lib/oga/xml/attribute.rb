@@ -3,19 +3,17 @@ module Oga
     ##
     # Class for storing information about a single XML attribute.
     #
-    # @!attribute [rw] name
-    #  The name of the attribute.
-    #  @return [String]
-    #
-    # @!attribute [rw] namespace_name
-    #  @return [String]
-    #
-    # @!attribute [r] element
-    #  The element this attribute belongs to.
-    #  @return [Oga::XML::Element]
-    #
     class Attribute
-      attr_accessor :name, :namespace_name, :element
+      # The name of the attribute.
+      # @return [String]
+      attr_accessor :name
+
+      # @return [String]
+      attr_accessor :namespace_name
+
+      # The element this attribute belongs to.
+      # @return [Oga::XML::Element]
+      attr_accessor :element
 
       ##
       # The default namespace available to all attributes. This namespace can

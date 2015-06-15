@@ -4,14 +4,12 @@ module Oga
     # The Namespace class contains information about XML namespaces such as the
     # name and URI.
     #
-    # @!attribute [r] name
-    #  @return [String]
-    #
-    # @!attribute [r] uri
-    #  @return [String]
-    #
     class Namespace
-      attr_accessor :name, :uri
+      # @return [String]
+      attr_accessor :name
+
+      # @return [String]
+      attr_accessor :uri
 
       ##
       # @param [Hash] options

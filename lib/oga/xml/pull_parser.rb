@@ -19,16 +19,13 @@ module Oga
     # This parses yields proper XML instances such as {Oga::XML::Element}.
     # Doctypes and XML declarations are ignored by this parser.
     #
-    # @!attribute [r] node
-    #  The current node.
-    #  @return [Oga::XML::Node]
-    #
-    # @!attribute [r] nesting
-    #  Array containing the names of the currently nested elements.
-    #  @return [Array]
-    #
     class PullParser < Parser
-      attr_reader :node, :nesting
+      # @return [Oga::XML::Node]
+      attr_reader :node
+
+      # Array containing the names of the currently nested elements.
+      # @return [Array]
+      attr_reader :nesting
 
       ##
       # @return [Array]

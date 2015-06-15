@@ -3,20 +3,16 @@ module Oga
     ##
     # Class containing information about an XML declaration tag.
     #
-    # @!attribute [rw] version
-    #  The XML version.
-    #  @return [String]
-    #
-    # @!attribute [rw] encoding
-    #  The XML document's encoding.
-    #  @return [String]
-    #
-    # @!attribute [rw] standalone
-    #  Whether or not the document is a standalone document.
-    #  @return [String]
-    #
     class XmlDeclaration
-      attr_accessor :version, :encoding, :standalone
+      # @return [String]
+      attr_accessor :version
+
+      # @return [String]
+      attr_accessor :encoding
+
+      # Whether or not the document is a standalone document.
+      # @return [String]
+      attr_accessor :standalone
 
       ##
       # @param [Hash] options

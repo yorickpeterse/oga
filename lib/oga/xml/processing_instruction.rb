@@ -3,10 +3,8 @@ module Oga
     ##
     # Class used for storing information about a single processing instruction.
     #
-    # @!attribute [rw] name
-    #  @return [String]
-    #
     class ProcessingInstruction < CharacterNode
+      # @return [String]
       attr_accessor :name
 
       ##

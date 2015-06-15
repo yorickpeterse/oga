@@ -31,12 +31,10 @@ module Oga
     # If ownership was not handled then you'd have to manually set the
     # `element` variable's `node_set` attribute after pushing it into a set.
     #
-    # @!attribute [rw] owner
-    #  @return [Oga::XML::Node]
-    #
     class NodeSet
       include Enumerable
 
+      # @return [Oga::XML::Node]
       attr_accessor :owner
 
       ##

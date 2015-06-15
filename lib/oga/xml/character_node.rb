@@ -4,10 +4,8 @@ module Oga
     # Base class for nodes that represent a text-like value such as Text and
     # Comment nodes.
     #
-    # @!attribute [rw] text
-    #  @return [String]
-    #
     class CharacterNode < Node
+      # @return [String]
       attr_accessor :text
 
       ##
