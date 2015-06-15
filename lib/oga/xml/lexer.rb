@@ -34,6 +34,16 @@ module Oga
     # However, it is perfectly save to use different instances per thread.
     # There is no _global_ state used by this lexer.
     #
+    # ## Strict Mode
+    #
+    # By default the lexer is rather permissive regarding the input. For
+    # example, missing closing tags are inserted by default. To disable this
+    # behaviour the lexer can be run in "strict mode" by setting `:strict` to
+    # `true`:
+    #
+    #     lexer = Oga::XML::Lexer.new('...', :strict => true)
+    #
+    # Strict mode only applies to XML documents.
     #
     # @private
     #
@@ -97,13 +107,17 @@ module Oga
       #
       # @param [Hash] options
       #
-      # @option options [Symbol] :html When set to `true` the lexer will treat
-      #  the input as HTML instead of SGML/XML. This makes it possible to lex
-      #  HTML void elements such as `<link href="">`.
+      # @option options [TrueClass|FalseClass] :html When set to `true` the
+      #  lexer will treat the input as HTML instead of XML. This makes it
+      #  possible to lex HTML void elements such as `<link href="">`.
+      #
+      # @option options [TrueClass|FalseClass] :strict Enables/disables strict
+      #  parsing of XML documents, disabled by default.
       #
       def initialize(data, options = {})
-        @data = data
-        @html = options[:html]
+        @data   = data
+        @html   = options[:html]
+        @strict = options[:strict] || false
 
         reset
       end
@@ -191,7 +205,7 @@ module Oga
         end
 
         # Add any missing closing tags
-        unless @elements.empty?
+        if !strict? and !@elements.empty?
           @elements.length.times { on_element_end }
         end
       ensure
@@ -203,6 +217,13 @@ module Oga
       #
       def html?
         return @html == true
+      end
+
+      ##
+      # @return [TrueClass|FalseClass]
+      #
+      def strict?
+        return @strict
       end
 
       ##

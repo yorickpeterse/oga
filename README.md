@@ -28,6 +28,11 @@ Parsing a simple string of XML:
 
     Oga.parse_xml('<people><person>Alice</person></people>')
 
+Parsing XML using strict mode (disables automatic tag insertion):
+
+    Oga.parse_xml('<people>foo</people>', :strict => true) # works fine
+    Oga.parse_xml('<people>foo', :strict => true)          # throws an error
+
 Parsing a simple string of HTML:
 
     Oga.parse_html('<link rel="stylesheet" href="foo.css">')
