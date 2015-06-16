@@ -3,6 +3,40 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 1.0.3 - 2015-06-16
+
+### Strict XML parsing support
+
+Oga can now parse XML documents in "strict mode". This mode currently only
+disables the automatic insertion of missing closing tags. This feature can be
+used as following:
+
+    document = Oga.parse_xml('<foo>bar</foo>', :strict => true)
+
+This works for all 3 (DOM, SAX and pull) parsing APIs.
+
+See commit 2c18a51ba905d46469170af7f071b068abe965eb for more information.
+
+### Support for HTML attribute values without starting quotes
+
+Oga can now parse HTML such as `<foo bar=baz" />`. This will be parsed as if the
+input were `<foo bar='baz"' />`.
+
+See commit fd307a0fcc3616ded272432ba27f972a9113953a for more information.
+
+### Support for spaces around attribute equal signs
+
+Previously XML/HTML such as `<foo bar = "baz" />` would not be parsed correctly
+as Oga didn't support spaces around the `=` sign. Commit
+a76286b973ed6d6241a0280eb3d1d117428e9964 added support for input like this.
+
+### Decoding entities with numbers
+
+Oga can now decode entities such as `&frac12;`. Due to an incorrect regular
+expression these entities would not be decoded.
+
+See commit af7f2674af65a2dd50f6f8a138ddd9429e8533d1 for more information.
+
 ## 1.0.2 - 2015-06-03
 
 ### Fix for requiring extensions on certain platforms
