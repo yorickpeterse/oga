@@ -33,6 +33,20 @@ module Oga
       }
 
       ##
+      # Hash containing characters and the corresponding XML entities to use
+      # when encoding XML/HTML attribute values.
+      #
+      # @return [Hash]
+      #
+      ENCODE_ATTRIBUTE_MAPPING = {
+        '&' => '&amp;',
+        '>' => '&gt;',
+        '<' => '&lt;',
+        "'" => '&apos;',
+        '"' => '&quot;'
+      }
+
+      ##
       # @return [String]
       #
       AMPERSAND = '&'.freeze
@@ -55,6 +69,12 @@ module Oga
       # @return [Regexp]
       #
       ENCODE_REGEXP = Regexp.new(ENCODE_MAPPING.keys.join('|'))
+
+      ##
+      # @return [Regexp]
+      #
+      ENCODE_ATTRIBUTE_REGEXP =
+        Regexp.new(ENCODE_ATTRIBUTE_MAPPING.keys.join('|'))
 
       ##
       # Decodes XML entities.
@@ -86,6 +106,16 @@ module Oga
       #
       def self.encode(input, mapping = ENCODE_MAPPING)
         input.gsub(ENCODE_REGEXP, mapping)
+      end
+
+      ##
+      # Encodes special characters in an XML attribute value.
+      #
+      # @param [String] input
+      # @return [String]
+      #
+      def self.encode_attribute(input)
+        input.gsub(ENCODE_ATTRIBUTE_REGEXP, ENCODE_ATTRIBUTE_MAPPING)
       end
     end # Entities
   end # XML

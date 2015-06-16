@@ -139,10 +139,10 @@ describe Oga::XML::Attribute do
       attr.to_xml.should == 'xmlns:class=""'
     end
 
-    it 'converts special characters to XML entities' do
-      attr = described_class.new(:name => 'href', :value => '&<>')
+    it 'decodes XML entities' do
+      attr = described_class.new(:name => 'href', :value => %q{&<>'"})
 
-      attr.to_xml.should == 'href="&amp;&lt;&gt;"'
+      attr.to_xml.should == 'href="&amp;&lt;&gt;&apos;&quot;"'
     end
   end
 

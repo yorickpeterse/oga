@@ -104,4 +104,26 @@ describe Oga::XML::Entities do
       described_class.encode('&lt;').should == '&amp;lt;'
     end
   end
+
+  describe 'encode_attribute' do
+    it 'encodes & as &amp;' do
+      described_class.encode_attribute('&').should == '&amp;'
+    end
+
+    it 'encodes > as &gt;' do
+      described_class.encode_attribute('>').should == '&gt;'
+    end
+
+    it 'encodes < as &gt;' do
+      described_class.encode_attribute('<').should == '&lt;'
+    end
+
+    it 'encodes a single quote as &apos;' do
+      described_class.encode_attribute("'").should == '&apos;'
+    end
+
+    it 'encodes a double quote as &quot;' do
+      described_class.encode_attribute('"').should == '&quot;'
+    end
+  end
 end
