@@ -101,11 +101,7 @@ module Oga
           full_name = name
         end
 
-        if value
-          enc_value = Entities.encode_attribute(value)
-        else
-          enc_value = nil
-        end
+        enc_value = value ? Entities.encode_attribute(value) : nil
 
         %Q(#{full_name}="#{enc_value}")
       end
