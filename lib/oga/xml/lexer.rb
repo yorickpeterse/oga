@@ -499,7 +499,7 @@ module Oga
       ##
       # Called on the closing tag of an element.
       #
-      # @param [String] ns_name The name of the element (minus namespace
+      # @param [String] name The name of the element (minus namespace
       #  prefix). This is not set for self closing tags.
       #
       def on_element_end(name = nil)
