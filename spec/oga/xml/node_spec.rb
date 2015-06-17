@@ -179,6 +179,28 @@ describe Oga::XML::Node do
     end
   end
 
+  describe '#replace' do
+    before do
+      @node      = described_class.new
+      @container = described_class.new(:children => [@node])
+    end
+
+    it 'replaces a node with another node when called with Oga::XML::Node' do
+      other = described_class.new
+
+      @node.replace(other)
+
+      @container.children[0].should == other
+    end
+
+    it 'replaces a node with Oga::XML::Text when called with String' do
+      @node.replace('a string')
+
+      @container.children[0].should be_an_instance_of(Oga::XML::Text)
+      @container.children[0].text.should == 'a string'
+    end
+  end
+
   describe '#before' do
     before do
       @node      = described_class.new

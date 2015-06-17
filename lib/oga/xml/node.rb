@@ -153,6 +153,27 @@ module Oga
       end
 
       ##
+      # Replaces the current node with another.
+      #
+      # @example Replacing with an element
+      #  element = Oga::XML::Element.new(:name => 'div')
+      #  some_node.replace(element)
+      #
+      # @example Replacing with a String
+      #  some_node.replace('this will replace the current node with a text node')
+      #
+      # @param [String|Oga::XML::Node] other
+      #
+      def replace(other)
+        if other.is_a?(String)
+          other = Text.new(:text => other)
+        end
+
+        before(other)
+        remove
+      end
+
+      ##
       # Inserts the given node before the current node.
       #
       # @param [Oga::XML::Node] other
