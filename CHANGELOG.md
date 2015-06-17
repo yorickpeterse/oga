@@ -3,6 +3,28 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 1.1.0 - Unreleased
+
+### Support for replacing of DOM nodes
+
+The newly added method `Oga::XML::Node#replace` can be used to replace an
+existing node with another node or with a String (which will result in it being
+replaced with a Text node). For example:
+
+    p   = Oga::XML::Element.new(:name => 'p')
+    div = Oga::XML::Element.new(:name => 'div', :children => [p])
+
+    puts div.to_xml # => "<div><p /></div>"
+
+    p.replace('Hello world!')
+
+    puts div.to_xml # => "<div>Hello world!</div>"
+
+Thanks to Tero Tasanen for adding this.
+
+See commit 0b4791b277abf492ae0feb1c467dfc03aef4f2ec and
+<https://github.com/YorickPeterse/oga/pull/116> for more information.
+
 ## 1.0.3 - 2015-06-16
 
 ### Strict XML parsing support
