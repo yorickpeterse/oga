@@ -52,6 +52,7 @@ require 'oga/html/entities'
 require 'oga/xpath/lexer'
 require 'oga/xpath/parser'
 require 'oga/xpath/evaluator'
+require 'oga/xpath/compiler'
 
 require 'oga/css/lexer'
 require 'oga/css/parser'
