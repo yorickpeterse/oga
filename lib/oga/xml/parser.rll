@@ -302,7 +302,7 @@ string_body
 
     reset
 
-    return retval
+    retval
   end
 
   ##
@@ -324,14 +324,14 @@ string_body
       end
     end
 
-    return document
+    document
   end
 
   ##
   # @param [Hash] options
   #
   def on_doctype(options = {})
-    return Doctype.new(options)
+    Doctype.new(options)
   end
 
   ##
@@ -339,7 +339,7 @@ string_body
   # @return [Oga::XML::Cdata]
   #
   def on_cdata(text = nil)
-    return Cdata.new(:text => text)
+    Cdata.new(:text => text)
   end
 
   ##
@@ -347,7 +347,7 @@ string_body
   # @return [Oga::XML::Comment]
   #
   def on_comment(text = nil)
-    return Comment.new(:text => text)
+    Comment.new(:text => text)
   end
 
   ##
@@ -356,7 +356,7 @@ string_body
   # @return [Oga::XML::ProcessingInstruction]
   #
   def on_proc_ins(name, text = nil)
-    return ProcessingInstruction.new(:name => name, :text => text)
+    ProcessingInstruction.new(:name => name, :text => text)
   end
 
   ##
@@ -370,7 +370,7 @@ string_body
       options[attr.name.to_sym] = attr.value
     end
 
-    return XmlDeclaration.new(options)
+    XmlDeclaration.new(options)
   end
 
   ##
@@ -378,7 +378,7 @@ string_body
   # @return [Oga::XML::Text]
   #
   def on_text(text)
-    return Text.new(:text => text)
+    Text.new(:text => text)
   end
 
   ##
@@ -394,7 +394,7 @@ string_body
       :attributes     => attributes
     )
 
-    return element
+    element
   end
 
   ##
@@ -405,7 +405,7 @@ string_body
   def on_element_children(element, children = [])
     element.children = children
 
-    return element
+    element
   end
 
   ##
@@ -413,7 +413,7 @@ string_body
   # @return [Oga::XML::Element]
   #
   def after_element(element)
-    return element
+    element
   end
 
   ##
@@ -423,7 +423,7 @@ string_body
   # @return [Oga::XML::Attribute]
   #
   def on_attribute(name, ns_name = nil, value = nil)
-    return Attribute.new(
+    Attribute.new(
       :namespace_name => ns_name,
       :name           => name,
       :value          => value
@@ -434,6 +434,6 @@ string_body
   # @param [Array] attrs
   #
   def on_attributes(attrs)
-    return attrs
+    attrs
   end
 }

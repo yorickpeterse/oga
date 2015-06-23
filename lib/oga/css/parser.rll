@@ -339,7 +339,7 @@ even
   # @return [AST::Node]
   #
   def self.parse_with_cache(data)
-    return CACHE.get_or_set(data) { new(data).parse }
+    CACHE.get_or_set(data) { new(data).parse }
   end
 
   ##
@@ -362,7 +362,7 @@ even
   # @return [AST::Node]
   #
   def s(type, *children)
-    return AST::Node.new(type, children)
+    AST::Node.new(type, children)
   end
 
   ##
@@ -678,7 +678,7 @@ even
       end
     end
 
-    return node
+    node
   end
 
   ##

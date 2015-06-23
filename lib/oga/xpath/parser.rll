@@ -235,7 +235,7 @@ variable
   # @return [AST::Node]
   #
   def self.parse_with_cache(data)
-    return CACHE.get_or_set(data) { new(data).parse }
+    CACHE.get_or_set(data) { new(data).parse }
   end
 
   ##
@@ -253,7 +253,7 @@ variable
   # @return [AST::Node]
   #
   def s(type, *children)
-    return AST::Node.new(type, children)
+    AST::Node.new(type, children)
   end
 
   ##
@@ -281,7 +281,7 @@ variable
       ret = s(expr[0], ret, expr[1])
     end
 
-    return ret
+    ret
   end
 
   ##
