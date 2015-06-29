@@ -206,7 +206,7 @@ can use the following:
 
     descendant::*[local-name() = "bar"]
 
-And if you want to specify an explici namespace URI, you can use this:
+And if you want to specify an explicit namespace URI, you can use this:
 
     descendant::*[local-name() = "bar" and namespace-uri() = "http://example.com"]
 
