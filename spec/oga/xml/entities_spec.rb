@@ -73,6 +73,18 @@ describe Oga::XML::Entities do
     it 'decodes numeric entities starting with a 0' do
       described_class.decode('&#038;').should == '&'
     end
+
+    it 'preserves entity-like tokens' do
+      described_class.decode('&#TAB;').should == '&#TAB;'
+    end
+
+    it 'preserves entity-like hex tokens' do
+      described_class.decode('&#x;').should == '&#x;'
+    end
+
+    it 'preserves entity-like letters in non-hex mode' do
+      described_class.decode('&#123A;').should == '&#123A;'
+    end
   end
 
   describe 'encode' do

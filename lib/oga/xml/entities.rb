@@ -63,7 +63,7 @@ module Oga
       #
       # @return [Regexp]
       #
-      CODEPOINT_ENTITY = /&#(x)?([a-zA-Z0-9]+);/
+      CODEPOINT_ENTITY = /&#(x[a-fA-F0-9]+|\d+);/
 
       ##
       # @return [Regexp]
@@ -90,7 +90,7 @@ module Oga
 
         if input.include?(AMPERSAND)
           input = input.gsub(CODEPOINT_ENTITY) do |match|
-            [$1 ? Integer($2, 16) : Integer($2, 10)].pack('U*')
+            [$1.start_with?('x') ? Integer($1[1..-1], 16) : Integer($1, 10)].pack('U*')
           end
         end
 
