@@ -307,12 +307,39 @@ describe Oga::XML::Lexer do
       ]
     end
   end
-  
+
   it 'lexes an element with inline dots' do
     lex('<SOAP..TestMapping..MappablePerson>').should == [
-      [:T_ELEM_NAME, "SOAP..TestMapping..MappablePerson", 1], 
+      [:T_ELEM_NAME, "SOAP..TestMapping..MappablePerson", 1],
       [:T_ELEM_END, nil, 1]
     ]
   end
-  
+
+  it 'lexes an element with a name containing Unicode characters' do
+    lex('<foobár />').should == [
+      [:T_ELEM_NAME, 'foobár', 1],
+      [:T_ELEM_END, nil, 1]
+    ]
+  end
+
+  it 'lexes an element with a name containing an underscore' do
+    lex('<foo_bar />').should == [
+      [:T_ELEM_NAME, 'foo_bar', 1],
+      [:T_ELEM_END, nil, 1]
+    ]
+  end
+
+  it 'lexes an element with a name containing a dash' do
+    lex('<foo-bar />').should == [
+      [:T_ELEM_NAME, 'foo-bar', 1],
+      [:T_ELEM_END, nil, 1]
+    ]
+  end
+
+  it 'lexes an element with a name containing numbers' do
+    lex('<foo123 />').should == [
+      [:T_ELEM_NAME, 'foo123', 1],
+      [:T_ELEM_END, nil, 1]
+    ]
+  end
 end
