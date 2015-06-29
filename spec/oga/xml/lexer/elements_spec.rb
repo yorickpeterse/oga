@@ -307,4 +307,12 @@ describe Oga::XML::Lexer do
       ]
     end
   end
+  
+  it 'lexes an element with inline dots' do
+    lex('<SOAP..TestMapping..MappablePerson>').should == [
+      [:T_ELEM_NAME, "SOAP..TestMapping..MappablePerson", 1], 
+      [:T_ELEM_END, nil, 1]
+    ]
+  end
+  
 end
