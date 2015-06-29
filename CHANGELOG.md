@@ -3,6 +3,14 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 1.1.1 - Unreleased
+
+### Support for commas in CSS expressions
+
+CSS expressions such as `foo, bar` and `#hello, #world` are now supported.
+
+See commit d26b48feb454de0d5b2a3a9bcffaa7c5d9d604b5 for more information.
+
 ## 1.1.0 - 2015-06-29
 
 ### Better support for unquoted HTML attribute values
