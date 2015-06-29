@@ -48,7 +48,7 @@
 
     newline    = '\r\n' | '\n' | '\r';
     whitespace = [ \t];
-    ident_char = [a-zA-Z0-9\-_];
+    ident_char = [a-zA-Z0-9\-_\.];
     identifier = ident_char+;
 
     whitespace_or_newline = whitespace | newline;
