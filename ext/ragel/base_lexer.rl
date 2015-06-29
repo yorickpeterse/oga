@@ -419,17 +419,23 @@
         any $count_newlines;
     *|;
 
-    # Characters that can be used for unquoted HTML attribute values.
-    # See https://html.spec.whatwg.org/multipage/introduction.html#intro-early-example
-    # for more info.
-    html_unquoted_value =
-        ^(squote | dquote | whitespace_or_newline)
-        ^('`' | '=' | '<' | '>' | whitespace_or_newline)+;
-
     # Machine used after matching the "=" of an attribute and just before moving
     # into the actual attribute value.
     attribute_pre := |*
         whitespace_or_newline $count_newlines;
+
+        squote | dquote => {
+            fhold;
+
+            if ( lines > 0 )
+            {
+                advance_line(lines);
+
+                lines = 0;
+            }
+
+            fnext quoted_attribute_value;
+        };
 
         any => {
             fhold;
@@ -443,25 +449,33 @@
 
             if ( html_p )
             {
-                fnext html_attribute_value;
+                fnext unquoted_attribute_value;
             }
+            /* XML doesn't support unquoted attribute values */
             else
             {
-                fnext xml_attribute_value;
+                fret;
             }
         };
     *|;
 
-    # Machine used for processing HTML attribute values.
-    html_attribute_value := |*
-        squote | dquote => {
-            fhold;
-            fnext xml_attribute_value;
-        };
-
-        # Unquoted attribute values are lexed as if they were single quoted
-        # strings.
-        html_unquoted_value => {
+    # Machine for processing unquoted HTML attribute values.
+    #
+    # The HTML specification describes a set of characters that can be allowed
+    # in an unquoted value at https://html.spec.whatwg.org/multipage/introduction.html#intro-early-example.
+    #
+    # As is always the case with HTML everybody completely ignores this
+    # specification and thus every library and browser out these is expected to
+    # support input such as `<a href=lol("javascript","is","great")></a>.
+    #
+    # Oga too has to support this, thus the only characters it disallows in
+    # unquoted attribute values are:
+    #
+    # * > (used for terminating open tags)
+    # * whitespace
+    #
+    unquoted_attribute_value := |*
+        ^('>' | whitespace_or_newline)+ => {
             callback_simple(id_on_string_squote);
 
             callback(id_on_string_body, data, encoding, ts, te);
@@ -472,8 +486,8 @@
         any => hold_and_return;
     *|;
 
-    # Machine used for processing XML attribute values.
-    xml_attribute_value := |*
+    # Machine used for processing quoted XML/HTML attribute values.
+    quoted_attribute_value := |*
         # The following two actions use "fnext" instead of "fcall". Combined
         # with "element_head" using "fcall" to jump to this machine this means
         # we can return back to "element_head" after processing a single string.
