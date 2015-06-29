@@ -19,6 +19,10 @@ describe 'CSS selector evaluation' do
       evaluate_css(@document, 'a b').should == node_set(@b1, @b2)
     end
 
+    it 'returns a node set containing the union of multiple paths' do
+      evaluate_css(@document, 'b, ns1|c').should == node_set(@b1, @b2, @c1)
+    end
+
     it 'returns a node set containing namespaced nodes' do
       evaluate_css(@document, 'a ns1|c').should == node_set(@c1)
     end

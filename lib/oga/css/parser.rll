@@ -19,7 +19,7 @@
 %terminals T_IDENT T_PIPE T_LBRACK T_RBRACK T_COLON T_SPACE T_LPAREN T_RPAREN;
 %terminals T_MINUS T_EQ T_SPACE_IN T_STARTS_WITH T_ENDS_WITH T_IN T_HYPHEN_IN;
 %terminals T_GREATER T_TILDE T_PLUS T_NTH T_INT T_STRING T_ODD T_EVEN T_DOT;
-%terminals T_HASH;
+%terminals T_HASH T_COMMA;
 
 css
   = selectors
@@ -27,7 +27,24 @@ css
   ;
 
 selectors
-  = selector selectors_follow*
+  = path selectors_follow*
+    {
+      path = val[0]
+
+      val[1].each do |chunk|
+        path = s(:pipe, path, chunk)
+      end
+
+      path
+    }
+  ;
+
+selectors_follow
+  = T_COMMA path { val[1] }
+  ;
+
+path
+  = selector path_follow*
     {
       # Single selector
       if val[1].empty?
@@ -58,7 +75,7 @@ selectors
     }
   ;
 
-selectors_follow
+path_follow
   = T_SPACE selector { val[1] }
   ;
 

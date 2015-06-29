@@ -11,9 +11,18 @@ describe Oga::CSS::Parser do
     end
 
     it 'parses a path using two selectors' do
-      parse_css('foo bar').should == parse_xpath(
-        'descendant::foo/descendant::bar'
-      )
+      parse_css('foo bar').should ==
+        parse_xpath('descendant::foo/descendant::bar')
+    end
+
+    it 'parses two paths separated by a comma' do
+      parse_css('foo, bar').should ==
+        parse_xpath('descendant::foo | descendant::bar')
+    end
+
+    it 'parses three paths separated by a comma' do
+      parse_css('foo, bar, baz').should ==
+        parse_xpath('descendant::foo | descendant::bar | descendant::baz')
     end
   end
 end
