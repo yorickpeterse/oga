@@ -474,6 +474,16 @@ even
   end
 
   ##
+  # Generates the AST for the `nth` pseudo class.
+  #
+  # @param [AST::Node] arg
+  # @return [AST::Node]
+  #
+  def on_pseudo_class_nth(arg)
+    s(:eq, s(:call, 'position'), arg)
+  end
+
+  ##
   # Generates the AST for the `:first-child` selector.
   #
   # @return [AST::Node]
