@@ -5,6 +5,13 @@ Dates are in the format `yyyy-mm-dd`.
 
 ## 1.1.0 - Unreleased
 
+### Better support for unquoted HTML attribute values
+
+Oga can now parse HTML such as `<a href=foo("bar","baz")></a>` and basically any
+other kind of value as long as it does not contain a `>` or whitespace.
+
+See commit 3b633ff41c48c44893e42d3ba29ef7a5e3d70617 for more information.
+
 ### Support for replacing of DOM nodes
 
 The newly added method `Oga::XML::Node#replace` can be used to replace an
@@ -24,6 +31,12 @@ Thanks to Tero Tasanen for adding this.
 
 See commit 0b4791b277abf492ae0feb1c467dfc03aef4f2ec and
 <https://github.com/YorickPeterse/oga/pull/116> for more information.
+
+### Encoding quotes in attribute values
+
+When serializing elements back to XML Oga now properly encodes single/double
+quotes in attribute values. See commit 074b53c18c85eaeba09557f6b0c5a6792f522c3e
+for more information.
 
 ## 1.0.3 - 2015-06-16
 
