@@ -59,11 +59,18 @@ module Oga
       REGULAR_ENTITY = /&[a-zA-Z0-9]+;/
 
       ##
-      # Regexp for matching XML/HTML entities such as "&#38;".
+      # Regexp for matching XML/HTML numeric entities such as "&#38;".
       #
       # @return [Regexp]
       #
-      CODEPOINT_ENTITY = /&#(x[a-fA-F0-9]+|\d+);/
+      NUMERIC_CODE_POINT_ENTITY = /&#(\d+);/
+
+      ##
+      # Regexp for matching XML/HTML hex entities such as "&#x3C;".
+      #
+      # @return [Regexp]
+      #
+      HEX_CODE_POINT_ENTITY = /&#x([a-fA-F0-9]+);/
 
       ##
       # @return [Regexp]
@@ -89,8 +96,14 @@ module Oga
         input = input.gsub(REGULAR_ENTITY, mapping)
 
         if input.include?(AMPERSAND)
-          input = input.gsub(CODEPOINT_ENTITY) do |match|
-            [$1.start_with?('x') ? Integer($1[1..-1], 16) : Integer($1, 10)].pack('U*')
+          input = input.gsub(NUMERIC_CODE_POINT_ENTITY) do
+            [Integer($1, 10)].pack('U*')
+          end
+        end
+
+        if input.include?(AMPERSAND)
+          input = input.gsub(HEX_CODE_POINT_ENTITY) do
+            [Integer($1, 16)].pack('U*')
           end
         end
 
