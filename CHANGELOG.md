@@ -3,6 +3,17 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 1.2.1 - 2015-07-01
+
+### Better support for decoding unrecognized XML/HTML entities
+
+Jakub Pawlowicz improved the process of decoding XML/HTML entities so that it
+handles unrecognized entities better. Previously Oga would raise an error when
+trying to decode entities such as `&#TAB;` instead of just leaving them as-is.
+
+See issue <https://github.com/YorickPeterse/oga/issues/118> and pull request
+<https://github.com/YorickPeterse/oga/pull/122> for more information.
+
 ## 1.2.0 - 2015-06-30
 
 ### Support for Unicode in XML/HTML identifiers
