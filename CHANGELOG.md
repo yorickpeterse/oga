@@ -3,7 +3,29 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
-## 1.1.1 - Unreleased
+## 1.2.0 - 2015-06-30
+
+### Support for Unicode in XML/HTML identifiers
+
+XML/HTML element and attribute names can now contain Unicode characters. While
+the HTML specification states only ASCII may be used Oga still supports Unicode
+identifiers for HTML.
+
+See commit dde644cd7991f5d24e662e0fc4094bd644274046 for more information.
+
+### Support for dots in XML/HTML identifiers
+
+XML/HTML element and attribute names can now contain dots such as
+`<foo.bar>baz</foo.bar>`. Thanks to Laurence Lee for adding this.
+
+See commit b7771ed5fe4b82ad72d255444f87f5e51638af7d for more information.
+
+### Support for the CSS :nth() pseudo class
+
+Oga now supports the `:nth()` CSS pseudo class. This pseudo class can be used to
+select the Nth element in a set regardless of any preceding/following siblings.
+
+See commit 71960fff87da633dcab863002a461fbf7d4c5738 for more information.
 
 ### Support for commas in CSS expressions
 
