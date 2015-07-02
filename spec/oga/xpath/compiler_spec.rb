@@ -27,7 +27,7 @@ describe Oga::XPath::Compiler do
 
     describe 'calling the compiled Proc' do
       it 'returns a NodeSet' do
-        doc   = parse_xml('<foo></foo>')
+        doc   = parse('<foo></foo>')
         ast   = parse_xpath('foo')
         block = @compiler.compile(ast)
 
