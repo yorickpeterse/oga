@@ -1,0 +1,137 @@
+require 'spec_helper'
+
+describe Oga::Ruby::Generator do
+  before do
+    @generator = described_class.new
+  end
+
+  describe '#on_begin' do
+    it 'returns a String' do
+      node1  = Oga::Ruby::Node.new(:lit, %w{10})
+      node2  = Oga::Ruby::Node.new(:lit, %w{20})
+      joined = node1.followed_by(node2)
+
+      @generator.on_begin(joined).should == "10\n\n20"
+    end
+  end
+
+  describe '#on_assign' do
+    it 'returns a String' do
+      var    = Oga::Ruby::Node.new(:lit, %w{number})
+      val    = Oga::Ruby::Node.new(:lit, %w{10})
+      assign = var.assign(val)
+
+      @generator.on_assign(assign).should == 'number = 10'
+    end
+  end
+
+  describe '#on_eq' do
+    it 'returns a String' do
+      var = Oga::Ruby::Node.new(:lit, %w{number})
+      val = Oga::Ruby::Node.new(:lit, %w{10})
+      eq  = var.eq(val)
+
+      @generator.on_eq(eq).should == 'number == 10'
+    end
+  end
+
+  describe '#on_and' do
+    it 'returns a String' do
+      left      = Oga::Ruby::Node.new(:lit, %w{foo})
+      right     = Oga::Ruby::Node.new(:lit, %w{bar})
+      condition = left.and(right)
+
+      @generator.on_and(condition).should == 'foo && bar'
+    end
+  end
+
+  describe '#on_or' do
+    it 'returns a String' do
+      left      = Oga::Ruby::Node.new(:lit, %w{foo})
+      right     = Oga::Ruby::Node.new(:lit, %w{bar})
+      condition = left.or(right)
+
+      @generator.on_or(condition).should == '(foo || bar)'
+    end
+  end
+
+  describe '#on_if' do
+    it 'returns a String' do
+      statement = Oga::Ruby::Node.new(:lit, %w{foo}).if_true do
+        Oga::Ruby::Node.new(:lit, %w{bar})
+      end
+
+      @generator.on_if(statement).should == <<-EOF
+if foo
+  bar
+end
+      EOF
+    end
+  end
+
+  describe '#on_send' do
+    describe 'without arguments' do
+      it 'returns a String' do
+        node = Oga::Ruby::Node.new(:lit, %w{number}).foobar
+
+        @generator.on_send(node).should == 'number.foobar'
+      end
+    end
+
+    describe 'with arguments' do
+      it 'returns a String' do
+        arg  = Oga::Ruby::Node.new(:lit, %w{10})
+        node = Oga::Ruby::Node.new(:lit, %w{number}).foobar(arg)
+
+        @generator.on_send(node).should == 'number.foobar(10)'
+      end
+    end
+  end
+
+  describe '#on_block' do
+    describe 'without arguments' do
+      it 'returns a String' do
+        node = Oga::Ruby::Node.new(:lit, %w{number}).add_block do
+          Oga::Ruby::Node.new(:lit, %w{10})
+        end
+
+        @generator.on_block(node).should == <<-EOF
+number do ||
+  10
+end
+        EOF
+      end
+    end
+
+    describe 'with arguments' do
+      it 'returns a String' do
+        arg  = Oga::Ruby::Node.new(:lit, %w{foo})
+        node = Oga::Ruby::Node.new(:lit, %w{number}).add_block(arg) do
+          Oga::Ruby::Node.new(:lit, %w{10})
+        end
+
+        @generator.on_block(node).should == <<-EOF
+number do |foo|
+  10
+end
+        EOF
+      end
+    end
+  end
+
+  describe '#on_string' do
+    it 'returns a String' do
+      node = Oga::Ruby::Node.new(:string, %w{foo})
+
+      @generator.on_string(node).should == '"foo"'
+    end
+  end
+
+  describe '#on_lit' do
+    it 'returns a String' do
+      node = Oga::Ruby::Node.new(:lit, %w{foo})
+
+      @generator.on_lit(node).should == 'foo'
+    end
+  end
+end
