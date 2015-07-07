@@ -31,8 +31,8 @@ module Oga
       # @return [Proc]
       #
       def compile(ast)
-        document = literal('node')
-        matched  = literal('matched')
+        document = node_literal
+        matched  = matched_literal
 
         if ast.type == :path
           ruby_ast = process(ast, document)
@@ -71,22 +71,41 @@ module Oga
       # @return [Oga::Ruby::Node]
       #
       def on_path(ast, input, &block)
-        matched  = literal('matched')
-        ruby_ast = nil
+        matched    = matched_literal
+        ruby_ast   = nil
+        var_name   = node_literal
+        last_index = ast.children.length - 1
 
         ast.children.reverse_each.with_index do |child, index|
+          # The first block should operate on the variable set in "input", all
+          # others should operate on the child variables ("node").
+          input_var = index == last_index ? input : var_name
+
           # The last segment of the path should add the code that actually
           # pushes the matched node into the node set.
           if index == 0
-            ruby_ast = process(child, input) do |node|
+            ruby_ast = process(child, input_var) do |node|
               matched.push(node)
             end
           else
-            ruby_ast = process(child, input) { ruby_ast }
+            ruby_ast = process(child, input_var) { ruby_ast }
           end
         end
 
         ruby_ast
+      end
+
+      ##
+      # @param [AST::Node] ast
+      # @param [Oga::Ruby::Node] input
+      # @return [Oga::Ruby::Node]
+      #
+      def on_absolute_path(ast, input, &block)
+        if ast.children.empty?
+          matched_literal.push(input.root_node)
+        else
+          on_path(ast, input.root_node, &block)
+        end
       end
 
       ##
@@ -112,7 +131,7 @@ module Oga
       # @return [Oga::Ruby::Node]
       #
       def on_axis_child(ast, input, &block)
-        child     = literal('node')
+        child     = node_literal
         condition = process(ast, child, &block)
 
         input.children.each.add_block(child) do
@@ -187,6 +206,15 @@ module Oga
         string(ast.children[0])
       end
 
+      ##
+      # @param [AST::Node] ast
+      # @param [Oga::Ruby::Node] input
+      # @return [Oga::Ruby::Node]
+      #
+      def on_int(ast, input)
+        literal(ast.children[0].to_s)
+      end
+
       private
 
       ##
@@ -211,6 +239,16 @@ module Oga
       #
       def element_or_attribute(node)
         node.is_a?(XML::Attribute).or(node.is_a?(XML::Element))
+      end
+
+      # @return [Oga::Ruby::Node]
+      def matched_literal
+        literal('matched')
+      end
+
+      # @return [Oga::Ruby::Node]
+      def node_literal
+        literal('node')
       end
     end # Compiler
   end # XPath
