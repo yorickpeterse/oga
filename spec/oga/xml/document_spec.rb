@@ -34,6 +34,14 @@ describe Oga::XML::Document do
     end
   end
 
+  describe '#root_node' do
+    it 'returns self' do
+      doc = described_class.new
+
+      doc.root_node.should == doc
+    end
+  end
+
   describe '#to_xml' do
     before do
       child = Oga::XML::Comment.new(:text => 'foo')

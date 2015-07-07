@@ -55,6 +55,18 @@ module Oga
       end
 
       ##
+      # Returns self.
+      #
+      # This method exists to make this class compatible with Element, which in
+      # turn makes it easier to use both in the XPath compiler.
+      #
+      # @return [Oga::XML::Document]
+      #
+      def root_node
+        self
+      end
+
+      ##
       # Converts the document and its child nodes to XML.
       #
       # @return [String]
