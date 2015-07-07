@@ -6,7 +6,11 @@ module Oga
     # @return [Oga::XML::NodeSet]
     #
     def evaluate_xpath(document, xpath)
-      return Oga::XPath::Evaluator.new(document).evaluate(xpath)
+      ast      = parse_xpath(xpath)
+      compiler = Oga::XPath::Compiler.new
+      block    = compiler.compile(ast)
+
+      block.call(document)
     end
 
     ##
@@ -17,9 +21,11 @@ module Oga
     # @return [Oga::XML::NodeSet]
     #
     def evaluate_css(document, css)
-      xpath = parse_css(css)
+      ast      = parse_css(css)
+      compiler = Oga::XPath::Compiler.new
+      block    = compiler.compile(ast)
 
-      return Oga::XPath::Evaluator.new(document).evaluate_ast(xpath)
+      block.call(document)
     end
   end # EvaluationHelpers
 end # Oga
