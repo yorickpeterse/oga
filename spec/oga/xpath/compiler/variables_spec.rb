@@ -1,22 +1,25 @@
 require 'spec_helper'
 
 describe Oga::XPath::Compiler do
-  describe 'variable bindings' do
+  describe 'using variable bindings' do
     before do
       @document = parse('<a></a>')
+      @compiler = described_class.new
     end
 
-    it 'evaluates a variable' do
-      evaluator = described_class.new(@document, 'number' => 10.0)
+    it 'returns the value of a variable' do
+      ast   = parse_xpath('$number')
+      block = @compiler.compile(ast)
 
-      evaluator.evaluate('$number').should == 10.0
+      block.call(@document, 'number' => 10.0).should == 10.0
     end
 
     it 'raises RuntimeError when evaluating an unbound variable' do
-      evaluator = described_class.new(@document)
-      block     = lambda { evaluator.evaluate('$number') }
+      ast   = parse_xpath('$number')
+      block = @compiler.compile(ast)
 
-      block.should raise_error 'Undefined XPath variable: number'
+      proc { block.call(@document) }.should
+        raise_error 'Undefined XPath variable: number'
     end
   end
 end
