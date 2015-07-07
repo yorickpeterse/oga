@@ -9,8 +9,20 @@ module Oga
     # recompiling the same expression over and over again.
     #
     class Compiler
+      # @return [Oga::LRU]
+      CACHE = LRU.new
+
       # Wildcard for node names/namespace prefixes.
       STAR = '*'
+
+      ##
+      # Compiles and caches an AST.
+      #
+      # @see [#compile]
+      #
+      def self.compile_with_cache(ast)
+        CACHE.get_or_set(ast) { new.compile(ast) }
+      end
 
       ##
       # Compiles an XPath AST into a Ruby Proc.
