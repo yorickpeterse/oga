@@ -31,7 +31,7 @@ describe Oga::XPath::Compiler do
         ast   = parse_xpath('foo')
         block = @compiler.compile(ast)
 
-        block.call(doc).should be_an_instance_of(NodeSet)
+        block.call(doc).should be_an_instance_of(Oga::XML::NodeSet)
       end
     end
   end

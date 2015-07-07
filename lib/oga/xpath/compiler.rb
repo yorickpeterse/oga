@@ -30,11 +30,16 @@ module Oga
           end
         end
 
-        literal('lambda').add_block(document) do
+        proc_ast = literal('lambda').add_block(document) do
           matched.assign(literal(XML::NodeSet).new)
             .followed_by(ruby_ast)
             .followed_by(matched)
         end
+
+        generator = Ruby::Generator.new
+        source    = generator.process(proc_ast)
+
+        eval(source)
       end
 
       ##
