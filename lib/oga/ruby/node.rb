@@ -115,6 +115,17 @@ module Oga
       end
 
       ##
+      # Adds an "else" statement to the current node.
+      #
+      # This method assumes it's being called only on "if" nodes.
+      #
+      # @return [Oga::Ruby::Node]
+      #
+      def else
+        Node.new(:if, @children + [yield])
+      end
+
+      ##
       # Chains two nodes together.
       #
       # @param [Oga::Ruby::Node] other

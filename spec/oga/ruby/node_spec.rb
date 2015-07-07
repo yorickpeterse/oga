@@ -99,6 +99,18 @@ describe Oga::Ruby::Node do
     end
   end
 
+  describe '#else' do
+    it 'returns an if-statement with an else clause' do
+      condition = described_class.new(:lit, %w{number})
+      body      = described_class.new(:lit, %w{10})
+      or_else   = described_class.new(:lit, %w{20})
+      statement = condition.if_true { body }.else { or_else }
+
+      statement.type.should == :if
+      statement.to_a.should == [condition, body, or_else]
+    end
+  end
+
   describe '#followed_by' do
     it 'returns a Node chaining two nodes together' do
       node1  = described_class.new(:lit, %w{A})

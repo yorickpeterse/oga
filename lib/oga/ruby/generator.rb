@@ -93,16 +93,28 @@ module Oga
       # @return [String]
       #
       def on_if(ast)
-        cond, body = *ast
+        cond, body, else_body = *ast
 
         cond_str = process(cond)
         body_str = process(body)
 
-        <<-EOF
+        if else_body
+          else_str = process(else_body)
+
+          <<-EOF
+if #{cond_str}
+  #{body_str}
+else
+  #{else_str}
+end
+          EOF
+        else
+          <<-EOF
 if #{cond_str}
   #{body_str}
 end
-        EOF
+          EOF
+        end
       end
 
       ##

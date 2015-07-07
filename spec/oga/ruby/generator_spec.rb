@@ -67,6 +67,24 @@ if foo
 end
       EOF
     end
+
+    describe 'when using an else clause' do
+      it 'returns a String' do
+        foo = Oga::Ruby::Node.new(:lit, %w{foo})
+        bar = Oga::Ruby::Node.new(:lit, %w{bar})
+        baz = Oga::Ruby::Node.new(:lit, %w{baz})
+
+        statement = foo.if_true { bar }.else { baz }
+
+        @generator.on_if(statement).should == <<-EOF
+if foo
+  bar
+else
+  baz
+end
+        EOF
+      end
+    end
   end
 
   describe '#on_send' do
