@@ -66,6 +66,8 @@ module Oga
       end
 
       ##
+      # Processes a relative path.
+      #
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
@@ -96,6 +98,8 @@ module Oga
       end
 
       ##
+      # Processes an absolute path.
+      #
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
@@ -126,6 +130,8 @@ module Oga
       end
 
       ##
+      # Processes the "child" axis.
+      #
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
@@ -140,6 +146,8 @@ module Oga
       end
 
       ##
+      # Processes the "attribute" axis.
+      #
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
@@ -153,6 +161,8 @@ module Oga
       end
 
       ##
+      # Processes a node test predicate.
+      #
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
@@ -166,6 +176,8 @@ module Oga
       end
 
       ##
+      # Processes a node test.
+      #
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
@@ -187,6 +199,8 @@ module Oga
       end
 
       ##
+      # Processes an equality expression.
+      #
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
@@ -198,6 +212,8 @@ module Oga
       end
 
       ##
+      # Processes a string.
+      #
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
@@ -207,6 +223,8 @@ module Oga
       end
 
       ##
+      # Processes an integer.
+      #
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
