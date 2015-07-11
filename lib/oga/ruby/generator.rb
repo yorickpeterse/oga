@@ -126,15 +126,17 @@ end
       def on_send(ast)
         receiver, name, *args = *ast
 
-        call = name.dup
+        call     = name
+        brackets = name == '[]'
 
         unless args.empty?
-          arg_strs = args.map { |arg| process(arg) }
-          call     = "#{call}(#{arg_strs.join(', ')})"
+          arg_str = args.map { |arg| process(arg) }.join(', ')
+          call    = brackets ? "[#{arg_str}]" : "#{call}(#{arg_str})"
         end
 
         if receiver
-          call = "#{process(receiver)}.#{call}"
+          rec_str = process(receiver)
+          call    = brackets ? "#{rec_str}#{call}" : "#{rec_str}.#{call}"
         end
 
         call

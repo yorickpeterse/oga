@@ -104,6 +104,15 @@ end
         @generator.on_send(node).should == 'number.foobar(10)'
       end
     end
+
+    describe 'when calling #[]' do
+      it 'returns a correctly formatted String' do
+        arg  = Oga::Ruby::Node.new(:lit, %w{10})
+        node = Oga::Ruby::Node.new(:lit, %w{number})[arg]
+
+        @generator.on_send(node).should == 'number[10]'
+      end
+    end
   end
 
   describe '#on_block' do
