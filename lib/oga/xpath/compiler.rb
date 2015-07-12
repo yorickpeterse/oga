@@ -15,6 +15,9 @@ module Oga
       # Wildcard for node names/namespace prefixes.
       STAR = '*'
 
+      # Node types that require a NodeSet to push nodes into.
+      USE_NODESET = [:path, :absolute_path, :axis]
+
       ##
       # Compiles and caches an AST.
       #
@@ -34,18 +37,22 @@ module Oga
         document = node_literal
         matched  = matched_literal
 
-        if ast.type == :path
-          ruby_ast = process(ast, document)
+        if ast.type == :axis
+          ruby_ast = process(ast, document) { |node| matched.push(node) }
         else
-          ruby_ast = process(ast, document) do |node|
-            matched.push(node)
-          end
+          ruby_ast = process(ast, document)
         end
 
-        proc_ast = literal('lambda').add_block(document) do
-          matched.assign(literal(XML::NodeSet).new)
-            .followed_by(ruby_ast)
-            .followed_by(matched)
+        vars = variables_literal.assign(literal('nil'))
+
+        proc_ast = literal('lambda').add_block(document, vars) do
+          if USE_NODESET.include?(ast.type)
+            matched.assign(literal(XML::NodeSet).new)
+              .followed_by(ruby_ast)
+              .followed_by(matched)
+          else
+            ruby_ast
+          end
         end
 
         generator = Ruby::Generator.new
@@ -233,6 +240,25 @@ module Oga
         literal(ast.children[0].to_s)
       end
 
+      ##
+      # Processes a variable reference.
+      #
+      # @param [AST::Node] ast
+      # @param [Oga::Ruby::Node] input
+      # @return [Oga::Ruby::Node]
+      #
+      def on_var(ast, input)
+        vars = variables_literal
+        name = ast.children[0]
+
+        raise_call = Ruby::Node.new(
+          :send,
+          [nil, 'raise', string("Undefined XPath variable: #{name}")]
+        )
+
+        variables_literal.and(variables_literal[string(name)]).or(raise_call)
+      end
+
       private
 
       ##
@@ -267,6 +293,11 @@ module Oga
       # @return [Oga::Ruby::Node]
       def node_literal
         literal('node')
+      end
+
+      # @return [Oga::Ruby::Node]
+      def variables_literal
+        literal('variables')
       end
     end # Compiler
   end # XPath
