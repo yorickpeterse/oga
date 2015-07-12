@@ -173,6 +173,16 @@ end
       end
 
       ##
+      # Processes a Symbol node.
+      #
+      # @param [Oga::Ruby::Node] ast
+      # @return [String]
+      #
+      def on_symbol(ast)
+        ast.to_a[0].to_sym.inspect
+      end
+
+      ##
       # Processes a literal node.
       #
       # @param [Oga::Ruby::Node] ast

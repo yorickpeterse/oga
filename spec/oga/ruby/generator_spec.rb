@@ -154,6 +154,14 @@ end
     end
   end
 
+  describe '#on_symbol' do
+    it 'returns a String' do
+      node = Oga::Ruby::Node.new(:symbol, [:foo])
+
+      @generator.on_symbol(node).should == ':foo'
+    end
+  end
+
   describe '#on_lit' do
     it 'returns a String' do
       node = Oga::Ruby::Node.new(:lit, %w{foo})
