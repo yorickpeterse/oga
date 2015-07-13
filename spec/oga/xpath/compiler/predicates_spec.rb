@@ -3,23 +3,30 @@ require 'spec_helper'
 describe Oga::XPath::Compiler do
   describe 'predicates' do
     before do
-      @document = parse(<<-EOF)
-<root>
-  <a>10</a>
-  <b>
-    <a>20</a>
-    <a>30</3>
-  </b>
-</root>
-      EOF
+      @document = parse('<root><a>10</a><a><b>20</a></a></root>')
 
-      @a1 = @document.at_xpath('root/a[1]')
-      @a2 = @document.at_xpath('root/b/a[1]')
+      root = @document.children[0]
+
+      @a1 = root.children[0]
+      @a2 = root.children[1]
     end
 
-    it 'returns a node set containing all first <a> nodes' do
-      evaluate_xpath(@document, 'descendant-or-self::node()/a[1]')
-        .should == node_set(@a1, @a2)
+    describe 'using an integer as an index' do
+      it 'returns a NodeSet containing the first <a> node' do
+        evaluate_xpath(@document, 'root/a[1]').should == node_set(@a1)
+      end
+    end
+
+    describe 'using a float as an index' do
+      it 'returns a NodeSet containing the first <a> node' do
+        evaluate_xpath(@document, 'root/a[1.5]').should == node_set(@a1)
+      end
+    end
+
+    describe 'using a node test' do
+      it 'returns a NodeSet containing all <a> nodes with <b> child nodes' do
+        evaluate_xpath(@document, 'root/a[b]').should == node_set(@a2)
+      end
     end
   end
 end
