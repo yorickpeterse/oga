@@ -177,8 +177,72 @@ module Oga
       def on_predicate(ast, input, &block)
         test, predicate = *ast
 
-        process(test, input) do |node|
-          process(predicate, node).if_true(&block)
+        if xpath_number?(predicate)
+          index_predicate(test, predicate, input, &block)
+        else
+          expression_predicate(test, predicate, input, &block)
+        end
+      end
+
+      ##
+      # Processes an index predicate such as `foo[10]`.
+      #
+      # @param [AST::Node] test
+      # @param [AST::Node] predicate
+      # @param [Oga::Ruby::Node] input
+      # @return [Oga::Ruby::Node]
+      #
+      def index_predicate(test, predicate, input)
+        int1      = literal('1')
+        index     = on_int(predicate)
+        index_var = literal('index')
+
+        inner = process(test, input) do |matched_test_node|
+          index_var.eq(index).if_true { yield matched_test_node }
+            .followed_by(index_var.assign(index_var + int1))
+        end
+
+        index_var.assign(int1).followed_by(inner)
+      end
+
+      ##
+      # Processes a predicate using an expression.
+      #
+      # This method generates Ruby code that roughly looks like the following:
+      #
+      #     if catch :predicate_matched do
+      #         node.children.each do |node|
+      #
+      #         if some_condition_that_matches_a_predicate
+      #           throw :predicate_matched, true
+      #         end
+      #
+      #         nil
+      #       end
+      #
+      #       matched.push(node)
+      #     end
+      #
+      # @param [AST::Node] test
+      # @param [AST::Node] predicate
+      # @param [Oga::Ruby::Node] input
+      # @return [Oga::Ruby::Node]
+      #
+      def expression_predicate(test, predicate, input)
+        catch_arg = symbol(:predicate_matched)
+
+        process(test, input) do |matched_test_node|
+          catch_block = send_message('catch', catch_arg).add_block do
+            inner = process(predicate, matched_test_node) do
+              send_message('throw', catch_arg, literal('true'))
+            end
+
+            # Ensure that the "catch" only returns a value when "throw" is
+            # actually invoked.
+            inner.followed_by(literal('nil'))
+          end
+
+          catch_block.if_true { yield matched_test_node }
         end
       end
 
@@ -225,7 +289,7 @@ module Oga
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
       #
-      def on_string(ast, input)
+      def on_string(ast, *)
         string(ast.children[0])
       end
 
@@ -236,7 +300,18 @@ module Oga
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
       #
-      def on_int(ast, input)
+      def on_int(ast, *)
+        literal(ast.children[0].to_i.to_s)
+      end
+
+      ##
+      # Processes a float.
+      #
+      # @param [AST::Node] ast
+      # @param [Oga::Ruby::Node] input
+      # @return [Oga::Ruby::Node]
+      #
+      def on_float(ast, *)
         literal(ast.children[0].to_s)
       end
 
@@ -251,12 +326,8 @@ module Oga
         vars = variables_literal
         name = ast.children[0]
 
-        raise_call = Ruby::Node.new(
-          :send,
-          [nil, 'raise', string("Undefined XPath variable: #{name}")]
-        )
-
-        variables_literal.and(variables_literal[string(name)]).or(raise_call)
+        variables_literal.and(variables_literal[string(name)])
+          .or(send_message('raise', string("Undefined XPath variable: #{name}")))
       end
 
       private
@@ -275,6 +346,23 @@ module Oga
       #
       def string(value)
         Ruby::Node.new(:string, [value.to_s])
+      end
+
+      ##
+      # @param [String] value
+      # @return [Oga::Ruby::Node]
+      #
+      def symbol(value)
+        Ruby::Node.new(:symbol, [value.to_sym])
+      end
+
+      ##
+      # @param [String] name
+      # @param [Array] args
+      # @return [Oga::Ruby::Node]
+      #
+      def send_message(name, *args)
+        Ruby::Node.new(:send, [nil, name, *args])
       end
 
       ##
@@ -298,6 +386,14 @@ module Oga
       # @return [Oga::Ruby::Node]
       def variables_literal
         literal('variables')
+      end
+
+      ##
+      # @param [AST::Node] ast
+      # @return [TrueClass|FalseClass]
+      #
+      def xpath_number?(ast)
+        ast.type == :int || ast.type == :float
       end
     end # Compiler
   end # XPath
