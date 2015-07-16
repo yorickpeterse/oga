@@ -115,6 +115,18 @@ module Oga
       end
 
       ##
+      # Wraps the current node in a `while` statement.
+      #
+      # The body of this statement is set to the return value of the supplied
+      # block.
+      #
+      # @return [Oga::Ruby::Node]
+      #
+      def while_true
+        Node.new(:while, [self, yield])
+      end
+
+      ##
       # Adds an "else" statement to the current node.
       #
       # This method assumes it's being called only on "if" nodes.

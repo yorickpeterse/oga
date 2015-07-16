@@ -87,6 +87,20 @@ end
     end
   end
 
+  describe '#on_while' do
+    it 'returns a String' do
+      statement = Oga::Ruby::Node.new(:lit, %w{foo}).while_true do
+        Oga::Ruby::Node.new(:lit, %w{bar})
+      end
+
+      @generator.on_while(statement).should == <<-EOF
+while foo
+  bar
+end
+      EOF
+    end
+  end
+
   describe '#on_send' do
     describe 'without arguments' do
       it 'returns a String' do

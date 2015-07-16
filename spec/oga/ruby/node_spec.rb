@@ -89,12 +89,23 @@ describe Oga::Ruby::Node do
   end
 
   describe '#if_true' do
-    it 'returns an if-statement Node' do
+    it 'returns an if statement Node' do
       condition = described_class.new(:lit, %w{number})
       body      = described_class.new(:lit, %w{10})
       statement = condition.if_true { body }
 
       statement.type.should == :if
+      statement.to_a.should == [condition, body]
+    end
+  end
+
+  describe '#while_true' do
+    it 'returns a while statement Node' do
+      condition = described_class.new(:lit, %w{number})
+      body      = described_class.new(:lit, %w{10})
+      statement = condition.while_true { body }
+
+      statement.type.should == :while
       statement.to_a.should == [condition, body]
     end
   end

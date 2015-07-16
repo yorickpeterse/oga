@@ -118,6 +118,25 @@ end
       end
 
       ##
+      # Processes a while statement node.
+      #
+      # @param [Oga::Ruby::Node] ast
+      # @return [String]
+      #
+      def on_while(ast)
+        cond, body = *ast
+
+        cond_str = process(cond)
+        body_str = process(body)
+
+        <<-EOF
+while #{cond_str}
+  #{body_str}
+end
+        EOF
+      end
+
+      ##
       # Processes a method call node.
       #
       # @param [Oga::Ruby::Node] ast
