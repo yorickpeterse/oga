@@ -16,7 +16,11 @@ module Oga
       STAR = '*'
 
       # Node types that require a NodeSet to push nodes into.
-      USE_NODESET = [:path, :absolute_path, :axis]
+      USE_NODESET = [:path, :absolute_path, :axis, :predicate]
+
+      # Node types that require "compile" to define a block to call upon
+      # matching a node.
+      ADD_PUSH_BLOCK = [:axis, :predicate]
 
       ##
       # Compiles and caches an AST.
@@ -37,7 +41,7 @@ module Oga
         document = node_literal
         matched  = matched_literal
 
-        if ast.type == :axis
+        if ADD_PUSH_BLOCK.include?(ast.type)
           ruby_ast = process(ast, document) { |node| matched.push(node) }
         else
           ruby_ast = process(ast, document)
@@ -165,6 +169,30 @@ module Oga
         query = ns ? "#{ns}:#{name}" : name
 
         input.get(string(query))
+      end
+
+      ##
+      # Processes the `ancestor-or-self` axis.
+      #
+      # @param [AST::Node] ast
+      # @param [Oga::Ruby::Node] input
+      # @return [Oga::Ruby::Node]
+      #
+      def on_axis_ancestor_or_self(ast, input, &block)
+        parent_var = literal('parent')
+        assign     = parent_var.assign(input)
+        has_parent = parent_var.respond_to?(symbol(:parent))
+          .and(parent_var.parent)
+
+        body = has_parent.while_true do
+          if_statement = process(ast, parent_var, &block).if_true do
+            yield parent_var
+          end
+
+          if_statement.followed_by(parent_var.assign(parent_var.parent))
+        end
+
+        assign.followed_by(body)
       end
 
       ##

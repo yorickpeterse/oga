@@ -27,6 +27,8 @@ module Oga
     # @private
     #
     class Node < BasicObject
+      undef_method :!, :!=
+
       # @return [Symbol]
       attr_reader :type
 
