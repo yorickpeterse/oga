@@ -193,6 +193,21 @@ module Oga
       end
 
       ##
+      # Processes the `ancestor` axis.
+      #
+      # @param [AST::Node] ast
+      # @param [Oga::Ruby::Node] input
+      # @return [Oga::Ruby::Node]
+      #
+      def on_axis_ancestor(ast, input, &block)
+        parent = literal('parent')
+
+        input.each_ancestor.add_block(parent) do
+          process(ast, parent, &block).if_true { yield parent }
+        end
+      end
+
+      ##
       # Processes a node test predicate.
       #
       # @param [AST::Node] ast

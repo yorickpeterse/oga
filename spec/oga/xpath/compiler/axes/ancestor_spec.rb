@@ -22,6 +22,10 @@ describe Oga::XPath::Compiler do
       evaluate_xpath(@c1, 'ancestor::*[1]').should == node_set(@b1)
     end
 
+    it 'returns a node set containing all ancestors' do
+      evaluate_xpath(@c1, 'ancestor::*').should == node_set(@b1, @a1)
+    end
+
     it 'returns an empty node set for non existing ancestors' do
       evaluate_xpath(@c1, 'ancestor::c').should == node_set
     end
