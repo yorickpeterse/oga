@@ -8,6 +8,8 @@ module Oga
     # Compiled source code is cached per expression, removing the need for
     # recompiling the same expression over and over again.
     #
+    # @private
+    #
     class Compiler
       # @return [Oga::LRU]
       CACHE = LRU.new
