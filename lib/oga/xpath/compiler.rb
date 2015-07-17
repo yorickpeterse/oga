@@ -179,20 +179,15 @@ module Oga
       # @return [Oga::Ruby::Node]
       #
       def on_axis_ancestor_or_self(ast, input, &block)
-        parent_var = literal('parent')
-        assign     = parent_var.assign(input)
-        has_parent = parent_var.respond_to?(symbol(:parent))
-          .and(parent_var.parent)
+        parent = literal('parent')
 
-        body = has_parent.while_true do
-          if_statement = process(ast, parent_var, &block).if_true do
-            yield parent_var
-          end
+        self_test = process(ast, input, &block).if_true { yield input }
 
-          if_statement.followed_by(parent_var.assign(parent_var.parent))
+        ancestors_test = input.each_ancestor.add_block(parent) do
+          process(ast, parent, &block).if_true { yield parent }
         end
 
-        assign.followed_by(body)
+        self_test.followed_by(ancestors_test)
       end
 
       ##
@@ -360,43 +355,33 @@ module Oga
 
       private
 
-      ##
       # @param [#to_s] value
       # @return [Oga::Ruby::Node]
-      #
       def literal(value)
         Ruby::Node.new(:lit, [value.to_s])
       end
 
-      ##
       # @param [#to_s] value
       # @return [Oga::Ruby::Node]
-      #
       def string(value)
         Ruby::Node.new(:string, [value.to_s])
       end
 
-      ##
       # @param [String] value
       # @return [Oga::Ruby::Node]
-      #
       def symbol(value)
         Ruby::Node.new(:symbol, [value.to_sym])
       end
 
-      ##
       # @param [String] name
       # @param [Array] args
       # @return [Oga::Ruby::Node]
-      #
       def send_message(name, *args)
         Ruby::Node.new(:send, [nil, name, *args])
       end
 
-      ##
       # @param [Oga::Ruby::Node] node
       # @return [Oga::Ruby::Node]
-      #
       def element_or_attribute(node)
         node.is_a?(XML::Attribute).or(node.is_a?(XML::Element))
       end
@@ -416,10 +401,8 @@ module Oga
         literal('variables')
       end
 
-      ##
       # @param [AST::Node] ast
       # @return [TrueClass|FalseClass]
-      #
       def xpath_number?(ast)
         ast.type == :int || ast.type == :float
       end
