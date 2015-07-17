@@ -276,4 +276,18 @@ describe Oga::XML::Node do
       node.xml?.should == false
     end
   end
+
+  describe '#each_ancestor' do
+    before do
+      @child2   = Oga::XML::Element.new(:name => 'c')
+      @child1   = Oga::XML::Element.new(:name => 'b', :children => [@child2])
+      @root     = Oga::XML::Element.new(:name => 'a', :children => [@child1])
+      @document = Oga::XML::Document.new(:children => [@root])
+    end
+
+    it 'yields all the ancestor elements' do
+      expect { |b| @child2.each_ancestor(&b) }
+        .to yield_successive_args(@child1, @root)
+    end
+  end
 end

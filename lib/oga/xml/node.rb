@@ -214,6 +214,26 @@ module Oga
       def xml?
         !html?
       end
+
+      ##
+      # Yields all ancestor elements of the current node.
+      #
+      # @example
+      #  some_element.each_ancestor do |node|
+      #    # ...
+      #  end
+      #
+      # @yieldparam [Oga::XML::Node]
+      #
+      def each_ancestor
+        node = parent
+
+        while node.is_a?(XML::Element)
+          yield node
+
+          node = node.parent
+        end
+      end
     end # Element
   end # XML
 end # Oga
