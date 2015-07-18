@@ -166,11 +166,20 @@ module Oga
       # @return [Oga::Ruby::Node]
       #
       def on_axis_attribute(ast, input)
-        ns, name = *ast
+        input.is_a?(XML::Element).if_true do
+          attribute = literal('attribute')
 
-        query = ns ? "#{ns}:#{name}" : name
+          input.attributes.each.add_block(attribute) do
+            name_match = match_name_and_namespace(ast, attribute)
 
-        input.get(string(query))
+            if name_match
+              name_match.if_true { yield attribute }
+            else
+              yield attribute
+            end
+          end
+        end
+        #input.attribute(string(query))
       end
 
       ##
@@ -294,19 +303,10 @@ module Oga
       # @return [Oga::Ruby::Node]
       #
       def on_test(ast, input)
-        ns, name = *ast
+        condition  = element_or_attribute(input)
+        name_match = match_name_and_namespace(ast, input)
 
-        condition = element_or_attribute(input)
-
-        if name != STAR
-          condition = condition.and(input.name.eq(string(name)))
-        end
-
-        if ns and ns != STAR
-          condition = condition.and(input.namespace_name.eq(string(ns)))
-        end
-
-        condition
+        name_match ? condition.and(name_match) : condition
       end
 
       ##
@@ -401,6 +401,26 @@ module Oga
       # @return [Oga::Ruby::Node]
       def element_or_attribute(node)
         node.is_a?(XML::Attribute).or(node.is_a?(XML::Element))
+      end
+
+      # @param [AST::Node] ast
+      # @param [Oga::Ruby::Node] input
+      # @return [Oga::Ruby::Node]
+      def match_name_and_namespace(ast, input)
+        ns, name = *ast
+
+        condition = nil
+
+        if name != STAR
+          condition = input.name.eq(string(name))
+        end
+
+        if ns and ns != STAR
+          ns_match  = input.namespace_name.eq(string(ns))
+          condition = condition ? condition.and(ns_match) : ns_match
+        end
+
+        condition
       end
 
       # @return [Oga::Ruby::Node]
