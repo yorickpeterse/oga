@@ -179,7 +179,6 @@ module Oga
             end
           end
         end
-        #input.attribute(string(query))
       end
 
       ##
