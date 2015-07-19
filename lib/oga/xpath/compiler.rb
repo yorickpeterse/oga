@@ -110,13 +110,9 @@ module Oga
         ruby_ast
       end
 
-      ##
-      # Processes an absolute path.
-      #
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
-      #
       def on_absolute_path(ast, input, &block)
         if ast.children.empty?
           matched_literal.push(input.root_node)
@@ -142,13 +138,9 @@ module Oga
         send(:"on_axis_#{handler}", test, input, &block)
       end
 
-      ##
-      # Processes the "child" axis.
-      #
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
-      #
       def on_axis_child(ast, input, &block)
         child     = node_literal
         condition = process(ast, child, &block)
@@ -158,13 +150,9 @@ module Oga
         end
       end
 
-      ##
-      # Processes the "attribute" axis.
-      #
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
-      #
       def on_axis_attribute(ast, input)
         input.is_a?(XML::Element).if_true do
           attribute = literal('attribute')
@@ -181,13 +169,9 @@ module Oga
         end
       end
 
-      ##
-      # Processes the `ancestor-or-self` axis.
-      #
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
-      #
       def on_axis_ancestor_or_self(ast, input, &block)
         parent = literal('parent')
 
@@ -200,13 +184,9 @@ module Oga
         self_test.followed_by(ancestors_test)
       end
 
-      ##
-      # Processes the `ancestor` axis.
-      #
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
-      #
       def on_axis_ancestor(ast, input, &block)
         parent = literal('parent')
 
@@ -215,13 +195,9 @@ module Oga
         end
       end
 
-      ##
-      # Processes a node test predicate.
-      #
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
-      #
       def on_predicate(ast, input, &block)
         test, predicate = *ast
 
@@ -294,13 +270,9 @@ module Oga
         end
       end
 
-      ##
-      # Processes a node test.
-      #
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
-      #
       def on_test(ast, input)
         condition  = element_or_attribute(input)
         name_match = match_name_and_namespace(ast, input)
@@ -308,59 +280,39 @@ module Oga
         name_match ? condition.and(name_match) : condition
       end
 
-      ##
-      # Processes an equality expression.
-      #
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
-      #
       def on_eq(ast, input)
         left, right = *ast
 
         process(left, input).eq(process(right, input))
       end
 
-      ##
-      # Processes a string.
-      #
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
-      #
       def on_string(ast, *)
         string(ast.children[0])
       end
 
-      ##
-      # Processes an integer.
-      #
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
-      #
       def on_int(ast, *)
         literal(ast.children[0].to_i.to_s)
       end
 
-      ##
-      # Processes a float.
-      #
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
-      #
       def on_float(ast, *)
         literal(ast.children[0].to_s)
       end
 
-      ##
-      # Processes a variable reference.
-      #
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
-      #
       def on_var(ast, input)
         vars = variables_literal
         name = ast.children[0]
