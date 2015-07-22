@@ -3,9 +3,12 @@ language: ruby
 
 script: bundle exec rake
 
-before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq ragel
+sudo: false
+
+addons:
+  apt:
+    packages:
+      - ragel
 
 install:
   - bundle install --retry=3
