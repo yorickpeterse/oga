@@ -194,7 +194,7 @@ module Oga
       def on_predicate(ast, input, &block)
         test, predicate = *ast
 
-        if xpath_number?(predicate)
+        if number?(predicate)
           index_predicate(test, predicate, input, &block)
         else
           expression_predicate(test, predicate, input, &block)
@@ -384,7 +384,7 @@ module Oga
 
       # @param [AST::Node] ast
       # @return [TrueClass|FalseClass]
-      def xpath_number?(ast)
+      def number?(ast)
         ast.type == :int || ast.type == :float
       end
 
