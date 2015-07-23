@@ -9,5 +9,16 @@ describe Oga::XML::Lexer do
         [:T_ELEM_END, nil, 1]
       ]
     end
+
+    it 'lexes a <param> element' do
+      lex_html('<object><param></param><param></param></object>').should == [
+        [:T_ELEM_NAME, 'object', 1],
+        [:T_ELEM_NAME, 'param', 1],
+        [:T_ELEM_END, nil, 1],
+        [:T_ELEM_NAME, 'param', 1],
+        [:T_ELEM_END, nil, 1],
+        [:T_ELEM_END, nil, 1]
+      ]
+    end
   end
 end

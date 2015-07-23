@@ -512,8 +512,11 @@ module Oga
           end
         end
 
-        add_token(:T_ELEM_END)
+        # Prevents a superfluous end tag of a self-closing HTML tag from
+        # closing its parent element prematurely
+        return if html? && name && name != current_element
 
+        add_token(:T_ELEM_END)
         @elements.pop
       end
 
