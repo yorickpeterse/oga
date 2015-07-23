@@ -20,10 +20,6 @@ module Oga
       # Node types that require a NodeSet to push nodes into.
       USE_NODESET = [:path, :absolute_path, :axis, :predicate]
 
-      # Node types that require "compile" to define a block to call upon
-      # matching a node.
-      ADD_PUSH_BLOCK = [:axis, :predicate]
-
       ##
       # Compiles and caches an AST.
       #
@@ -43,7 +39,7 @@ module Oga
         document = node_literal
         matched  = matched_literal
 
-        if ADD_PUSH_BLOCK.include?(ast.type)
+        if USE_NODESET.include?(ast.type)
           ruby_ast = process(ast, document) { |node| matched.push(node) }
         else
           ruby_ast = process(ast, document)
@@ -86,7 +82,6 @@ module Oga
       # @return [Oga::Ruby::Node]
       #
       def on_path(ast, input, &block)
-        matched    = matched_literal
         ruby_ast   = nil
         var_name   = node_literal
         last_index = ast.children.length - 1
@@ -99,9 +94,7 @@ module Oga
           # The last segment of the path should add the code that actually
           # pushes the matched node into the node set.
           if index == 0
-            ruby_ast = process(child, input_var) do |node|
-              matched.push(node)
-            end
+            ruby_ast = process(child, input_var, &block)
           else
             ruby_ast = process(child, input_var) { ruby_ast }
           end
