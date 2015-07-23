@@ -18,7 +18,7 @@ module Oga
       STAR = '*'
 
       # Node types that require a NodeSet to push nodes into.
-      USE_NODESET = [:path, :absolute_path, :axis, :predicate]
+      RETURN_NODESET = [:path, :absolute_path, :axis, :predicate]
 
       ##
       # Compiles and caches an AST.
@@ -39,7 +39,7 @@ module Oga
         document = node_literal
         matched  = matched_literal
 
-        if USE_NODESET.include?(ast.type)
+        if return_nodeset?(ast)
           ruby_ast = process(ast, document) { |node| matched.push(node) }
         else
           ruby_ast = process(ast, document)
@@ -48,7 +48,7 @@ module Oga
         vars = variables_literal.assign(literal('nil'))
 
         proc_ast = literal('lambda').add_block(document, vars) do
-          if USE_NODESET.include?(ast.type)
+          if return_nodeset?(ast)
             matched.assign(literal(XML::NodeSet).new)
               .followed_by(ruby_ast)
               .followed_by(matched)
@@ -386,6 +386,12 @@ module Oga
       # @return [TrueClass|FalseClass]
       def xpath_number?(ast)
         ast.type == :int || ast.type == :float
+      end
+
+      # @param [AST::Node] ast
+      # @return [TrueClass|FalseClass]
+      def return_nodeset?(ast)
+        RETURN_NODESET.include?(ast.type)
       end
     end # Compiler
   end # XPath
