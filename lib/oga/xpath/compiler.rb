@@ -195,9 +195,9 @@ module Oga
         test, predicate = *ast
 
         if number?(predicate)
-          index_predicate(test, predicate, input, &block)
+          on_index_predicate(test, predicate, input, &block)
         else
-          expression_predicate(test, predicate, input, &block)
+          on_expression_predicate(test, predicate, input, &block)
         end
       end
 
@@ -209,7 +209,7 @@ module Oga
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
       #
-      def index_predicate(test, predicate, input)
+      def on_index_predicate(test, predicate, input)
         int1      = literal('1')
         index     = to_int(predicate)
         index_var = literal('index')
@@ -245,7 +245,7 @@ module Oga
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
       #
-      def expression_predicate(test, predicate, input)
+      def on_expression_predicate(test, predicate, input)
         catch_arg = symbol(:predicate_matched)
 
         process(test, input) do |matched_test_node|
