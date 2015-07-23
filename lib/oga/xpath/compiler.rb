@@ -211,7 +211,7 @@ module Oga
       #
       def index_predicate(test, predicate, input)
         int1      = literal('1')
-        index     = on_int(predicate)
+        index     = to_int(predicate)
         index_var = literal('index')
 
         inner = process(test, input) do |matched_test_node|
@@ -293,7 +293,7 @@ module Oga
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
       def on_int(ast, *)
-        literal(ast.children[0].to_i.to_s)
+        literal(ast.children[0].to_f.to_s)
       end
 
       # @param [AST::Node] ast
@@ -380,6 +380,12 @@ module Oga
       # @return [Oga::Ruby::Node]
       def variables_literal
         literal('variables')
+      end
+
+      # @param [AST::Node] ast
+      # @return [Oga::Ruby::Node]
+      def to_int(ast)
+        literal(ast.children[0].to_i.to_s)
       end
 
       # @param [AST::Node] ast
