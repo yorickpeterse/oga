@@ -10,6 +10,14 @@ describe Oga::XPath::Compiler do
       evaluate_xpath(@document, '10 = 10').should == true
     end
 
+    it 'returns true if two numbers and 1 are equal' do
+      evaluate_xpath(@document, '10 = 10 = 1').should == true
+    end
+
+    it 'returns false if two numbers and 0 are not equal' do
+      evaluate_xpath(@document, '10 = 10 = 0').should == false
+    end
+
     it 'returns false if two numbers are not equal' do
       evaluate_xpath(@document, '10 = 15').should == false
     end
@@ -34,6 +42,14 @@ describe Oga::XPath::Compiler do
       evaluate_xpath(@document, 'root/a = root/b').should == true
     end
 
+    it 'returns true if two node sets and 1 are equal' do
+      evaluate_xpath(@document, 'root/a = root/b = 1').should == true
+    end
+
+    it 'returns false if two node sets and 0 are not equal' do
+      evaluate_xpath(@document, 'root/a = root/b = 0').should == false
+    end
+
     it 'returns false if two node sets are not equal' do
       evaluate_xpath(@document, 'root/a = root/c').should == false
     end
@@ -56,6 +72,12 @@ describe Oga::XPath::Compiler do
 
     it 'returns true if an attribute and string are equal' do
       evaluate_xpath(@document, 'root/b/@class = "foo"').should == true
+    end
+
+    it 'returns true if an axis and a string are equal' do
+      element = @document.at_xpath('root/b')
+
+      evaluate_xpath(element, '@class = "foo"').should == true
     end
   end
 end

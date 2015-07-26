@@ -29,6 +29,15 @@ module Oga
         CACHE.get_or_set(ast) { new.compile(ast) }
       end
 
+      def initialize
+        reset
+      end
+
+      # Resets the internal state.
+      def reset
+        @literal_id = 0
+      end
+
       ##
       # Compiles an XPath AST into a Ruby Proc.
       #
@@ -61,6 +70,8 @@ module Oga
         source    = generator.process(proc_ast)
 
         eval(source)
+      ensure
+        reset
       end
 
       ##
@@ -246,17 +257,11 @@ module Oga
       # @return [Oga::Ruby::Node]
       #
       def on_expression_predicate(test, predicate, input)
-        catch_arg = symbol(:predicate_matched)
-
         process(test, input) do |matched_test_node|
-          catch_block = send_message('catch', catch_arg).add_block do
-            inner = process(predicate, matched_test_node) do
-              send_message('throw', catch_arg, literal('true'))
+          catch_block = catch_message(:predicate_matched) do
+            process(predicate, matched_test_node) do
+              throw_message(:predicate_matched, literal('true'))
             end
-
-            # Ensure that the "catch" only returns a value when "throw" is
-            # actually invoked.
-            inner.followed_by(literal('nil'))
           end
 
           catch_block.if_true { yield matched_test_node }
@@ -273,13 +278,99 @@ module Oga
         name_match ? condition.and(name_match) : condition
       end
 
+      ##
+      # Processes the `=` operator.
+      #
+      # The generated code is optimized so that expressions such as `a/b = c`
+      # only match the first node in both arms instead of matching all available
+      # nodes first. Because the `=` only ever operates on the first node in a
+      # set we can simply ditch the rest, possibly speeding things up quite a
+      # bit. This only works if one of the arms is:
+      #
+      # * a path
+      # * an axis
+      # * a predicate
+      #
+      # Everything else is processed the usual (and possibly slower) way.
+      #
+      # The variables used by this operator are assigned a "begin" block
+      # containing the actual result. This ensures that each variable is
+      # assigned the result of the entire block instead of the first expression
+      # that occurs.
+      #
+      # For example, take the following expression:
+      #
+      #     10 = 10 = 20
+      #
+      # Without a "begin" we'd end up with the following code (trimmed for
+      # readability):
+      #
+      #     eq_left3 = eq_left1 = ...
+      #
+      #     eq_left2 = ...
+      #
+      #     eq_left1, eq_left2 = to_compatible_types(eq_left1, eq_left2)
+      #
+      #     eq_left1 == eq_left2
+      #
+      #     eq_left4 = ...
+      #
+      #     eq_left3 == eq_left4
+      #
+      # This would be incorrect as the first boolean expression (`10 = 10`)
+      # would be ignored. By using a "begin" we instead get the following:
+      #
+      #     eq_left3 = begin
+      #       eq_left1 = ...
+      #
+      #       eq_left2 = ...
+      #
+      #       eq_left1, eq_left2 = to_compatible_types(eq_left1, eq_left2)
+      #
+      #       eq_left1 == eq_left2
+      #     end
+      #
+      #     eq_left4 = begin
+      #       ...
+      #     end
+      #
+      #     eq_left3 == eq_left4
+      #
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
+      #
       def on_eq(ast, input)
         left, right = *ast
 
-        process(left, input).eq(process(right, input))
+        left_var  = unique_literal('eq_left')
+        right_var = unique_literal('eq_right')
+
+        text_sym   = symbol(:text)
+        conversion = literal('Conversion')
+
+        if return_nodeset?(left)
+          left_ast = match_first_node(left, input)
+        else
+          left_ast = process(left, input)
+        end
+
+        if return_nodeset?(right)
+          right_ast = match_first_node(right, input)
+        else
+          right_ast = process(right, input)
+        end
+
+        initial_assign = left_var.assign(left_ast.wrap)
+          .followed_by(right_var.assign(right_ast.wrap))
+
+        compatible_assign = mass_assign(
+          [left_var, right_var],
+          conversion.to_compatible_types(left_var, right_var)
+        )
+
+        initial_assign.followed_by(compatible_assign)
+          .followed_by(left_var.eq(right_var))
       end
 
       # @param [AST::Node] ast
@@ -320,6 +411,14 @@ module Oga
       # @return [Oga::Ruby::Node]
       def literal(value)
         Ruby::Node.new(:lit, [value.to_s])
+      end
+
+      # @param [String] name
+      # @return [Oga::Ruby::Node]
+      def unique_literal(name)
+        new_id = @literal_id += 1
+
+        literal("#{name}#{new_id}")
       end
 
       # @param [#to_s] value
@@ -367,6 +466,21 @@ module Oga
         condition
       end
 
+      ##
+      # Returns an AST matching the first node of a node set.
+      #
+      # @param [Oga::Ruby::Node] ast
+      # @param [Oga::Ruby::Node] input
+      # @return [Oga::Ruby::Node]
+      #
+      def match_first_node(ast, input)
+        catch_message(:value) do
+          process(ast, input) do |node|
+            throw_message(:value, literal('Conversion').to_string(node))
+          end
+        end
+      end
+
       # @return [Oga::Ruby::Node]
       def matched_literal
         literal('matched')
@@ -388,10 +502,42 @@ module Oga
         literal(ast.children[0].to_i.to_s)
       end
 
+      ##
+      # @param [Array] vars The variables to assign.
+      # @param [Oga::Ruby::Node] value
+      # @return [Oga::Ruby::Node]
+      #
+      def mass_assign(vars, value)
+        Ruby::Node.new(:massign, [vars, value])
+      end
+
       # @param [AST::Node] ast
       # @return [TrueClass|FalseClass]
       def number?(ast)
         ast.type == :int || ast.type == :float
+      end
+
+      # @param [AST::Node] ast
+      # @return [TrueClass|FalseClass]
+      def string?(ast)
+        ast.type == :string
+      end
+
+      # @param [Symbol] name
+      # @return [Oga::Ruby::Node]
+      def catch_message(name)
+        send_message('catch', symbol(name)).add_block do
+          # Ensure that the "catch" only returns a value when "throw" is
+          # actually invoked.
+          yield.followed_by(literal('nil'))
+        end
+      end
+
+      # @param [Symbol] name
+      # @param [Array] args
+      # @return [Oga::Ruby::Node]
+      def throw_message(name, *args)
+        send_message('throw', symbol(name), *args)
       end
 
       # @param [AST::Node] ast
