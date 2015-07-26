@@ -25,6 +25,18 @@ describe Oga::Ruby::Generator do
     end
   end
 
+  describe '#on_mass_assign' do
+    it 'returns a String' do
+      var1 = Oga::Ruby::Node.new(:lit, %w{foo})
+      var2 = Oga::Ruby::Node.new(:lit, %w{bar})
+      val  = Oga::Ruby::Node.new(:lit, %w{10})
+
+      assign = Oga::Ruby::Node.new(:massign, [[var1, var2], val])
+
+      @generator.on_massign(assign).should == 'foo, bar = 10'
+    end
+  end
+
   describe '#on_eq' do
     it 'returns a String' do
       var = Oga::Ruby::Node.new(:lit, %w{number})

@@ -42,6 +42,21 @@ module Oga
       end
 
       ##
+      # Processes a mass assignment node.
+      #
+      # @param [Oga::Ruby::Node] ast
+      # @return [String]
+      #
+      def on_massign(ast)
+        vars, val = *ast
+
+        var_names = vars.map { |var| process(var) }
+        val_str   = process(val)
+
+        "#{var_names.join(', ')} = #{val_str}"
+      end
+
+      ##
       # Processes an equality node.
       #
       # @param [Oga::Ruby::Node] ast
