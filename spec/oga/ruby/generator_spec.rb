@@ -37,6 +37,19 @@ describe Oga::Ruby::Generator do
     end
   end
 
+  describe '#on_begin' do
+    it 'returns a String' do
+      number = Oga::Ruby::Node.new(:lit, %w{10})
+      node   = Oga::Ruby::Node.new(:begin, [number])
+
+      @generator.on_begin(node).should == <<-EOF
+begin
+  10
+end
+      EOF
+    end
+  end
+
   describe '#on_eq' do
     it 'returns a String' do
       var = Oga::Ruby::Node.new(:lit, %w{number})

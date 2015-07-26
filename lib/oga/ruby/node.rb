@@ -105,6 +105,15 @@ module Oga
       end
 
       ##
+      # Wraps the current node in a `begin` node.
+      #
+      # @return [Oga::Ruby::Node]
+      #
+      def wrap
+        Node.new(:begin, [self])
+      end
+
+      ##
       # Wraps the current node in an if statement node.
       #
       # The body of this statement is set to the return value of the supplied

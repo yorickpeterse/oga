@@ -53,6 +53,22 @@ module Oga
       end
 
       ##
+      # Processes a `begin` node.
+      #
+      # @param [Oga::Ruby::Node] ast
+      # @return [String]
+      #
+      def on_begin(ast)
+        body = process(ast.to_a[0])
+
+        <<-EOF
+begin
+  #{body}
+end
+        EOF
+      end
+
+      ##
       # Processes an equality node.
       #
       # @param [Oga::Ruby::Node] ast

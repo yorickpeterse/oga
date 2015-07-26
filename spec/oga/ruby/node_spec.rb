@@ -88,6 +88,16 @@ describe Oga::Ruby::Node do
     end
   end
 
+  describe '#wrap' do
+    it 'returns a begin Node' do
+      number  = described_class.new(:lit, %w{10})
+      wrapped = number.wrap
+
+      wrapped.type.should == :begin
+      wrapped.to_a.should == [number]
+    end
+  end
+
   describe '#if_true' do
     it 'returns an if statement Node' do
       condition = described_class.new(:lit, %w{number})
