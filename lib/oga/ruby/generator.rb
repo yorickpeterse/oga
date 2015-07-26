@@ -16,13 +16,9 @@ module Oga
         send(:"on_#{ast.type}", ast)
       end
 
-      ##
-      # Processes a "begin" node.
-      #
       # @param [Oga::Ruby::Node] ast
       # @return [String]
-      #
-      def on_begin(ast)
+      def on_followed_by(ast)
         ast.to_a.map { |child| process(child) }.join("\n\n")
       end
 

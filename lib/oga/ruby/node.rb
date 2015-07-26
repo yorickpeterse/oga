@@ -146,7 +146,7 @@ module Oga
       # @return [Oga::Ruby::Node]
       #
       def followed_by(other)
-        Node.new(:begin, [self, other])
+        Node.new(:followed_by, [self, other])
       end
 
       ##

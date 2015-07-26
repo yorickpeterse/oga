@@ -5,13 +5,13 @@ describe Oga::Ruby::Generator do
     @generator = described_class.new
   end
 
-  describe '#on_begin' do
+  describe '#on_followed_by' do
     it 'returns a String' do
       node1  = Oga::Ruby::Node.new(:lit, %w{10})
       node2  = Oga::Ruby::Node.new(:lit, %w{20})
       joined = node1.followed_by(node2)
 
-      @generator.on_begin(joined).should == "10\n\n20"
+      @generator.on_followed_by(joined).should == "10\n\n20"
     end
   end
 

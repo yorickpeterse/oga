@@ -128,7 +128,7 @@ describe Oga::Ruby::Node do
       node2  = described_class.new(:lit, %w{B})
       joined = node1.followed_by(node2)
 
-      joined.type.should == :begin
+      joined.type.should == :followed_by
       joined.to_a.should == [node1, node2]
     end
   end
