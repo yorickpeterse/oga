@@ -21,12 +21,5 @@ describe Oga::XPath::Compiler do
     it 'returns false if one of the node sets is empty' do
       evaluate_xpath(@document, 'root/a and root/c').should == false
     end
-
-    it 'skips the right expression if the left one evaluates to false' do
-      evaluator = described_class.new(@document)
-      evaluator.should_not receive(:on_call_true)
-
-      evaluator.evaluate('false() and true()').should == false
-    end
   end
 end

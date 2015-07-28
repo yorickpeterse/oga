@@ -20,6 +20,22 @@ module Oga
       # Node types that require a NodeSet to push nodes into.
       RETURN_NODESET = [:path, :absolute_path, :axis, :predicate]
 
+      # Hash containing all operator callbacks, the conversion methods and the
+      # Ruby methods to use.
+      OPERATORS = {
+        :on_add => [:to_float, :+],
+        :on_sub => [:to_float, :-],
+        :on_div => [:to_float, :/],
+        :on_gt  => [:to_float, :>],
+        :on_gte => [:to_float, :>=],
+        :on_lt  => [:to_float, :<],
+        :on_lte => [:to_float, :<=],
+        :on_mul => [:to_float, :*],
+        :on_mod => [:to_float, :%],
+        :on_and => [:to_boolean, :and],
+        :on_or  => [:to_boolean, :or]
+      }
+
       ##
       # Compiles and caches an AST.
       #
@@ -281,96 +297,74 @@ module Oga
       ##
       # Processes the `=` operator.
       #
-      # The generated code is optimized so that expressions such as `a/b = c`
-      # only match the first node in both arms instead of matching all available
-      # nodes first. Because the `=` only ever operates on the first node in a
-      # set we can simply ditch the rest, possibly speeding things up quite a
-      # bit. This only works if one of the arms is:
-      #
-      # * a path
-      # * an axis
-      # * a predicate
-      #
-      # Everything else is processed the usual (and possibly slower) way.
-      #
-      # The variables used by this operator are assigned a "begin" block
-      # containing the actual result. This ensures that each variable is
-      # assigned the result of the entire block instead of the first expression
-      # that occurs.
-      #
-      # For example, take the following expression:
-      #
-      #     10 = 10 = 20
-      #
-      # Without a "begin" we'd end up with the following code (trimmed for
-      # readability):
-      #
-      #     eq_left3 = eq_left1 = ...
-      #
-      #     eq_left2 = ...
-      #
-      #     eq_left1, eq_left2 = to_compatible_types(eq_left1, eq_left2)
-      #
-      #     eq_left1 == eq_left2
-      #
-      #     eq_left4 = ...
-      #
-      #     eq_left3 == eq_left4
-      #
-      # This would be incorrect as the first boolean expression (`10 = 10`)
-      # would be ignored. By using a "begin" we instead get the following:
-      #
-      #     eq_left3 = begin
-      #       eq_left1 = ...
-      #
-      #       eq_left2 = ...
-      #
-      #       eq_left1, eq_left2 = to_compatible_types(eq_left1, eq_left2)
-      #
-      #       eq_left1 == eq_left2
-      #     end
-      #
-      #     eq_left4 = begin
-      #       ...
-      #     end
-      #
-      #     eq_left3 == eq_left4
-      #
-      # @param [AST::Node] ast
-      # @param [Oga::Ruby::Node] input
-      # @return [Oga::Ruby::Node]
+      # @see [#operator]
       #
       def on_eq(ast, input)
-        left, right = *ast
-
-        left_var  = unique_literal('eq_left')
-        right_var = unique_literal('eq_right')
-
-        text_sym   = symbol(:text)
         conversion = literal('Conversion')
 
-        if return_nodeset?(left)
-          left_ast = match_first_node(left, input)
-        else
-          left_ast = process(left, input)
+        operator(ast, input) do |left, right|
+          compatible_assign = mass_assign(
+            [left, right],
+            conversion.to_compatible_types(left, right)
+          )
+
+          compatible_assign.followed_by(left.eq(right))
+        end
+      end
+
+      ##
+      # Processes the `!=` operator.
+      #
+      # @see [#operator]
+      #
+      def on_neq(ast, input)
+        conversion = literal('Conversion')
+
+        operator(ast, input) do |left, right|
+          compatible_assign = mass_assign(
+            [left, right],
+            conversion.to_compatible_types(left, right)
+          )
+
+          compatible_assign.followed_by(left != right)
+        end
+      end
+
+      OPERATORS.each do |callback, (conv_method, ruby_method)|
+        define_method(callback) do |ast, input|
+          conversion = literal('Conversion')
+
+          operator(ast, input) do |left, right|
+            lval = conversion.__send__(conv_method, left)
+            rval = conversion.__send__(conv_method, right)
+
+            lval.__send__(ruby_method, rval)
+          end
+        end
+      end
+
+      ##
+      # Processes the `|` operator.
+      #
+      # @see [#operator]
+      #
+      def on_pipe(ast, input)
+        left, right = *ast
+
+        union = unique_literal('union')
+
+        left_push = process(left, input) do |node|
+          union << node
         end
 
-        if return_nodeset?(right)
-          right_ast = match_first_node(right, input)
-        else
-          right_ast = process(right, input)
+        right_push = process(right, input) do |node|
+          union << node
         end
 
-        initial_assign = left_var.assign(left_ast.wrap)
-          .followed_by(right_var.assign(right_ast.wrap))
-
-        compatible_assign = mass_assign(
-          [left_var, right_var],
-          conversion.to_compatible_types(left_var, right_var)
-        )
-
-        initial_assign.followed_by(compatible_assign)
-          .followed_by(left_var.eq(right_var))
+        union.assign(literal(XML::NodeSet).new)
+          .followed_by(left_push)
+          .followed_by(right_push)
+          .followed_by(union)
       end
 
       # @param [AST::Node] ast
@@ -476,9 +470,98 @@ module Oga
       def match_first_node(ast, input)
         catch_message(:value) do
           process(ast, input) do |node|
-            throw_message(:value, literal('Conversion').to_string(node))
+            throw_message(:value, node)
           end
         end
+      end
+
+      ##
+      # Generates the code for an operator.
+      #
+      # The generated code is optimized so that expressions such as `a/b = c`
+      # only match the first node in both arms instead of matching all available
+      # nodes first. Because numeric operators only ever operates on the first
+      # node in a set we can simply ditch the rest, possibly speeding things up
+      # quite a bit. This only works if one of the arms is:
+      #
+      # * a path
+      # * an axis
+      # * a predicate
+      #
+      # Everything else is processed the usual (and possibly slower) way.
+      #
+      # The variables used by this operator are assigned a "begin" block
+      # containing the actual result. This ensures that each variable is
+      # assigned the result of the entire block instead of the first expression
+      # that occurs.
+      #
+      # For example, take the following expression:
+      #
+      #     10 = 10 = 20
+      #
+      # Without a "begin" we'd end up with the following code (trimmed for
+      # readability):
+      #
+      #     eq_left3 = eq_left1 = ...
+      #
+      #     eq_left2 = ...
+      #
+      #     eq_left1, eq_left2 = to_compatible_types(eq_left1, eq_left2)
+      #
+      #     eq_left1 == eq_left2
+      #
+      #     eq_left4 = ...
+      #
+      #     eq_left3 == eq_left4
+      #
+      # This would be incorrect as the first boolean expression (`10 = 10`)
+      # would be ignored. By using a "begin" we instead get the following:
+      #
+      #     eq_left3 = begin
+      #       eq_left1 = ...
+      #
+      #       eq_left2 = ...
+      #
+      #       eq_left1, eq_left2 = to_compatible_types(eq_left1, eq_left2)
+      #
+      #       eq_left1 == eq_left2
+      #     end
+      #
+      #     eq_left4 = begin
+      #       ...
+      #     end
+      #
+      #     eq_left3 == eq_left4
+      #
+      # @param [AST::Node] ast
+      # @param [Oga::Ruby::Node] input
+      # @param [TrueClass|FalseClass] optimize_first
+      # @return [Oga::Ruby::Node]
+      #
+      def operator(ast, input, optimize_first = true)
+        left, right = *ast
+
+        left_var  = unique_literal('op_left')
+        right_var = unique_literal('op_right')
+
+        if return_nodeset?(left) and optimize_first
+          left_ast = match_first_node(left, input)
+        else
+          left_ast = process(left, input)
+        end
+
+        if return_nodeset?(right) and optimize_first
+          right_ast = match_first_node(right, input)
+        else
+          right_ast = process(right, input)
+        end
+
+        initial_assign = left_var.assign(left_ast.wrap)
+          .followed_by(right_var.assign(right_ast.wrap))
+
+        blockval = yield left_var, right_var
+
+        initial_assign.followed_by(blockval)
       end
 
       # @return [Oga::Ruby::Node]
