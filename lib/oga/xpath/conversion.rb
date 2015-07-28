@@ -80,6 +80,8 @@ module Oga
           bool = !value.zero?
         elsif value.respond_to?(:empty?)
           bool = !value.empty?
+        elsif value
+          bool = true
         end
 
         bool

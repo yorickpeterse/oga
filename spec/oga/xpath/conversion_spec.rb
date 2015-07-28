@@ -220,5 +220,11 @@ describe Oga::XPath::Conversion do
     it 'returns false for an empty NodeSet' do
       described_class.to_boolean(node_set).should == false
     end
+
+    it 'returns true for an Element' do
+      element = Oga::XML::Element.new(:name => 'foo')
+
+      described_class.to_boolean(element).should == true
+    end
   end
 end
