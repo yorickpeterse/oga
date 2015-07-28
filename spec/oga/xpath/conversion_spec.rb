@@ -125,12 +125,36 @@ describe Oga::XPath::Conversion do
   end
 
   describe 'to_float' do
-    it 'returns a Float for a valid value' do
-      described_class.to_float('10.5').should == 10.5
+    describe 'using a Float' do
+      it 'returns the input Float' do
+        described_class.to_float(10.5).should == 10.5
+      end
     end
 
-    it 'returns Float::NAN for an invalid value' do
-      described_class.to_float('foo').nan?.should == true
+    describe 'using a String' do
+      it 'returns a Float for a valid value' do
+        described_class.to_float('10.5').should == 10.5
+      end
+
+      it 'returns Float::NAN for an invalid value' do
+        described_class.to_float('foo').nan?.should == true
+      end
+    end
+
+    describe 'using a NodeSet' do
+      it 'returns a Float using the text of the first node' do
+        set = node_set(Oga::XML::Text.new(:text => '10.5'))
+
+        described_class.to_float(set).should == 10.5
+      end
+    end
+
+    describe 'using an Node' do
+      it 'returns a Float using the text of the node' do
+        node = Oga::XML::Text.new(:text => '10.5')
+
+        described_class.to_float(node).should == 10.5
+      end
     end
   end
 

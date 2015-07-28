@@ -43,8 +43,7 @@ module Oga
         end
 
         if value.is_a?(XML::NodeSet)
-          first = value.first
-          value = first.respond_to?(:text) ? first.text : ''
+          value = first_node_text(value)
         end
 
         if value.respond_to?(:text)
@@ -56,7 +55,19 @@ module Oga
 
       # @return [Float]
       def self.to_float(value)
-        Float(value) rescue Float::NAN
+        if value.is_a?(XML::NodeSet)
+          value = first_node_text(value)
+        end
+
+        if value.respond_to?(:text)
+          value = value.text
+        end
+
+        if value.is_a?(String)
+          value = Float(value) rescue Float::NAN
+        end
+
+        value
       end
 
       # @return [TrueClass|FalseClass]
@@ -77,6 +88,12 @@ module Oga
       # @return [TrueClass|FalseClass]
       def self.boolean?(value)
         value.is_a?(TrueClass) || value.is_a?(FalseClass)
+      end
+
+      # @param [Oga::XML::NodeSet] set
+      # @return [String]
+      def self.first_node_text(set)
+        set[0].respond_to?(:text) ? set[0].text : ''
       end
     end # Conversion
   end # XPath
