@@ -10,11 +10,11 @@ module Oga
       # @return [Array]
       #
       def self.to_compatible_types(left, right)
-        if left.is_a?(XML::NodeSet)
+        if left.is_a?(XML::NodeSet) or left.respond_to?(:text)
           left = to_string(left)
         end
 
-        if right.is_a?(XML::NodeSet)
+        if right.is_a?(XML::NodeSet) or right.respond_to?(:text)
           right = to_string(right)
         end
 

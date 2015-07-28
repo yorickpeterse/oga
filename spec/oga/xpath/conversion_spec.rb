@@ -12,6 +12,26 @@ describe Oga::XPath::Conversion do
       right.should == 'bar'
     end
 
+    it 'returns two Strings when using two Nodes' do
+      n1 = Oga::XML::Text.new(:text => 'foo')
+      n2 = Oga::XML::Text.new(:text => 'bar')
+
+      left, right = described_class.to_compatible_types(n1, n2)
+
+      left.should  == 'foo'
+      right.should == 'bar'
+    end
+
+    it 'returns two Strings when using two Attributes' do
+      n1 = Oga::XML::Attribute.new(:value => 'foo')
+      n2 = Oga::XML::Attribute.new(:value => 'bar')
+
+      left, right = described_class.to_compatible_types(n1, n2)
+
+      left.should  == 'foo'
+      right.should == 'bar'
+    end
+
     it 'returns two Strings when using a NodeSet and Float' do
       set = node_set(Oga::XML::Text.new(:text => 'foo'))
 
