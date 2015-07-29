@@ -151,7 +151,7 @@ module Oga
       # @return [Oga::Ruby::Node]
       #
       def on_axis(ast, input, &block)
-        name, test = *ast.children
+        name, test = *ast
 
         handler = name.gsub('-', '_')
 
@@ -407,28 +407,28 @@ module Oga
       # @return [Oga::Ruby::Node]
       #
       def on_call(ast, input, &block)
-        name, test = *ast.children
+        name, args = *ast
 
         handler = name.gsub('-', '_')
 
-        send(:"on_call_#{handler}", test, input, &block)
+        send(:"on_call_#{handler}", input, *args, &block)
       end
 
       ##
       # Processes the `true()` function call.
       #
-      # @see [#on_call]
+      # @return [Oga::Ruby::Node]
       #
-      def on_call_true(ast, input)
+      def on_call_true(*)
         literal('true')
       end
 
       ##
       # Processes the `false()` function call.
       #
-      # @see [#on_call]
+      # @return [Oga::Ruby::Node]
       #
-      def on_call_false(ast, input)
+      def on_call_false(*)
         literal('false')
       end
 
