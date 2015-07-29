@@ -399,6 +399,39 @@ module Oga
           .or(send_message('raise', string("Undefined XPath variable: #{name}")))
       end
 
+      ##
+      # Delegates function calls to specific handlers.
+      #
+      # @param [AST::Node] ast
+      # @param [Oga::Ruby::Node] input
+      # @return [Oga::Ruby::Node]
+      #
+      def on_call(ast, input, &block)
+        name, test = *ast.children
+
+        handler = name.gsub('-', '_')
+
+        send(:"on_call_#{handler}", test, input, &block)
+      end
+
+      ##
+      # Processes the `true()` function call.
+      #
+      # @see [#on_call]
+      #
+      def on_call_true(ast, input)
+        literal('true')
+      end
+
+      ##
+      # Processes the `false()` function call.
+      #
+      # @see [#on_call]
+      #
+      def on_call_false(ast, input)
+        literal('false')
+      end
+
       private
 
       # @param [#to_s] value
