@@ -432,6 +432,61 @@ module Oga
         literal('false')
       end
 
+      ##
+      # Delegates type tests to specific handlers.
+      #
+      # @param [AST::Node] ast
+      # @param [Oga::Ruby::Node] input
+      # @return [Oga::Ruby::Node]
+      #
+      def on_type_test(ast, input, &block)
+        name = ast.children[0]
+
+        handler = name.gsub('-', '_')
+
+        send(:"on_type_test_#{handler}", input, &block)
+      end
+
+      ##
+      # Processes the `comment()` type test.
+      #
+      # @param [Oga::Ruby::Node] input
+      # @return [Oga::Ruby::Node]
+      #
+      def on_type_test_comment(input)
+        input.is_a?(XML::Comment)
+      end
+
+      ##
+      # Processes the `text()` type test.
+      #
+      # @param [Oga::Ruby::Node] input
+      # @return [Oga::Ruby::Node]
+      #
+      def on_type_test_text(input)
+        input.is_a?(XML::Text)
+      end
+
+      ##
+      # Processes the `processing-instruction()` type test.
+      #
+      # @param [Oga::Ruby::Node] input
+      # @return [Oga::Ruby::Node]
+      #
+      def on_type_test_processing_instruction(input)
+        input.is_a?(XML::ProcessingInstruction)
+      end
+
+      ##
+      # Processes the `node()` type test.
+      #
+      # @param [Oga::Ruby::Node] input
+      # @return [Oga::Ruby::Node]
+      #
+      def on_type_test_node(input)
+        input.is_a?(XML::Node)
+      end
+
       private
 
       # @param [#to_s] value
