@@ -193,8 +193,7 @@ module Oga
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
       def on_axis_ancestor_or_self(ast, input, &block)
-        parent = literal('parent')
-
+        parent    = node_literal
         self_test = process(ast, input, &block).if_true { yield input }
 
         ancestors_test = input.each_ancestor.add_block(parent) do
@@ -208,7 +207,7 @@ module Oga
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
       def on_axis_ancestor(ast, input, &block)
-        parent = literal('parent')
+        parent = node_literal
 
         input.each_ancestor.add_block(parent) do
           process(ast, parent, &block).if_true { yield parent }
