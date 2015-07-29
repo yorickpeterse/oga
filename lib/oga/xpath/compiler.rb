@@ -217,6 +217,20 @@ module Oga
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
+      def on_axis_descendant_or_self(ast, input, &block)
+        descendant = node_literal
+        self_test  = process(ast, input, &block).if_true { yield input }
+
+        descendants_test = input.each_node.add_block(descendant) do
+          process(ast, descendant, &block).if_true { yield descendant }
+        end
+
+        self_test.followed_by(descendants_test)
+      end
+
+      # @param [AST::Node] ast
+      # @param [Oga::Ruby::Node] input
+      # @return [Oga::Ruby::Node]
       def on_predicate(ast, input, &block)
         test, predicate = *ast
 
