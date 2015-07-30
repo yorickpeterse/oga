@@ -218,14 +218,17 @@ module Oga
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
       def on_axis_descendant_or_self(ast, input, &block)
-        descendant = node_literal
-        self_test  = process(ast, input, &block).if_true { yield input }
+        node = node_literal
 
-        descendants_test = input.each_node.add_block(descendant) do
-          process(ast, descendant, &block).if_true { yield descendant }
+        backup_variable(node, input) do
+          self_test = process(ast, node, &block).if_true { yield node }
+
+          descendants_test = node.each_node.add_block(node) do
+            process(ast, node, &block).if_true { yield node }
+          end
+
+          self_test.followed_by(descendants_test)
         end
-
-        self_test.followed_by(descendants_test)
       end
 
       # @param [AST::Node] ast
@@ -684,6 +687,28 @@ module Oga
         blockval = yield left_var, right_var
 
         initial_assign.followed_by(blockval)
+      end
+
+      ##
+      # Backs up a local variable and restores it after yielding the block.
+      #
+      # This is useful when processing axes followed by other segments in a
+      # path. In these cases each segment doesn't know about its input (since
+      # it's determined later), thus they resort to just using whatever `node`
+      # is set to. By re-assigning (and re-storing) this variable the input can
+      # be controller more easily.
+      #
+      # @param [Oga::Ruby::Node] variable
+      # @param [Oga::Ruby::Node] new
+      # @return [Oga::Ruby::Node]
+      #
+      def backup_variable(variable, new)
+        backup = unique_literal('backup')
+
+        backup.assign(variable)
+          .followed_by(variable.assign(new))
+          .followed_by(yield)
+          .followed_by(variable.assign(backup))
       end
 
       # @return [Oga::Ruby::Node]
