@@ -518,7 +518,7 @@ module Oga
       # @return [Oga::Ruby::Node]
       #
       def on_type_test_node(input)
-        input.is_a?(XML::Node)
+        input.is_a?(XML::Node).or(input.is_a?(XML::Document))
       end
 
       private
