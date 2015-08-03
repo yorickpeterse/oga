@@ -247,6 +247,19 @@ module Oga
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
+      def on_axis_parent(ast, input, &block)
+        node = node_literal
+
+        input.is_a?(XML::Node).if_true do
+          backup_variable(node, input.parent) do
+            process(ast, node, &block).if_true { yield node }
+          end
+        end
+      end
+
+      # @param [AST::Node] ast
+      # @param [Oga::Ruby::Node] input
+      # @return [Oga::Ruby::Node]
       def on_predicate(ast, input, &block)
         test, predicate = *ast
 
