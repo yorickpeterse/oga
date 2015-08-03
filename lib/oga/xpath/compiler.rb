@@ -260,6 +260,17 @@ module Oga
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
+      def on_axis_self(ast, input, &block)
+        node = node_literal
+
+        backup_variable(node, input) do
+          process(ast, node, &block).if_true { yield node }
+        end
+      end
+
+      # @param [AST::Node] ast
+      # @param [Oga::Ruby::Node] input
+      # @return [Oga::Ruby::Node]
       def on_predicate(ast, input, &block)
         test, predicate = *ast
 
