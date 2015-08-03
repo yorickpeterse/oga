@@ -137,8 +137,10 @@ module Oga
       if @owner != Thread.current
         @mutex.synchronize do
           @owner = Thread.current
+          retval = yield
+          @owner = nil
 
-          yield
+          retval
         end
       else
         yield
