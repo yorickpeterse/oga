@@ -74,7 +74,10 @@ module Oga
 
         proc_ast = literal('lambda').add_block(document, vars) do
           if return_nodeset?(ast)
+            input_assign = original_input_literal.assign(document)
+
             matched.assign(literal(XML::NodeSet).new)
+              .followed_by(input_assign)
               .followed_by(ruby_ast)
               .followed_by(matched)
           else
@@ -266,6 +269,52 @@ module Oga
         backup_variable(node, input) do
           process(ast, node, &block).if_true { yield node }
         end
+      end
+
+      # @param [AST::Node] ast
+      # @param [Oga::Ruby::Node] input
+      # @return [Oga::Ruby::Node]
+      def on_axis_following_sibling(ast, input, &block)
+        node       = node_literal
+        orig_input = original_input_literal
+        doc_node   = literal('doc_node')
+        check      = literal('check')
+        parent     = literal('parent')
+        root       = literal('root')
+
+        root_assign = orig_input.is_a?(XML::Node)
+          .if_true { root.assign(orig_input.parent) }
+          .else    { root.assign(orig_input) }
+
+        parent_if = input.is_a?(XML::Node).and(input.parent)
+          .if_true { parent.assign(input.parent) }
+          .else    { parent.assign(literal('nil')) }
+
+        check_assign = check.assign(literal('false'))
+
+        each_node = root.each_node.add_block(doc_node) do
+          doc_compare = doc_node.eq(input).if_true do
+            check.assign(literal('true'))
+              .followed_by(throw_message(:skip_children))
+          end
+
+          next_check = (!check).or(parent != doc_node.parent).if_true do
+            literal('next')
+          end
+
+          match_node = backup_variable(node, doc_node) do
+            process(ast, node, &block).if_true do
+              yield(node).followed_by(throw_message(:skip_children))
+            end
+          end
+
+          doc_compare.followed_by(next_check)
+            .followed_by(match_node)
+        end
+
+        root_assign.followed_by(parent_if)
+          .followed_by(check_assign)
+          .followed_by(each_node)
       end
 
       # @param [AST::Node] ast
@@ -756,6 +805,11 @@ module Oga
       # @return [Oga::Ruby::Node]
       def node_literal
         literal('node')
+      end
+
+      # @return [Oga::Ruby::Node]
+      def original_input_literal
+        literal('original_input')
       end
 
       # @return [Oga::Ruby::Node]
