@@ -362,6 +362,23 @@ module Oga
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
+      def on_axis_namespace(ast, input)
+        underscore = literal('_')
+        node       = node_literal
+
+        name = string(ast.children[1])
+        star = string(STAR)
+
+        input.is_a?(XML::Element).if_true do
+          input.available_namespaces.each.add_block(underscore, node) do
+            node.name.eq(name).or(name.eq(star)).if_true { yield node }
+          end
+        end
+      end
+
+      # @param [AST::Node] ast
+      # @param [Oga::Ruby::Node] input
+      # @return [Oga::Ruby::Node]
       def on_predicate(ast, input, &block)
         test, predicate = *ast
 
