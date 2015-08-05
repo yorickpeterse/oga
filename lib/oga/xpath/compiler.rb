@@ -88,6 +88,10 @@ module Oga
         generator = Ruby::Generator.new
         source    = generator.process(proc_ast)
 
+#File.open('/tmp/xpath.rb', 'w') do |handle|
+#  handle.write(source.gsub("\n\n", "\n"))
+#end
+
         eval(source)
       ensure
         reset
@@ -299,7 +303,7 @@ module Oga
           end
 
           next_check = (!check).or(parent != doc_node.parent).if_true do
-            literal('next')
+            send_message(:next)
           end
 
           match_node = backup_variable(node, doc_node) do
@@ -314,6 +318,44 @@ module Oga
 
         root_assign.followed_by(parent_if)
           .followed_by(check_assign)
+          .followed_by(each_node)
+      end
+
+      # @param [AST::Node] ast
+      # @param [Oga::Ruby::Node] input
+      # @return [Oga::Ruby::Node]
+      def on_axis_following(ast, input, &block)
+        node       = node_literal
+        orig_input = original_input_literal
+        doc_node   = literal('doc_node')
+        check      = literal('check')
+        root       = literal('root')
+
+        root_assign = orig_input.is_a?(XML::Node)
+          .if_true { root.assign(orig_input.root_node) }
+          .else    { root.assign(orig_input) }
+
+        check_assign = check.assign(literal('false'))
+
+        each_node = root.each_node.add_block(doc_node) do
+          doc_compare = doc_node.eq(input).if_true do
+            check.assign(literal('true'))
+              .followed_by(throw_message(:skip_children))
+          end
+
+          next_check = (!check).if_true { send_message(:next) }
+
+          match_node = backup_variable(node, doc_node) do
+            process(ast, node, &block).if_true do
+              yield node
+            end
+          end
+
+          doc_compare.followed_by(next_check)
+            .followed_by(match_node)
+        end
+
+        root_assign.followed_by(check_assign)
           .followed_by(each_node)
       end
 
