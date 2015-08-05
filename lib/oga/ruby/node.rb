@@ -85,6 +85,17 @@ module Oga
       end
 
       ##
+      # Returns a node that evaluates to its inverse.
+      #
+      # For example, a variable `foo` would be turned into `!foo`.
+      #
+      # @return [Oga::Ruby::Node]
+      #
+      def not
+        !self
+      end
+
+      ##
       # Returns a node for Ruby's "is_a?" method.
       #
       # @param [Class] klass

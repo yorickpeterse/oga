@@ -61,6 +61,16 @@ describe Oga::Ruby::Node do
     end
   end
 
+  describe '#not' do
+    it 'returns a send Node' do
+      node     = described_class.new(:lit, %w{foo})
+      inverted = node.not
+
+      inverted.type.should == :send
+      inverted.to_a.should == [node, '!']
+    end
+  end
+
   describe '#is_a?' do
     it 'returns a is_a? call Node' do
       left = described_class.new(:lit, %w{number})

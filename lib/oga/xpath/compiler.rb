@@ -302,7 +302,7 @@ module Oga
               .followed_by(throw_message(:skip_children))
           end
 
-          next_check = (!check).or(parent != doc_node.parent).if_true do
+          next_check = check.not.or(parent != doc_node.parent).if_true do
             send_message(:next)
           end
 
@@ -343,7 +343,7 @@ module Oga
               .followed_by(throw_message(:skip_children))
           end
 
-          next_check = (!check).if_true { send_message(:next) }
+          next_check = check.not.if_true { send_message(:next) }
 
           match_node = backup_variable(node, doc_node) do
             process(ast, node, &block).if_true do
