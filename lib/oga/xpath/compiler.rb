@@ -88,10 +88,6 @@ module Oga
         generator = Ruby::Generator.new
         source    = generator.process(proc_ast)
 
-#File.open('/tmp/xpath.rb', 'w') do |handle|
-#  handle.write(source.gsub("\n\n", "\n"))
-#end
-
         eval(source)
       ensure
         reset
