@@ -70,9 +70,9 @@ module Oga
           ruby_ast = process(ast, document)
         end
 
-        vars = variables_literal.assign(literal('nil'))
+        vars = variables_literal.assign(self.nil)
 
-        proc_ast = literal('lambda').add_block(document, vars) do
+        proc_ast = literal(:lambda).add_block(document, vars) do
           if return_nodeset?(ast)
             input_assign = original_input_literal.assign(document)
 
@@ -178,7 +178,7 @@ module Oga
       # @return [Oga::Ruby::Node]
       def on_axis_attribute(ast, input)
         input.is_a?(XML::Element).if_true do
-          attribute = literal('attribute')
+          attribute = literal(:attribute)
 
           input.attributes.each.add_block(attribute) do
             name_match = match_name_and_namespace(ast, attribute)
@@ -277,10 +277,10 @@ module Oga
       def on_axis_following_sibling(ast, input, &block)
         node       = node_literal
         orig_input = original_input_literal
-        doc_node   = literal('doc_node')
-        check      = literal('check')
-        parent     = literal('parent')
-        root       = literal('root')
+        doc_node   = literal(:doc_node)
+        check      = literal(:check)
+        parent     = literal(:parent)
+        root       = literal(:root)
 
         root_assign = orig_input.is_a?(XML::Node)
           .if_true { root.assign(orig_input.parent) }
@@ -288,13 +288,13 @@ module Oga
 
         parent_if = input.is_a?(XML::Node).and(input.parent)
           .if_true { parent.assign(input.parent) }
-          .else    { parent.assign(literal('nil')) }
+          .else    { parent.assign(self.nil) }
 
-        check_assign = check.assign(literal('false'))
+        check_assign = check.assign(self.false)
 
         each_node = root.each_node.add_block(doc_node) do
           doc_compare = doc_node.eq(input).if_true do
-            check.assign(literal('true'))
+            check.assign(self.true)
               .followed_by(throw_message(:skip_children))
           end
 
@@ -323,19 +323,19 @@ module Oga
       def on_axis_following(ast, input, &block)
         node       = node_literal
         orig_input = original_input_literal
-        doc_node   = literal('doc_node')
-        check      = literal('check')
-        root       = literal('root')
+        doc_node   = literal(:doc_node)
+        check      = literal(:check)
+        root       = literal(:root)
 
         root_assign = orig_input.is_a?(XML::Node)
           .if_true { root.assign(orig_input.root_node) }
           .else    { root.assign(orig_input) }
 
-        check_assign = check.assign(literal('false'))
+        check_assign = check.assign(self.false)
 
         each_node = root.each_node.add_block(doc_node) do
           doc_compare = doc_node.eq(input).if_true do
-            check.assign(literal('true'))
+            check.assign(self.true)
               .followed_by(throw_message(:skip_children))
           end
 
@@ -359,7 +359,7 @@ module Oga
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
       def on_axis_namespace(ast, input)
-        underscore = literal('_')
+        underscore = literal(:_)
         node       = node_literal
 
         name = string(ast.children[1])
@@ -377,9 +377,9 @@ module Oga
       # @return [Oga::Ruby::Node]
       def on_axis_preceding(ast, input, &block)
         orig_input = original_input_literal
-        root       = literal('root')
+        root       = literal(:root)
         node       = node_literal
-        doc_node   = literal('doc_node')
+        doc_node   = literal(:doc_node)
 
         root_assign = orig_input.is_a?(XML::Node)
           .if_true { root.assign(orig_input.root_node) }
@@ -403,21 +403,21 @@ module Oga
       # @return [Oga::Ruby::Node]
       def on_axis_preceding_sibling(ast, input, &block)
         orig_input = original_input_literal
-        check      = literal('check')
-        root       = literal('root')
+        check      = literal(:check)
+        root       = literal(:root)
         node       = node_literal
-        parent     = literal('parent')
-        doc_node   = literal('doc_node')
+        parent     = literal(:parent)
+        doc_node   = literal(:doc_node)
 
         root_assign = orig_input.is_a?(XML::Node)
           .if_true { root.assign(orig_input.parent) }
           .else    { root.assign(orig_input) }
 
-        check_assign = check.assign(literal('false'))
+        check_assign = check.assign(self.false)
 
         parent_if = input.is_a?(XML::Node).and(input.parent)
           .if_true { parent.assign(input.parent) }
-          .else    { parent.assign(literal('nil')) }
+          .else    { parent.assign(self.nil) }
 
         each_node = root.each_node.add_block(doc_node) do
           compare = doc_node.eq(input).if_true { send_message(:break) }
@@ -460,7 +460,7 @@ module Oga
       def on_index_predicate(test, predicate, input)
         int1      = literal('1')
         index     = to_int(predicate)
-        index_var = literal('index')
+        index_var = literal(:index)
 
         inner = process(test, input) do |matched_test_node|
           index_var.eq(index).if_true { yield matched_test_node }
@@ -497,7 +497,7 @@ module Oga
         process(test, input) do |matched_test_node|
           catch_block = catch_message(:predicate_matched) do
             process(predicate, matched_test_node) do
-              throw_message(:predicate_matched, literal('true'))
+              throw_message(:predicate_matched, self.true)
             end
           end
 
@@ -521,7 +521,7 @@ module Oga
       # @see [#operator]
       #
       def on_eq(ast, input, &block)
-        conversion = literal('Conversion')
+        conversion = literal(XPath::Conversion)
 
         operator(ast, input) do |left, right|
           compatible_assign = mass_assign(
@@ -542,7 +542,7 @@ module Oga
       # @see [#operator]
       #
       def on_neq(ast, input, &block)
-        conversion = literal('Conversion')
+        conversion = literal(XPath::Conversion)
 
         operator(ast, input) do |left, right|
           compatible_assign = mass_assign(
@@ -559,7 +559,7 @@ module Oga
 
       OPERATORS.each do |callback, (conv_method, ruby_method)|
         define_method(callback) do |ast, input, &block|
-          conversion = literal('Conversion')
+          conversion = literal(XPath::Conversion)
 
           operator(ast, input) do |left, right|
             lval      = conversion.__send__(conv_method, left)
@@ -584,8 +584,8 @@ module Oga
       def on_pipe(ast, input, &block)
         left, right = *ast
 
-        union      = unique_literal('union')
-        conversion = literal('Conversion')
+        union      = unique_literal(:union)
+        conversion = literal(XPath::Conversion)
 
         left_push = process(left, input) do |node|
           union << node
@@ -638,7 +638,7 @@ module Oga
         name = ast.children[0]
 
         variables_literal.and(variables_literal[string(name)])
-          .or(send_message('raise', string("Undefined XPath variable: #{name}")))
+          .or(send_message(:raise, string("Undefined XPath variable: #{name}")))
       end
 
       ##
@@ -662,7 +662,7 @@ module Oga
       # @return [Oga::Ruby::Node]
       #
       def on_call_true(*)
-        literal('true')
+        self.true
       end
 
       ##
@@ -671,7 +671,7 @@ module Oga
       # @return [Oga::Ruby::Node]
       #
       def on_call_false(*)
-        literal('false')
+        self.false
       end
 
       ##
@@ -729,8 +729,6 @@ module Oga
         input.is_a?(XML::Node).or(input.is_a?(XML::Document))
       end
 
-      private
-
       # @param [#to_s] value
       # @return [Oga::Ruby::Node]
       def literal(value)
@@ -761,7 +759,22 @@ module Oga
       # @param [Array] args
       # @return [Oga::Ruby::Node]
       def send_message(name, *args)
-        Ruby::Node.new(:send, [nil, name, *args])
+        Ruby::Node.new(:send, [nil, name.to_s, *args])
+      end
+
+      # @return [Oga::Ruby::Node]
+      def nil
+        @nil ||= literal(:nil)
+      end
+
+      # @return [Oga::Ruby::Node]
+      def true
+        @true ||= literal(:true)
+      end
+
+      # @return [Oga::Ruby::Node]
+      def false
+        @false ||= literal(:false)
       end
 
       # @param [Oga::Ruby::Node] node
@@ -871,8 +884,8 @@ module Oga
       def operator(ast, input, optimize_first = true)
         left, right = *ast
 
-        left_var  = unique_literal('op_left')
-        right_var = unique_literal('op_right')
+        left_var  = unique_literal(:op_left)
+        right_var = unique_literal(:op_right)
 
         if return_nodeset?(left) and optimize_first
           left_ast = match_first_node(left, input)
@@ -908,7 +921,7 @@ module Oga
       # @return [Oga::Ruby::Node]
       #
       def backup_variable(variable, new)
-        backup = unique_literal('backup')
+        backup = unique_literal(:backup)
 
         backup.assign(variable)
           .followed_by(variable.assign(new))
@@ -918,22 +931,22 @@ module Oga
 
       # @return [Oga::Ruby::Node]
       def matched_literal
-        literal('matched')
+        literal(:matched)
       end
 
       # @return [Oga::Ruby::Node]
       def node_literal
-        literal('node')
+        literal(:node)
       end
 
       # @return [Oga::Ruby::Node]
       def original_input_literal
-        literal('original_input')
+        literal(:original_input)
       end
 
       # @return [Oga::Ruby::Node]
       def variables_literal
-        literal('variables')
+        literal(:variables)
       end
 
       # @param [AST::Node] ast
@@ -966,10 +979,10 @@ module Oga
       # @param [Symbol] name
       # @return [Oga::Ruby::Node]
       def catch_message(name)
-        send_message('catch', symbol(name)).add_block do
+        send_message(:catch, symbol(name)).add_block do
           # Ensure that the "catch" only returns a value when "throw" is
           # actually invoked.
-          yield.followed_by(literal('nil'))
+          yield.followed_by(self.nil)
         end
       end
 
@@ -977,7 +990,7 @@ module Oga
       # @param [Array] args
       # @return [Oga::Ruby::Node]
       def throw_message(name, *args)
-        send_message('throw', symbol(name), *args)
+        send_message(:throw, symbol(name), *args)
       end
 
       # @param [AST::Node] ast
