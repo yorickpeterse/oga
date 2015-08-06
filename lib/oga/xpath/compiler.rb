@@ -405,6 +405,44 @@ module Oga
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
+      def on_axis_preceding_sibling(ast, input, &block)
+        orig_input = original_input_literal
+        check      = literal('check')
+        root       = literal('root')
+        node       = node_literal
+        parent     = literal('parent')
+        doc_node   = literal('doc_node')
+
+        root_assign = orig_input.is_a?(XML::Node)
+          .if_true { root.assign(orig_input.parent) }
+          .else    { root.assign(orig_input) }
+
+        check_assign = check.assign(literal('false'))
+
+        parent_if = input.is_a?(XML::Node).and(input.parent)
+          .if_true { parent.assign(input.parent) }
+          .else    { parent.assign(literal('nil')) }
+
+        each_node = root.each_node.add_block(doc_node) do
+          compare = doc_node.eq(input).if_true { send_message(:break) }
+
+          match = doc_node.parent.eq(parent).if_true do
+            backup_variable(node, doc_node) do
+              process(ast, node, &block).if_true { yield node }
+            end
+          end
+
+          compare.followed_by(match)
+        end
+
+        root_assign.followed_by(check_assign)
+          .followed_by(parent_if)
+          .followed_by(each_node)
+      end
+
+      # @param [AST::Node] ast
+      # @param [Oga::Ruby::Node] input
+      # @return [Oga::Ruby::Node]
       def on_predicate(ast, input, &block)
         test, predicate = *ast
 
