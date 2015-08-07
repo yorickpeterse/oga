@@ -31,16 +31,16 @@ module Oga
       # @yieldparam [Oga::XML::Node] The current node.
       #
       def each_node
-        visit = children.to_a.dup # copy it since we're modifying the array
+        visit = children.to_a.reverse
 
         until visit.empty?
-          current = visit.shift
+          current = visit.pop
 
           catch :skip_children do
             yield current
 
             current.children.to_a.reverse_each do |child|
-              visit.unshift(child)
+              visit << child
             end
           end
         end
