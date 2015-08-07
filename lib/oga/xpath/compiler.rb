@@ -649,29 +649,149 @@ module Oga
       # @return [Oga::Ruby::Node]
       #
       def on_call(ast, input, &block)
-        name, args = *ast
+        name, *args = *ast
 
         handler = name.gsub('-', '_')
 
         send(:"on_call_#{handler}", input, *args, &block)
       end
 
-      ##
-      # Processes the `true()` function call.
-      #
       # @return [Oga::Ruby::Node]
-      #
       def on_call_true(*)
         self.true
       end
 
-      ##
-      # Processes the `false()` function call.
-      #
       # @return [Oga::Ruby::Node]
-      #
       def on_call_false(*)
         self.false
+      end
+
+      # @param [Oga::Ruby::Node] input
+      # @param [AST::Node] arg
+      # @return [Oga::Ruby::Node]
+      def on_call_boolean(input, arg)
+        arg_ast    = try_match_first_node(arg, input)
+        call_arg   = unique_literal(:call_arg)
+        conversion = literal(Conversion)
+
+        call_arg.assign(arg_ast)
+          .followed_by(conversion.to_boolean(call_arg))
+      end
+
+      # @param [Oga::Ruby::Node] input
+      # @param [AST::Node] arg
+      # @return [Oga::Ruby::Node]
+      def on_call_ceiling(input, arg)
+        arg_ast    = try_match_first_node(arg, input)
+        call_arg   = unique_literal(:call_arg)
+        conversion = literal(Conversion)
+
+        initial_assign = call_arg.assign(arg_ast)
+        float_assign   = call_arg.assign(conversion.to_float(call_arg))
+
+        if_nan = call_arg.nan?
+          .if_true { call_arg }
+          .else    { call_arg.ceil.to_f }
+
+        initial_assign.followed_by(float_assign)
+          .followed_by(if_nan)
+      end
+
+      # @param [Oga::Ruby::Node] input
+      # @param [AST::Node] arg
+      # @return [Oga::Ruby::Node]
+      def on_call_floor(input, arg)
+        arg_ast    = try_match_first_node(arg, input)
+        call_arg   = unique_literal(:call_arg)
+        conversion = literal(Conversion)
+
+        initial_assign = call_arg.assign(arg_ast)
+        float_assign   = call_arg.assign(conversion.to_float(call_arg))
+
+        if_nan = call_arg.nan?
+          .if_true { call_arg }
+          .else    { call_arg.floor.to_f }
+
+        initial_assign.followed_by(float_assign)
+          .followed_by(if_nan)
+      end
+
+      # @param [Oga::Ruby::Node] input
+      # @param [AST::Node] arg
+      # @return [Oga::Ruby::Node]
+      def on_call_round(input, arg)
+        arg_ast    = try_match_first_node(arg, input)
+        call_arg   = unique_literal(:call_arg)
+        conversion = literal(Conversion)
+
+        initial_assign = call_arg.assign(arg_ast)
+        float_assign   = call_arg.assign(conversion.to_float(call_arg))
+
+        if_nan = call_arg.nan?
+          .if_true { call_arg }
+          .else    { call_arg.round.to_f }
+
+        initial_assign.followed_by(float_assign)
+          .followed_by(if_nan)
+      end
+
+      # @param [Oga::Ruby::Node] input
+      # @param [Array<AST::Node>] args
+      # @return [Oga::Ruby::Node]
+      def on_call_concat(input, *args)
+        conversion  = literal(Conversion)
+        assigns     = []
+        conversions = []
+
+        args.each do |arg|
+          arg_var = unique_literal(:concat_arg)
+          arg_ast = try_match_first_node(arg, input)
+
+          assigns     << arg_var.assign(arg_ast)
+          conversions << conversion.to_string(arg_var)
+        end
+
+        assigns.inject(:followed_by)
+          .followed_by(conversions.inject(:+))
+      end
+
+      # @param [Oga::Ruby::Node] input
+      # @param [AST::Node] haystack_ast
+      # @param [AST::Node] needle_ast
+      # @return [Oga::Ruby::Node]
+      def on_call_contains(input, haystack, needle)
+        haystack_lit = unique_literal(:haystack)
+        needle_lit   = unique_literal(:needle)
+        conversion   = literal(Conversion)
+
+        haystack_ast = try_match_first_node(haystack, input)
+        needle_ast   = try_match_first_node(needle, input)
+
+        include_call = conversion.to_string(haystack_lit)
+          .include?(conversion.to_string(needle_lit))
+
+        haystack_lit.assign(haystack_ast)
+          .followed_by(needle_lit.assign(needle_ast))
+          .followed_by(include_call)
+      end
+
+      # @param [Oga::Ruby::Node] input
+      # @param [AST::Node] arg
+      # @return [Oga::Ruby::Node]
+      def on_call_count(input, arg)
+        count  = unique_literal(:count)
+        assign = count.assign(literal('0.0'))
+
+        unless return_nodeset?(arg)
+          raise TypeError, 'count() can only operate on NodeSet instances'
+        end
+
+        increment = process(arg, input) do
+          count.assign(count + literal('1'))
+        end
+
+        assign.followed_by(increment)
+          .followed_by(count)
       end
 
       ##
@@ -819,6 +939,19 @@ module Oga
       end
 
       ##
+      # Tries to match the first node in a set, otherwise processes it as usual.
+      #
+      # @see [#match_first_node]
+      #
+      def try_match_first_node(ast, input, optimize_first = true)
+        if return_nodeset?(ast) and optimize_first
+          match_first_node(ast, input)
+        else
+          process(ast, input)
+        end
+      end
+
+      ##
       # Generates the code for an operator.
       #
       # The generated code is optimized so that expressions such as `a/b = c`
@@ -887,17 +1020,8 @@ module Oga
         left_var  = unique_literal(:op_left)
         right_var = unique_literal(:op_right)
 
-        if return_nodeset?(left) and optimize_first
-          left_ast = match_first_node(left, input)
-        else
-          left_ast = process(left, input)
-        end
-
-        if return_nodeset?(right) and optimize_first
-          right_ast = match_first_node(right, input)
-        else
-          right_ast = process(right, input)
-        end
+        left_ast  = try_match_first_node(left, input, optimize_first)
+        right_ast = try_match_first_node(right, input, optimize_first)
 
         initial_assign = left_var.assign(left_ast.wrap)
           .followed_by(right_var.assign(right_ast.wrap))
