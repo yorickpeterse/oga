@@ -176,6 +176,12 @@ describe Oga::XPath::Conversion do
         described_class.to_float(node).should == 10.5
       end
     end
+
+    describe 'using a NilClass' do
+      it 'returns Float::NAN' do
+        described_class.to_float(nil).should be_nan
+      end
+    end
   end
 
   describe 'to_boolean' do
