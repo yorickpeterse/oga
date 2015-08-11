@@ -73,16 +73,18 @@ module Oga
         vars = variables_literal.assign(self.nil)
 
         proc_ast = literal(:lambda).add_block(document, vars) do
-          if return_nodeset?(ast)
-            input_assign = original_input_literal.assign(document)
+          input_assign = original_input_literal.assign(document)
 
-            matched.assign(literal(XML::NodeSet).new)
+          if return_nodeset?(ast)
+            body = matched.assign(literal(XML::NodeSet).new)
               .followed_by(input_assign)
               .followed_by(ruby_ast)
               .followed_by(matched)
           else
-            ruby_ast
+            body = ruby_ast
           end
+
+          input_assign.followed_by(body)
         end
 
         generator = Ruby::Generator.new
@@ -792,6 +794,68 @@ module Oga
 
         assign.followed_by(increment)
           .followed_by(count)
+      end
+
+      ##
+      # Processes the `id()` function call.
+      #
+      # The XPath specification states that this function's behaviour should be
+      # controlled by a DTD. If a DTD were to specify that the ID attribute for
+      # a certain element would be "foo" then this function should use said
+      # attribute.
+      #
+      # Oga does not support DTD parsing/evaluation and as such always uses the
+      # "id" attribute.
+      #
+      # This function searches the entire document for a matching node,
+      # regardless of the current position.
+      #
+      # @param [Oga::Ruby::Node] input
+      # @param [AST::Node] arg
+      # @return [Oga::Ruby::Node]
+      #
+      def on_call_id(input, arg)
+        orig_input = original_input_literal
+        node       = node_literal
+        ids_var    = unique_literal('ids')
+        matched    = unique_literal('id_matched')
+        id_str_var = unique_literal('id_string')
+        attr_var   = unique_literal('attr')
+
+        matched_assign = matched.assign(literal(XML::NodeSet).new)
+
+        # When using some sort of path we'll want the text of all matched nodes.
+        if return_nodeset?(arg)
+          id_assign = ids_var.assign(literal(:[]))
+            .followed_by(process(arg, input) { |node| ids_var << node.text })
+
+        # For everything else we'll cast the value to a string and split it on
+        # every space.
+        else
+          conversion = literal(Conversion).to_string(ids_var).split(string(' '))
+
+          id_assign = ids_var.assign(process(arg, input))
+            .followed_by(ids_var.assign(conversion))
+        end
+
+        id_str_assign = id_str_var.assign(string('id'))
+
+        each_node = orig_input.each_node.add_block(node) do
+          node.is_a?(XML::Element).if_true do
+            assign = attr_var.assign(node.attribute(id_str_var))
+
+            compare = attr_var.and(ids_var.include?(attr_var.value)).if_true do
+              matched << node
+            end
+
+            assign.followed_by(compare)
+          end
+        end
+
+        matched_assign.followed_by(id_assign)
+          .followed_by(id_str_assign)
+          .followed_by(each_node)
+          .followed_by(matched)
       end
 
       ##
