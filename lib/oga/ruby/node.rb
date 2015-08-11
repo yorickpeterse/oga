@@ -165,7 +165,9 @@ module Oga
       # @param [Oga::Ruby::Node] other
       # @return [Oga::Ruby::Node]
       #
-      def followed_by(other)
+      def followed_by(other = nil)
+        other = yield if ::Kernel.block_given?
+
         Node.new(:followed_by, [self, other])
       end
 

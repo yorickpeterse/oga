@@ -143,13 +143,26 @@ describe Oga::Ruby::Node do
   end
 
   describe '#followed_by' do
-    it 'returns a Node chaining two nodes together' do
-      node1  = described_class.new(:lit, %w{A})
-      node2  = described_class.new(:lit, %w{B})
-      joined = node1.followed_by(node2)
+    describe 'without a block' do
+      it 'returns a Node chaining two nodes together' do
+        node1  = described_class.new(:lit, %w{A})
+        node2  = described_class.new(:lit, %w{B})
+        joined = node1.followed_by(node2)
 
-      joined.type.should == :followed_by
-      joined.to_a.should == [node1, node2]
+        joined.type.should == :followed_by
+        joined.to_a.should == [node1, node2]
+      end
+    end
+
+    describe 'with a block' do
+      it 'returns a Node chaining two nodes together' do
+        node1  = described_class.new(:lit, %w{A})
+        node2  = described_class.new(:lit, %w{B})
+        joined = node1.followed_by { node2 }
+
+        joined.type.should == :followed_by
+        joined.to_a.should == [node1, node2]
+      end
     end
   end
 

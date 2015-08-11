@@ -198,14 +198,15 @@ module Oga
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
       def on_axis_ancestor_or_self(ast, input, &block)
-        parent    = node_literal
-        self_test = process(ast, input, &block).if_true { yield input }
+        parent = node_literal
 
-        ancestors_test = input.each_ancestor.add_block(parent) do
-          process(ast, parent, &block).if_true { yield parent }
-        end
-
-        self_test.followed_by(ancestors_test)
+        process(ast, input, &block)
+          .if_true { yield input }
+          .followed_by do
+            input.each_ancestor.add_block(parent) do
+              process(ast, parent, &block).if_true { yield parent }
+            end
+          end
       end
 
       # @param [AST::Node] ast
@@ -226,13 +227,13 @@ module Oga
         node = node_literal
 
         backup_variable(node, input) do
-          self_test = process(ast, node, &block).if_true { yield node }
-
-          descendants_test = node.each_node.add_block(node) do
-            process(ast, node, &block).if_true { yield node }
-          end
-
-          self_test.followed_by(descendants_test)
+          process(ast, node, &block)
+            .if_true { yield node }
+            .followed_by do
+              node.each_node.add_block(node) do
+                process(ast, node, &block).if_true { yield node }
+              end
+            end
         end
       end
 
@@ -284,39 +285,36 @@ module Oga
         parent     = literal(:parent)
         root       = literal(:root)
 
-        root_assign = orig_input.is_a?(XML::Node)
+        orig_input.is_a?(XML::Node)
           .if_true { root.assign(orig_input.parent) }
           .else    { root.assign(orig_input) }
-
-        parent_if = input.is_a?(XML::Node).and(input.parent)
-          .if_true { parent.assign(input.parent) }
-          .else    { parent.assign(self.nil) }
-
-        check_assign = check.assign(self.false)
-
-        each_node = root.each_node.add_block(doc_node) do
-          doc_compare = doc_node.eq(input).if_true do
-            check.assign(self.true)
-              .followed_by(throw_message(:skip_children))
+          .followed_by do
+            input.is_a?(XML::Node).and(input.parent)
+              .if_true { parent.assign(input.parent) }
+              .else    { parent.assign(self.nil) }
           end
-
-          next_check = check.not.or(parent != doc_node.parent).if_true do
-            send_message(:next)
-          end
-
-          match_node = backup_variable(node, doc_node) do
-            process(ast, node, &block).if_true do
-              yield(node).followed_by(throw_message(:skip_children))
+          .followed_by(check.assign(self.false))
+          .followed_by do
+            root.each_node.add_block(doc_node) do
+              doc_node.eq(input)
+                .if_true do
+                  check.assign(self.true)
+                    .followed_by(throw_message(:skip_children))
+                end
+                .followed_by do
+                  check.not.or(parent != doc_node.parent).if_true do
+                    send_message(:next)
+                  end
+                end
+                .followed_by do
+                  backup_variable(node, doc_node) do
+                    process(ast, node, &block).if_true do
+                      yield(node).followed_by(throw_message(:skip_children))
+                    end
+                  end
+                end
             end
           end
-
-          doc_compare.followed_by(next_check)
-            .followed_by(match_node)
-        end
-
-        root_assign.followed_by(parent_if)
-          .followed_by(check_assign)
-          .followed_by(each_node)
       end
 
       # @param [AST::Node] ast
@@ -329,32 +327,29 @@ module Oga
         check      = literal(:check)
         root       = literal(:root)
 
-        root_assign = orig_input.is_a?(XML::Node)
+        orig_input.is_a?(XML::Node)
           .if_true { root.assign(orig_input.root_node) }
           .else    { root.assign(orig_input) }
-
-        check_assign = check.assign(self.false)
-
-        each_node = root.each_node.add_block(doc_node) do
-          doc_compare = doc_node.eq(input).if_true do
-            check.assign(self.true)
-              .followed_by(throw_message(:skip_children))
-          end
-
-          next_check = check.not.if_true { send_message(:next) }
-
-          match_node = backup_variable(node, doc_node) do
-            process(ast, node, &block).if_true do
-              yield node
+          .followed_by(check.assign(self.false))
+          .followed_by do
+            root.each_node.add_block(doc_node) do
+              doc_node.eq(input)
+                .if_true do
+                  check.assign(self.true)
+                    .followed_by(throw_message(:skip_children))
+                end
+                .followed_by do
+                  check.not.if_true { send_message(:next) }
+                end
+                .followed_by do
+                  backup_variable(node, doc_node) do
+                    process(ast, node, &block).if_true do
+                      yield node
+                    end
+                  end
+                end
             end
           end
-
-          doc_compare.followed_by(next_check)
-            .followed_by(match_node)
-        end
-
-        root_assign.followed_by(check_assign)
-          .followed_by(each_node)
       end
 
       # @param [AST::Node] ast
@@ -383,21 +378,19 @@ module Oga
         node       = node_literal
         doc_node   = literal(:doc_node)
 
-        root_assign = orig_input.is_a?(XML::Node)
+        orig_input.is_a?(XML::Node)
           .if_true { root.assign(orig_input.root_node) }
           .else    { root.assign(orig_input) }
-
-        each_node = root.each_node.add_block(doc_node) do
-          compare = doc_node.eq(input).if_true { send_message(:break) }
-
-          match = backup_variable(node, doc_node) do
-            process(ast, node, &block).if_true { yield node }
+          .followed_by do
+            root.each_node.add_block(doc_node) do
+              doc_node.eq(input).if_true { send_message(:break) }
+                .followed_by do
+                  backup_variable(node, doc_node) do
+                    process(ast, node, &block).if_true { yield node }
+                  end
+                end
+            end
           end
-
-          compare.followed_by(match)
-        end
-
-        root_assign.followed_by(each_node)
       end
 
       # @param [AST::Node] ast
@@ -411,31 +404,27 @@ module Oga
         parent     = literal(:parent)
         doc_node   = literal(:doc_node)
 
-        root_assign = orig_input.is_a?(XML::Node)
+        orig_input.is_a?(XML::Node)
           .if_true { root.assign(orig_input.parent) }
           .else    { root.assign(orig_input) }
-
-        check_assign = check.assign(self.false)
-
-        parent_if = input.is_a?(XML::Node).and(input.parent)
-          .if_true { parent.assign(input.parent) }
-          .else    { parent.assign(self.nil) }
-
-        each_node = root.each_node.add_block(doc_node) do
-          compare = doc_node.eq(input).if_true { send_message(:break) }
-
-          match = doc_node.parent.eq(parent).if_true do
-            backup_variable(node, doc_node) do
-              process(ast, node, &block).if_true { yield node }
+          .followed_by(check.assign(self.false))
+          .followed_by do
+            input.is_a?(XML::Node).and(input.parent)
+              .if_true { parent.assign(input.parent) }
+              .else    { parent.assign(self.nil) }
+          end
+          .followed_by do
+            root.each_node.add_block(doc_node) do
+              doc_node.eq(input).if_true { send_message(:break) }
+                .followed_by do
+                  doc_node.parent.eq(parent).if_true do
+                    backup_variable(node, doc_node) do
+                      process(ast, node, &block).if_true { yield node }
+                    end
+                  end
+                end
             end
           end
-
-          compare.followed_by(match)
-        end
-
-        root_assign.followed_by(check_assign)
-          .followed_by(parent_if)
-          .followed_by(each_node)
       end
 
       # @param [AST::Node] ast
@@ -464,12 +453,14 @@ module Oga
         index     = to_int(predicate)
         index_var = literal(:index)
 
-        inner = process(test, input) do |matched_test_node|
-          index_var.eq(index).if_true { yield matched_test_node }
-            .followed_by(index_var.assign(index_var + int1))
-        end
-
-        index_var.assign(int1).followed_by(inner)
+        index_var.assign(int1)
+          .followed_by do
+            process(test, input) do |matched_test_node|
+              index_var.eq(index)
+                .if_true { yield matched_test_node }
+                .followed_by(index_var.assign(index_var + int1))
+            end
+          end
       end
 
       ##
@@ -523,18 +514,15 @@ module Oga
       # @see [#operator]
       #
       def on_eq(ast, input, &block)
-        conversion = literal(XPath::Conversion)
+        conv = literal(Conversion)
 
         operator(ast, input) do |left, right|
-          compatible_assign = mass_assign(
-            [left, right],
-            conversion.to_compatible_types(left, right)
-          )
+          mass_assign([left, right], conv.to_compatible_types(left, right))
+            .followed_by do
+              operation = left.eq(right)
 
-          operation = left.eq(right)
-          operation = operation.if_true(&block) if block # In a predicate
-
-          compatible_assign.followed_by(operation)
+              block ? operation.if_true(&block) : operation
+            end
         end
       end
 
@@ -544,18 +532,15 @@ module Oga
       # @see [#operator]
       #
       def on_neq(ast, input, &block)
-        conversion = literal(XPath::Conversion)
+        conv = literal(Conversion)
 
         operator(ast, input) do |left, right|
-          compatible_assign = mass_assign(
-            [left, right],
-            conversion.to_compatible_types(left, right)
-          )
+          mass_assign([left, right], conv.to_compatible_types(left, right))
+            .followed_by do
+              operation = left != right
 
-          operation = left != right
-          operation = operation.if_true(&block) if block # In a predicate
-
-          compatible_assign.followed_by(operation)
+              block ? operation.if_true(&block) : operation
+            end
         end
       end
 
@@ -568,12 +553,7 @@ module Oga
             rval      = conversion.__send__(conv_method, right)
             operation = lval.__send__(ruby_method, rval)
 
-            # In a predicate
-            if block
-              operation = conversion.to_boolean(operation).if_true(&block)
-            end
-
-            operation
+            block ? conversion.to_boolean(operation).if_true(&block) : operation
           end
         end
       end
@@ -587,28 +567,15 @@ module Oga
         left, right = *ast
 
         union      = unique_literal(:union)
-        conversion = literal(XPath::Conversion)
+        conversion = literal(Conversion)
 
-        left_push = process(left, input) do |node|
-          union << node
-        end
-
-        right_push = process(right, input) do |node|
-          union << node
-        end
-
-        push_ast = union.assign(literal(XML::NodeSet).new)
-          .followed_by(left_push)
-          .followed_by(right_push)
-
-        # In a predicate
-        if block
-          final = conversion.to_boolean(union).if_true(&block)
-        else
-          final = union
-        end
-
-        push_ast.followed_by(final)
+        union.assign(literal(XML::NodeSet).new)
+          .followed_by(process(left, input) { |node| union << node })
+          .followed_by(process(right, input) { |node| union << node })
+          .followed_by do
+            # block present means we're in a predicate
+            block ? conversion.to_boolean(union).if_true(&block) : union
+          end
       end
 
       # @param [AST::Node] ast
@@ -688,15 +655,13 @@ module Oga
         call_arg   = unique_literal(:call_arg)
         conversion = literal(Conversion)
 
-        initial_assign = call_arg.assign(arg_ast)
-        float_assign   = call_arg.assign(conversion.to_float(call_arg))
-
-        if_nan = call_arg.nan?
-          .if_true { call_arg }
-          .else    { call_arg.ceil.to_f }
-
-        initial_assign.followed_by(float_assign)
-          .followed_by(if_nan)
+        call_arg.assign(arg_ast)
+          .followed_by do
+            call_arg.assign(conversion.to_float(call_arg))
+          end
+          .followed_by do
+            call_arg.nan?.if_true { call_arg }.else { call_arg.ceil.to_f }
+          end
       end
 
       # @param [Oga::Ruby::Node] input
@@ -707,15 +672,13 @@ module Oga
         call_arg   = unique_literal(:call_arg)
         conversion = literal(Conversion)
 
-        initial_assign = call_arg.assign(arg_ast)
-        float_assign   = call_arg.assign(conversion.to_float(call_arg))
-
-        if_nan = call_arg.nan?
-          .if_true { call_arg }
-          .else    { call_arg.floor.to_f }
-
-        initial_assign.followed_by(float_assign)
-          .followed_by(if_nan)
+        call_arg.assign(arg_ast)
+          .followed_by do
+            call_arg.assign(conversion.to_float(call_arg))
+          end
+          .followed_by do
+            call_arg.nan?.if_true { call_arg }.else { call_arg.floor.to_f }
+          end
       end
 
       # @param [Oga::Ruby::Node] input
@@ -726,15 +689,13 @@ module Oga
         call_arg   = unique_literal(:call_arg)
         conversion = literal(Conversion)
 
-        initial_assign = call_arg.assign(arg_ast)
-        float_assign   = call_arg.assign(conversion.to_float(call_arg))
-
-        if_nan = call_arg.nan?
-          .if_true { call_arg }
-          .else    { call_arg.round.to_f }
-
-        initial_assign.followed_by(float_assign)
-          .followed_by(if_nan)
+        call_arg.assign(arg_ast)
+          .followed_by do
+            call_arg.assign(conversion.to_float(call_arg))
+          end
+          .followed_by do
+            call_arg.nan?.if_true { call_arg }.else { call_arg.round.to_f }
+          end
       end
 
       # @param [Oga::Ruby::Node] input
@@ -766,15 +727,14 @@ module Oga
         needle_lit   = unique_literal(:needle)
         conversion   = literal(Conversion)
 
-        haystack_ast = try_match_first_node(haystack, input)
-        needle_ast   = try_match_first_node(needle, input)
-
-        include_call = conversion.to_string(haystack_lit)
-          .include?(conversion.to_string(needle_lit))
-
-        haystack_lit.assign(haystack_ast)
-          .followed_by(needle_lit.assign(needle_ast))
-          .followed_by(include_call)
+        haystack_lit.assign(try_match_first_node(haystack, input))
+          .followed_by do
+            needle_lit.assign(try_match_first_node(needle, input))
+          end
+          .followed_by do
+            conversion.to_string(haystack_lit)
+              .include?(conversion.to_string(needle_lit))
+          end
       end
 
       # @param [Oga::Ruby::Node] input
@@ -782,17 +742,16 @@ module Oga
       # @return [Oga::Ruby::Node]
       def on_call_count(input, arg)
         count  = unique_literal(:count)
-        assign = count.assign(literal('0.0'))
+        assign =
 
         unless return_nodeset?(arg)
           raise TypeError, 'count() can only operate on NodeSet instances'
         end
 
-        increment = process(arg, input) do
-          count.assign(count + literal('1'))
-        end
-
-        assign.followed_by(increment)
+        count.assign(literal('0.0'))
+          .followed_by do
+            process(arg, input) { count.assign(count + literal('1')) }
+          end
           .followed_by(count)
       end
 
@@ -822,39 +781,36 @@ module Oga
         id_str_var = unique_literal('id_string')
         attr_var   = unique_literal('attr')
 
-        matched_assign = matched.assign(literal(XML::NodeSet).new)
+        matched.assign(literal(XML::NodeSet).new)
+          .followed_by do
+            # When using some sort of path we'll want the text of all matched
+            # nodes.
+            if return_nodeset?(arg)
+              ids_var.assign(literal(:[])).followed_by do
+                process(arg, input) { |node| ids_var << node.text }
+              end
 
-        # When using some sort of path we'll want the text of all matched nodes.
-        if return_nodeset?(arg)
-          id_assign = ids_var.assign(literal(:[]))
-            .followed_by(process(arg, input) { |node| ids_var << node.text })
+            # For everything else we'll cast the value to a string and split it
+            # on every space.
+            else
+              conversion = literal(Conversion).to_string(ids_var)
+                .split(string(' '))
 
-        # For everything else we'll cast the value to a string and split it on
-        # every space.
-        else
-          conversion = literal(Conversion).to_string(ids_var).split(string(' '))
-
-          id_assign = ids_var.assign(process(arg, input))
-            .followed_by(ids_var.assign(conversion))
-        end
-
-        id_str_assign = id_str_var.assign(string('id'))
-
-        each_node = orig_input.each_node.add_block(node) do
-          node.is_a?(XML::Element).if_true do
-            assign = attr_var.assign(node.attribute(id_str_var))
-
-            compare = attr_var.and(ids_var.include?(attr_var.value)).if_true do
-              matched << node
+              ids_var.assign(process(arg, input))
+                .followed_by(ids_var.assign(conversion))
             end
-
-            assign.followed_by(compare)
           end
-        end
-
-        matched_assign.followed_by(id_assign)
-          .followed_by(id_str_assign)
-          .followed_by(each_node)
+          .followed_by(id_str_var.assign(string('id')))
+          .followed_by do
+            orig_input.each_node.add_block(node) do
+              node.is_a?(XML::Element).if_true do
+                attr_var.assign(node.attribute(id_str_var)).followed_by do
+                  attr_var.and(ids_var.include?(attr_var.value))
+                    .if_true { matched << node }
+                end
+              end
+            end
+          end
           .followed_by(matched)
       end
 
@@ -1089,10 +1045,7 @@ module Oga
 
         initial_assign = left_var.assign(left_ast.wrap)
           .followed_by(right_var.assign(right_ast.wrap))
-
-        blockval = yield left_var, right_var
-
-        initial_assign.followed_by(blockval)
+          .followed_by { yield left_var, right_var }
       end
 
       ##
