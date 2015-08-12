@@ -106,13 +106,9 @@ module Oga
         send("on_#{ast.type}", ast, input, &block)
       end
 
-      ##
-      # Processes a relative path.
-      #
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
-      #
       def on_path(ast, input, &block)
         ruby_ast   = nil
         var_name   = node_literal
@@ -464,22 +460,7 @@ module Oga
       end
 
       ##
-      # Processes a predicate using an expression.
-      #
-      # This method generates Ruby code that roughly looks like the following:
-      #
-      #     if catch :predicate_matched do
-      #         node.children.each do |node|
-      #
-      #         if some_condition_that_matches_a_predicate
-      #           throw :predicate_matched, true
-      #         end
-      #
-      #         nil
-      #       end
-      #
-      #       matched.push(node)
-      #     end
+      # Processes a predicate using an expression (e.g. a path).
       #
       # @param [AST::Node] test
       # @param [AST::Node] predicate
@@ -829,42 +810,26 @@ module Oga
         send(:"on_type_test_#{handler}", input, &block)
       end
 
-      ##
-      # Processes the `comment()` type test.
-      #
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
-      #
       def on_type_test_comment(input)
         input.is_a?(XML::Comment)
       end
 
-      ##
-      # Processes the `text()` type test.
-      #
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
-      #
       def on_type_test_text(input)
         input.is_a?(XML::Text)
       end
 
-      ##
-      # Processes the `processing-instruction()` type test.
-      #
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
-      #
       def on_type_test_processing_instruction(input)
         input.is_a?(XML::ProcessingInstruction)
       end
 
-      ##
-      # Processes the `node()` type test.
-      #
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
-      #
       def on_type_test_node(input)
         input.is_a?(XML::Node).or(input.is_a?(XML::Document))
       end
@@ -1096,11 +1061,9 @@ module Oga
         literal(ast.children[0].to_i.to_s)
       end
 
-      ##
       # @param [Array] vars The variables to assign.
       # @param [Oga::Ruby::Node] value
       # @return [Oga::Ruby::Node]
-      #
       def mass_assign(vars, value)
         Ruby::Node.new(:massign, [vars, value])
       end
