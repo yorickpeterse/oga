@@ -379,7 +379,8 @@ module Oga
           .else    { root.assign(orig_input) }
           .followed_by do
             root.each_node.add_block(doc_node) do
-              doc_node.eq(input).if_true { send_message(:break) }
+              doc_node.eq(input)
+                .if_true { self.break }
                 .followed_by do
                   backup_variable(node, doc_node) do
                     process(ast, node, &block).if_true { yield node }
@@ -411,7 +412,8 @@ module Oga
           end
           .followed_by do
             root.each_node.add_block(doc_node) do
-              doc_node.eq(input).if_true { send_message(:break) }
+              doc_node.eq(input)
+                .if_true { self.break }
                 .followed_by do
                   doc_node.parent.eq(parent).if_true do
                     backup_variable(node, doc_node) do
@@ -469,13 +471,12 @@ module Oga
       #
       def on_expression_predicate(test, predicate, input)
         process(test, input) do |matched_test_node|
-          catch_block = catch_message(:predicate_matched) do
+          catch_message(:predicate_matched) do
             process(predicate, matched_test_node) do
               throw_message(:predicate_matched, self.true)
             end
           end
-
-          catch_block.if_true { yield matched_test_node }
+          .if_true { yield matched_test_node }
         end
       end
 
@@ -781,7 +782,9 @@ module Oga
                 .followed_by(ids_var.assign(conversion))
             end
           end
-          .followed_by(id_str_var.assign(string('id')))
+          .followed_by do
+            id_str_var.assign(string('id'))
+          end
           .followed_by do
             orig_input.each_node.add_block(node) do
               node.is_a?(XML::Element).if_true do
@@ -793,6 +796,54 @@ module Oga
             end
           end
           .followed_by(matched)
+      end
+
+      # @param [Oga::Ruby::Node] input
+      # @param [AST::Node] arg
+      # @return [Oga::Ruby::Node]
+      def on_call_lang(input, arg)
+        lang_var = unique_literal('lang')
+        node     = unique_literal('node')
+        found    = unique_literal('found')
+        xml_lang = unique_literal('xml_lang')
+        matched  = unique_literal('matched')
+
+        conversion = literal(Conversion)
+
+        ast = lang_var.assign(try_match_first_node(arg, input))
+          .followed_by do
+            lang_var.assign(conversion.to_string(lang_var))
+          end
+          .followed_by do
+            matched.assign(self.false)
+          end
+          .followed_by do
+            node.assign(input)
+          end
+          .followed_by do
+            xml_lang.assign(string('xml:lang'))
+          end
+          .followed_by do
+            node.respond_to?(symbol(:attribute)).while_true do
+              found.assign(node.get(xml_lang))
+                .followed_by do
+                  found.if_true do
+                    found.eq(lang_var)
+                      .if_true do
+                        if block_given?
+                          yield
+                        else
+                          matched.assign(self.true).followed_by(self.break)
+                        end
+                      end
+                      .else { self.break }
+                  end
+                end
+                .followed_by(node.assign(node.parent))
+            end
+          end
+
+        block_given? ? ast : ast.followed_by(matched)
       end
 
       ##
@@ -1095,6 +1146,11 @@ module Oga
       # @return [Oga::Ruby::Node]
       def throw_message(name, *args)
         send_message(:throw, symbol(name), *args)
+      end
+
+      # @return [Oga::Ruby::Node]
+      def break
+        send_message(:break)
       end
 
       # @param [AST::Node] ast
