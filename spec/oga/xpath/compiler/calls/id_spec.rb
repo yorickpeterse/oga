@@ -9,16 +9,37 @@ describe Oga::XPath::Compiler do
       @a2 = @document.children[0].children[1]
     end
 
-    it 'returns a node set containing the nodes with ID "a1"' do
-      evaluate_xpath(@document, 'id("a1")').should == node_set(@a1)
+    describe 'at the top level' do
+      describe 'using a string' do
+        it 'returns a NodeSet' do
+          evaluate_xpath(@document, 'id("a1")').should == node_set(@a1)
+        end
+      end
+
+      describe 'using a space separated string' do
+        it 'returns a NodeSet' do
+          evaluate_xpath(@document, 'id("a1 a2")').should == node_set(@a1, @a2)
+        end
+      end
+
+      describe 'using a path' do
+        it 'returns a NodeSet' do
+          evaluate_xpath(@document, 'id(root/a[2])').should == node_set(@a1)
+        end
+      end
     end
 
-    it 'returns a node set containing the nodes with ID "a1" or "a2"' do
-      evaluate_xpath(@document, 'id("a1 a2")').should == node_set(@a1, @a2)
-    end
+    describe 'in a predicate' do
+      describe 'using a string' do
+        it 'matches nodes when a non-empty NodeSet is returned' do
+          evaluate_xpath(@document, 'root/a[id("a1")]')
+            .should == node_set(@a1, @a2)
+        end
 
-    it 'returns a node set containing the nodes with an ID based on a path' do
-      evaluate_xpath(@document, 'id(root/a[2])').should == node_set(@a1)
+        it 'does not match nodes when an empty NodeSet is returned' do
+          evaluate_xpath(@document, 'root/a[id("foo")]').should == node_set
+        end
+      end
     end
   end
 end

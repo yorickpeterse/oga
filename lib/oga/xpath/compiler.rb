@@ -790,7 +790,7 @@ module Oga
               node.is_a?(XML::Element).if_true do
                 attr_var.assign(node.attribute(id_str_var)).followed_by do
                   attr_var.and(ids_var.include?(attr_var.value))
-                    .if_true { matched << node }
+                    .if_true { block_given? ? yield : matched << node }
                 end
               end
             end
