@@ -434,7 +434,7 @@ module Oga
         if number?(predicate)
           on_predicate_index(test, predicate, input, &block)
         else
-          on_preidcate_expression(test, predicate, input, &block)
+          on_predicate_expression(test, predicate, input, &block)
         end
       end
 
@@ -469,7 +469,7 @@ module Oga
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
       #
-      def on_preidcate_expression(test, predicate, input)
+      def on_predicate_expression(test, predicate, input)
         process(test, input) do |matched_test_node|
           catch_message(:predicate_matched) do
             process(predicate, matched_test_node) do
