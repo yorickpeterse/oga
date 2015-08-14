@@ -92,6 +92,12 @@ describe Oga::XPath::Evaluator do
 
         @evaluator.node_matches?(text, s(:test, nil, 'a')).should == false
       end
+
+      it 'returns true if a node is matched case insensitively' do
+        node = Oga::XML::Element.new(:name => 'DiV')
+
+        @evaluator.node_matches?(node, s(:test, nil, 'div')).should == true
+      end
     end
 
     describe 'with a custom namespace' do

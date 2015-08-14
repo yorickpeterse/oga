@@ -1691,7 +1691,9 @@ module Oga
       def name_matches?(xml_node, name)
         return false unless xml_node.respond_to?(:name)
 
-        name == STAR ? true : xml_node.name == name
+        return true if name == STAR
+
+        xml_node.name == name || xml_node.name.downcase == name.downcase 
       end
 
       ##
