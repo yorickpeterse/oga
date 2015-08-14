@@ -3,6 +3,24 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 1.2.2 - 2015-08-14
+
+### Race condition in the LRU class
+
+A race condition in the LRU class has been resolved. This race condition would
+result in errors such as "ConcurrencyError: Detected invalid array contents due
+to unsynchronized modifications with concurrent users" on JRuby or
+"ArgumentError: negative array size" on Rubinius.
+
+See commit 32b75bf62c0c1770b68e7e1a9918718943d1c04c for more information.
+
+### Lexing of void elements with explicit closing tags
+
+Void elements followed by an explicit closing tag (e.g. `<param></param>`) are
+now lexed properly. Thanks to Jakub Pawlowicz for fixing this.
+
+See commit ed3cbe7975eeb9d142c4f649334038b6389abc0e for more information.
+
 ## 1.2.1 - 2015-07-01
 
 ### Better support for decoding unrecognized XML/HTML entities
