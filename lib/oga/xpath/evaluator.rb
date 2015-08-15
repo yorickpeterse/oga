@@ -1693,7 +1693,7 @@ module Oga
 
         return true if name == STAR
 
-        xml_node.name == name || xml_node.name.downcase == name.downcase 
+        xml_node.name == name || xml_node.name.casecmp(name).zero?
       end
 
       ##
