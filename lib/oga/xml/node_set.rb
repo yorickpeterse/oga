@@ -42,10 +42,15 @@ module Oga
       # @param [Oga::XML::NodeSet] owner The owner of the set.
       #
       def initialize(nodes = [], owner = nil)
-        @nodes = nodes
-        @owner = owner
+        @nodes    = nodes
+        @owner    = owner
+        @existing = {}
 
-        @nodes.each { |node| take_ownership(node) } if owner
+        @nodes.each do |node|
+          mark_existing(node)
+
+          take_ownership(node) if @owner
+        end
       end
 
       ##
@@ -103,11 +108,13 @@ module Oga
       # @param [Oga::XML::Node] node
       #
       def push(node)
-        return if @nodes.include?(node)
+        return if exists?(node)
 
         @nodes << node
 
-        take_ownership(node)
+        mark_existing(node)
+
+        take_ownership(node) if @owner
       end
 
       alias_method :<<, :push
@@ -118,11 +125,13 @@ module Oga
       # @param [Oga::XML::Node] node
       #
       def unshift(node)
-        return if @nodes.include?(node)
+        return if exists?(node)
 
         @nodes.unshift(node)
 
-        take_ownership(node)
+        mark_existing(node)
+
+        take_ownership(node) if @owner
       end
 
       ##
@@ -133,7 +142,11 @@ module Oga
       def shift
         node = @nodes.shift
 
-        remove_ownership(node)
+        if node
+          unmark_existing(node)
+
+          remove_ownership(node) if @owner
+        end
 
         node
       end
@@ -146,7 +159,11 @@ module Oga
       def pop
         node = @nodes.pop
 
-        remove_ownership(node)
+        if node
+          unmark_existing(node)
+
+          remove_ownership(node) if @owner
+        end
 
         node
       end
@@ -158,11 +175,13 @@ module Oga
       # @param [Oga::XML::Node] node
       #
       def insert(index, node)
-        return if @nodes.include?(node)
+        return if exists?(node)
 
         @nodes.insert(index, node)
 
-        take_ownership(node)
+        mark_existing(node)
+
+        take_ownership(node) if @owner
       end
 
       ##
@@ -257,7 +276,11 @@ module Oga
       def delete(node)
         removed = @nodes.delete(node)
 
-        remove_ownership(removed) if removed
+        if removed
+          unmark_existing(removed)
+
+          remove_ownership(removed) if @owner
+        end
 
         removed
       end
@@ -317,7 +340,7 @@ module Oga
       # @param [Oga::XML::Node] node
       #
       def take_ownership(node)
-        node.node_set = self if owner
+        node.node_set = self
       end
 
       ##
@@ -327,6 +350,22 @@ module Oga
       #
       def remove_ownership(node)
         node.node_set = nil if node.node_set == self
+      end
+
+      # @param [Oga::XML::Node|Oga::XML::Attribute] node
+      # @return [TrueClass|FalseClass]
+      def exists?(node)
+        @existing.key?(node)
+      end
+
+      # @param [Oga::XML::Node|Oga::XML::Attribute] node
+      def mark_existing(node)
+        @existing[node] = true
+      end
+
+      # @param [Oga::XML::Node|Oga::XML::Attribute] node
+      def unmark_existing(node)
+        @existing.delete(node)
       end
     end # NodeSet
   end # XML
