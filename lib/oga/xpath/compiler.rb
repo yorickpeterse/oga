@@ -846,6 +846,20 @@ module Oga
         block_given? ? ast : ast.followed_by(matched)
       end
 
+      # @param [Oga::Ruby::Node] input
+      # @param [AST::Node] arg
+      # @return [Oga::Ruby::Node]
+      def on_call_local_name(input, arg = nil)
+        first_node_or_argument(input, arg) do |arg_var|
+          arg_var
+            .if_true do
+              ensure_element_or_attribute(arg_var)
+                .followed_by { block_given? ? yield : arg_var.name }
+            end
+            .else { string('') }
+        end
+      end
+
       ##
       # Delegates type tests to specific handlers.
       #
@@ -918,6 +932,13 @@ module Oga
         Ruby::Node.new(:send, [nil, name.to_s, *args])
       end
 
+      # @param [Class] klass
+      # @param [String] message
+      # @return [Oga::Ruby::Node]
+      def raise_message(klass, message)
+        send_message(:raise, literal(klass), string(message))
+      end
+
       # @return [Oga::Ruby::Node]
       def nil
         @nil ||= literal(:nil)
@@ -985,6 +1006,24 @@ module Oga
         else
           process(ast, input)
         end
+      end
+
+      # @param [Oga::Ruby::Node] input
+      # @return [Oga::Ruby::Node]
+      def ensure_element_or_attribute(input)
+        element_or_attribute(input).not.if_true do
+          raise_message(TypeError, 'argument is not an Element or Attribute')
+        end
+      end
+
+      # @param [Oga::Ruby::Node] input
+      # @param [AST::Ruby] arg
+      # @return [Oga::Ruby::Node]
+      def first_node_or_argument(input, arg = nil)
+        arg_ast = arg ? try_match_first_node(arg, input) : input
+        arg_var = unique_literal(:first_node_or_argument)
+
+        arg_var.assign(arg_ast).followed_by { yield arg_var }
       end
 
       ##
