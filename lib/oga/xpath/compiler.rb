@@ -1103,6 +1103,28 @@ module Oga
           end
       end
 
+      # @param [Oga::Ruby::Node] input
+      # @param [AST::Node] arg
+      # @return [Oga::Ruby::Node]
+      def on_call_sum(input, arg)
+        unless return_nodeset?(arg)
+          raise TypeError, 'sum() can only operate on a path, axis or predicate'
+        end
+
+        sum_var    = unique_literal(:sum)
+        conversion = literal(Conversion)
+
+        sum_var.assign(literal(0.0))
+          .followed_by do
+            process(arg, input) do |matched_node|
+              sum_var.assign(sum_var + conversion.to_float(matched_node.text))
+            end
+          end
+          .followed_by do
+            block_given? ? sum_var.zero?.not.if_true { yield } : sum_var
+          end
+      end
+
       ##
       # Delegates type tests to specific handlers.
       #
