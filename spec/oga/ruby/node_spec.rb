@@ -34,7 +34,11 @@ describe Oga::Ruby::Node do
       node  = left.assign(right)
 
       node.type.should == :assign
-      node.to_a.should == [left, right]
+
+      node.to_a[0].should == left
+
+      node.to_a[1].type.should    == :begin
+      node.to_a[1].to_a[0].should == right
     end
   end
 

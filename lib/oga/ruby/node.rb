@@ -56,11 +56,14 @@ module Oga
       ##
       # Returns an assignment node.
       #
+      # This method wraps assigned values in a begin/end block to ensure that
+      # multiple lines of code result in the proper value being assigned.
+      #
       # @param [Oga::Ruby::Node] other
       # @return [Oga::Ruby::Node]
       #
       def assign(other)
-        Node.new(:assign, [self, other])
+        Node.new(:assign, [self, other.wrap])
       end
 
       ##

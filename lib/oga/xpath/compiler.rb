@@ -1358,49 +1358,6 @@ module Oga
       #
       # Everything else is processed the usual (and possibly slower) way.
       #
-      # The variables used by this operator are assigned a "begin" block
-      # containing the actual result. This ensures that each variable is
-      # assigned the result of the entire block instead of the first expression
-      # that occurs.
-      #
-      # For example, take the following expression:
-      #
-      #     10 = 10 = 20
-      #
-      # Without a "begin" we'd end up with the following code (trimmed for
-      # readability):
-      #
-      #     eq_left3 = eq_left1 = ...
-      #
-      #     eq_left2 = ...
-      #
-      #     eq_left1, eq_left2 = to_compatible_types(eq_left1, eq_left2)
-      #
-      #     eq_left1 == eq_left2
-      #
-      #     eq_left4 = ...
-      #
-      #     eq_left3 == eq_left4
-      #
-      # This would be incorrect as the first boolean expression (`10 = 10`)
-      # would be ignored. By using a "begin" we instead get the following:
-      #
-      #     eq_left3 = begin
-      #       eq_left1 = ...
-      #
-      #       eq_left2 = ...
-      #
-      #       eq_left1, eq_left2 = to_compatible_types(eq_left1, eq_left2)
-      #
-      #       eq_left1 == eq_left2
-      #     end
-      #
-      #     eq_left4 = begin
-      #       ...
-      #     end
-      #
-      #     eq_left3 == eq_left4
-      #
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @param [TrueClass|FalseClass] optimize_first
@@ -1415,8 +1372,8 @@ module Oga
         left_ast  = try_match_first_node(left, input, optimize_first)
         right_ast = try_match_first_node(right, input, optimize_first)
 
-        initial_assign = left_var.assign(left_ast.wrap)
-          .followed_by(right_var.assign(right_ast.wrap))
+        initial_assign = left_var.assign(left_ast)
+          .followed_by(right_var.assign(right_ast))
           .followed_by { yield left_var, right_var }
       end
 
