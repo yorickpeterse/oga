@@ -874,6 +874,25 @@ module Oga
         end
       end
 
+      # @param [Oga::Ruby::Node] input
+      # @param [AST::Node] arg
+      # @return [Oga::Ruby::Node]
+      def on_call_namespace_uri(input, arg = nil)
+        default = string('')
+
+        first_node_or_argument(input, arg) do |arg_var|
+          arg_var
+            .if_true do
+              ensure_element_or_attribute(arg_var).followed_by do
+                arg_var.namespace
+                  .if_true { block_given? ? yield : arg_var.namespace.uri }
+                  .else    { default } # no yield so predicates aren't matched
+              end
+            end
+            .else { default }
+        end
+      end
+
       ##
       # Delegates type tests to specific handlers.
       #
