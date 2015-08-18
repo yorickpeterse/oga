@@ -63,7 +63,13 @@ module Oga
           value = value.text
         end
 
-        Float(value) rescue Float::NAN
+        if value == true
+          1.0
+        elsif value == false
+          0.0
+        else
+          Float(value) rescue Float::NAN
+        end
       end
 
       # @return [TrueClass|FalseClass]

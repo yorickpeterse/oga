@@ -182,6 +182,18 @@ describe Oga::XPath::Conversion do
         described_class.to_float(nil).should be_nan
       end
     end
+
+    describe 'using a TrueClass' do
+      it 'returns 1.0' do
+        described_class.to_float(true).should == 1.0
+      end
+    end
+
+    describe 'using a FalseClass' do
+      it 'returns 0.0' do
+        described_class.to_float(false).should == 0.0
+      end
+    end
   end
 
   describe 'to_boolean' do
