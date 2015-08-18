@@ -21,11 +21,23 @@ describe Oga::Ruby::Generator do
       val    = Oga::Ruby::Node.new(:lit, %w{10})
       assign = var.assign(val)
 
+      @generator.on_assign(assign).should == 'number = 10'
+    end
+
+    describe 'using a followed_by node' do
+      it 'returns a String' do
+      var    = Oga::Ruby::Node.new(:lit, %w{number})
+      val    = Oga::Ruby::Node.new(:lit, %w{10})
+      assign = var.assign(val.followed_by(val))
+
       @generator.on_assign(assign).should == <<-EOF
 number = begin
   10
+
+10
 end
-      EOF
+EOF
+      end
     end
   end
 

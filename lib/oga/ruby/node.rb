@@ -63,7 +63,11 @@ module Oga
       # @return [Oga::Ruby::Node]
       #
       def assign(other)
-        Node.new(:assign, [self, other.wrap])
+        if other.type == :followed_by
+          other = other.wrap
+        end
+
+        Node.new(:assign, [self, other])
       end
 
       ##
