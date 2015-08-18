@@ -1125,6 +1125,51 @@ module Oga
           end
       end
 
+      # @param [Oga::Ruby::Node] input
+      # @param [AST::Node] source
+      # @param [AST::Node] find
+      # @param [AST::Node] replace
+      # @return [Oga::Ruby::Node]
+      def on_call_translate(input, source, find, replace)
+        source_var   = unique_literal(:source)
+        find_var     = unique_literal(:find)
+        replace_var  = unique_literal(:replace)
+        replaced_var = unique_literal(:replaced)
+        conversion   = literal(Conversion)
+
+        char  = unique_literal(:char)
+        index = unique_literal(:index)
+
+        source_var.assign(try_match_first_node(source, input))
+          .followed_by do
+            replaced_var.assign(conversion.to_string(source_var))
+          end
+          .followed_by do
+            find_var.assign(try_match_first_node(find, input))
+          end
+          .followed_by do
+            find_var.assign(conversion.to_string(find_var).chars.to_array)
+          end
+          .followed_by do
+            replace_var.assign(try_match_first_node(replace, input))
+          end
+          .followed_by do
+            replace_var.assign(conversion.to_string(replace_var).chars.to_array)
+          end
+          .followed_by do
+            find_var.each_with_index.add_block(char, index) do
+              replace_with = replace_var[index]
+                .if_true { replace_var[index] }
+                .else    { string('') }
+
+              replaced_var.assign(replaced_var.gsub(char, replace_with))
+            end
+          end
+          .followed_by do
+            replaced_var
+          end
+      end
+
       ##
       # Delegates type tests to specific handlers.
       #

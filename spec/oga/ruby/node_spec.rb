@@ -17,6 +17,16 @@ describe Oga::Ruby::Node do
     end
   end
 
+  describe '#to_array' do
+    it 'returns a send Node' do
+      number = described_class.new(:lit, %w{10})
+      node   = number.to_array
+
+      node.type.should == :send
+      node.to_a.should == [number, :to_a]
+    end
+  end
+
   describe '#assign' do
     it 'returns an assignment Node' do
       left  = described_class.new(:lit, %w{number})

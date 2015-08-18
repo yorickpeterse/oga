@@ -45,6 +45,15 @@ module Oga
       end
 
       ##
+      # Returns a "to_a" call node.
+      #
+      # @return [Oga::Ruby::Node]
+      #
+      def to_array
+        Node.new(:send, [self, :to_a])
+      end
+
+      ##
       # Returns an assignment node.
       #
       # @param [Oga::Ruby::Node] other
