@@ -1,3 +1,4 @@
+require 'bundler/setup'
 require 'stringio'
 require 'benchmark'
 require 'benchmark/ips'
