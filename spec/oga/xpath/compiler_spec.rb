@@ -44,7 +44,7 @@ describe Oga::XPath::Compiler do
       ast = parse_xpath('foo')
 
       # Only the input document is required.
-      @compiler.compile(ast).arity.should == 1
+      @compiler.compile(ast).arity.should == -2
     end
 
     describe 'calling the compiled Proc' do
