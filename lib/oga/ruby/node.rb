@@ -149,6 +149,15 @@ module Oga
       end
 
       ##
+      # Wraps the current node in an `if !...` statement.
+      #
+      # @see [#if_true]
+      #
+      def if_false
+        self.not.if_true { yield }
+      end
+
+      ##
       # Wraps the current node in a `while` statement.
       #
       # The body of this statement is set to the return value of the supplied
