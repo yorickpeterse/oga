@@ -4,6 +4,8 @@ module Oga
     # Class for storing information about a single XML attribute.
     #
     class Attribute
+      include ExpandedName
+
       # The name of the attribute.
       # @return [String]
       attr_accessor :name

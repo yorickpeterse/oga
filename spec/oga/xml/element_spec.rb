@@ -608,4 +608,22 @@ describe Oga::XML::Element do
       parent.flush_namespaces_cache
     end
   end
+
+  describe '#expanded_name' do
+    describe 'with a namespace' do
+      it 'returns a String' do
+        element = described_class.new(:namespace_name => 'foo', :name => 'bar')
+
+        element.expanded_name.should == 'foo:bar'
+      end
+    end
+
+    describe 'without a namespace' do
+      it 'returns a String' do
+        element = described_class.new(:name => 'bar')
+
+        element.expanded_name.should == 'bar'
+      end
+    end
+  end
 end

@@ -6,6 +6,7 @@ module Oga
     #
     class Element < Node
       include Querying
+      include ExpandedName
 
       # @return [String]
       attr_reader :namespace_name
