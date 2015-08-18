@@ -714,8 +714,10 @@ module Oga
             needle_lit.assign(try_match_first_node(needle, input))
           end
           .followed_by do
-            conversion.to_string(haystack_lit)
+            converted = conversion.to_string(haystack_lit)
               .include?(conversion.to_string(needle_lit))
+
+            block_given? ? converted.if_true { yield } : converted
           end
       end
 
@@ -961,11 +963,7 @@ module Oga
             converted = conversion.to_string(haystack_var)
               .start_with?(conversion.to_string(needle_var))
 
-            if block_given?
-              converted.if_true { yield }
-            else
-              converted
-            end
+            block_given? ? converted.if_true { yield } : converted
           end
       end
 
