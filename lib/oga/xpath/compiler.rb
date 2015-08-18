@@ -447,7 +447,7 @@ module Oga
       # @return [Oga::Ruby::Node]
       #
       def on_predicate_index(test, predicate, input)
-        int1      = literal('1')
+        int1      = literal(1)
         index     = to_int(predicate)
         index_var = literal(:index)
 
@@ -732,9 +732,9 @@ module Oga
           raise TypeError, 'count() can only operate on NodeSet instances'
         end
 
-        count.assign(literal('0.0'))
+        count.assign(literal(0.0))
           .followed_by do
-            process(arg, input) { count.assign(count + literal('1')) }
+            process(arg, input) { count.assign(count + literal(1)) }
           end
           .followed_by(count)
       end
@@ -1063,6 +1063,46 @@ module Oga
           end
       end
 
+      # @param [Oga::Ruby::Node] input
+      # @param [AST::Node] haystack
+      # @param [AST::Node] start
+      # @param [AST::Node] length
+      # @return [Oga::Ruby::Node]
+      def on_call_substring(input, haystack, start, length = nil)
+        haystack_var = unique_literal(:haystack)
+        start_var    = unique_literal(:start)
+        stop_var     = unique_literal(:stop)
+        length_var   = unique_literal(:length)
+        conversion   = literal(Conversion)
+
+        haystack_var.assign(try_match_first_node(haystack, input))
+          .followed_by do
+            start_var.assign(try_match_first_node(start, input))
+              .followed_by do
+                start_var.assign(start_var - literal(1))
+              end
+          end
+          .followed_by do
+            if length
+              length_var.assign(try_match_first_node(length, input))
+                .followed_by do
+                  length_int = conversion.to_float(length_var)
+                    .to_i - literal(1)
+
+                  stop_var.assign(start_var + length_int)
+                end
+            else
+              stop_var.assign(literal(-1))
+            end
+          end
+          .followed_by do
+            substring = conversion
+              .to_string(haystack_var)[range(start_var, stop_var)]
+
+            block_given? ? substring.empty?.not.if_true { yield } : substring
+          end
+      end
+
       ##
       # Delegates type tests to specific handlers.
       #
@@ -1106,6 +1146,13 @@ module Oga
       # @return [Oga::Ruby::Node]
       def literal(value)
         Ruby::Node.new(:lit, [value.to_s])
+      end
+
+      # @param [Oga::Ruby::Node] start
+      # @param [Oga::Ruby::Node] stop
+      # @return [Oga::Ruby::Node]
+      def range(start, stop)
+        Ruby::Node.new(:range, [start, stop])
       end
 
       # @param [String] name
