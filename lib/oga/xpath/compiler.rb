@@ -944,6 +944,31 @@ module Oga
         end
       end
 
+      # @param [Oga::Ruby::Node] input
+      # @param [AST::Node] haystack
+      # @param [AST::Node] needle
+      # @return [Oga::Ruby::Node]
+      def on_call_starts_with(input, haystack, needle)
+        haystack_var = unique_literal(:haystack)
+        needle_var   = unique_literal(:needle)
+        conversion   = literal(Conversion)
+
+        haystack_var.assign(try_match_first_node(haystack, input))
+          .followed_by do
+            needle_var.assign(try_match_first_node(needle, input))
+          end
+          .followed_by do
+            converted = conversion.to_string(haystack_var)
+              .start_with?(conversion.to_string(needle_var))
+
+            if block_given?
+              converted.if_true { yield }
+            else
+              converted
+            end
+          end
+      end
+
       ##
       # Delegates type tests to specific handlers.
       #
