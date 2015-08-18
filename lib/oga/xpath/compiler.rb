@@ -609,7 +609,7 @@ module Oga
 
       # @return [Oga::Ruby::Node]
       def on_call_true(*)
-        self.true
+        block_given? ? yield : self.true
       end
 
       # @return [Oga::Ruby::Node]
@@ -625,8 +625,11 @@ module Oga
         call_arg   = unique_literal(:call_arg)
         conversion = literal(Conversion)
 
-        call_arg.assign(arg_ast)
-          .followed_by(conversion.to_boolean(call_arg))
+        call_arg.assign(arg_ast).followed_by do
+          converted = conversion.to_boolean(call_arg)
+
+          block_given? ? converted.if_true { yield } : converted
+        end
       end
 
       # @param [Oga::Ruby::Node] input
@@ -642,7 +645,9 @@ module Oga
             call_arg.assign(conversion.to_float(call_arg))
           end
           .followed_by do
-            call_arg.nan?.if_true { call_arg }.else { call_arg.ceil.to_f }
+            call_arg.nan?
+              .if_true { call_arg }
+              .else    { block_given? ? yield : call_arg.ceil.to_f }
           end
       end
 
@@ -659,7 +664,9 @@ module Oga
             call_arg.assign(conversion.to_float(call_arg))
           end
           .followed_by do
-            call_arg.nan?.if_true { call_arg }.else { call_arg.floor.to_f }
+            call_arg.nan?
+              .if_true { call_arg }
+              .else    { block_given? ? yield : call_arg.floor.to_f }
           end
       end
 
@@ -676,7 +683,9 @@ module Oga
             call_arg.assign(conversion.to_float(call_arg))
           end
           .followed_by do
-            call_arg.nan?.if_true { call_arg }.else { call_arg.round.to_f }
+            call_arg.nan?
+              .if_true { call_arg }
+              .else    { block_given? ? yield : call_arg.round.to_f }
           end
       end
 
@@ -696,8 +705,10 @@ module Oga
           conversions << conversion.to_string(arg_var)
         end
 
-        assigns.inject(:followed_by)
+        concatted = assigns.inject(:followed_by)
           .followed_by(conversions.inject(:+))
+
+        block_given? ? concatted.empty?.if_false { yield } : concatted
       end
 
       # @param [Oga::Ruby::Node] input
@@ -736,7 +747,9 @@ module Oga
           .followed_by do
             process(arg, input) { count.assign(count + literal(1)) }
           end
-          .followed_by(count)
+          .followed_by do
+            block_given? ? count.zero?.if_false { yield } : count
+          end
       end
 
       ##
