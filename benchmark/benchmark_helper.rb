@@ -2,8 +2,7 @@ require 'bundler/setup'
 require 'stringio'
 require 'benchmark'
 require 'benchmark/ips'
-
-require_relative '../lib/oga'
+require 'oga'
 
 # @return [File]
 def big_xml_file

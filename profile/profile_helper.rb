@@ -1,8 +1,7 @@
 require 'bundler/setup'
 require 'timeout'
 require 'stringio'
-
-require_relative '../lib/oga'
+require 'oga'
 
 Thread.abort_on_exception = true
 
