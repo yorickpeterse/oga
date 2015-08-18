@@ -893,6 +893,27 @@ module Oga
         end
       end
 
+      # @param [Oga::Ruby::Node] input
+      # @param [AST::Node] arg
+      # @return [Oga::Ruby::Node]
+      def on_call_normalize_space(input, arg = nil)
+        conversion = literal(Conversion)
+        norm_var   = unique_literal(:normalized)
+
+        find    = literal('/\s+/')
+        replace = string(' ')
+
+        first_node_or_argument(input, arg) do |arg_var|
+          norm_var
+            .assign(conversion.to_string(arg_var).strip.gsub(find, replace))
+            .followed_by do
+              norm_var.empty?
+                .if_true { string('') }
+                .else    { block_given? ? yield : norm_var }
+            end
+        end
+      end
+
       ##
       # Delegates type tests to specific handlers.
       #
