@@ -209,6 +209,21 @@ end
       end
 
       ##
+      # Processes a Range node.
+      #
+      # @param [Oga::Ruby::Node] ast
+      # @return [String]
+      #
+      def on_range(ast)
+        start, stop = *ast
+
+        start_str = process(start)
+        stop_str  = process(stop)
+
+        "(#{start_str}..#{stop_str})"
+      end
+
+      ##
       # Processes a string node.
       #
       # @param [Oga::Ruby::Node] ast

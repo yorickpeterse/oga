@@ -185,6 +185,16 @@ end
     end
   end
 
+  describe '#on_range' do
+    it 'returns a String' do
+      start = Oga::Ruby::Node.new(:lit, %w{10})
+      stop  = Oga::Ruby::Node.new(:lit, %w{20})
+      node  = Oga::Ruby::Node.new(:range, [start, stop])
+
+      @generator.on_range(node).should == '(10..20)'
+    end
+  end
+
   describe '#on_string' do
     it 'returns a String' do
       node = Oga::Ruby::Node.new(:string, %w{foo})
