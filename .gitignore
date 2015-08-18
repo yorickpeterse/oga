@@ -12,6 +12,7 @@ lib/oga/css/parser.rb
 lib/liboga.*
 
 benchmark/fixtures/big.xml
+benchmark/fixtures/kaf.xml
 
 profile/samples/xml/*.txt
 profile/samples/xml/*/*.txt

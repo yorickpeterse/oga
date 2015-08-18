@@ -5,29 +5,27 @@ require 'benchmark/ips'
 
 require_relative '../lib/oga'
 
-##
-# Returns a File instance pointing to the sample XML file.
-#
 # @return [File]
-#
 def big_xml_file
-  return File.open(File.expand_path('../fixtures/big.xml', __FILE__), 'r')
+  File.open(File.expand_path('../fixtures/big.xml', __FILE__), 'r')
 end
 
-##
-# Reads a big XML file and returns it as a String.
-#
+# @return [File]
+def big_kaf_file
+  File.open(File.expand_path('../fixtures/kaf.xml', __FILE__), 'r')
+end
+
 # @return [String]
-#
 def read_big_xml
-  return big_xml_file.read
+  big_xml_file.read
 end
 
-##
-# Reads a normal sized HTML fixture.
-#
 # @return [String]
-#
+def read_big_kaf
+  big_kaf_file.read
+end
+
+# @return [String]
 def read_html
   return File.read(File.expand_path('../fixtures/with_entities.html', __FILE__))
 end

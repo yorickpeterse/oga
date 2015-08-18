@@ -3,4 +3,4 @@ rule '.xml' => '.xml.gz' do |task|
 end
 
 desc 'Generates large XML fixtures'
-task :fixtures => ['benchmark/fixtures/big.xml']
+task :fixtures => ['benchmark/fixtures/big.xml', 'benchmark/fixtures/kaf.xml']
