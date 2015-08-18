@@ -736,8 +736,7 @@ module Oga
       # @param [AST::Node] arg
       # @return [Oga::Ruby::Node]
       def on_call_count(input, arg)
-        count  = unique_literal(:count)
-        assign =
+        count = unique_literal(:count)
 
         unless return_nodeset?(arg)
           raise TypeError, 'count() can only operate on NodeSet instances'
