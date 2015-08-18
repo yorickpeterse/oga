@@ -1005,6 +1005,35 @@ module Oga
         end
       end
 
+      # @param [Oga::Ruby::Node] input
+      # @param [AST::Node] haystack
+      # @param [AST::Node] needle
+      # @return [Oga::Ruby::Node]
+      def on_call_substring_after(input, haystack, needle)
+        haystack_var = unique_literal(:haystack)
+        needle_var   = unique_literal(:needle)
+        conversion   = literal(Conversion)
+
+        before = unique_literal(:before)
+        sep    = unique_literal(:sep)
+        after  = unique_literal(:after)
+
+        haystack_var.assign(try_match_first_node(haystack, input))
+          .followed_by do
+            needle_var.assign(try_match_first_node(needle, input))
+          end
+          .followed_by do
+            converted = conversion.to_string(haystack_var)
+              .partition(conversion.to_string(needle_var))
+
+            mass_assign([before, sep, after], converted).followed_by do
+              sep.empty?
+                .if_true { sep }
+                .else    { block_given? ? yield : after }
+            end
+          end
+      end
+
       ##
       # Delegates type tests to specific handlers.
       #
