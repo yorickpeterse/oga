@@ -986,6 +986,25 @@ module Oga
         end
       end
 
+      # @param [Oga::Ruby::Node] input
+      # @param [AST::Node] arg
+      # @return [Oga::Ruby::Node]
+      def on_call_string(input, arg = nil)
+        convert_var = unique_literal(:convert)
+        conversion  = literal(Conversion)
+
+        argument_or_first_node(input, arg) do |arg_var|
+          convert_var.assign(conversion.to_string(arg_var))
+            .followed_by do
+              if block_given?
+                convert_var.empty?.not.if_true { yield }
+              else
+                convert_var
+              end
+            end
+        end
+      end
+
       ##
       # Delegates type tests to specific handlers.
       #
