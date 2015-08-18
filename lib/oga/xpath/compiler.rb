@@ -914,6 +914,18 @@ module Oga
         end
       end
 
+      # @param [Oga::Ruby::Node] input
+      # @param [AST::Node] arg
+      # @return [Oga::Ruby::Node]
+      def on_call_not(input, arg)
+        arg_ast    = try_match_first_node(arg, input)
+        call_arg   = unique_literal(:call_arg)
+        conversion = literal(Conversion)
+
+        call_arg.assign(arg_ast)
+          .followed_by(conversion.to_boolean(call_arg).not)
+      end
+
       ##
       # Delegates type tests to specific handlers.
       #
