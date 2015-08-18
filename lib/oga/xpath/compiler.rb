@@ -860,6 +860,20 @@ module Oga
         end
       end
 
+      # @param [Oga::Ruby::Node] input
+      # @param [AST::Node] arg
+      # @return [Oga::Ruby::Node]
+      def on_call_name(input, arg = nil)
+        first_node_or_argument(input, arg) do |arg_var|
+          arg_var
+            .if_true do
+              ensure_element_or_attribute(arg_var)
+                .followed_by { block_given? ? yield : arg_var.expanded_name }
+            end
+            .else { string('') }
+        end
+      end
+
       ##
       # Delegates type tests to specific handlers.
       #
