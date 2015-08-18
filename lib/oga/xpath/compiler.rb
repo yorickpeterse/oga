@@ -850,7 +850,7 @@ module Oga
       # @param [AST::Node] arg
       # @return [Oga::Ruby::Node]
       def on_call_local_name(input, arg = nil)
-        first_node_or_argument(input, arg) do |arg_var|
+        argument_or_first_node(input, arg) do |arg_var|
           arg_var
             .if_true do
               ensure_element_or_attribute(arg_var)
@@ -864,7 +864,7 @@ module Oga
       # @param [AST::Node] arg
       # @return [Oga::Ruby::Node]
       def on_call_name(input, arg = nil)
-        first_node_or_argument(input, arg) do |arg_var|
+        argument_or_first_node(input, arg) do |arg_var|
           arg_var
             .if_true do
               ensure_element_or_attribute(arg_var)
@@ -880,7 +880,7 @@ module Oga
       def on_call_namespace_uri(input, arg = nil)
         default = string('')
 
-        first_node_or_argument(input, arg) do |arg_var|
+        argument_or_first_node(input, arg) do |arg_var|
           arg_var
             .if_true do
               ensure_element_or_attribute(arg_var).followed_by do
@@ -903,7 +903,7 @@ module Oga
         find    = literal('/\s+/')
         replace = string(' ')
 
-        first_node_or_argument(input, arg) do |arg_var|
+        argument_or_first_node(input, arg) do |arg_var|
           norm_var
             .assign(conversion.to_string(arg_var).strip.gsub(find, replace))
             .followed_by do
@@ -924,6 +924,24 @@ module Oga
 
         call_arg.assign(arg_ast)
           .followed_by(conversion.to_boolean(call_arg).not)
+      end
+
+      # @param [Oga::Ruby::Node] input
+      # @param [AST::Node] arg
+      # @return [Oga::Ruby::Node]
+      def on_call_number(input, arg = nil)
+        convert_var = unique_literal(:convert)
+        conversion  = literal(Conversion)
+
+        argument_or_first_node(input, arg) do |arg_var|
+          convert_var.assign(conversion.to_float(arg_var)).followed_by do
+            if block_given?
+              convert_var.zero?.not.if_true { yield }
+            else
+              convert_var
+            end
+          end
+        end
       end
 
       ##
@@ -1085,9 +1103,9 @@ module Oga
       # @param [Oga::Ruby::Node] input
       # @param [AST::Ruby] arg
       # @return [Oga::Ruby::Node]
-      def first_node_or_argument(input, arg = nil)
+      def argument_or_first_node(input, arg = nil)
         arg_ast = arg ? try_match_first_node(arg, input) : input
-        arg_var = unique_literal(:first_node_or_argument)
+        arg_var = unique_literal(:argument_or_first_node)
 
         arg_var.assign(arg_ast).followed_by { yield arg_var }
       end
