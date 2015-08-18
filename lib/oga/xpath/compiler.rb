@@ -222,15 +222,13 @@ module Oga
       def on_axis_descendant_or_self(ast, input, &block)
         node = node_literal
 
-        backup_variable(node, input) do
-          process(ast, node, &block)
-            .if_true { yield node }
-            .followed_by do
-              node.each_node.add_block(node) do
-                process(ast, node, &block).if_true { yield node }
-              end
+        process(ast, input, &block)
+          .if_true { yield input }
+          .followed_by do
+            input.each_node.add_block(node) do
+              process(ast, node, &block).if_true { yield node }
             end
-        end
+          end
       end
 
       # @param [AST::Node] ast
@@ -239,10 +237,8 @@ module Oga
       def on_axis_descendant(ast, input, &block)
         node = node_literal
 
-        backup_variable(node, input) do
-          node.each_node.add_block(node) do
-            process(ast, node, &block).if_true { yield node }
-          end
+        input.each_node.add_block(node) do
+          process(ast, node, &block).if_true { yield node }
         end
       end
 
@@ -250,11 +246,12 @@ module Oga
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
       def on_axis_parent(ast, input, &block)
-        node = node_literal
+        node   = node_literal
+        parent = unique_literal(:parent)
 
         input.is_a?(XML::Node).if_true do
-          backup_variable(node, input.parent) do
-            process(ast, node, &block).if_true { yield node }
+          parent.assign(input.parent).followed_by do
+            process(ast, parent, &block).if_true { yield parent }
           end
         end
       end
@@ -265,9 +262,7 @@ module Oga
       def on_axis_self(ast, input, &block)
         node = node_literal
 
-        backup_variable(node, input) do
-          process(ast, node, &block).if_true { yield node }
-        end
+        process(ast, input, &block).if_true { yield input }
       end
 
       # @param [AST::Node] ast
@@ -303,9 +298,7 @@ module Oga
                   end
                 end
                 .followed_by do
-                  backup_variable(node, doc_node) do
-                    process(ast, node, &block).if_true { yield node }
-                  end
+                  process(ast, doc_node, &block).if_true { yield doc_node }
                 end
             end
           end
@@ -315,7 +308,6 @@ module Oga
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
       def on_axis_following(ast, input, &block)
-        node       = node_literal
         orig_input = original_input_literal
         doc_node   = literal(:doc_node)
         check      = literal(:check)
@@ -336,10 +328,8 @@ module Oga
                   check.if_false { send_message(:next) }
                 end
                 .followed_by do
-                  backup_variable(node, doc_node) do
-                    process(ast, node, &block).if_true do
-                      yield node
-                    end
+                  process(ast, doc_node, &block).if_true do
+                    yield doc_node
                   end
                 end
             end
@@ -380,9 +370,7 @@ module Oga
               doc_node.eq(input)
                 .if_true { self.break }
                 .followed_by do
-                  backup_variable(node, doc_node) do
-                    process(ast, node, &block).if_true { yield node }
-                  end
+                  process(ast, doc_node, &block).if_true { yield doc_node }
                 end
             end
           end
@@ -414,9 +402,7 @@ module Oga
                 .if_true { self.break }
                 .followed_by do
                   doc_node.parent.eq(parent).if_true do
-                    backup_variable(node, doc_node) do
-                      process(ast, node, &block).if_true { yield node }
-                    end
+                    process(ast, doc_node, &block).if_true { yield doc_node }
                   end
                 end
             end
@@ -1388,28 +1374,6 @@ module Oga
         initial_assign = left_var.assign(left_ast)
           .followed_by(right_var.assign(right_ast))
           .followed_by { yield left_var, right_var }
-      end
-
-      ##
-      # Backs up a local variable and restores it after yielding the block.
-      #
-      # This is useful when processing axes followed by other segments in a
-      # path. In these cases each segment doesn't know about its input (since
-      # it's determined later), thus they resort to just using whatever `node`
-      # is set to. By re-assigning (and re-storing) this variable the input can
-      # be controller more easily.
-      #
-      # @param [Oga::Ruby::Node] variable
-      # @param [Oga::Ruby::Node] new
-      # @return [Oga::Ruby::Node]
-      #
-      def backup_variable(variable, new)
-        backup = unique_literal(:backup)
-
-        backup.assign(variable)
-          .followed_by(variable.assign(new))
-          .followed_by(yield)
-          .followed_by(variable.assign(backup))
       end
 
       # @return [Oga::Ruby::Node]
