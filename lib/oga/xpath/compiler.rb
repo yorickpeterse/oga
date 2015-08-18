@@ -335,7 +335,7 @@ module Oga
                     .followed_by(throw_message(:skip_children))
                 end
                 .followed_by do
-                  check.not.if_true { send_message(:next) }
+                  check.if_false { send_message(:next) }
                 end
                 .followed_by do
                   backup_variable(node, doc_node) do
@@ -924,8 +924,11 @@ module Oga
         call_arg   = unique_literal(:call_arg)
         conversion = literal(Conversion)
 
-        call_arg.assign(arg_ast)
-          .followed_by(conversion.to_boolean(call_arg).not)
+        call_arg.assign(arg_ast).followed_by do
+          converted = conversion.to_boolean(call_arg).not
+
+          block_given? ? converted.if_false { yield } : converted
+        end
       end
 
       # @param [Oga::Ruby::Node] input
@@ -938,7 +941,7 @@ module Oga
         argument_or_first_node(input, arg) do |arg_var|
           convert_var.assign(conversion.to_float(arg_var)).followed_by do
             if block_given?
-              convert_var.zero?.not.if_true { yield }
+              convert_var.zero?.if_false { yield }
             else
               convert_var
             end
@@ -978,7 +981,7 @@ module Oga
           convert_var.assign(conversion.to_string(arg_var).length)
             .followed_by do
               if block_given?
-                convert_var.zero?.not.if_true { yield }
+                convert_var.zero?.if_false { yield }
               else
                 convert_var.to_f
               end
@@ -997,7 +1000,7 @@ module Oga
           convert_var.assign(conversion.to_string(arg_var))
             .followed_by do
               if block_given?
-                convert_var.empty?.not.if_true { yield }
+                convert_var.empty?.if_false { yield }
               else
                 convert_var
               end
@@ -1099,7 +1102,7 @@ module Oga
             substring = conversion
               .to_string(haystack_var)[range(start_var, stop_var)]
 
-            block_given? ? substring.empty?.not.if_true { yield } : substring
+            block_given? ? substring.empty?.if_false { yield } : substring
           end
       end
 
@@ -1121,7 +1124,7 @@ module Oga
             end
           end
           .followed_by do
-            block_given? ? sum_var.zero?.not.if_true { yield } : sum_var
+            block_given? ? sum_var.zero?.if_false { yield } : sum_var
           end
       end
 
@@ -1328,7 +1331,7 @@ module Oga
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
       def ensure_element_or_attribute(input)
-        element_or_attribute(input).not.if_true do
+        element_or_attribute(input).if_false do
           raise_message(TypeError, 'argument is not an Element or Attribute')
         end
       end
