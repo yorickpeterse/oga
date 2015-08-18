@@ -304,9 +304,7 @@ module Oga
                 end
                 .followed_by do
                   backup_variable(node, doc_node) do
-                    process(ast, node, &block).if_true do
-                      yield(node).followed_by(throw_message(:skip_children))
-                    end
+                    process(ast, node, &block).if_true { yield node }
                   end
                 end
             end
