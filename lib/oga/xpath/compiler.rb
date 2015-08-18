@@ -927,7 +927,7 @@ module Oga
         call_arg.assign(arg_ast).followed_by do
           converted = conversion.to_boolean(call_arg).not
 
-          block_given? ? converted.if_false { yield } : converted
+          block_given? ? converted.if_true { yield } : converted
         end
       end
 

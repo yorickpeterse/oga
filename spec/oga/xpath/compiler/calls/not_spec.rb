@@ -28,7 +28,8 @@ describe Oga::XPath::Compiler do
 
     describe 'in a predicate' do
       it 'returns a NodeSet containing all matching nodes ' do
-        evaluate_xpath(@document, 'root[not(node())]').should == node_set(@root)
+        evaluate_xpath(@document, 'root[not(comment())]')
+          .should == node_set(@root)
       end
     end
   end
