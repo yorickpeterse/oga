@@ -14,8 +14,9 @@ describe Oga::XPath::Compiler do
         evaluate_xpath(@document, 'root/a[last()]').should == node_set(@a2)
       end
 
-      it 'returns a NodeSet containing all but the last node' do
-        evaluate_xpath(@document, 'root/a[1 < last()]').should == node_set(@a1)
+      it 'returns a NodeSet matching all <a> nodes' do
+        evaluate_xpath(@document, 'root/a[1 < last()]')
+          .should == node_set(@a1, @a2)
       end
     end
   end
