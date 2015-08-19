@@ -12,6 +12,7 @@ stop    = false
 threads = []
 
 thread_count = ENV['THREADS'] ? ENV['THREADS'].to_i : 5
+sample_size  = ENV['SAMPLES'] ? ENV['SAMPLES'].to_i : 10
 
 trap 'INT' do
   stop = true
@@ -29,7 +30,7 @@ thread_count.times.each do
     oga_doc   = documents.pop
     evaluator = Oga::XPath::Evaluator.new(oga_doc)
 
-    10.times do
+    sample_size.times do
       break if stop
 
       output << Benchmark.measure { evaluator.evaluate_ast(xpath_ast) }
