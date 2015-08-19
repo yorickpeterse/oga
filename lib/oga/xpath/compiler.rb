@@ -52,6 +52,9 @@ module Oga
       # Resets the internal state.
       def reset
         @literal_id = 0
+
+        @predicate_nodesets = []
+        @predicate_indexes  = []
       end
 
       ##
@@ -77,7 +80,6 @@ module Oga
 
           if return_nodeset?(ast)
             body = matched.assign(literal(XML::NodeSet).new)
-              .followed_by(input_assign)
               .followed_by(ruby_ast)
               .followed_by(matched)
           else
@@ -117,6 +119,9 @@ module Oga
         ast.children.reverse_each.with_index do |child, index|
           # The first block should operate on the variable set in "input", all
           # others should operate on the child variables ("node").
+          #
+          # FIXME: this currently basically only works by accident due to
+          # various bits of code also using "node_literal".
           input_var = index == last_index ? input : var_name
 
           # The last segment of the path should add the code that actually
@@ -415,52 +420,139 @@ module Oga
       def on_predicate(ast, input, &block)
         test, predicate = *ast
 
+        index_var = unique_literal(:index)
+
         if number?(predicate)
-          on_predicate_index(test, predicate, input, &block)
+          method = :on_predicate_index
+        elsif has_call_node?(predicate, 'last')
+          method = :on_predicate_temporary
         else
-          on_predicate_expression(test, predicate, input, &block)
+          method = :on_predicate_direct
+        end
+
+        @predicate_indexes << index_var
+
+        ast = index_var.assign(literal(1)).followed_by do
+          send(method, input, test, predicate, &block)
+        end
+
+        @predicate_indexes.pop
+
+        ast
+      end
+
+      ##
+      # Processes a predicate that requires a temporary NodeSet.
+      #
+      # @param [Oga::Ruby::Node] input
+      # @param [AST::Node] test
+      # @param [AST::Node] predicate
+      # @return [Oga::Ruby::Node]
+      #
+      def on_predicate_temporary(input, test, predicate)
+        temp_set   = unique_literal(:temp_set)
+        pred_node  = unique_literal(:pred_node)
+        pred_var   = unique_literal(:pred_var)
+        conversion = literal(Conversion)
+
+        index_var  = predicate_index
+        index_step = literal(1)
+
+        @predicate_nodesets << temp_set
+
+        ast = temp_set.assign(literal(XML::NodeSet).new)
+          .followed_by do
+            process(test, input) { |node| temp_set << node }
+          end
+          .followed_by do
+            temp_set.each.add_block(pred_node) do
+              pred_ast = process(predicate, pred_node)
+
+              pred_var.assign(pred_ast)
+                .followed_by do
+                  pred_var.is_a?(Numeric).if_true do
+                    pred_var.assign(pred_var.to_i.eq(index_var))
+                  end
+                end
+                .followed_by do
+                  conversion.to_boolean(pred_var).if_true { yield pred_node }
+                end
+                .followed_by do
+                  index_var.assign(index_var + index_step)
+                end
+            end
+          end
+
+        @predicate_nodesets.pop
+
+        ast
+      end
+
+      ##
+      # Processes a predicate that doesn't require temporary NodeSet.
+      #
+      # @param [Oga::Ruby::Node] input
+      # @param [AST::Node] test
+      # @param [AST::Node] predicate
+      # @return [Oga::Ruby::Node]
+      #
+      def on_predicate_direct(input, test, predicate)
+        pred_var   = unique_literal(:pred_var)
+        index_var  = predicate_index
+        index_step = literal(1)
+        conversion = literal(Conversion)
+
+        process(test, input) do |matched_test_node|
+          if return_nodeset?(predicate)
+            pred_ast = catch_message(:predicate_matched) do
+              process(predicate, matched_test_node) do
+                throw_message(:predicate_matched, self.true)
+              end
+            end
+          else
+            pred_ast = process(predicate, matched_test_node)
+          end
+
+          pred_var.assign(pred_ast)
+            .followed_by do
+              pred_var.is_a?(Numeric).if_true do
+                pred_var.assign(pred_var.to_i.eq(index_var))
+              end
+            end
+            .followed_by do
+              conversion.to_boolean(pred_var).if_true do
+                yield matched_test_node
+              end
+            end
+            .followed_by do
+              index_var.assign(index_var + index_step)
+            end
         end
       end
 
       ##
-      # Processes an index predicate such as `foo[10]`.
+      # Processes a predicate that uses a literal index.
       #
+      # @param [Oga::Ruby::Node] input
       # @param [AST::Node] test
       # @param [AST::Node] predicate
-      # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
       #
-      def on_predicate_index(test, predicate, input)
-        int1      = literal(1)
-        index     = to_int(predicate)
-        index_var = literal(:index)
+      def on_predicate_index(input, test, predicate)
+        pred_var   = unique_literal(:pred_var)
+        index_var  = predicate_index
+        index_step = literal(1)
 
-        index_var.assign(int1)
-          .followed_by do
-            process(test, input) do |matched_test_node|
-              index_var.eq(index)
-                .if_true { yield matched_test_node }
-                .followed_by(index_var.assign(index_var + int1))
-            end
-          end
-      end
+        index = process(predicate, input).to_i
 
-      ##
-      # Processes a predicate using an expression (e.g. a path).
-      #
-      # @param [AST::Node] test
-      # @param [AST::Node] predicate
-      # @param [Oga::Ruby::Node] input
-      # @return [Oga::Ruby::Node]
-      #
-      def on_predicate_expression(test, predicate, input)
         process(test, input) do |matched_test_node|
-          catch_message(:predicate_matched) do
-            process(predicate, matched_test_node) do
-              throw_message(:predicate_matched, self.true)
+          index_var.eq(index)
+            .if_true do
+              yield matched_test_node
             end
-          end
-          .if_true { yield matched_test_node }
+            .followed_by do
+              index_var.assign(index_var + index_step)
+            end
         end
       end
 
@@ -1169,6 +1261,28 @@ module Oga
           end
       end
 
+      # @return [Oga::Ruby::Node]
+      def on_call_last(*)
+        set = predicate_nodeset
+
+        unless set
+          raise 'last() can only be used in a predicate'
+        end
+
+        set.length.to_f
+      end
+
+      # @return [Oga::Ruby::Node]
+      def on_call_position(*)
+        index = predicate_index
+
+        unless index
+          raise 'position() can only be used in a predicate'
+        end
+
+        index.to_f
+      end
+
       ##
       # Delegates type tests to specific handlers.
       #
@@ -1447,6 +1561,34 @@ module Oga
       # @return [TrueClass|FalseClass]
       def return_nodeset?(ast)
         RETURN_NODESET.include?(ast.type)
+      end
+
+      # @param [AST::Node] ast
+      # @return [TrueClass|FalseClass]
+      def has_call_node?(ast, name)
+        visit = [ast]
+
+        until visit.empty?
+          current = visit.pop
+
+          return true if current.type == :call && current.children[0] == name
+
+          current.children.each do |child|
+            visit << child if child.is_a?(AST::Node)
+          end
+        end
+
+        false
+      end
+
+      # @return [Oga::Ruby::Node]
+      def predicate_index
+        @predicate_indexes.last
+      end
+
+      # @return [Oga::Ruby::Node]
+      def predicate_nodeset
+        @predicate_nodesets.last
       end
     end # Compiler
   end # XPath
