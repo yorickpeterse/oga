@@ -30,8 +30,8 @@ describe Oga::XPath::Compiler do
     end
 
     describe 'in a predicate' do
-      it 'returns a NodeSet containing all matching nodes' do
-        evaluate_xpath(@document, 'root/a[sum(/root/*)]')
+      it 'returns a NodeSet containing the first <a> node' do
+        evaluate_xpath(@document, 'root/a[sum(/root/a)]')
           .should == node_set(@a1)
       end
     end
