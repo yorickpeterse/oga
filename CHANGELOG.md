@@ -3,6 +3,25 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 1.2.3 - 2015-08-19
+
+## NodeSet performance improvements
+
+Performance of the NodeSet class has been improved, especially when used in
+concurrent environments. See commit 4f94d03a85f6acabe5cc57ba8c778928e42186be for
+more information.
+
+## Comparing names in the XPath evaluator
+
+Performance of comparing names of nodes in the XPath evaluator has been
+improved thanks to Daniel Fockler.
+
+See the following commits for more information:
+
+* be7bc8f4234832ea16385ed92ba252850d7a890e
+* fc38b39aa36f49fc38afd44c7e23ac3bfc6159e7
+* 496811a23fa7c3f0498ec5721575b1c8406a5351
+
 ## 1.2.2 - 2015-08-14
 
 ### Race condition in the LRU class
