@@ -167,9 +167,9 @@ module Oga
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
-      def on_axis_child(ast, input, &block)
+      def on_axis_child(ast, input)
         child     = node_literal
-        condition = process(ast, child, &block)
+        condition = process(ast, child)
 
         input.children.each.add_block(child) do
           condition.if_true { yield child }
@@ -198,14 +198,14 @@ module Oga
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
-      def on_axis_ancestor_or_self(ast, input, &block)
+      def on_axis_ancestor_or_self(ast, input)
         parent = node_literal
 
-        process(ast, input, &block)
+        process(ast, input)
           .if_true { yield input }
           .followed_by do
             input.each_ancestor.add_block(parent) do
-              process(ast, parent, &block).if_true { yield parent }
+              process(ast, parent).if_true { yield parent }
             end
           end
       end
@@ -213,25 +213,25 @@ module Oga
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
-      def on_axis_ancestor(ast, input, &block)
+      def on_axis_ancestor(ast, input)
         parent = node_literal
 
         input.each_ancestor.add_block(parent) do
-          process(ast, parent, &block).if_true { yield parent }
+          process(ast, parent).if_true { yield parent }
         end
       end
 
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
-      def on_axis_descendant_or_self(ast, input, &block)
+      def on_axis_descendant_or_self(ast, input)
         node = node_literal
 
-        process(ast, input, &block)
+        process(ast, input)
           .if_true { yield input }
           .followed_by do
             input.each_node.add_block(node) do
-              process(ast, node, &block).if_true { yield node }
+              process(ast, node).if_true { yield node }
             end
           end
       end
@@ -239,24 +239,24 @@ module Oga
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
-      def on_axis_descendant(ast, input, &block)
+      def on_axis_descendant(ast, input)
         node = node_literal
 
         input.each_node.add_block(node) do
-          process(ast, node, &block).if_true { yield node }
+          process(ast, node).if_true { yield node }
         end
       end
 
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
-      def on_axis_parent(ast, input, &block)
+      def on_axis_parent(ast, input)
         node   = node_literal
         parent = unique_literal(:parent)
 
         input.is_a?(XML::Node).if_true do
           parent.assign(input.parent).followed_by do
-            process(ast, parent, &block).if_true { yield parent }
+            process(ast, parent).if_true { yield parent }
           end
         end
       end
@@ -264,16 +264,16 @@ module Oga
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
-      def on_axis_self(ast, input, &block)
+      def on_axis_self(ast, input)
         node = node_literal
 
-        process(ast, input, &block).if_true { yield input }
+        process(ast, input).if_true { yield input }
       end
 
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
-      def on_axis_following_sibling(ast, input, &block)
+      def on_axis_following_sibling(ast, input)
         node       = node_literal
         orig_input = original_input_literal
         doc_node   = literal(:doc_node)
@@ -303,7 +303,7 @@ module Oga
                   end
                 end
                 .followed_by do
-                  process(ast, doc_node, &block).if_true { yield doc_node }
+                  process(ast, doc_node).if_true { yield doc_node }
                 end
             end
           end
@@ -312,7 +312,7 @@ module Oga
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
-      def on_axis_following(ast, input, &block)
+      def on_axis_following(ast, input)
         orig_input = original_input_literal
         doc_node   = literal(:doc_node)
         check      = literal(:check)
@@ -333,9 +333,7 @@ module Oga
                   check.if_false { send_message(:next) }
                 end
                 .followed_by do
-                  process(ast, doc_node, &block).if_true do
-                    yield doc_node
-                  end
+                  process(ast, doc_node).if_true { yield doc_node }
                 end
             end
           end
@@ -361,7 +359,7 @@ module Oga
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
-      def on_axis_preceding(ast, input, &block)
+      def on_axis_preceding(ast, input)
         orig_input = original_input_literal
         root       = literal(:root)
         node       = node_literal
@@ -375,7 +373,7 @@ module Oga
               doc_node.eq(input)
                 .if_true { self.break }
                 .followed_by do
-                  process(ast, doc_node, &block).if_true { yield doc_node }
+                  process(ast, doc_node).if_true { yield doc_node }
                 end
             end
           end
@@ -384,7 +382,7 @@ module Oga
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
-      def on_axis_preceding_sibling(ast, input, &block)
+      def on_axis_preceding_sibling(ast, input)
         orig_input = original_input_literal
         check      = literal(:check)
         root       = literal(:root)
@@ -407,7 +405,7 @@ module Oga
                 .if_true { self.break }
                 .followed_by do
                   doc_node.parent.eq(parent).if_true do
-                    process(ast, doc_node, &block).if_true { yield doc_node }
+                    process(ast, doc_node).if_true { yield doc_node }
                   end
                 end
             end
