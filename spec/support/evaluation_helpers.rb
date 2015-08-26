@@ -5,7 +5,7 @@ module Oga
     # @param [String] xpath
     # @return [Oga::XML::NodeSet]
     #
-    def evaluate_xpath(document, xpath)
+    def evaluate_xpath(document, xpath = self.class.description)
       ast      = parse_xpath(xpath)
       compiler = Oga::XPath::Compiler.new
       block    = compiler.compile(ast)
@@ -20,7 +20,7 @@ module Oga
     # @param [String] css
     # @return [Oga::XML::NodeSet]
     #
-    def evaluate_css(document, css)
+    def evaluate_css(document, css = self.class.description)
       ast      = parse_css(css)
       compiler = Oga::XPath::Compiler.new
       block    = compiler.compile(ast)
