@@ -125,6 +125,15 @@ module Oga
         "Attribute(#{segments.join(' ')})"
       end
 
+      # @see [Oga::XML::Node#each_ancestor]
+      def each_ancestor(&block)
+        return unless element
+
+        yield element
+
+        element.each_ancestor(&block)
+      end
+
       private
 
       ##

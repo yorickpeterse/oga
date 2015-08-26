@@ -168,17 +168,38 @@ EOF
   describe '#expanded_name' do
     describe 'with a namespace' do
       it 'returns a String' do
-        element = described_class.new(:namespace_name => 'foo', :name => 'bar')
+        attr = described_class.new(:namespace_name => 'foo', :name => 'bar')
 
-        element.expanded_name.should == 'foo:bar'
+        attr.expanded_name.should == 'foo:bar'
       end
     end
 
     describe 'without a namespace' do
       it 'returns a String' do
-        element = described_class.new(:name => 'bar')
+        attr = described_class.new(:name => 'bar')
 
-        element.expanded_name.should == 'bar'
+        attr.expanded_name.should == 'bar'
+      end
+    end
+  end
+
+  describe '#each_ancestor' do
+    describe 'without an element' do
+      it 'simply returns' do
+        attr = described_class.new(:name => 'class')
+
+        expect { |b| attr.each_ancestor(&b) }.to_not yield_control
+      end
+    end
+
+    describe 'with an element' do
+      it 'yields the supplied block for every ancestor' do
+        child  = Oga::XML::Element.new(:name => 'b')
+        parent = Oga::XML::Element.new(:name => 'a', :children => [child])
+        attr   = described_class.new(:name => 'class', :element => child)
+
+        expect { |b| attr.each_ancestor(&b) }
+          .to yield_successive_args(child, parent)
       end
     end
   end
