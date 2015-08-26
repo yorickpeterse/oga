@@ -27,71 +27,77 @@ css
   ;
 
 selectors
-  = path selectors_follow*
+  = selector selectors_follow*
     {
-      path = val[0]
+      node = val[0]
 
       val[1].each do |chunk|
-        path = s(:pipe, path, chunk)
+        node = s(:pipe, node, chunk)
       end
 
-      path
+      node
     }
   ;
 
 selectors_follow
-  = T_COMMA path { val[1] }
-  ;
-
-path
-  = selector path_follow*
-    {
-      # Single selector
-      if val[1].empty?
-        ret = val[0]
-
-        if ret.is_a?(Array)
-          ret = s(:path, *ret)
-        end
-
-      # Multiple selectors
-      else
-        steps = [val[0]]
-
-        val[1].each do |step|
-          # "+ foo" is broken up into two steps.
-          if step.is_a?(Array)
-            # Using Array#+ or Array#| would require allocating an extra Array
-            step.each { |sub| steps << sub }
-          else
-            steps << step
-          end
-        end
-
-        ret = s(:path, *steps)
-      end
-
-      ret
-    }
-  ;
-
-path_follow
-  = T_SPACE selector { val[1] }
+  = T_COMMA selector { val[1] }
   ;
 
 selector
-  = descendant_or_self predicates?
+  = axis_or_descendant_or_self predicates? selector_follow?
     {
-      val[1] ? s(:predicate, val[0], val[1]) : val[0]
+      node = val[0]
+      pred = val[1]
+      more = val[2]
+
+      if pred
+        node = s(:predicate, node, pred)
+      end
+
+      if more
+        node = node.updated(nil, node.children + [more])
+      end
+
+      node
     }
-  | axis predicates?
+  | predicates selector_follow?
     {
-      val[1] ? s(:predicate, val[0], val[1]) : val[0]
+      node  = s(:axis, 'descendant', on_test(nil, '*'))
+      preds = val[0]
+      more  = val[1]
+
+      if more
+        s(:predicate, node, preds, more)
+      else
+        s(:predicate, node, preds)
+      end
     }
-  | predicates
+  # + foo
+  #
+  # This branch is not part of the "axis" rule because we need more fine grained
+  # control over what to do with any selec
+  | T_PLUS axis_selector selector_follow?
     {
-      s(:predicate, s(:axis, 'descendant', on_test(nil, '*')), val[0])
+      selector = val[1]
+      more     = val[2]
+
+      if more
+        child = s(:axis, 'self', selector, more)
+      else
+        child = s(:axis, 'self', selector)
+      end
+
+      s(
+        :predicate,
+        s(:axis, 'following-sibling', on_test(nil, '*')),
+        s(:int, 1),
+        child
+      )
     }
+  ;
+
+selector_follow
+  = T_SPACE selector { val[1] }
   ;
 
 descendant_or_self
@@ -110,19 +116,11 @@ axis
     {
       s(:axis, 'following-sibling', val[1])
     }
+  ;
 
-  # + foo
-  | T_PLUS axis_selector
-    {
-      [
-        s(
-          :predicate,
-          s(:axis, 'following-sibling', on_test(nil, '*')),
-          s(:int, 1)
-        ),
-        s(:axis, 'self', val[1])
-      ]
-    }
+axis_or_descendant_or_self
+  = descendant_or_self
+  | axis
   ;
 
 axis_selector
