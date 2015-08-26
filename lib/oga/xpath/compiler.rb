@@ -142,11 +142,12 @@ module Oga
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
       def on_axis_child(ast, input)
-        child     = unique_literal(:child)
-        condition = process(ast, child)
+        child = unique_literal(:child)
 
-        input.children.each.add_block(child) do
-          condition.if_true { yield child }
+        document_or_node(input).if_true do
+          input.children.each.add_block(child) do
+            process(ast, child).if_true { yield child }
+          end
         end
       end
 
@@ -155,7 +156,7 @@ module Oga
       # @return [Oga::Ruby::Node]
       def on_axis_attribute(ast, input)
         input.is_a?(XML::Element).if_true do
-          attribute = literal(:attribute)
+          attribute = unique_literal(:attribute)
 
           input.attributes.each.add_block(attribute) do
             name_match = match_name_and_namespace(ast, attribute)
@@ -178,7 +179,7 @@ module Oga
         process(ast, input)
           .if_true { yield input }
           .followed_by do
-            node_or_attribute(input).if_true do
+            attribute_or_node(input).if_true do
               input.each_ancestor.add_block(parent) do
                 process(ast, parent).if_true { yield parent }
               end
@@ -192,7 +193,7 @@ module Oga
       def on_axis_ancestor(ast, input)
         parent = unique_literal(:parent)
 
-        node_or_attribute(input).if_true do
+        attribute_or_node(input).if_true do
           input.each_ancestor.add_block(parent) do
             process(ast, parent).if_true { yield parent }
           end
@@ -1367,13 +1368,19 @@ module Oga
       # @param [Oga::Ruby::Node] node
       # @return [Oga::Ruby::Node]
       def element_or_attribute(node)
-        node.is_a?(XML::Attribute).or(node.is_a?(XML::Element))
+        node.is_a?(XML::Element).or(node.is_a?(XML::Attribute))
       end
 
       # @param [Oga::Ruby::Node] node
       # @return [Oga::Ruby::Node]
-      def node_or_attribute(node)
+      def attribute_or_node(node)
         node.is_a?(XML::Attribute).or(node.is_a?(XML::Node))
+      end
+
+      # @param [Oga::Ruby::Node] node
+      # @return [Oga::Ruby::Node]
+      def document_or_node(node)
+        node.is_a?(XML::Document).or(node.is_a?(XML::Node))
       end
 
       # @param [AST::Node] ast
