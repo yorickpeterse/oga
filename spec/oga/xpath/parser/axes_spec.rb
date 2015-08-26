@@ -112,8 +112,12 @@ describe Oga::XPath::Parser do
     it 'parses the // axis' do
       parse_xpath('//A').should == s(
         :absolute_path,
-        s(:axis, 'descendant-or-self', s(:type_test, 'node')),
-        s(:axis, 'child', s(:test, nil, 'A'))
+        s(
+          :axis,
+          'descendant-or-self',
+          s(:type_test, 'node'),
+          s(:axis, 'child', s(:test, nil, 'A'))
+        ),
       )
     end
 

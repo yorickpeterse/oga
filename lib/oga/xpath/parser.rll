@@ -97,7 +97,7 @@ union_expr_follow
   ;
 
 expression_member
-  = relative_path
+  = path_step_or_axis
   | absolute_path
   | string
   | number
@@ -105,22 +105,16 @@ expression_member
   | T_LPAREN expression T_RPAREN { val[1] }
   ;
 
-# A, A/B, etc
-relative_path
-  = path_steps { val[0].length > 1 ? s(:path, *val[0]) : val[0][0] }
-  ;
-
-path_steps
-  = path_step_or_axis path_steps_follow* { [val[0], *val[1]] }
-  ;
-
-path_steps_follow
-  = T_SLASH path_step_or_axis { val[1] }
-  ;
-
 # /A, /A/B, etc
 absolute_path
-  = T_SLASH path_steps? { s(:absolute_path, *val[1]) }
+  = T_SLASH path_step_or_axis?
+    {
+      if val[1]
+        s(:absolute_path, val[1])
+      else
+        s(:absolute_path)
+      end
+    }
   ;
 
 path_step_or_axis
@@ -135,6 +129,7 @@ path_step
       type = val[1][0]
       args = val[1][1]
       pred = val[1][2]
+      more = val[1][3]
 
       if type.equal?(:test)
         # Whenever a bare test is used (e.g. just "A") this actually means
@@ -152,15 +147,38 @@ path_step
         node = s(:predicate, node, pred)
       end
 
+      if more
+        node = node.updated(nil, node.children + [more])
+      end
+
       node
     }
-  | type_test { s(:axis, 'child', val[0]) }
+  | type_test predicate? path_step_more?
+    {
+      pred = val[1]
+      more = val[2]
+      node = s(:axis, 'child', val[0])
+
+      if pred
+        node = s(:predicate, node, pred)
+      end
+
+      if more
+        node = node.updated(nil, node.children + [more])
+      end
+
+      node
+    }
   ;
 
 path_step_follow
-  = T_LPAREN call_args T_RPAREN { [:call, val[1]] }
-  | T_COLON T_IDENT predicate?  { [:test, val[1], val[2]] }
-  | predicate?                  { [:test, nil, val[0]] }
+  = T_LPAREN call_args T_RPAREN                { [:call, val[1]] }
+  | T_COLON T_IDENT predicate? path_step_more? { [:test, val[1], val[2], val[3]] }
+  | predicate? path_step_more?                 { [:test, nil, val[0], val[1]] }
+  ;
+
+path_step_more
+  = T_SLASH path_step_or_axis { val[1] }
   ;
 
 predicate
@@ -194,12 +212,17 @@ call_args_follow
 
 # child::foo, descendant-or-self::foo, etc
 axis
-  = T_AXIS axis_value predicate?
+  = T_AXIS axis_value predicate? path_step_more?
     {
-      ret = s(:axis, val[0], val[1])
+      ret  = s(:axis, val[0], val[1])
+      more = val[3]
 
       if val[2]
         ret = s(:predicate, ret, val[2])
+      end
+
+      if more
+        ret = ret.updated(nil, ret.children + [more])
       end
 
       ret

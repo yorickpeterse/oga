@@ -15,35 +15,53 @@ describe Oga::XPath::Parser do
 
     it 'parses a relative path using two steps' do
       parse_xpath('A/B').should == s(
-        :path,
-        s(:axis, 'child', s(:test, nil, 'A')),
-        s(:axis, 'child', s(:test, nil, 'B')),
+        :axis,
+        'child',
+        s(:test, nil, 'A'),
+        s(:axis, 'child', s(:test, nil, 'B'))
       )
     end
 
     it 'parses a relative path using three steps' do
       parse_xpath('A/B/C').should == s(
-        :path,
-        s(:axis, 'child', s(:test, nil, 'A')),
-        s(:axis, 'child', s(:test, nil, 'B')),
-        s(:axis, 'child', s(:test, nil, 'C')),
+        :axis,
+        'child',
+        s(:test, nil, 'A'),
+        s(
+          :axis,
+          'child',
+          s(:test, nil, 'B'),
+          s(:axis, 'child', s(:test, nil, 'C'))
+        )
       )
     end
 
     it 'parses an expression using two paths' do
       parse_xpath('/A/B').should == s(
         :absolute_path,
-        s(:axis, 'child', s(:test, nil, 'A')),
-        s(:axis, 'child', s(:test, nil, 'B'))
+        s(
+          :axis,
+          'child',
+          s(:test, nil, 'A'),
+          s(:axis, 'child', s(:test, nil, 'B'))
+        )
       )
     end
 
     it 'parses an expression using three paths' do
       parse_xpath('/A/B/C').should == s(
         :absolute_path,
-        s(:axis, 'child', s(:test, nil, 'A')),
-        s(:axis, 'child', s(:test, nil, 'B')),
-        s(:axis, 'child', s(:test, nil, 'C'))
+        s(
+          :axis,
+          'child',
+          s(:test, nil, 'A'),
+          s(
+            :axis,
+            'child',
+            s(:test, nil, 'B'),
+            s(:axis, 'child', s(:test, nil, 'C'))
+          )
+        )
       )
     end
 

@@ -14,13 +14,15 @@ describe Oga::XPath::Parser do
       parse_xpath('A/B | C/D').should == s(
         :pipe,
         s(
-          :path,
-          s(:axis, 'child', s(:test, nil, 'A')),
+          :axis,
+          'child',
+          s(:test, nil, 'A'),
           s(:axis, 'child', s(:test, nil, 'B'))
         ),
         s(
-          :path,
-          s(:axis, 'child', s(:test, nil, 'C')),
+          :axis,
+          'child',
+          s(:test, nil, 'C'),
           s(:axis, 'child', s(:test, nil, 'D'))
         )
       )

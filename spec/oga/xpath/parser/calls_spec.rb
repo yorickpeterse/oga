@@ -24,32 +24,25 @@ describe Oga::XPath::Parser do
     end
 
     it 'parses a relative path with a function call' do
-      parse_xpath('foo/bar()').should == s(
-        :path,
-        s(:axis, 'child', s(:test, nil, 'foo')),
-        s(:call, 'bar')
-      )
+      parse_xpath('foo/bar()').should ==
+        s(:axis, 'child', s(:test, nil, 'foo'), s(:call, 'bar'))
     end
 
     it 'parses an absolute path with a function call' do
       parse_xpath('/foo/bar()').should == s(
         :absolute_path,
-        s(:axis, 'child', s(:test, nil, 'foo')),
-        s(:call, 'bar')
+        s(:axis, 'child', s(:test, nil, 'foo'), s(:call, 'bar'))
       )
     end
 
     it 'parses a predicate followed by a function call' do
       parse_xpath('div[@class="foo"]/bar()').should == s(
-        :path,
+        :predicate,
+        s(:axis, 'child', s(:test, nil, 'div')),
         s(
-          :predicate,
-          s(:axis, 'child', s(:test, nil, 'div')),
-          s(
-            :eq,
-            s(:axis, 'attribute', s(:test, nil, 'class')),
-            s(:string, 'foo')
-          )
+          :eq,
+          s(:axis, 'attribute', s(:test, nil, 'class')),
+          s(:string, 'foo')
         ),
         s(:call, 'bar')
       )
@@ -57,18 +50,15 @@ describe Oga::XPath::Parser do
 
     it 'parses two predicates followed by a function call' do
       parse_xpath('A[@x]/B[@x]/bar()').should == s(
-        :path,
-        s(
-          :predicate,
-          s(:axis, 'child', s(:test, nil, 'A')),
-          s(:axis, 'attribute', s(:test, nil, 'x'))
-        ),
+        :predicate,
+        s(:axis, 'child', s(:test, nil, 'A')),
+        s(:axis, 'attribute', s(:test, nil, 'x')),
         s(
           :predicate,
           s(:axis, 'child', s(:test, nil, 'B')),
-          s(:axis, 'attribute', s(:test, nil, 'x'))
-        ),
-        s(:call, 'bar')
+          s(:axis, 'attribute', s(:test, nil, 'x')),
+          s(:call, 'bar')
+        )
       )
     end
 
