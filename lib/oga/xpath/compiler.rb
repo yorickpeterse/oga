@@ -111,39 +111,11 @@ module Oga
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
-      def on_path(ast, input, &block)
-        ruby_ast   = nil
-        var_name   = node_literal
-        last_index = ast.children.length - 1
-
-        ast.children.reverse_each.with_index do |child, index|
-          # The first block should operate on the variable set in "input", all
-          # others should operate on the child variables ("node").
-          #
-          # FIXME: this currently basically only works by accident due to
-          # various bits of code also using "node_literal".
-          input_var = index == last_index ? input : var_name
-
-          # The last segment of the path should add the code that actually
-          # pushes the matched node into the node set.
-          if index == 0
-            ruby_ast = process(child, input_var, &block)
-          else
-            ruby_ast = process(child, input_var) { ruby_ast }
-          end
-        end
-
-        ruby_ast
-      end
-
-      # @param [AST::Node] ast
-      # @param [Oga::Ruby::Node] input
-      # @return [Oga::Ruby::Node]
       def on_absolute_path(ast, input, &block)
         if ast.children.empty?
           matched_literal.push(input.root_node)
         else
-          on_path(ast, input.root_node, &block)
+          process(ast.children[0], input.root_node, &block)
         end
       end
 
@@ -157,18 +129,20 @@ module Oga
       # @return [Oga::Ruby::Node]
       #
       def on_axis(ast, input, &block)
-        name, test = *ast
+        name, test, following = *ast
 
         handler = name.gsub('-', '_')
 
-        send(:"on_axis_#{handler}", test, input, &block)
+        send(:"on_axis_#{handler}", test, input) do |matched|
+          process_following_or_yield(following, matched, &block)
+        end
       end
 
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
       def on_axis_child(ast, input)
-        child     = node_literal
+        child     = unique_literal(:child)
         condition = process(ast, child)
 
         input.children.each.add_block(child) do
@@ -199,13 +173,15 @@ module Oga
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
       def on_axis_ancestor_or_self(ast, input)
-        parent = node_literal
+        parent = unique_literal(:parent)
 
         process(ast, input)
           .if_true { yield input }
           .followed_by do
-            input.each_ancestor.add_block(parent) do
-              process(ast, parent).if_true { yield parent }
+            node_or_attribute(input).if_true do
+              input.each_ancestor.add_block(parent) do
+                process(ast, parent).if_true { yield parent }
+              end
             end
           end
       end
@@ -214,10 +190,12 @@ module Oga
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
       def on_axis_ancestor(ast, input)
-        parent = node_literal
+        parent = unique_literal(:parent)
 
-        input.each_ancestor.add_block(parent) do
-          process(ast, parent).if_true { yield parent }
+        node_or_attribute(input).if_true do
+          input.each_ancestor.add_block(parent) do
+            process(ast, parent).if_true { yield parent }
+          end
         end
       end
 
@@ -416,7 +394,7 @@ module Oga
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
       def on_predicate(ast, input, &block)
-        test, predicate = *ast
+        test, predicate, following = *ast
 
         index_var = unique_literal(:index)
 
@@ -431,7 +409,9 @@ module Oga
         @predicate_indexes << index_var
 
         ast = index_var.assign(literal(1)).followed_by do
-          send(method, input, test, predicate, &block)
+          send(method, input, test, predicate) do |matched|
+            process_following_or_yield(following, matched, &block)
+          end
         end
 
         @predicate_indexes.pop
@@ -1289,11 +1269,13 @@ module Oga
       # @return [Oga::Ruby::Node]
       #
       def on_type_test(ast, input, &block)
-        name = ast.children[0]
+        name, followng = *ast
 
         handler = name.gsub('-', '_')
 
-        send(:"on_type_test_#{handler}", input, &block)
+        send(:"on_type_test_#{handler}", input) do |matched|
+          process_following_or_yield(following, matched, &block)
+        end
       end
 
       # @param [Oga::Ruby::Node] input
@@ -1386,6 +1368,12 @@ module Oga
       # @return [Oga::Ruby::Node]
       def element_or_attribute(node)
         node.is_a?(XML::Attribute).or(node.is_a?(XML::Element))
+      end
+
+      # @param [Oga::Ruby::Node] node
+      # @return [Oga::Ruby::Node]
+      def node_or_attribute(node)
+        node.is_a?(XML::Attribute).or(node.is_a?(XML::Node))
       end
 
       # @param [AST::Node] ast
@@ -1587,6 +1575,17 @@ module Oga
       # @return [Oga::Ruby::Node]
       def predicate_nodeset
         @predicate_nodesets.last
+      end
+
+      # @param [AST::Node] following
+      # @param [Oga::Ruby::Node] matched
+      # @return [Oga::Ruby::Node]
+      def process_following_or_yield(following, matched, &block)
+        if following
+          process(following, matched, &block)
+        else
+          yield matched
+        end
       end
     end # Compiler
   end # XPath
