@@ -176,7 +176,7 @@ module Oga
       def on_axis_ancestor_or_self(ast, input)
         parent = unique_literal(:parent)
 
-        process(ast, input)
+        process(ast, input).and(input.is_a?(XML::Node))
           .if_true { yield input }
           .followed_by do
             attribute_or_node(input).if_true do

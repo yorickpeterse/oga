@@ -23,6 +23,12 @@ describe Oga::XPath::Compiler do
         evaluate_xpath(@a1.attribute('foo')).should == node_set(@a1)
       end
     end
+
+    describe 'ancestor-or-self::foo' do
+      it 'returns an empty NodeSet' do
+        evaluate_xpath(@a1.attribute('foo')).should == node_set
+      end
+    end
   end
 
   describe 'relative to an element' do
