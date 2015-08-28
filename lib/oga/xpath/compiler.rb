@@ -64,7 +64,7 @@ module Oga
       # @return [Proc]
       #
       def compile(ast)
-        document = node_literal
+        document = literal(:node)
         matched  = matched_literal
 
         if return_nodeset?(ast)
@@ -221,7 +221,7 @@ module Oga
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
       def on_axis_descendant(ast, input)
-        node = node_literal
+        node = unique_literal(:descendant)
 
         document_or_node(input).if_true do
           input.each_node.add_block(node) do
@@ -234,7 +234,6 @@ module Oga
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
       def on_axis_parent(ast, input)
-        node   = node_literal
         parent = unique_literal(:parent)
 
         attribute_or_node(input).if_true do
@@ -255,7 +254,6 @@ module Oga
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
       def on_axis_following_sibling(ast, input)
-        node       = node_literal
         orig_input = original_input_literal
         doc_node   = literal(:doc_node)
         check      = literal(:check)
@@ -329,7 +327,7 @@ module Oga
       # @return [Oga::Ruby::Node]
       def on_axis_namespace(ast, input)
         underscore = literal(:_)
-        node       = node_literal
+        node       = unique_literal(:namespace)
 
         name = string(ast.children[1])
         star = string(STAR)
@@ -347,7 +345,6 @@ module Oga
       def on_axis_preceding(ast, input)
         orig_input = original_input_literal
         root       = literal(:root)
-        node       = node_literal
         doc_node   = literal(:doc_node)
 
         input.is_a?(XML::Node).if_true do
@@ -373,7 +370,6 @@ module Oga
         orig_input = original_input_literal
         check      = literal(:check)
         root       = literal(:root)
-        node       = node_literal
         parent     = literal(:parent)
         doc_node   = literal(:doc_node)
 
@@ -836,7 +832,7 @@ module Oga
       #
       def on_call_id(input, arg)
         orig_input = original_input_literal
-        node       = node_literal
+        node       = unique_literal(:node)
         ids_var    = unique_literal('ids')
         matched    = unique_literal('id_matched')
         id_str_var = unique_literal('id_string')
@@ -1496,11 +1492,6 @@ module Oga
       # @return [Oga::Ruby::Node]
       def matched_literal
         literal(:matched)
-      end
-
-      # @return [Oga::Ruby::Node]
-      def node_literal
-        literal(:node)
       end
 
       # @return [Oga::Ruby::Node]
