@@ -274,20 +274,22 @@ module Oga
           end
           .followed_by(check.assign(self.false))
           .followed_by do
-            root.each_node.add_block(doc_node) do
-              doc_node.eq(input)
-                .if_true do
-                  check.assign(self.true)
-                    .followed_by(throw_message(:skip_children))
-                end
-                .followed_by do
-                  check.not.or(parent != doc_node.parent).if_true do
-                    send_message(:next)
+            document_or_node(root).if_true do
+              root.each_node.add_block(doc_node) do
+                doc_node.eq(input)
+                  .if_true do
+                    check.assign(self.true)
+                      .followed_by(throw_message(:skip_children))
                   end
-                end
-                .followed_by do
-                  process(ast, doc_node).if_true { yield doc_node }
-                end
+                  .followed_by do
+                    check.not.or(parent != doc_node.parent).if_true do
+                      send_message(:next)
+                    end
+                  end
+                  .followed_by do
+                    process(ast, doc_node).if_true { yield doc_node }
+                  end
+              end
             end
           end
       end

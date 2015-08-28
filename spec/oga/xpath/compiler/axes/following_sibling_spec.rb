@@ -1,11 +1,10 @@
 require 'spec_helper'
 
 describe Oga::XPath::Compiler do
-  describe 'following-sibling axis' do
-    before do
-      # Strip whitespace so it's easier to retrieve/compare elements.
-      @document = parse(<<-EOF.strip.gsub(/\s+/m, ''))
-<root>
+  before do
+    # Strip whitespace so it's easier to retrieve/compare elements.
+    @document = parse(<<-EOF.strip.gsub(/^\s+|\n/m, ''))
+<root foo="bar">
   <foo>
     <bar></bar>
     <baz>
@@ -16,30 +15,49 @@ describe Oga::XPath::Compiler do
 </root>
       EOF
 
-      @bar1 = @document.children[0].children[0].children[0]
-      @baz1 = @document.children[0].children[0].children[1]
-      @baz2 = @baz1.children[0]
-      @baz3 = @document.children[0].children[1]
+    @bar1 = @document.children[0].children[0].children[0]
+    @baz1 = @document.children[0].children[0].children[1]
+    @baz2 = @baz1.children[0]
+    @baz3 = @document.children[0].children[1]
+  end
+
+  describe 'relative to a document' do
+    describe 'following-sibling::foo' do
+      # This should return an empty set since the document doesn't have any
+      # following nodes.
+      it 'returns an empty NodeSet' do
+        evaluate_xpath(@document).should == node_set
+      end
     end
 
-    # This should return an empty set since the document doesn't have any
-    # following nodes.
-    it 'returns an empty node set for the sibling of a document' do
-      evaluate_xpath(@document, 'following-sibling::foo').should == node_set
+    describe 'root/foo/following-sibling::baz' do
+      it 'returns a NodeSet' do
+        evaluate_xpath(@document).should == node_set(@baz3)
+      end
     end
 
-    it 'returns a node set containing the siblings of root/foo' do
-      evaluate_xpath(@document, 'root/foo/following-sibling::baz')
-        .should == node_set(@baz3)
+    describe 'root/foo/bar/following-sibling::baz' do
+      it 'returns a NodeSet' do
+        evaluate_xpath(@document).should == node_set(@baz1)
+      end
     end
+  end
 
-    it 'returns a node set containing the siblings of root/foo/bar' do
-      evaluate_xpath(@document, 'root/foo/bar/following-sibling::baz')
-        .should == node_set(@baz1)
+  describe 'relative to an element' do
+    describe 'following-sibling::baz' do
+      it 'returns a NodeSet' do
+        evaluate_xpath(@bar1).should == node_set(@baz1)
+      end
     end
+  end
 
-    it 'returns a node set containing the siblings relative to root/foo/bar' do
-      evaluate_xpath(@bar1, 'following-sibling::baz').should == node_set(@baz1)
+  describe 'relative to an attribute' do
+    describe 'following-sibling::foo' do
+      it 'returns an empty NodeSet' do
+        root = @document.children[0]
+
+        evaluate_xpath(root.attribute('foo')).should == node_set
+      end
     end
   end
 end
