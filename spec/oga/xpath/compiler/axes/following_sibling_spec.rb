@@ -13,7 +13,7 @@ describe Oga::XPath::Compiler do
   </foo>
   <baz></baz>
 </root>
-      EOF
+    EOF
 
     @bar1 = @document.children[0].children[0].children[0]
     @baz1 = @document.children[0].children[0].children[1]
