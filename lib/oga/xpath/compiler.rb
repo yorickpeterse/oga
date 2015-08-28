@@ -248,8 +248,6 @@ module Oga
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
       def on_axis_self(ast, input)
-        node = node_literal
-
         process(ast, input).if_true { yield input }
       end
 
@@ -1312,7 +1310,7 @@ module Oga
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
       def on_type_test_node(input)
-        input.is_a?(XML::Node).or(input.is_a?(XML::Document))
+        document_or_node(input).or(input.is_a?(XML::Attribute))
       end
 
       # @param [#to_s] value

@@ -1,41 +1,73 @@
 require 'spec_helper'
 
 describe Oga::XPath::Compiler do
-  describe 'self axis' do
-    before do
-      @document = parse('<a><b>foo</b><b>bar<c>test</c></b></a>')
+  before do
+    @document = parse('<a foo="bar"><b>foo</b><b>bar<c>test</c></b></a>')
 
-      @a1 = @document.children[0]
-      @b1 = @a1.children[0]
-      @b2 = @a1.children[1]
+    @a1 = @document.children[0]
+    @b1 = @a1.children[0]
+    @b2 = @a1.children[1]
+  end
+
+  describe 'relative to a document' do
+    describe 'a/self::a' do
+      it 'returns a NodeSet' do
+        evaluate_xpath(@document).should == node_set(@a1)
+      end
     end
 
-    it 'returns a node set containing the context node' do
-      evaluate_xpath(@document, 'a/self::a').should == node_set(@a1)
+    describe 'a/self::b' do
+      it 'returns an empty NodeSet' do
+        evaluate_xpath(@document).should == node_set
+      end
     end
 
-    it 'returns an empty node set for non existing nodes' do
-      evaluate_xpath(@document, 'a/self::b').should == node_set
+    describe 'a/.' do
+      it 'returns a NodeSet' do
+        evaluate_xpath(@document).should == node_set(@a1)
+      end
     end
 
-    it 'returns a node set containing the context node using the short form' do
-      evaluate_xpath(@document, 'a/.').should == node_set(@a1)
+    describe 'a/b[. = "foo"]' do
+      it 'returns a NodeSet' do
+        evaluate_xpath(@document).should == node_set(@b1)
+      end
     end
 
-    it 'returns a node set by matching the text of a node' do
-      evaluate_xpath(@document, 'a/b[. = "foo"]').should == node_set(@b1)
+    describe 'a/b[c/. = "test"]' do
+      it 'returns a NodeSet' do
+        evaluate_xpath(@document).should == node_set(@b2)
+      end
     end
 
-    it 'returns a node set by matching the text of a path' do
-      evaluate_xpath(@document, 'a/b[c/. = "test"]').should == node_set(@b2)
+    describe 'a/b[c[. = "test"]]' do
+      it 'returns a NodeSet' do
+        evaluate_xpath(@document).should == node_set(@b2)
+      end
     end
 
-    it 'returns a node set by matching the text of a nested predicate' do
-      evaluate_xpath(@document, 'a/b[c[. = "test"]]').should == node_set(@b2)
+    describe 'self::node()' do
+      it 'returns a NodeSet' do
+        evaluate_xpath(@document).should == node_set(@document)
+      end
     end
+  end
 
-    it 'returns a node set containing the document itself' do
-      evaluate_xpath(@document, 'self::node()').should == node_set(@document)
+  describe 'relative to an element' do
+    describe 'self::node()' do
+      it 'returns a NodeSet' do
+        evaluate_xpath(@a1).should == node_set(@a1)
+      end
+    end
+  end
+
+  describe 'relative to an attribute' do
+    describe 'self::node()' do
+      it 'returns a NodeSet' do
+        attr = @a1.attribute('foo')
+
+        evaluate_xpath(attr).should == node_set(attr)
+      end
     end
   end
 end
