@@ -1,10 +1,9 @@
 require 'spec_helper'
 
 describe Oga::XPath::Compiler do
-  describe 'preceding-sibling axis' do
-    before do
-      @document = parse(<<-EOF.strip.gsub(/\s+/m, ''))
-<root>
+  before do
+    @document = parse(<<-EOF.strip.gsub(/^\s+|\n/m, ''))
+<root foo="bar">
   <foo>
   </foo>
   <bar>
@@ -12,25 +11,48 @@ describe Oga::XPath::Compiler do
     <baz></baz>
   </bar>
 </root>
-      EOF
+    EOF
 
-      @foo1 = @document.children[0].children[0]
-      @foo2 = @document.children[0].children[1].children[0]
-      @bar1 = @document.children[0].children[1]
+    @foo1 = @document.children[0].children[0]
+    @foo2 = @document.children[0].children[1].children[0]
+    @bar1 = @document.children[0].children[1]
+  end
+
+  describe 'relative to a document' do
+    describe 'preceding-sibling::*' do
+      it 'returns an empty NodeSet' do
+        evaluate_xpath(@document).should == node_set
+      end
     end
 
-    it 'returns a node set containing preceding siblings of root/bar' do
-      evaluate_xpath(@document, 'root/bar/preceding-sibling::foo')
-        .should == node_set(@foo1)
+    describe 'root/bar/preceding-sibling::foo' do
+      it 'returns a NodeSet' do
+        evaluate_xpath(@document).should == node_set(@foo1)
+      end
     end
 
-    it 'returns a node set containing preceding siblings of root/bar/baz' do
-      evaluate_xpath(@document, 'root/bar/baz/preceding-sibling::foo')
-        .should == node_set(@foo2)
+    describe 'root/bar/baz/preceding-sibling::foo' do
+      it 'returns a NodeSet' do
+        evaluate_xpath(@document).should == node_set(@foo2)
+      end
     end
+  end
 
-    it 'returns a node set containing preceding siblings relative to root/bar' do
-      evaluate_xpath(@bar1, 'preceding-sibling::foo').should == node_set(@foo1)
+  describe 'relative to an element' do
+    describe 'preceding-sibling::foo' do
+      it 'returns a NodeSet' do
+        evaluate_xpath(@bar1).should == node_set(@foo1)
+      end
+    end
+  end
+
+  describe 'relative to an attribute' do
+    describe 'preceding-sibling::*' do
+      it 'returns an empty NodeSet' do
+        root = @document.children[0]
+
+        evaluate_xpath(root.attribute('foo')).should == node_set
+      end
     end
   end
 end

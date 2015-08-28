@@ -387,14 +387,16 @@ module Oga
               .else    { parent.assign(self.nil) }
           end
           .followed_by do
-            root.each_node.add_block(doc_node) do
-              doc_node.eq(input)
-                .if_true { self.break }
-                .followed_by do
-                  doc_node.parent.eq(parent).if_true do
-                    process(ast, doc_node).if_true { yield doc_node }
+            document_or_node(root).if_true do
+              root.each_node.add_block(doc_node) do
+                doc_node.eq(input)
+                  .if_true { self.break }
+                  .followed_by do
+                    doc_node.parent.eq(parent).if_true do
+                      process(ast, doc_node).if_true { yield doc_node }
+                    end
                   end
-                end
+              end
             end
           end
       end
