@@ -1,10 +1,9 @@
 require 'spec_helper'
 
 describe Oga::XPath::Compiler do
-  describe 'preceding axis' do
-    before do
-      @document = parse(<<-EOF.strip.gsub(/\s+/m, ''))
-<root>
+  before do
+    @document = parse(<<-EOF.strip.gsub(/^\s+|\n/m, ''))
+<root foo="bar">
   <foo>
     <bar></bar>
     <baz>
@@ -13,27 +12,64 @@ describe Oga::XPath::Compiler do
   </foo>
   <baz></baz>
 </root>
-      EOF
+    EOF
 
-      @foo1 = @document.children[0].children[0]
-      @bar1 = @foo1.children[0]
-      @baz1 = @foo1.children[1]
-      @baz2 = @baz1.children[0]
-      @baz3 = @document.children[0].children[1]
+    @foo1 = @document.children[0].children[0]
+    @bar1 = @foo1.children[0]
+    @baz1 = @foo1.children[1]
+    @baz2 = @baz1.children[0]
+    @baz3 = @document.children[0].children[1]
+  end
+
+  describe 'relative to a document' do
+    describe 'preceding::*' do
+      it 'returns an empty NodeSet' do
+        evaluate_xpath(@document).should == node_set
+      end
     end
 
-    it 'returns a node set containing preceding nodes of root/foo/baz' do
-      evaluate_xpath(@document, 'root/foo/baz/preceding::bar')
-        .should == node_set(@bar1)
+    describe 'root/foo/baz/preceding::bar' do
+      it 'returns a NodeSet' do
+        evaluate_xpath(@document).should == node_set(@bar1)
+      end
     end
 
-    it 'returns a node set containing preceding nodes for root/baz' do
-      evaluate_xpath(@document, 'root/baz/preceding::baz')
-        .should == node_set(@baz1, @baz2)
+    describe 'root/baz/preceding::baz' do
+      it 'returns a NodeSet' do
+        evaluate_xpath(@document).should == node_set(@baz1, @baz2)
+      end
+    end
+  end
+
+  describe 'relative to an element' do
+    describe 'preceding::root' do
+      it 'returns a NodeSet' do
+        evaluate_xpath(@foo1).should == @document.children
+      end
     end
 
-    it 'returns a node set containing preceding nodes relative to root/baz' do
-      evaluate_xpath(@baz3, 'preceding::baz').should == node_set(@baz1, @baz2)
+    describe 'preceding::baz' do
+      it 'returns a NodeSet' do
+        evaluate_xpath(@baz3).should == node_set(@baz1, @baz2)
+      end
+    end
+  end
+
+  describe 'relative to the root element' do
+    describe 'preceding::*' do
+      it 'returns an empty NodeSet' do
+        evaluate_xpath(@document.children[0]).should == node_set
+      end
+    end
+  end
+
+  describe 'relative to an attribute' do
+    describe 'preceding::*' do
+      it 'returns an empty NodeSet' do
+        root = @document.children[0]
+
+        evaluate_xpath(root.attribute('foo')).should == node_set
+      end
     end
   end
 end

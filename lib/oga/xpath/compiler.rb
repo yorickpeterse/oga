@@ -352,18 +352,20 @@ module Oga
         node       = node_literal
         doc_node   = literal(:doc_node)
 
-        orig_input.is_a?(XML::Node)
-          .if_true { root.assign(orig_input.root_node) }
-          .else    { root.assign(orig_input) }
-          .followed_by do
-            root.each_node.add_block(doc_node) do
-              doc_node.eq(input)
-                .if_true { self.break }
-                .followed_by do
-                  process(ast, doc_node).if_true { yield doc_node }
+        input.is_a?(XML::Node).if_true do
+          root.assign(input.root_node)
+            .followed_by do
+              document_or_node(root).if_true do
+                root.each_node.add_block(doc_node) do
+                  doc_node.eq(input)
+                    .if_true { self.break }
+                    .followed_by do
+                      process(ast, doc_node).if_true { yield doc_node }
+                    end
                 end
+              end
             end
-          end
+        end
       end
 
       # @param [AST::Node] ast
