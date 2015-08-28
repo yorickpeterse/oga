@@ -223,8 +223,10 @@ module Oga
       def on_axis_descendant(ast, input)
         node = node_literal
 
-        input.each_node.add_block(node) do
-          process(ast, node).if_true { yield node }
+        document_or_node(input).if_true do
+          input.each_node.add_block(node) do
+            process(ast, node).if_true { yield node }
+          end
         end
       end
 
