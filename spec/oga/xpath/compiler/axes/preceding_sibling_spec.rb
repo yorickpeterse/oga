@@ -46,6 +46,14 @@ describe Oga::XPath::Compiler do
     end
   end
 
+  describe 'relative to the root element' do
+    describe 'preceding-sibling::*' do
+      it 'returns an empty NodeSet' do
+        evaluate_xpath(@document.children[0]).should == node_set
+      end
+    end
+  end
+
   describe 'relative to an attribute' do
     describe 'preceding-sibling::*' do
       it 'returns an empty NodeSet' do
