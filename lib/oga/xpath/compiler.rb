@@ -237,7 +237,7 @@ module Oga
         node   = node_literal
         parent = unique_literal(:parent)
 
-        input.is_a?(XML::Node).if_true do
+        attribute_or_node(input).if_true do
           parent.assign(input.parent).followed_by do
             process(ast, parent).if_true { yield parent }
           end

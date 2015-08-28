@@ -1,23 +1,54 @@
 require 'spec_helper'
 
 describe Oga::XPath::Compiler do
-  describe 'parent axis' do
-    before do
-      @document = parse('<a><b></b></a>')
+  before do
+    @document = parse('<a foo="bar"><b></b></a>')
 
-      @a1 = @document.children[0]
+    @a1 = @document.children[0]
+    @b1 = @a1.children[0]
+  end
+
+  describe 'relative to a document' do
+    describe 'parent::a' do
+      it 'returns an empty NodeSet' do
+        evaluate_xpath(@document).should == node_set
+      end
     end
 
-    it 'returns an empty node set for non existing parents' do
-      evaluate_xpath(@document, 'parent::a').should == node_set
+    describe 'a/b/parent::a' do
+      it 'returns a NodeSet' do
+        evaluate_xpath(@document).should == node_set(@a1)
+      end
     end
 
-    it 'returns a node set containing parents of a node' do
-      evaluate_xpath(@document, 'a/b/parent::a').should == node_set(@a1)
+    describe 'a/b/..' do
+      it 'returns a NodeSet' do
+        evaluate_xpath(@document).should == node_set(@a1)
+      end
     end
+  end
 
-    it 'returns a node set containing parents of a node using the short form' do
-      evaluate_xpath(@document, 'a/b/..').should == node_set(@a1)
+  describe 'relative to an element' do
+    describe 'parent::a' do
+      it 'returns a NodeSet' do
+        evaluate_xpath(@b1).should == node_set(@a1)
+      end
+    end
+  end
+
+  describe 'relative to the root element' do
+    describe 'parent::*' do
+      it 'returns an empty NodeSet' do
+        evaluate_xpath(@a1).should == node_set
+      end
+    end
+  end
+
+  describe 'relative to an attribute' do
+    describe 'parent::a' do
+      it 'returns a NodeSet' do
+        evaluate_xpath(@a1.attribute('foo')).should == node_set(@a1)
+      end
     end
   end
 end
