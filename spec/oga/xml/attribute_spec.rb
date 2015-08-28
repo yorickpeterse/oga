@@ -11,6 +11,15 @@ describe Oga::XML::Attribute do
     end
   end
 
+  describe '#parent' do
+    it 'returns the parent Element' do
+      element = Oga::XML::Element.new(:name => 'foo')
+      attr    = described_class.new(:element => element)
+
+      attr.parent.should == element
+    end
+  end
+
   describe '#namespace' do
     before do
       @namespace = Oga::XML::Namespace.new(:name => 'b')

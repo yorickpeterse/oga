@@ -17,6 +17,8 @@ module Oga
       # @return [Oga::XML::Element]
       attr_accessor :element
 
+      alias_method :parent, :element
+
       ##
       # The default namespace available to all attributes. This namespace can
       # not be modified.
