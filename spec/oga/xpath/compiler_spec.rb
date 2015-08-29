@@ -40,13 +40,6 @@ describe Oga::XPath::Compiler do
       block.lambda?.should == true
     end
 
-    it 'returns a Proc with a single required argument' do
-      ast = parse_xpath('foo')
-
-      # Only the input document is required.
-      @compiler.compile(ast).arity.should == -2
-    end
-
     describe 'calling the compiled Proc' do
       it 'returns a NodeSet' do
         doc   = parse('<foo></foo>')
