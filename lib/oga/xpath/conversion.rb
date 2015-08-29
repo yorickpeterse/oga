@@ -3,6 +3,8 @@ module Oga
     ##
     # Module for converting XPath objects such as NodeSets.
     #
+    # @private
+    #
     module Conversion
       ##
       # Converts both arguments to a type that can be compared using ==.
