@@ -1276,7 +1276,7 @@ module Oga
       # @return [Oga::Ruby::Node]
       #
       def on_type_test(ast, input, &block)
-        name, followng = *ast
+        name, following = *ast
 
         handler = name.gsub('-', '_')
 

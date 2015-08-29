@@ -1,20 +1,24 @@
 require 'spec_helper'
 
 describe Oga::XPath::Compiler do
-  describe 'text() tests' do
-    before do
-      @document = parse('<a>foo<b>bar</b></a>')
+  before do
+    @document = parse('<a>foo<b>bar</b></a>')
 
-      @text1 = @document.children[0].children[0]
-      @text2 = @document.children[0].children[1].children[0]
+    @text1 = @document.children[0].children[0]
+    @text2 = @document.children[0].children[1].children[0]
+  end
+
+  describe 'relative to a document' do
+    describe 'a/text()' do
+      it 'returns a NodeSet' do
+        evaluate_xpath(@document).should == node_set(@text1)
+      end
     end
 
-    it 'returns a node set containing text nodes' do
-      evaluate_xpath(@document, 'a/text()').should == node_set(@text1)
-    end
-
-    it 'returns a node set containing nested text nodes' do
-      evaluate_xpath(@document, 'a/b/text()').should == node_set(@text2)
+    describe 'a/b/text()' do
+      it 'returns a NodeSet' do
+        evaluate_xpath(@document).should == node_set(@text2)
+      end
     end
   end
 end
