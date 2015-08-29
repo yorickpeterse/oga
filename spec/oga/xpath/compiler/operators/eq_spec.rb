@@ -75,7 +75,7 @@ describe Oga::XPath::Compiler do
     end
 
     it 'returns true if an axis and a string are equal' do
-      element = @document.at_xpath('root/b')
+      element = @document.children[0].children[1]
 
       evaluate_xpath(element, '@class = "foo"').should == true
     end
