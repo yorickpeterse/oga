@@ -13,7 +13,10 @@ module Oga
       # @see [Oga::XPath::Evaluator#initialize]
       #
       def xpath(expression, variables = {})
-        XPath::Evaluator.new(self, variables).evaluate(expression)
+        ast   = XPath::Parser.parse_with_cache(expression)
+        block = XPath::Compiler.compile_with_cache(ast)
+
+        block.call(self, variables)
       end
 
       ##
@@ -35,9 +38,10 @@ module Oga
       # @see [Oga::XPath::Evaluator#initialize]
       #
       def css(expression)
-        ast = CSS::Parser.parse_with_cache(expression)
+        ast   = CSS::Parser.parse_with_cache(expression)
+        block = XPath::Compiler.compile_with_cache(ast)
 
-        XPath::Evaluator.new(self).evaluate_ast(ast)
+        block.call(self)
       end
 
       ##
