@@ -28,12 +28,13 @@ require 'profile' if ENV['PROFILE']
 thread_count.times.each do
   threads << Thread.new do
     oga_doc   = documents.pop
-    evaluator = Oga::XPath::Evaluator.new(oga_doc)
+    compiler  = Oga::XPath::Compiler.new
+    block     = compiler.compile(xpath_ast)
 
     sample_size.times do
       break if stop
 
-      output << Benchmark.measure { evaluator.evaluate_ast(xpath_ast) }
+      output << Benchmark.measure { block.call(oga_doc) }
     end
   end
 end

@@ -10,7 +10,6 @@ module Oga
       #
       # @param [String] expression The XPath expression to run.
       # @param [Hash] variables Variables to bind.
-      # @see [Oga::XPath::Evaluator#initialize]
       #
       def xpath(expression, variables = {})
         ast   = XPath::Parser.parse_with_cache(expression)
@@ -35,7 +34,6 @@ module Oga
       # Evaluates the given CSS expression.
       #
       # @param [String] expression The CSS expression to run.
-      # @see [Oga::XPath::Evaluator#initialize]
       #
       def css(expression)
         ast   = CSS::Parser.parse_with_cache(expression)
