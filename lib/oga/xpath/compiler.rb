@@ -343,9 +343,8 @@ module Oga
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
       def on_axis_preceding(ast, input)
-        orig_input = original_input_literal
-        root       = literal(:root)
-        doc_node   = literal(:doc_node)
+        root     = literal(:root)
+        doc_node = literal(:doc_node)
 
         input.is_a?(XML::Node).if_true do
           root.assign(input.root_node)
@@ -524,7 +523,6 @@ module Oga
       # @return [Oga::Ruby::Node]
       #
       def on_predicate_index(input, test, predicate)
-        pred_var   = unique_literal(:pred_var)
         index_var  = predicate_index
         index_step = literal(1)
 
@@ -643,10 +641,8 @@ module Oga
       end
 
       # @param [AST::Node] ast
-      # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
-      def on_var(ast, input)
-        vars = variables_literal
+      def on_var(ast, *)
         name = ast.children[0]
 
         variables_literal.and(variables_literal[string(name)])
@@ -844,7 +840,7 @@ module Oga
             # nodes.
             if return_nodeset?(arg)
               ids_var.assign(literal(:[])).followed_by do
-                process(arg, input) { |node| ids_var << node.text }
+                process(arg, input) { |element| ids_var << element.text }
               end
 
             # For everything else we'll cast the value to a string and split it
@@ -1484,7 +1480,7 @@ module Oga
         left_ast  = try_match_first_node(left, input, optimize_first)
         right_ast = try_match_first_node(right, input, optimize_first)
 
-        initial_assign = left_var.assign(left_ast)
+        left_var.assign(left_ast)
           .followed_by(right_var.assign(right_ast))
           .followed_by { yield left_var, right_var }
       end
