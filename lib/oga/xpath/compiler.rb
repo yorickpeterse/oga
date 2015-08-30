@@ -1398,9 +1398,12 @@ module Oga
         ns, name = *ast
 
         condition = nil
+        name_str  = string(name)
+        zero      = literal(0)
 
         if name != STAR
-          condition = input.name.eq(string(name))
+          condition = input.name.eq(name_str)
+            .or(input.name.casecmp(name_str).eq(zero))
         end
 
         if ns and ns != STAR

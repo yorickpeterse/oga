@@ -16,6 +16,12 @@ describe Oga::XPath::Compiler do
       end
     end
 
+    describe '/A' do
+      it 'returns a NodeSet' do
+        evaluate_xpath(@document).should == node_set(@a1)
+      end
+    end
+
     describe '/' do
       it 'returns a NodeSet' do
         evaluate_xpath(@document).should == node_set(@document)
