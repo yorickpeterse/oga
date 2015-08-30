@@ -1032,10 +1032,16 @@ module Oga
             needle_var.assign(try_match_first_node(needle, input))
           end
           .followed_by do
-            converted = conversion.to_string(haystack_var)
-              .start_with?(conversion.to_string(needle_var))
+            haystack_var.assign(conversion.to_string(haystack_var))
+              .followed_by do
+                needle_var.assign(conversion.to_string(needle_var))
+              end
+              .followed_by do
+                equal = needle_var.empty?
+                  .or(haystack_var.start_with?(needle_var))
 
-            block_given? ? converted.if_true { yield } : converted
+                block_given? ? equal.if_true { yield } : equal
+              end
           end
       end
 
