@@ -44,6 +44,8 @@ module Oga
         @children
       end
 
+      alias_method :to_ary, :to_a
+
       ##
       # Returns a "to_a" call node.
       #
