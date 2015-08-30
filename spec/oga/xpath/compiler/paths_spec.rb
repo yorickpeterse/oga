@@ -1,47 +1,65 @@
 require 'spec_helper'
 
 describe Oga::XPath::Compiler do
-  describe 'paths' do
-    before do
-      @document = parse('<a xmlns:ns1="x">Foo<b></b><b></b><ns1:c></ns1:c></a>')
+  before do
+    @document = parse('<a xmlns:ns1="x">Foo<b></b><b></b><ns1:c></ns1:c></a>')
 
-      @a1 = @document.children[0]
-      @b1 = @a1.children[1]
-      @b2 = @a1.children[2]
+    @a1 = @document.children[0]
+    @b1 = @a1.children[1]
+    @b2 = @a1.children[2]
+  end
+
+  describe 'relative to a document' do
+    describe '/a' do
+      it 'returns a NodeSet' do
+        evaluate_xpath(@document).should == node_set(@a1)
+      end
     end
 
-    it 'evaluates an absolute path' do
-      evaluate_xpath(@document, '/a').should == node_set(@a1)
+    describe '/' do
+      it 'returns a NodeSet' do
+        evaluate_xpath(@document).should == node_set(@document)
+      end
     end
 
-    it 'evaluates an absolute path relative to a sub node' do
-      b_node = @document.children[0].children[0]
-
-      evaluate_xpath(b_node, '/a').should == node_set(@a1)
+    describe 'a' do
+      it 'returns a NodeSet' do
+        evaluate_xpath(@document).should == node_set(@a1)
+      end
     end
 
-    it 'evaluates the root selector' do
-      evaluate_xpath(@document, '/').should == node_set(@document)
+    describe 'x/a' do
+      it 'returns a NodeSet' do
+        evaluate_xpath(@document).should == node_set
+      end
     end
 
-    it 'evaluates a relative path' do
-      evaluate_xpath(@document, 'a').should == node_set(@a1)
+    describe '/a/b' do
+      it 'returns a NodeSet' do
+        evaluate_xpath(@document).should == node_set(@b1, @b2)
+      end
     end
 
-    it 'evaluates a relative path that returns an empty node set' do
-      evaluate_xpath(@document, 'x/a').should == node_set
+    describe '/x/a' do
+      it 'returns a NodeSet' do
+        evaluate_xpath(@document).should == node_set
+      end
     end
 
-    it 'evaluates a nested absolute path' do
-      evaluate_xpath(@document, '/a/b').should == node_set(@b1, @b2)
+    describe 'a/ns1:c' do
+      it 'returns a NodeSet' do
+        evaluate_xpath(@document).should == node_set(@a1.children[-1])
+      end
     end
+  end
 
-    it 'evaluates an absolute path that returns an empty node set' do
-      evaluate_xpath(@document, '/x/a').should == node_set
-    end
+  describe 'relative to an element' do
+    describe '/a' do
+      it 'returns a NodeSet' do
+        b_node = @document.children[0].children[0]
 
-    it 'evaluates a namespaced path' do
-      evaluate_xpath(@document, 'a/ns1:c').should == node_set(@a1.children[-1])
+        evaluate_xpath(b_node, '/a').should == node_set(@a1)
+      end
     end
   end
 end
