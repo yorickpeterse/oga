@@ -1,6 +1,5 @@
 module Oga
   module XPath
-    ##
     # Compiling of XPath ASTs into Ruby code.
     #
     # The Compiler class can be used to turn an XPath AST into Ruby source code
@@ -9,7 +8,6 @@ module Oga
     # recompiling the same expression over and over again.
     #
     # @private
-    #
     class Compiler
       # @return [Oga::LRU]
       CACHE = LRU.new
@@ -36,11 +34,9 @@ module Oga
         :on_or  => [:to_boolean, :or]
       }
 
-      ##
       # Compiles and caches an AST.
       #
       # @see [#compile]
-      #
       def self.compile_with_cache(ast)
         CACHE.get_or_set(ast) { new.compile(ast) }
       end
@@ -57,12 +53,10 @@ module Oga
         @predicate_indexes  = []
       end
 
-      ##
       # Compiles an XPath AST into a Ruby Proc.
       #
       # @param [AST::Node] ast
       # @return [Proc]
-      #
       def compile(ast)
         document = literal(:node)
         matched  = matched_literal
@@ -97,13 +91,11 @@ module Oga
         reset
       end
 
-      ##
       # Processes a single XPath AST node.
       #
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
-      #
       def process(ast, input, &block)
         send("on_#{ast.type}", ast, input, &block)
       end
@@ -119,7 +111,6 @@ module Oga
         end
       end
 
-      ##
       # Dispatches the processing of axes to dedicated methods. This works
       # similar to {#process} except the handler names are "on_axis_X" with "X"
       # being the axis name.
@@ -127,7 +118,6 @@ module Oga
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
-      #
       def on_axis(ast, input, &block)
         name, test, following = *ast
 
@@ -425,14 +415,12 @@ module Oga
         ast
       end
 
-      ##
       # Processes a predicate that requires a temporary NodeSet.
       #
       # @param [Oga::Ruby::Node] input
       # @param [AST::Node] test
       # @param [AST::Node] predicate
       # @return [Oga::Ruby::Node]
-      #
       def on_predicate_temporary(input, test, predicate)
         temp_set   = unique_literal(:temp_set)
         pred_node  = unique_literal(:pred_node)
@@ -472,14 +460,12 @@ module Oga
         ast
       end
 
-      ##
       # Processes a predicate that doesn't require temporary NodeSet.
       #
       # @param [Oga::Ruby::Node] input
       # @param [AST::Node] test
       # @param [AST::Node] predicate
       # @return [Oga::Ruby::Node]
-      #
       def on_predicate_direct(input, test, predicate)
         pred_var   = unique_literal(:pred_var)
         index_var  = predicate_index
@@ -514,14 +500,12 @@ module Oga
         end
       end
 
-      ##
       # Processes a predicate that uses a literal index.
       #
       # @param [Oga::Ruby::Node] input
       # @param [AST::Node] test
       # @param [AST::Node] predicate
       # @return [Oga::Ruby::Node]
-      #
       def on_predicate_index(input, test, predicate)
         index_var  = predicate_index
         index_step = literal(1)
@@ -549,11 +533,9 @@ module Oga
         name_match ? condition.and(name_match) : condition
       end
 
-      ##
       # Processes the `=` operator.
       #
       # @see [#operator]
-      #
       def on_eq(ast, input, &block)
         conv = literal(Conversion)
 
@@ -567,11 +549,9 @@ module Oga
         end
       end
 
-      ##
       # Processes the `!=` operator.
       #
       # @see [#operator]
-      #
       def on_neq(ast, input, &block)
         conv = literal(Conversion)
 
@@ -599,11 +579,9 @@ module Oga
         end
       end
 
-      ##
       # Processes the `|` operator.
       #
       # @see [#operator]
-      #
       def on_pipe(ast, input, &block)
         left, right = *ast
 
@@ -649,13 +627,11 @@ module Oga
           .or(send_message(:raise, string("Undefined XPath variable: #{name}")))
       end
 
-      ##
       # Delegates function calls to specific handlers.
       #
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
-      #
       def on_call(ast, input, &block)
         name, *args = *ast
 
@@ -808,7 +784,6 @@ module Oga
           end
       end
 
-      ##
       # Processes the `id()` function call.
       #
       # The XPath specification states that this function's behaviour should be
@@ -825,7 +800,6 @@ module Oga
       # @param [Oga::Ruby::Node] input
       # @param [AST::Node] arg
       # @return [Oga::Ruby::Node]
-      #
       def on_call_id(input, arg)
         orig_input = original_input_literal
         node       = unique_literal(:node)
@@ -1270,13 +1244,11 @@ module Oga
         index.to_f
       end
 
-      ##
       # Delegates type tests to specific handlers.
       #
       # @param [AST::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
-      #
       def on_type_test(ast, input, &block)
         name, following = *ast
 
@@ -1414,13 +1386,11 @@ module Oga
         condition
       end
 
-      ##
       # Returns an AST matching the first node of a node set.
       #
       # @param [Oga::Ruby::Node] ast
       # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
-      #
       def match_first_node(ast, input)
         catch_message(:value) do
           process(ast, input) do |node|
@@ -1429,11 +1399,9 @@ module Oga
         end
       end
 
-      ##
       # Tries to match the first node in a set, otherwise processes it as usual.
       #
       # @see [#match_first_node]
-      #
       def try_match_first_node(ast, input, optimize_first = true)
         if return_nodeset?(ast) and optimize_first
           match_first_node(ast, input)
@@ -1460,7 +1428,6 @@ module Oga
         arg_var.assign(arg_ast).followed_by { yield arg_var }
       end
 
-      ##
       # Generates the code for an operator.
       #
       # The generated code is optimized so that expressions such as `a/b = c`
@@ -1479,7 +1446,6 @@ module Oga
       # @param [Oga::Ruby::Node] input
       # @param [TrueClass|FalseClass] optimize_first
       # @return [Oga::Ruby::Node]
-      #
       def operator(ast, input, optimize_first = true)
         left, right = *ast
 

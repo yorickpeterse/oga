@@ -2,7 +2,6 @@
 
 module Oga
   module XPath
-    ##
     # Lexer for turning XPath expressions into a set of tokens. Tokens are
     # returned as arrays with every array having two values:
     #
@@ -33,18 +32,15 @@ module Oga
     # shared state.
     #
     # @api private
-    #
     class Lexer
       %% write data;
 
       # % fix highlight
 
-      ##
       # Maps certain XPath axes written in their short form to their long form
       # equivalents.
       #
       # @return [Hash]
-      #
       AXIS_MAPPING = {
         '@'  => 'attribute',
         '//' => 'descendant-or-self',
@@ -52,33 +48,25 @@ module Oga
         '.'  => 'self'
       }
 
-      ##
       # Axes that require a separate `node()` call to be emitted.
       #
       # @return [Array]
-      #
       AXIS_EMIT_NODE = %w{descendant-or-self parent self}
 
-      ##
       # Axes that require an extra T_SLASH token to be emitted.
       #
       # @return [Array]
-      #
       AXIS_EMIT_EXTRA_SLASH = %w{descendant-or-self}
 
-      ##
       # @param [String] data The data to lex.
-      #
       def initialize(data)
         @data = data
       end
 
-      ##
       # Gathers all the tokens for the input and returns them as an Array.
       #
       # @see [#advance]
       # @return [Array]
-      #
       def lex
         tokens = []
 
@@ -89,7 +77,6 @@ module Oga
         return tokens
       end
 
-      ##
       # Advances through the input and generates the corresponding tokens. Each
       # token is yielded to the supplied block.
       #
@@ -103,7 +90,6 @@ module Oga
       # the lexer loop has finished.
       #
       # @see [#add_token]
-      #
       def advance(&block)
         @block = block
 
@@ -137,7 +123,6 @@ module Oga
 
       private
 
-      ##
       # Emits a token of which the value is based on the supplied start/stop
       # position.
       #
@@ -147,25 +132,21 @@ module Oga
       #
       # @see [#text]
       # @see [#add_token]
-      #
       def emit(type, start, stop)
         value = slice_input(start, stop)
 
         add_token(type, value)
       end
 
-      ##
       # Returns the text between the specified start and stop position.
       #
       # @param [Fixnum] start
       # @param [Fixnum] stop
       # @return [String]
-      #
       def slice_input(start, stop)
         return @data.byteslice(start, stop - start)
       end
 
-      ##
       # Yields a new token to the supplied block.
       #
       # @param [Symbol] type The token type.
@@ -173,7 +154,6 @@ module Oga
       #
       # @yieldparam [Symbol] type
       # @yieldparam [String|NilClass] value
-      #
       def add_token(type, value = nil)
         @block.call(type, value)
       end
@@ -228,7 +208,6 @@ module Oga
         #
         # Strings can be single or double quoted. They are mainly used for
         # attribute values.
-        #
         dquote = '"';
         squote = "'";
 
@@ -244,7 +223,6 @@ module Oga
         # Full Axes
         #
         # XPath axes in their full syntax.
-        #
         axis_full = ('ancestor'
           | 'ancestor-or-self'
           | 'attribute'
@@ -268,7 +246,6 @@ module Oga
         # XPath axes in their abbreviated form. When lexing these are mapped to
         # their full forms so that the parser doesn't have to take care of
         # this.
-        #
         axis_short = '@' | '//' | '..' | '.';
 
         action emit_axis_short {
@@ -358,7 +335,6 @@ module Oga
         # can not assign variables in an expression, you can only refer to them.
         # This means that libraries themselves have to expose an interface for
         # setting variables.
-        #
         var = '$' identifier;
 
         action emit_variable {

@@ -1,6 +1,5 @@
 %header
 {
-##
 # AST parser for CSS expressions.
 #
 # This parser does _not_ build a CSS specific AST, instead it directly produces
@@ -327,47 +326,35 @@ even
 
 %inner
 {
-  ##
   # @return [Oga::LRU]
-  #
   CACHE = LRU.new
 
-  ##
   # @param [String] data
   # @return [AST::Node]
-  #
   def self.parse_with_cache(data)
     CACHE.get_or_set(data) { new(data).parse }
   end
 
-  ##
   # @param [String] data The input to parse.
-  #
   def initialize(data)
     @lexer = Lexer.new(data)
   end
 
-  ##
   # Resets the internal state of the parser.
-  #
   def reset
     @current_element = nil
   end
 
-  ##
   # @param [Symbol] type
   # @param [Array] children
   # @return [AST::Node]
-  #
   def s(type, *children)
     AST::Node.new(type, children)
   end
 
-  ##
   # Yields the next token from the lexer.
   #
   # @yieldparam [Array]
-  #
   def each_token
     @lexer.advance do |*args|
       yield args
@@ -376,16 +363,13 @@ even
     yield [-1, -1]
   end
 
-  ##
   # Returns the node test for the current element.
   #
   # @return [AST::Node]
-  #
   def current_element
     @current_element ||= s(:test, nil, '*')
   end
 
-  ##
   # Parses the input and returns the corresponding AST.
   #
   # @example
@@ -393,175 +377,140 @@ even
   #  ast    = parser.parse
   #
   # @return [AST::Node]
-  #
   def parse
     reset
 
     super
   end
 
-  ##
   # Generates the AST for a node test.
   #
   # @param [String] namespace
   # @param [String] name
   # @return [AST::Node]
-  #
   def on_test(namespace, name)
     @current_element = s(:test, namespace, name)
   end
 
-  ##
   # @param [String] name
   # @param [AST::Node] arg
   # @return [AST::Node]
-  #
   def on_pseudo_class(name, arg = nil)
     handler = "on_pseudo_class_#{name.gsub('-', '_')}"
 
     arg ? send(handler, arg) : send(handler)
   end
 
-  ##
   # Generates the AST for the `root` pseudo class.
   #
   # @return [AST::Node]
-  #
   def on_pseudo_class_root
     s(:call, 'not', s(:axis, 'parent', s(:test, nil, '*')))
   end
 
-  ##
   # Generates the AST for the `nth-child` pseudo class.
   #
   # @param [AST::Node] arg
   # @return [AST::Node]
-  #
   def on_pseudo_class_nth_child(arg)
     generate_nth_child('preceding-sibling', arg)
   end
 
-  ##
   # Generates the AST for the `nth-last-child` pseudo class.
   #
   # @param [AST::Node] arg
   # @return [AST::Node]
-  #
   def on_pseudo_class_nth_last_child(arg)
     generate_nth_child('following-sibling', arg)
   end
 
-  ##
   # Generates the AST for the `nth-of-type` pseudo class.
   #
   # @param [AST::Node] arg
   # @return [AST::Node]
-  #
   def on_pseudo_class_nth_of_type(arg)
     generate_nth_child('preceding-sibling', arg, current_element)
   end
 
-  ##
   # Generates the AST for the `nth-last-of-type` pseudo class.
   #
   # @param [AST::Node] arg
   # @return [AST::Node]
-  #
   def on_pseudo_class_nth_last_of_type(arg)
     generate_nth_child('following-sibling', arg, current_element)
   end
 
-  ##
   # Generates the AST for the `nth` pseudo class.
   #
   # @param [AST::Node] arg
   # @return [AST::Node]
-  #
   def on_pseudo_class_nth(arg)
     s(:eq, s(:call, 'position'), arg)
   end
 
-  ##
   # Generates the AST for the `:first-child` selector.
   #
   # @return [AST::Node]
-  #
   def on_pseudo_class_first_child
     generate_no_siblings('preceding-sibling')
   end
 
-  ##
   # Generates the AST for the `:last-child` selector.
   #
   # @return [AST::Node]
-  #
   def on_pseudo_class_last_child
     generate_no_siblings('following-sibling')
   end
 
-  ##
   # Generates the AST for the `:first-of-type` selector.
   #
   # @return [AST::Node]
-  #
   def on_pseudo_class_first_of_type
     generate_no_siblings('preceding-sibling', current_element)
   end
 
-  ##
   # Generates the AST for the `:last-of-type` selector.
   #
   # @return [AST::Node]
-  #
   def on_pseudo_class_last_of_type
     generate_no_siblings('following-sibling', current_element)
   end
 
-  ##
   # Generates the AST for the `:only-child` selector.
   #
   # @return [AST::Node]
-  #
   def on_pseudo_class_only_child
     s(:and, on_pseudo_class_first_child, on_pseudo_class_last_child)
   end
 
-  ##
   # Generates the AST for the `:only-of-type` selector.
   #
   # @return [AST::Node]
-  #
   def on_pseudo_class_only_of_type
     s(:and, on_pseudo_class_first_of_type, on_pseudo_class_last_of_type)
   end
 
-  ##
   # Generates the AST for the `:empty` selector.
   #
   # @return [AST::Node]
-  #
   def on_pseudo_class_empty
     s(:call, 'not', s(:axis, 'child', s(:type_test, 'node')))
   end
 
-  ##
   # Generates the AST for the `=` operator.
   #
   # @param [AST::Node] attr
   # @param [AST::Node] value
   # @return [AST::Node]
-  #
   def on_op_eq(attr, value)
     s(:eq, attr, value)
   end
 
-  ##
   # Generates the AST for the `~=` operator.
   #
   # @param [AST::Node] attr
   # @param [AST::Node] value
   # @return [AST::Node]
-  #
   def on_op_space_in(attr, value)
     s(
       :call,
@@ -571,24 +520,20 @@ even
     )
   end
 
-  ##
   # Generates the AST for the `^=` operator.
   #
   # @param [AST::Node] attr
   # @param [AST::Node] value
   # @return [AST::Node]
-  #
   def on_op_starts_with(attr, value)
     s(:call, 'starts-with', attr, value)
   end
 
-  ##
   # Generates the AST for the `$=` operator.
   #
   # @param [AST::Node] attr
   # @param [AST::Node] value
   # @return [AST::Node]
-  #
   def on_op_ends_with(attr, value)
     s(
       :eq,
@@ -611,24 +556,20 @@ even
     )
   end
 
-  ##
   # Generates the AST for the `*=` operator.
   #
   # @param [AST::Node] attr
   # @param [AST::Node] value
   # @return [AST::Node]
-  #
   def on_op_in(attr, value)
     s(:call, 'contains', attr, value)
   end
 
-  ##
   # Generates the AST for the `|=` operator.
   #
   # @param [AST::Node] attr
   # @param [AST::Node] value
   # @return [AST::Node]
-  #
   def on_op_hyphen_in(attr, value)
     s(
       :or,
@@ -644,12 +585,10 @@ even
 
   private
 
-  ##
   # @param [String] count_axis
   # @param [AST::Node] arg
   # @param [AST::Node] count_test
   # @return [AST::Node]
-  #
   def generate_nth_child(count_axis, arg, count_test = s(:test, nil, '*'))
     count_call = s(:call, 'count', s(:axis, count_axis, count_test))
 
@@ -679,43 +618,33 @@ even
     node
   end
 
-  ##
   # @param [String] axis
   # @param [AST::Node] test
   # @return [AST::Node]
-  #
   def generate_no_siblings(axis, test = s(:test, nil, '*'))
     s(:eq, s(:call, 'count', s(:axis, axis, test)), s(:int, 0))
   end
 
-  ##
   # @param [AST::Node] node
   # @return [TrueClass|FalseClass]
-  #
   def int_node?(node)
     node.type.equal?(:int)
   end
 
-  ##
   # @param [AST::Node] node
   # @return [TrueClass|FalseClass]
-  #
   def non_positive_number?(node)
     node.children[0] <= 0
   end
 
-  ##
   # @param [AST::Node] node
   # @return [Symbol]
-  #
   def step_comparison(node)
     node.children[0] >= 0 ? :gte : :lte
   end
 
-  ##
   # @param [AST::Node] step
   # @return [AST::Node]
-  #
   def step_modulo_value(step)
     # -2n
     if step and non_positive_number?(step)

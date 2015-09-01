@@ -1,17 +1,13 @@
 module Oga
   module Ruby
-    ##
     # Class for converting a Ruby AST to a String.
     #
     # This class takes a {Oga::Ruby::Node} instance and converts it (and its
     # child nodes) to a String that in turn can be passed to `eval` and the
     # likes.
-    #
     class Generator
-      ##
       # @param [Oga::Ruby::Node] ast
       # @return [String]
-      #
       def process(ast)
         send(:"on_#{ast.type}", ast)
       end
@@ -22,12 +18,10 @@ module Oga
         ast.to_a.map { |child| process(child) }.join("\n\n")
       end
 
-      ##
       # Processes an assignment node.
       #
       # @param [Oga::Ruby::Node] ast
       # @return [String]
-      #
       def on_assign(ast)
         var, val = *ast
 
@@ -37,12 +31,10 @@ module Oga
         "#{var_str} = #{val_str}"
       end
 
-      ##
       # Processes a mass assignment node.
       #
       # @param [Oga::Ruby::Node] ast
       # @return [String]
-      #
       def on_massign(ast)
         vars, val = *ast
 
@@ -52,12 +44,10 @@ module Oga
         "#{var_names.join(', ')} = #{val_str}"
       end
 
-      ##
       # Processes a `begin` node.
       #
       # @param [Oga::Ruby::Node] ast
       # @return [String]
-      #
       def on_begin(ast)
         body = process(ast.to_a[0])
 
@@ -68,12 +58,10 @@ end
         EOF
       end
 
-      ##
       # Processes an equality node.
       #
       # @param [Oga::Ruby::Node] ast
       # @return [String]
-      #
       def on_eq(ast)
         left, right = *ast
 
@@ -83,12 +71,10 @@ end
         "#{left_str} == #{right_str}"
       end
 
-      ##
       # Processes a boolean "and" node.
       #
       # @param [Oga::Ruby::Node] ast
       # @return [String]
-      #
       def on_and(ast)
         left, right = *ast
 
@@ -98,12 +84,10 @@ end
         "#{left_str} && #{right_str}"
       end
 
-      ##
       # Processes a boolean "or" node.
       #
       # @param [Oga::Ruby::Node] ast
       # @return [String]
-      #
       def on_or(ast)
         left, right = *ast
 
@@ -113,12 +97,10 @@ end
         "(#{left_str} || #{right_str})"
       end
 
-      ##
       # Processes an if statement node.
       #
       # @param [Oga::Ruby::Node] ast
       # @return [String]
-      #
       def on_if(ast)
         cond, body, else_body = *ast
 
@@ -144,12 +126,10 @@ end
         end
       end
 
-      ##
       # Processes a while statement node.
       #
       # @param [Oga::Ruby::Node] ast
       # @return [String]
-      #
       def on_while(ast)
         cond, body = *ast
 
@@ -163,12 +143,10 @@ end
         EOF
       end
 
-      ##
       # Processes a method call node.
       #
       # @param [Oga::Ruby::Node] ast
       # @return [String]
-      #
       def on_send(ast)
         receiver, name, *args = *ast
 
@@ -188,12 +166,10 @@ end
         call
       end
 
-      ##
       # Processes a block node.
       #
       # @param [Oga::Ruby::Node] ast
       # @return [String]
-      #
       def on_block(ast)
         receiver, args, body = *ast
 
@@ -208,12 +184,10 @@ end
         EOF
       end
 
-      ##
       # Processes a Range node.
       #
       # @param [Oga::Ruby::Node] ast
       # @return [String]
-      #
       def on_range(ast)
         start, stop = *ast
 
@@ -223,32 +197,26 @@ end
         "(#{start_str}..#{stop_str})"
       end
 
-      ##
       # Processes a string node.
       #
       # @param [Oga::Ruby::Node] ast
       # @return [String]
-      #
       def on_string(ast)
         ast.to_a[0].inspect
       end
 
-      ##
       # Processes a Symbol node.
       #
       # @param [Oga::Ruby::Node] ast
       # @return [String]
-      #
       def on_symbol(ast)
         ast.to_a[0].to_sym.inspect
       end
 
-      ##
       # Processes a literal node.
       #
       # @param [Oga::Ruby::Node] ast
       # @return [String]
-      #
       def on_lit(ast)
         ast.to_a[0]
       end

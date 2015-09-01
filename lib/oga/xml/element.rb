@@ -1,9 +1,7 @@
 module Oga
   module XML
-    ##
     # Class that contains information about an XML element such as the name,
     # attributes and child nodes.
-    #
     class Element < Node
       include Querying
       include ExpandedName
@@ -20,14 +18,11 @@ module Oga
       # @return [Hash]
       attr_writer :namespaces
 
-      ##
       # The attribute prefix/namespace used for registering element namespaces.
       #
       # @return [String]
-      #
       XMLNS_PREFIX = 'xmlns'.freeze
 
-      ##
       # @param [Hash] options
       #
       # @option options [String] :name The name of the element.
@@ -36,7 +31,6 @@ module Oga
       #
       # @option options [Array<Oga::XML::Attribute>] :attributes The attributes
       #  of the element as an Array.
-      #
       def initialize(options = {})
         super
 
@@ -49,15 +43,12 @@ module Oga
         register_namespaces_from_attributes
       end
 
-      ##
       # @param [String] name
-      #
       def namespace_name=(name)
         @namespace_name = name
         @namespace      = nil
       end
 
-      ##
       # Returns an attribute matching the given name (with or without the
       # namespace).
       #
@@ -72,7 +63,6 @@ module Oga
       #  of the attribute.
       #
       # @return [Oga::XML::Attribute]
-      #
       def attribute(name)
         name, ns = split_name(name)
 
@@ -85,32 +75,27 @@ module Oga
 
       alias_method :attr, :attribute
 
-      ##
       # Returns the value of the given attribute.
       #
       # @example
       #  element.get('class') # => "container"
       #
       # @see [#attribute]
-      #
       def get(name)
         found = attribute(name)
 
         found ? found.value : nil
       end
 
-      ##
       # Adds a new attribute to the element.
       #
       # @param [Oga::XML::Attribute] attribute
-      #
       def add_attribute(attribute)
         attribute.element = self
 
         attributes << attribute
       end
 
-      ##
       # Sets the value of an attribute to the given value. If the attribute does
       # not exist it is created automatically.
       #
@@ -118,7 +103,6 @@ module Oga
       #  namespace.
       #
       # @param [String] value The new value of the attribute.
-      #
       def set(name, value)
         found = attribute(name)
 
@@ -141,25 +125,21 @@ module Oga
         end
       end
 
-      ##
       # Removes an attribute from the element.
       #
       # @param [String] name The name (optionally including namespace prefix)
       #  of the attribute to remove.
       #
       # @return [Oga::XML::Attribute]
-      #
       def unset(name)
         found = attribute(name)
 
         return attributes.delete(found) if found
       end
 
-      ##
       # Returns the namespace of the element.
       #
       # @return [Oga::XML::Namespace]
-      #
       def namespace
         unless @namespace
           available  = available_namespaces
@@ -169,40 +149,32 @@ module Oga
         @namespace
       end
 
-      ##
       # Returns the namespaces registered on this element, or an empty Hash in
       # case of an HTML element.
       #
       # @return [Hash]
-      #
       def namespaces
         html? ? {} : @namespaces
       end
 
-      ##
       # Returns true if the current element resides in the default XML
       # namespace.
       #
       # @return [TrueClass|FalseClass]
-      #
       def default_namespace?
         namespace == DEFAULT_NAMESPACE || namespace.nil?
       end
 
-      ##
       # Returns the text of all child nodes joined together.
       #
       # @return [String]
-      #
       def text
         children.text
       end
 
-      ##
       # Returns the text of the current element only.
       #
       # @return [String]
-      #
       def inner_text
         text = ''
 
@@ -213,12 +185,10 @@ module Oga
         text
       end
 
-      ##
       # Returns any {Oga::XML::Text} nodes that are a direct child of this
       # element.
       #
       # @return [Oga::XML::NodeSet]
-      #
       def text_nodes
         nodes = NodeSet.new
 
@@ -229,21 +199,17 @@ module Oga
         nodes
       end
 
-      ##
       # Sets the inner text of the current element to the given String.
       #
       # @param [String] text
-      #
       def inner_text=(text)
         text_node = XML::Text.new(:text => text)
         @children = NodeSet.new([text_node], self)
       end
 
-      ##
       # Converts the element and its child elements to XML.
       #
       # @return [String]
-      #
       def to_xml
         if namespace_name
           full_name = "#{namespace_name}:#{name}"
@@ -265,9 +231,7 @@ module Oga
         end
       end
 
-      ##
       # @return [String]
-      #
       def inspect
         segments = []
 
@@ -284,7 +248,6 @@ module Oga
         "Element(#{segments.join(' ')})"
       end
 
-      ##
       # Registers a new namespace for the current element and its child
       # elements.
       #
@@ -292,7 +255,6 @@ module Oga
       # @param [String] uri
       # @param [TrueClass|FalseClass] flush
       # @see [Oga::XML::Namespace#initialize]
-      #
       def register_namespace(name, uri, flush = true)
         if namespaces[name]
           raise ArgumentError, "The namespace #{name.inspect} already exists"
@@ -303,12 +265,10 @@ module Oga
         flush_namespaces_cache if flush
       end
 
-      ##
       # Returns a Hash containing all the namespaces available to the current
       # element.
       #
       # @return [Hash]
-      #
       def available_namespaces
         # HTML(5) completely ignores namespaces
         unless @available_namespaces
@@ -333,11 +293,9 @@ module Oga
         @available_namespaces
       end
 
-      ##
       # Returns `true` if the element is a self-closing element.
       #
       # @return [TrueClass|FalseClass]
-      #
       def self_closing?
         self_closing = children.empty?
         root         = root_node
@@ -350,10 +308,8 @@ module Oga
         self_closing
       end
 
-      ##
       # Flushes the namespaces cache of the current element and all its child
       # elements.
-      #
       def flush_namespaces_cache
         @available_namespaces = nil
         @namespace            = nil
@@ -365,9 +321,7 @@ module Oga
 
       private
 
-      ##
       # Registers namespaces based on any "xmlns" attributes.
-      #
       def register_namespaces_from_attributes
         flush = false
 
@@ -386,31 +340,25 @@ module Oga
         flush_namespaces_cache if flush
       end
 
-      ##
       # Links all attributes to the current element.
-      #
       def link_attributes
         attributes.each do |attr|
           attr.element = self
         end
       end
 
-      ##
       # @param [String] name
       # @return [Array]
-      #
       def split_name(name)
         segments = name.to_s.split(':')
 
         [segments.pop, segments.pop]
       end
 
-      ##
       # @param [Oga::XML::Attribute] attr
       # @param [String] ns
       # @param [String] name
       # @return [TrueClass|FalseClass]
-      #
       def attribute_matches?(attr, ns, name)
         name_matches = attr.name == name
         ns_matches   = false

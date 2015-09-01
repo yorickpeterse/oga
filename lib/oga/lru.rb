@@ -1,5 +1,4 @@
 module Oga
-  ##
   # Thread-safe LRU cache using a Hash as the underlying storage engine.
   # Whenever the size of the cache exceeds the given limit the oldest keys are
   # removed (base on insert order).
@@ -22,11 +21,8 @@ module Oga
   #     cache.keys # => [:b, :c, :d]
   #
   # @api private
-  #
   class LRU
-    ##
     # @param [Fixnum] maximum
-    #
     def initialize(maximum = 1024)
       @maximum = maximum
       @cache   = {}
@@ -35,9 +31,7 @@ module Oga
       @owner   = Thread.current
     end
 
-    ##
     # @param [Fixnum] value
-    #
     def maximum=(value)
       synchronize do
         @maximum = value
@@ -46,30 +40,24 @@ module Oga
       end
     end
 
-    ##
     # @return [Fixnum]
-    #
     def maximum
       synchronize { @maximum }
     end
 
-    ##
     # Returns the value of the key.
     #
     # @param [Mixed] key
     # @return [Mixed]
-    #
     def [](key)
       synchronize { @cache[key] }
     end
 
-    ##
     # Sets the key and its value. Old keys are discarded if the LRU size exceeds
     # the limit.
     #
     # @param [Mixed] key
     # @param [Mixed] value
-    #
     def []=(key, value)
       synchronize do
         @cache[key] = value
@@ -82,35 +70,27 @@ module Oga
       end
     end
 
-    ##
     # Returns a key if it exists, otherwise yields the supplied block and uses
     # its return value as the key value.
     #
     # @param [Mixed] key
     # @return [Mixed]
-    #
     def get_or_set(key)
       synchronize { self[key] ||= yield }
     end
 
-    ##
     # @return [Array]
-    #
     def keys
       synchronize { @keys }
     end
 
-    ##
     # @param [Mixed] key
     # @return [TrueClass|FalseClass]
-    #
     def key?(key)
       synchronize { @cache.key?(key) }
     end
 
-    ##
     # Removes all keys from the cache.
-    #
     def clear
       synchronize do
         @keys.clear
@@ -118,9 +98,7 @@ module Oga
       end
     end
 
-    ##
     # @return [Fixnum]
-    #
     def size
       synchronize { @cache.size }
     end
@@ -129,10 +107,8 @@ module Oga
 
     private
 
-    ##
     # Yields the supplied block in a synchronized manner (if needed). This
     # method is heavily based on `MonitorMixin#mon_enter`.
-    #
     def synchronize
       if @owner != Thread.current
         @mutex.synchronize do
@@ -147,10 +123,8 @@ module Oga
       end
     end
 
-    ##
     # Removes old keys until the size of the hash no longer exceeds the maximum
     # size.
-    #
     def resize
       return unless size > @maximum
 

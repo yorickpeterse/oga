@@ -1,8 +1,6 @@
 module Oga
   module XML
-    ##
     # Class containing information about an XML declaration tag.
-    #
     class XmlDeclaration
       # @return [String]
       attr_accessor :version
@@ -14,24 +12,20 @@ module Oga
       # @return [String]
       attr_accessor :standalone
 
-      ##
       # @param [Hash] options
       #
       # @option options [String] :version
       # @option options [String] :encoding
       # @option options [String] :standalone
-      #
       def initialize(options = {})
         @version    = options[:version] || '1.0'
         @encoding   = options[:encoding] || 'UTF-8'
         @standalone = options[:standalone]
       end
 
-      ##
       # Converts the declaration tag to XML.
       #
       # @return [String]
-      #
       def to_xml
         pairs = []
 
@@ -44,9 +38,7 @@ module Oga
         "<?xml #{pairs.join(' ')} ?>"
       end
 
-      ##
       # @return [String]
-      #
       def inspect
         segments = []
 

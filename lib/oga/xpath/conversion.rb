@@ -1,16 +1,12 @@
 module Oga
   module XPath
-    ##
     # Module for converting XPath objects such as NodeSets.
     #
     # @private
-    #
     module Conversion
-      ##
       # Converts both arguments to a type that can be compared using ==.
       #
       # @return [Array]
-      #
       def self.to_compatible_types(left, right)
         if left.is_a?(XML::NodeSet) or left.respond_to?(:text)
           left = to_string(left)

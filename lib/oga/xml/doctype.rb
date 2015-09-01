@@ -1,8 +1,6 @@
 module Oga
   module XML
-    ##
     # Class used for storing information about Doctypes.
-    #
     class Doctype
       # The name of the doctype (e.g. "HTML").
       # @return [String]
@@ -24,7 +22,6 @@ module Oga
       # @return [String]
       attr_accessor :inline_rules
 
-      ##
       # @example
       #  dtd = Doctype.new(:name => 'html', :type => 'PUBLIC')
       #
@@ -34,7 +31,6 @@ module Oga
       # @option options [String] :type
       # @option options [String] :public_id
       # @option options [String] :system_id
-      #
       def initialize(options = {})
         @name         = options[:name]
         @type         = options[:type]
@@ -43,11 +39,9 @@ module Oga
         @inline_rules = options[:inline_rules]
       end
 
-      ##
       # Converts the doctype back to XML.
       #
       # @return [String]
-      #
       def to_xml
         segments = "<!DOCTYPE #{name}"
 
@@ -59,11 +53,9 @@ module Oga
         segments + '>'
       end
 
-      ##
       # Inspects the doctype.
       #
       # @return [String]
-      #
       def inspect
         segments = []
 

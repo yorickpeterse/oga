@@ -1,6 +1,5 @@
 %header
 {
-##
 # AST parser for XPath expressions. The AST is built using `AST::Node`
 # instances.
 #
@@ -248,42 +247,32 @@ variable
 
 %inner
 {
-  ##
   # @return [Oga::LRU]
-  #
   CACHE = LRU.new
 
-  ##
   # @param [String] data
   # @return [AST::Node]
-  #
   def self.parse_with_cache(data)
     CACHE.get_or_set(data) { new(data).parse }
   end
 
-  ##
   # @param [String] data The input to parse.
-  #
   def initialize(data)
     @lexer = Lexer.new(data)
   end
 
-  ##
   # Creates a new XPath node.
   #
   # @param [Symbol] type
   # @param [Array] children
   # @return [AST::Node]
-  #
   def s(type, *children)
     AST::Node.new(type, children)
   end
 
-  ##
   # Yields the next token from the lexer.
   #
   # @yieldparam [Array]
-  #
   def each_token
     @lexer.advance do |type, value, line|
       @line = line if line
@@ -294,9 +283,7 @@ variable
     yield [-1, -1]
   end
 
-  ##
   # @param [Array] val
-  #
   def combine_operators(val)
     ret = val[0]
 
@@ -307,9 +294,7 @@ variable
     ret
   end
 
-  ##
   # @param [Array] val
-  #
   def combine_optional_operator(val)
     ret = val[0]
 

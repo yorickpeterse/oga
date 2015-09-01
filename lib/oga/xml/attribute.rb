@@ -1,8 +1,6 @@
 module Oga
   module XML
-    ##
     # Class for storing information about a single XML attribute.
-    #
     class Attribute
       include ExpandedName
 
@@ -19,25 +17,21 @@ module Oga
 
       alias_method :parent, :element
 
-      ##
       # The default namespace available to all attributes. This namespace can
       # not be modified.
       #
       # @return [Oga::XML::Namespace]
-      #
       DEFAULT_NAMESPACE = Namespace.new(
         :name => 'xml',
         :uri  => XML::DEFAULT_NAMESPACE.uri
       ).freeze
 
-      ##
       # @param [Hash] options
       #
       # @option options [String] :name
       # @option options [String] :namespace_name
       # @option options [String] :value
       # @option options [Oga::XML::Element] :element
-      #
       def initialize(options = {})
         @name    = options[:name]
         @value   = options[:value]
@@ -46,12 +40,10 @@ module Oga
         @namespace_name = options[:namespace_name]
       end
 
-      ##
       # Returns the {Oga::XML::Namespace} instance for the current namespace
       # name.
       #
       # @return [Oga::XML::Namespace]
-      #
       def namespace
         unless @namespace
           if namespace_name == DEFAULT_NAMESPACE.name
@@ -64,19 +56,15 @@ module Oga
         @namespace
       end
 
-      ##
       # @param [String] value
-      #
       def value=(value)
         @value   = value
         @decoded = false
       end
 
-      ##
       # Returns the value of the attribute or nil if no explicit value was set.
       #
       # @return [String|NilClass]
-      #
       def value
         if !@decoded and @value
           @value   = EntityDecoder.try_decode(@value, html?)
@@ -86,18 +74,14 @@ module Oga
         @value
       end
 
-      ##
       # @return [String]
-      #
       def text
         value.to_s
       end
 
       alias_method :to_s, :text
 
-      ##
       # @return [String]
-      #
       def to_xml
         if namespace_name
           full_name = "#{namespace_name}:#{name}"
@@ -110,9 +94,7 @@ module Oga
         %Q(#{full_name}="#{enc_value}")
       end
 
-      ##
       # @return [String]
-      #
       def inspect
         segments = []
 
@@ -138,9 +120,7 @@ module Oga
 
       private
 
-      ##
       # @return [TrueClass|FalseClass]
-      #
       def html?
         !!@element && @element.html?
       end

@@ -2,7 +2,6 @@
 
 module Oga
   module CSS
-    ##
     # Lexer for turning CSS expressions into a sequence of tokens. Tokens are
     # returned as arrays with every array having two values:
     #
@@ -17,25 +16,20 @@ module Oga
     # instances in threads just fine.
     #
     # @api private
-    #
     class Lexer
       %% write data;
 
       # % fix highlight
 
-      ##
       # @param [String] data The data to lex.
-      #
       def initialize(data)
         @data = data
       end
 
-      ##
       # Gathers all the tokens for the input and returns them as an Array.
       #
       # @see [#advance]
       # @return [Array]
-      #
       def lex
         tokens = []
 
@@ -46,7 +40,6 @@ module Oga
         return tokens
       end
 
-      ##
       # Advances through the input and generates the corresponding tokens. Each
       # token is yielded to the supplied block.
       #
@@ -54,7 +47,6 @@ module Oga
       # the lexer loop has finished.
       #
       # @see [#add_token]
-      #
       def advance(&block)
         @block = block
 
@@ -88,7 +80,6 @@ module Oga
 
       private
 
-      ##
       # Emits a token of which the value is based on the supplied start/stop
       # position.
       #
@@ -98,25 +89,21 @@ module Oga
       #
       # @see [#text]
       # @see [#add_token]
-      #
       def emit(type, start, stop)
         value = slice_input(start, stop)
 
         add_token(type, value)
       end
 
-      ##
       # Returns the text between the specified start and stop position.
       #
       # @param [Fixnum] start
       # @param [Fixnum] stop
       # @return [String]
-      #
       def slice_input(start, stop)
         return @data.byteslice(start, stop - start)
       end
 
-      ##
       # Yields a new token to the supplied block.
       #
       # @param [Symbol] type The token type.
@@ -124,7 +111,6 @@ module Oga
       #
       # @yieldparam [Symbol] type
       # @yieldparam [String|NilClass] value
-      #
       def add_token(type, value = nil)
         @block.call(type, value)
       end
@@ -202,7 +188,6 @@ module Oga
         #
         # Strings can be single or double quoted. They are mainly used for
         # attribute values.
-        #
         dquote = '"';
         squote = "'";
 

@@ -1,9 +1,7 @@
 module Oga
   module XML
-    ##
     # Class used for storing information about an entire XML document. This
     # includes the doctype, XML declaration, child nodes and more.
-    #
     class Document
       include Querying
       include Traversal
@@ -18,14 +16,12 @@ module Oga
       # @return [Symbol]
       attr_reader :type
 
-      ##
       # @param [Hash] options
       #
       # @option options [Oga::XML::NodeSet] :children
       # @option options [Oga::XML::Doctype] :doctype
       # @option options [Oga::XML::XmlDeclaration] :xml_declaration
       # @option options [Symbol] :type
-      #
       def initialize(options = {})
         @doctype         = options[:doctype]
         @xml_declaration = options[:xml_declaration]
@@ -34,18 +30,14 @@ module Oga
         self.children = options[:children] if options[:children]
       end
 
-      ##
       # @return [Oga::XML::NodeSet]
-      #
       def children
         @children ||= NodeSet.new([], self)
       end
 
-      ##
       # Sets the child nodes of the document.
       #
       # @param [Oga::XML::NodeSet|Array] nodes
-      #
       def children=(nodes)
         if nodes.is_a?(NodeSet)
           @children = nodes
@@ -54,23 +46,19 @@ module Oga
         end
       end
 
-      ##
       # Returns self.
       #
       # This method exists to make this class compatible with Element, which in
       # turn makes it easier to use both in the XPath compiler.
       #
       # @return [Oga::XML::Document]
-      #
       def root_node
         self
       end
 
-      ##
       # Converts the document and its child nodes to XML.
       #
       # @return [String]
-      #
       def to_xml
         xml = children.map(&:to_xml).join('')
 
@@ -85,19 +73,15 @@ module Oga
         xml
       end
 
-      ##
       # @return [TrueClass|FalseClass]
-      #
       def html?
         type.equal?(:html)
       end
 
-      ##
       # Inspects the document and its child nodes. Child nodes are indented for
       # each nesting level.
       #
       # @return [String]
-      #
       def inspect
         segments = []
 

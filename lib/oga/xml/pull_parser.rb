@@ -1,6 +1,5 @@
 module Oga
   module XML
-    ##
     # The PullParser class can be used to parse an XML document incrementally
     # instead of parsing it as a whole. This results in lower memory usage and
     # potentially faster parsing times. The downside is that pull parsers are
@@ -18,7 +17,6 @@ module Oga
     #
     # This parses yields proper XML instances such as {Oga::XML::Element}.
     # Doctypes and XML declarations are ignored by this parser.
-    #
     class PullParser < Parser
       # @return [Oga::XML::Node]
       attr_reader :node
@@ -27,9 +25,7 @@ module Oga
       # @return [Array]
       attr_reader :nesting
 
-      ##
       # @return [Array]
-      #
       DISABLED_CALLBACKS = [
         :on_document,
         :on_doctype,
@@ -37,9 +33,7 @@ module Oga
         :on_element_children
       ]
 
-      ##
       # @return [Array]
-      #
       BLOCK_CALLBACKS = [
         :on_cdata,
         :on_comment,
@@ -47,11 +41,9 @@ module Oga
         :on_proc_ins
       ]
 
-      ##
       # Returns the shorthands that can be used for various node classes.
       #
       # @return [Hash]
-      #
       NODE_SHORTHANDS = {
         :text            => XML::Text,
         :node            => XML::Node,
@@ -62,9 +54,7 @@ module Oga
         :xml_declaration => XML::XmlDeclaration
       }
 
-      ##
       # @see Oga::XML::Parser#reset
-      #
       def reset
         super
 
@@ -73,11 +63,9 @@ module Oga
         @node    = nil
       end
 
-      ##
       # Parses the input and yields every node to the supplied block.
       #
       # @yieldparam [Oga::XML::Node]
-      #
       def parse(&block)
         @block = block
 
@@ -86,7 +74,6 @@ module Oga
         return
       end
 
-      ##
       # Calls the supplied block if the current node type and optionally the
       # nesting match. This method allows you to write this:
       #
@@ -120,7 +107,6 @@ module Oga
       #  returned by {Oga::XML::Node#node_type}.
       #
       # @param [Array] nesting The element name nesting to act upon.
-      #
       def on(type, nesting = [])
         if node.is_a?(NODE_SHORTHANDS[type])
           if nesting.empty? or nesting == self.nesting
@@ -149,9 +135,7 @@ module Oga
         EOF
       end
 
-      ##
       # @see Oga::XML::Parser#on_element
-      #
       def on_element(*args)
         @node = super
 
@@ -162,9 +146,7 @@ module Oga
         return
       end
 
-      ##
       # @see Oga::XML::Parser#on_element_children
-      #
       def after_element(*args)
         nesting.pop
 

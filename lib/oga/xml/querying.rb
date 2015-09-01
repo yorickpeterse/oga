@@ -1,11 +1,8 @@
 module Oga
   module XML
-    ##
     # The Querying module provides methods that make it easy to run XPath/CSS
     # queries on XML documents/elements.
-    #
     module Querying
-      ##
       # Evaluates the given XPath expression.
       #
       # Querying a document:
@@ -34,7 +31,6 @@ module Oga
       #  be String values.
       #
       # @return [Oga::XML::NodeSet]
-      #
       def xpath(expression, variables = {})
         ast   = XPath::Parser.parse_with_cache(expression)
         block = XPath::Compiler.compile_with_cache(ast)
@@ -42,7 +38,6 @@ module Oga
         block.call(self, variables)
       end
 
-      ##
       # Evaluates the XPath expression and returns the first matched node.
       #
       # Querying a document:
@@ -59,14 +54,12 @@ module Oga
       #
       # @see [#xpath]
       # @return [Oga::XML::Node|Oga::XML::Attribute]
-      #
       def at_xpath(*args)
         result = xpath(*args)
 
         result.is_a?(XML::NodeSet) ? result.first : result
       end
 
-      ##
       # Evaluates the given CSS expression.
       #
       # Querying a document:
@@ -81,7 +74,6 @@ module Oga
       #
       # @param [String] expression The CSS expression to run.
       # @return [Oga::XML::NodeSet]
-      #
       def css(expression)
         ast   = CSS::Parser.parse_with_cache(expression)
         block = XPath::Compiler.compile_with_cache(ast)
@@ -89,12 +81,10 @@ module Oga
         block.call(self)
       end
 
-      ##
       # Evaluates the CSS expression and returns the first matched node.
       #
       # @see [#css]
       # @return [Oga::XML::Node|Oga::XML::Attribute]
-      #
       def at_css(*args)
         result = css(*args)
 

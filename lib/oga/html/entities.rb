@@ -1,14 +1,12 @@
 module Oga
   module HTML
     module Entities
-      ##
       # Hash mapping HTML entities to their Unicode character replacements.
       #
       # Based on the JSON output as listed at
       # http://www.w3.org/TR/html5/syntax.html#named-character-references
       #
       # @return [Hash]
-      #
       DECODE_MAPPING = {
         '&Aacute;'                          => [193].pack('U*'),
         '&aacute;'                          => [225].pack('U*'),
@@ -2137,11 +2135,9 @@ module Oga
         '&zwnj;'                            => [8204].pack('U*'),
       }
 
-      ##
       # Decodes HTML entities.
       #
       # @see [decode]
-      #
       def self.decode(input)
         XML::Entities.decode(input, DECODE_MAPPING)
       end

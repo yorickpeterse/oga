@@ -1,6 +1,5 @@
 %header
 {
-##
 # DOM parser for both XML and HTML.
 #
 # This parser does not produce a dedicated AST, instead it emits XML nodes
@@ -205,11 +204,9 @@ string_body
 
 %inner
 {
-  ##
   # Hash mapping token types and dedicated error labels.
   #
   # @return [Hash]
-  #
   TOKEN_ERROR_MAPPING = {
     :T_STRING         => 'string',
     :T_TEXT           => 'text',
@@ -234,11 +231,9 @@ string_body
     -1                => 'end of input'
   }
 
-  ##
   # @param [String|IO] data The input to parse.
   # @param [Hash] options
   # @see [Oga::XML::Lexer#initialize]
-  #
   def initialize(data, options = {})
     @data  = data
     @lexer = Lexer.new(data, options)
@@ -246,20 +241,16 @@ string_body
     reset
   end
 
-  ##
   # Resets the internal state of the parser.
-  #
   def reset
     @line = 1
 
     @lexer.reset
   end
 
-  ##
   # Yields the next token from the lexer.
   #
   # @yieldparam [Array]
-  #
   def each_token
     @lexer.advance do |type, value, line|
       @line = line if line
@@ -270,12 +261,10 @@ string_body
     yield [-1, -1]
   end
 
-  ##
   # @param [Fixnum] stack_type
   # @param [Fixnum] stack_value
   # @param [Symbol] token_type
   # @param [String] token_value
-  #
   def parser_error(stack_type, stack_value, token_type, token_value)
     case id_to_type(stack_type)
     when :rule
@@ -294,9 +283,7 @@ string_body
     raise LL::ParserError, message
   end
 
-  ##
   # @see [LL::Driver#parse]
-  #
   def parse
     retval = super
 
@@ -305,10 +292,8 @@ string_body
     retval
   end
 
-  ##
   # @param [Array] children
   # @return [Oga::XML::Document]
-  #
   def on_document(children = [])
     document = Document.new(:type => @lexer.html? ? :html : :xml)
 
@@ -327,42 +312,32 @@ string_body
     document
   end
 
-  ##
   # @param [Hash] options
-  #
   def on_doctype(options = {})
     Doctype.new(options)
   end
 
-  ##
   # @param [String] text
   # @return [Oga::XML::Cdata]
-  #
   def on_cdata(text = nil)
     Cdata.new(:text => text)
   end
 
-  ##
   # @param [String] text
   # @return [Oga::XML::Comment]
-  #
   def on_comment(text = nil)
     Comment.new(:text => text)
   end
 
-  ##
   # @param [String] name
   # @param [String] text
   # @return [Oga::XML::ProcessingInstruction]
-  #
   def on_proc_ins(name, text = nil)
     ProcessingInstruction.new(:name => name, :text => text)
   end
 
-  ##
   # @param [Array] attributes
   # @return [Oga::XML::XmlDeclaration]
-  #
   def on_xml_decl(attributes = [])
     options = {}
 
@@ -373,20 +348,16 @@ string_body
     XmlDeclaration.new(options)
   end
 
-  ##
   # @param [String] text
   # @return [Oga::XML::Text]
-  #
   def on_text(text)
     Text.new(:text => text)
   end
 
-  ##
   # @param [String] namespace
   # @param [String] name
   # @param [Hash] attributes
   # @return [Oga::XML::Element]
-  #
   def on_element(namespace, name, attributes = {})
     element = Element.new(
       :namespace_name => namespace,
@@ -397,31 +368,25 @@ string_body
     element
   end
 
-  ##
   # @param [Oga::XML::Element] element
   # @param [Array] children
   # @return [Oga::XML::Element]
-  #
   def on_element_children(element, children = [])
     element.children = children
 
     element
   end
 
-  ##
   # @param [Oga::XML::Element] element
   # @return [Oga::XML::Element]
-  #
   def after_element(element)
     element
   end
 
-  ##
   # @param [String] name
   # @param [String] ns_name
   # @param [String] value
   # @return [Oga::XML::Attribute]
-  #
   def on_attribute(name, ns_name = nil, value = nil)
     Attribute.new(
       :namespace_name => ns_name,
@@ -430,9 +395,7 @@ string_body
     )
   end
 
-  ##
   # @param [Array] attrs
-  #
   def on_attributes(attrs)
     attrs
   end

@@ -1,10 +1,7 @@
 module Oga
   module XML
-    ##
     # Module that provides methods to traverse DOM trees.
-    #
     module Traversal
-      ##
       # Traverses through the node and yields every child node to the supplied
       # block.
       #
@@ -29,7 +26,6 @@ module Oga
       #  end
       #
       # @yieldparam [Oga::XML::Node] The current node.
-      #
       def each_node
         visit = children.to_a.reverse
 

@@ -1,9 +1,7 @@
 module Oga
   module XML
-    ##
     # Class containing information about a single text node. Text nodes don't
     # have any children, attributes and the likes; just text.
-    #
     class Text < CharacterNode
       def initialize(*args)
         super
@@ -11,20 +9,16 @@ module Oga
         @decoded = false
       end
 
-      ##
       # @param [String] value
-      #
       def text=(value)
         @decoded = false
         @text    = value
       end
 
-      ##
       # Returns the text as a String. Upon the first call any XML/HTML entities
       # are decoded.
       #
       # @return [String]
-      #
       def text
         if decode_entities?
           @text    = EntityDecoder.try_decode(@text, html?)
@@ -34,9 +28,7 @@ module Oga
         @text
       end
 
-      ##
       # @see [Oga::XML::CharacterNode#to_xml]
-      #
       def to_xml
         return super if inside_literal_html?
 
@@ -45,16 +37,12 @@ module Oga
 
       private
 
-      ##
       # @return [TrueClass|FalseClass]
-      #
       def decode_entities?
         !@decoded && !inside_literal_html?
       end
 
-      ##
       # @return [TrueClass|FalseClass]
-      #
       def inside_literal_html?
         node = parent
 
