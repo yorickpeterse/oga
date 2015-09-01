@@ -230,6 +230,8 @@ module Oga
         pseudo_args := |*
           whitespace;
 
+          hash | dot | colon;
+
           # NOTE: the priorities here are put in place to ensure that rules such
           # as  `nth` take precedence over `identifier`. The highest number has
           # the highest priority.

@@ -497,6 +497,24 @@ even
     s(:call, 'not', s(:axis, 'child', s(:type_test, 'node')))
   end
 
+  # Generates the AST for the `:not` selector.
+  #
+  # @param [AST::Node] arg
+  # @return [AST::Node]
+  def on_pseudo_class_not(arg)
+    # Unpacks (axis "descendant" (test nil "x")) into just (test nil "x") as
+    # in this case we want to wrap the (test) node in a (axis "self") node.
+    if arg.type == :axis
+      arg = s(:axis, 'self', arg.children[1])
+
+    # Unpack (predicate (eq ...)) into just (eq)
+    elsif arg.type == :predicate
+      arg = arg.children[1]
+    end
+
+    s(:call, 'not', arg)
+  end
+
   # Generates the AST for the `=` operator.
   #
   # @param [AST::Node] attr

@@ -126,5 +126,16 @@ describe Oga::CSS::Lexer do
         [:T_RPAREN, nil]
       ]
     end
+
+    it 'lexes the :not(#foo) pseudo class' do
+      lex_css(':not(#foo)').should == [
+        [:T_COLON, nil],
+        [:T_IDENT, 'not'],
+        [:T_LPAREN, nil],
+        [:T_HASH, nil],
+        [:T_IDENT, 'foo'],
+        [:T_RPAREN, nil]
+      ]
+    end
   end
 end
