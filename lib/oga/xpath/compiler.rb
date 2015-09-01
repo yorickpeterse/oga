@@ -598,21 +598,18 @@ module Oga
       end
 
       # @param [AST::Node] ast
-      # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
       def on_string(ast, *)
         string(ast.children[0])
       end
 
       # @param [AST::Node] ast
-      # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
       def on_int(ast, *)
         literal(ast.children[0].to_f.to_s)
       end
 
       # @param [AST::Node] ast
-      # @param [Oga::Ruby::Node] input
       # @return [Oga::Ruby::Node]
       def on_float(ast, *)
         literal(ast.children[0].to_s)
@@ -745,8 +742,8 @@ module Oga
       end
 
       # @param [Oga::Ruby::Node] input
-      # @param [AST::Node] haystack_ast
-      # @param [AST::Node] needle_ast
+      # @param [AST::Node] haystack
+      # @param [AST::Node] needle
       # @return [Oga::Ruby::Node]
       def on_call_contains(input, haystack, needle)
         haystack_lit = unique_literal(:haystack)
