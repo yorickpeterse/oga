@@ -10,6 +10,18 @@ describe Oga::CSS::Lexer do
       lex_css('_h3').should == [[:T_IDENT, '_h3']]
     end
 
+    it 'lexes a path with an escaped identifier' do
+      lex_css('foo\.bar\.baz').should == [[:T_IDENT, 'foo.bar.baz']]
+    end
+
+    it 'lexes a path with an escaped identifier followed by another identifier' do
+      lex_css('foo\.bar baz').should == [
+        [:T_IDENT, 'foo.bar'],
+        [:T_SPACE, nil],
+        [:T_IDENT, 'baz']
+      ]
+    end
+
     it 'lexes a path with two members' do
       lex_css('div h3').should == [
         [:T_IDENT, 'div'],

@@ -48,7 +48,8 @@ module Oga
       #
       # @see [#add_token]
       def advance(&block)
-        @block = block
+        @block   = block
+        @escaped = false
 
         data  = @data # saves ivar lookups while lexing.
         ts    = nil
@@ -143,10 +144,22 @@ module Oga
         # Identifiers are used for element and attribute names. Identifiers have
         # to start with a letter.
 
-        identifier = '*' | [a-zA-Z_]+ [a-zA-Z\-_0-9]*;
+        ident_word = [a-zA-Z\-_0-9]*;
+
+        ident_escape = '\\.' %{ @escaped = true };
+
+        identifier = '*' | [a-zA-Z_]+ ident_word (ident_escape ident_word)*;
 
         action emit_identifier {
-          emit(:T_IDENT, ts, te)
+          value = slice_input(ts, te)
+
+          # Translates "foo\.bar" into "foo.bar"
+          if @escaped
+            value    = value.gsub('\.', '.')
+            @escaped = false
+          end
+
+          add_token(:T_IDENT, value)
         }
 
         # Operators
