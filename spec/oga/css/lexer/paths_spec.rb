@@ -6,6 +6,14 @@ describe Oga::CSS::Lexer do
       lex_css('h3').should == [[:T_IDENT, 'h3']]
     end
 
+    it 'lexes a path with Unicode characters' do
+      lex_css('áâã').should == [[:T_IDENT, 'áâã']]
+    end
+
+    it 'lexes a path with Unicode and ASCII characters' do
+      lex_css('áâãfoo').should == [[:T_IDENT, 'áâãfoo']]
+    end
+
     it 'lexes a simple path starting with an underscore' do
       lex_css('_h3').should == [[:T_IDENT, '_h3']]
     end

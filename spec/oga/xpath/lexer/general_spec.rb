@@ -6,6 +6,18 @@ describe Oga::XPath::Lexer do
       lex_xpath('/foo').should == [[:T_SLASH, nil], [:T_IDENT, 'foo']]
     end
 
+    it 'lexes an expression using Unicode identifiers' do
+      lex_xpath('fóó').should == [[:T_IDENT, 'fóó']]
+    end
+
+    it 'lexes an expression using Unicode plus ASCII identifiers' do
+      lex_xpath('fóóbar').should == [[:T_IDENT, 'fóóbar']]
+    end
+
+    it 'lexes an expression using an identifier with a dot' do
+      lex_xpath('foo.bar').should == [[:T_IDENT, 'foo.bar']]
+    end
+
     it 'lexes a simple expression with a test starting with an underscore' do
       lex_xpath('/_foo').should == [[:T_SLASH, nil], [:T_IDENT, '_foo']]
     end

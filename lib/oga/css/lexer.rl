@@ -144,11 +144,16 @@ module Oga
         # Identifiers are used for element and attribute names. Identifiers have
         # to start with a letter.
 
-        ident_word = [a-zA-Z\-_0-9]*;
+        unicode = any - ascii;
 
-        ident_escape = '\\.' %{ @escaped = true };
+        unicode_or_ascii = (unicode | [a-zA-Z\-_0-9])*;
 
-        identifier = '*' | [a-zA-Z_]+ ident_word (ident_escape ident_word)*;
+        escaped_dot = '\\.' %{ @escaped = true };
+
+        identifier
+          = '*'
+          | (unicode | [a-zA-Z_]) unicode_or_ascii (escaped_dot unicode_or_ascii)*
+          ;
 
         action emit_identifier {
           value = slice_input(ts, te)
