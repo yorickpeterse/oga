@@ -182,12 +182,9 @@ module Oga
         op_in          = '*=';
         op_hyphen_in   = '|=';
 
-        # Whitespace preceding these tokens is _not_ matched to make the parser
-        # rules more consistent. As such input such as " > x" will result in
-        # tokens [T_SPACE, T_GREATER, T_IDENT].
-        op_greater = '>' whitespace*;
-        op_plus    = '+' whitespace*;
-        op_tilde   = '~' whitespace*;
+        op_greater = whitespace* '>' whitespace*;
+        op_plus    = whitespace* '+' whitespace*;
+        op_tilde   = whitespace* '~' whitespace*;
 
         # Numbers
         #

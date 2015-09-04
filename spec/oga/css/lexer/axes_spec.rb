@@ -13,10 +13,13 @@ describe Oga::CSS::Lexer do
     it 'lexes the expression "x > y"' do
       lex_css('x > y').should == [
         [:T_IDENT, 'x'],
-        [:T_SPACE, nil],
         [:T_GREATER, nil],
         [:T_IDENT, 'y']
       ]
+    end
+
+    it 'lexes the expression "x>y"' do
+      lex_css('x>y').should == lex_css('x > y')
     end
 
     it 'lexes the + axis' do
@@ -30,10 +33,13 @@ describe Oga::CSS::Lexer do
     it 'lexes the expression "x + y"' do
       lex_css('x + y').should == [
         [:T_IDENT, 'x'],
-        [:T_SPACE, nil],
         [:T_PLUS, nil],
         [:T_IDENT, 'y']
       ]
+    end
+
+    it 'lexes the expression "x+y"' do
+      lex_css('x+y').should == lex_css('x + y')
     end
 
     it 'lexes the ~ axis' do
@@ -47,10 +53,13 @@ describe Oga::CSS::Lexer do
     it 'lexes the expression "x ~ y"' do
       lex_css('x ~ y').should == [
         [:T_IDENT, 'x'],
-        [:T_SPACE, nil],
         [:T_TILDE, nil],
         [:T_IDENT, 'y']
       ]
+    end
+
+    it 'lexes the expression "x~y"' do
+      lex_css('x~y').should == lex_css('x ~ y')
     end
   end
 end
