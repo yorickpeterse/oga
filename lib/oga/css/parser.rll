@@ -28,13 +28,13 @@ css
 selectors
   = selector selectors_follow*
     {
-      node = val[0]
+      query = val[0]
 
       val[1].each do |chunk|
-        node = s(:pipe, node, chunk)
+        query = s(:pipe, query, chunk)
       end
 
-      node
+      query
     }
   ;
 
@@ -43,88 +43,95 @@ selectors_follow
   ;
 
 selector
-  = axis_or_descendant_or_self predicates? selector_follow?
+  # foo, foo.bar, foo[bar], etc
+  = node_test predicates? selector_follow?
     {
-      node = val[0]
-      pred = val[1]
-      more = val[2]
+      node  = s(:axis, 'descendant', val[0])
+      preds = val[1]
+      more  = val[2]
 
-      if pred
-        node = s(:predicate, node, pred)
+      if preds
+        node = s(:predicate, node, preds)
       end
 
-      if more
-        node = node.updated(nil, node.children + [more])
-      end
+      node = add_child(node, more) if more
 
       node
     }
+
+  # > foo, + foo, etc
+  | axis
+
+  # .foo, :nth-child(2n), etc
   | predicates selector_follow?
     {
       node  = s(:axis, 'descendant', on_test(nil, '*'))
       preds = val[0]
       more  = val[1]
 
-      if more
-        s(:predicate, node, preds, more)
+      if preds
+        node = s(:predicate, node, preds)
       else
-        s(:predicate, node, preds)
-      end
-    }
-  # + foo
-  #
-  # This branch is not part of the "axis" rule because we need more fine grained
-  # control over what to do with any selec
-  | T_PLUS axis_selector selector_follow?
-    {
-      selector = val[1]
-      more     = val[2]
-
-      if more
-        child = s(:axis, 'self', selector, more)
-      else
-        child = s(:axis, 'self', selector)
+        node = s(:predicate, node)
       end
 
-      s(
-        :predicate,
-        s(:axis, 'following-sibling', on_test(nil, '*')),
-        s(:int, 1),
-        child
-      )
+      node = add_child(node, more) if more
+
+      node
     }
   ;
 
 selector_follow
   = T_SPACE selector { val[1] }
-  ;
-
-descendant_or_self
-  = node_test { s(:axis, 'descendant', val[0]) }
+  | axis
   ;
 
 axis
   # > foo
-  = T_GREATER axis_selector
+  = T_GREATER axis_selector selector_follow?
     {
-      s(:axis, 'child', val[1])
+      test, preds = val[1]
+      more        = val[2]
+
+      generate_axis('child', test, preds, more)
+    }
+
+  # + foo
+  | T_PLUS axis_selector selector_follow?
+    {
+      test, preds = val[1]
+      more        = val[2]
+
+      s(
+        :predicate,
+        s(:axis, 'following-sibling', on_test(nil, '*')),
+        s(:int, 1),
+        generate_axis('self', test, preds, more)
+      )
     }
 
   # ~ foo
-  | T_TILDE axis_selector
+  | T_TILDE axis_selector selector_follow?
     {
-      s(:axis, 'following-sibling', val[1])
+      test, preds = val[1]
+      more        = val[2]
+
+      generate_axis('following-sibling', test, preds, more)
     }
   ;
 
-axis_or_descendant_or_self
-  = descendant_or_self
-  | axis
+axis_selector
+  # foo.bar
+  = node_test predicates?
+
+  # .foo
+  | predicates { [nil, val[0]] }
   ;
 
-axis_selector
-  = node_test
-  | axis
+id_class_pseudo_class
+  = id
+  | class
+  | pseudo_class
   ;
 
 node_test
@@ -153,9 +160,7 @@ predicates
   ;
 
 predicate
-  = class
-  | id
-  | pseudo_class
+  = id_class_pseudo_class
   | attribute_predicate
   ;
 
@@ -677,5 +682,33 @@ even
     end
 
     mod_val
+  end
+
+  # @param [String] name
+  # @param [AST::Node] test
+  # @param [AST::Node] predicates
+  # @param [AST::Node] more
+  # @return [AST::Node]
+  def generate_axis(name, test = nil, predicates = nil, more = nil)
+    if test
+      node = s(:axis, name, test)
+    else
+      node = s(:axis, name, on_test(nil, '*'))
+    end
+
+    if predicates
+      node = s(:predicate, node, predicates)
+    end
+
+    node = add_child(node, more) if more
+
+    node
+  end
+
+  # @param [AST::Node] node
+  # @param [AST::Node] child
+  # @return [AST::Node]
+  def add_child(node, child)
+    node.updated(nil, node.children + [child])
   end
 }
