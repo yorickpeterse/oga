@@ -364,7 +364,7 @@ numbers="1 2 3" />` but _not_ the element `<foo numbers="2 3 1" />`.
 The corresponding XPath expression is quite complex due to a lack of a
 `ends-with` function in XPath. Instead one has to resort to using the
 `substring()` function. As such the corresponding XPath expression for
-`foo[bar="baz"]` is as following:
+`foo[bar$="baz"]` is as following:
 
     foo[substring(@bar, string-length(@bar) - string-length("baz") + 1, string-length("baz")) = "baz"]
 
