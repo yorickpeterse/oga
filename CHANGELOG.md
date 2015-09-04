@@ -3,6 +3,103 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 1.3.0 - Unreleased
+
+## XPath query evaluation rewritten
+
+The system used for evaluating XPath and CSS queries has been rewritten from the
+ground up, resulting in much better performance. Prior to 1.3.0 Oga would
+evaluate queries by iterating over the Abstract Syntax Tree (AST) produced by
+the XPath/CSS parser. This setup could lead to _lots_ of object allocations and
+method calls, even for small queries.
+
+Starting with 1.3.0 Oga instead generates Ruby code based on XPath expressions.
+The generated code relies on nesting of conditionals (instead of method calls)
+and allocates far fewer objects (partially as a result of this). The generated
+code is cached based on the input expression, removing the need for recompiling
+the same expression over and over. The result of all this greatly improved
+querying performance.
+
+As an example, lets look at the benchmark
+`benchmark/xpath/compiler/big_xml_average_bench.rb`. When using Oga 1.2.3 the
+output is as following:
+
+    Iteration: 1: 3.292
+    Iteration: 2: 2.71
+    Iteration: 3: 2.747
+    Iteration: 4: 2.752
+    Iteration: 5: 2.776
+    Iteration: 6: 2.735
+    Iteration: 7: 2.761
+    Iteration: 8: 2.741
+    Iteration: 9: 2.791
+    Iteration: 10: 2.787
+
+    Iterations: 10
+    Average:    2.809 sec
+
+Using Oga 1.3.0 we instead get the following output:
+
+    Iteration: 1: 0.639
+    Iteration: 2: 0.422
+    Iteration: 3: 0.428
+    Iteration: 4: 0.47
+    Iteration: 5: 0.443
+    Iteration: 6: 0.445
+    Iteration: 7: 0.51
+    Iteration: 8: 0.485
+    Iteration: 9: 0.506
+    Iteration: 10: 0.547
+
+    Iterations: 10
+    Average:    0.489 sec
+
+Here Oga 1.3.0 is about 5.7 times faster compared to version 1.2.3.
+
+In the coming days I'll work on writing a blog post that explains more about the
+new compiler setup, how it works, how it performs, etc.
+
+In the mean time, see the following issues/pull requests for more information:
+
+* <https://github.com/YorickPeterse/oga/issues/102>
+* <https://github.com/YorickPeterse/oga/pull/138>
+
+## Escaping of characters in CSS expressions
+
+CSS expressions now allow querying of nodes having dots in the element name or
+namespace. This can be done by escaping the dot using a backslash. For example:
+
+    Oga.parse_xml('<foo.bar />').css('foo\.bar') # => NodeSet(Element(name: "foo.bar"))
+
+See issue <https://github.com/YorickPeterse/oga/issues/124> for more
+information.
+
+## Support for the CSS :not() pseudo class
+
+CSS expressions can now use the `:not()` pseudo class.
+
+See issue <https://github.com/YorickPeterse/oga/issues/125> for more
+information.
+
+## Improved parsing of CSS expressions
+
+CSS expressions such as `foo>bar` and `foo > .bar` are now supported, previously
+these would result in parser errors.
+
+See the following issues for more information:
+
+* <https://github.com/YorickPeterse/oga/issues/126>
+* <https://github.com/YorickPeterse/oga/issues/131>
+
+## Unicode support for CSS/XPath
+
+CSS and XPath expressions can now contain Unicode characters, previously only
+ASCII characters were allowed for identifiers (node tests, attribute names,
+etc).
+
+See issue <https://github.com/YorickPeterse/oga/issues/140> for more
+information.
+
 ## 1.2.3 - 2015-08-19
 
 ## NodeSet performance improvements
