@@ -177,13 +177,17 @@ process and bundled inside the Gem itself.
 
 ## Thread Safety
 
-Documents parsed using Oga are thread-safe as long as they are not modified by
-multiple threads at the same time. Querying documents using XPath can be done by
-multiple threads just fine. Write operations, such as removing attributes, are
-_not_ thread-safe and should not be done by multiple threads at once.
+Oga does not use a unsynchronized global mutable state. As a result of this you
+can parse/create documents concurrently without any problems. Modifying
+documents concurrently can lead to bugs as these operations are not
+synchronized.
 
-It is advised that you do not share parsed documents between threads unless you
-_really_ have to.
+Some querying operations will cache data in instance variables, without
+synchronization. An example is `Oga::XML::Element#namespace` which will cache an
+element's namespace after the first call.
+
+In general it's recommended to _not_ use the same document in multiple threads
+at the same time.
 
 ## Namespace Support
 
