@@ -3,7 +3,7 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
-## 1.3.0 - Unreleased
+## 1.3.0 - 2015-09-06
 
 ## XPath query evaluation rewritten
 
