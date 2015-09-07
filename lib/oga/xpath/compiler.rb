@@ -12,6 +12,11 @@ module Oga
       # @return [Oga::LRU]
       CACHE = LRU.new
 
+      # Context for compiled Procs. As compiled Procs do not mutate the
+      # enclosing environment we can just re-use the same instance without
+      # synchronization.
+      CONTEXT = Context.new
+
       # Wildcard for node names/namespace prefixes.
       STAR = '*'
 
@@ -86,7 +91,7 @@ module Oga
         generator = Ruby::Generator.new
         source    = generator.process(proc_ast)
 
-        eval(source)
+        CONTEXT.evaluate(source)
       ensure
         reset
       end

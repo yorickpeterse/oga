@@ -49,5 +49,27 @@ describe Oga::XPath::Compiler do
         block.call(doc).should be_an_instance_of(Oga::XML::NodeSet)
       end
     end
+
+    # This test relies on Binding#receiver (Binding#self on Rubinius), which
+    # sadly isn't available on all tested Ruby versions.
+    #
+    # Procs should have their own Binding as otherwise concurrent usage could
+    # lead to race conditions due to variable scopes and such being re-used.
+    [:receiver, :self].each do |binding_method|
+      if Binding.method_defined?(binding_method)
+        describe 'the returned Proc' do
+          it 'uses an isolated Binding' do
+            ast   = parse_xpath('foo')
+            block = @compiler.compile(ast)
+
+            binding_context = block.binding.send(binding_method)
+
+            binding_context.should be_an_instance_of(Oga::XPath::Context)
+          end
+        end
+
+        break
+      end
+    end
   end
 end

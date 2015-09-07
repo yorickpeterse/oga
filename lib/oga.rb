@@ -55,6 +55,7 @@ require 'oga/ruby/generator'
 
 require 'oga/xpath/lexer'
 require 'oga/xpath/parser'
+require 'oga/xpath/context'
 require 'oga/xpath/compiler'
 require 'oga/xpath/conversion'
 
