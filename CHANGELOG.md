@@ -3,6 +3,17 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 1.3.1 - 2015-09-07
+
+## Race condition in the XPath compiler
+
+This release fixes a race condition in the XPath compiler. The
+`XPath::Compiler#compile` method would compile Procs using its own Binding, this
+in turn would lead to race conditions when using the compiled Procs
+concurrently.
+
+See commit bd48dc15cc26f4eb556068afaafd2ab18271d8d3 for more information.
+
 ## 1.3.0 - 2015-09-06
 
 ## XPath query evaluation rewritten
