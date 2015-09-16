@@ -5,7 +5,7 @@ Dates are in the format `yyyy-mm-dd`.
 
 ## 1.3.1 - 2015-09-07
 
-## Race condition in the XPath compiler
+### Race condition in the XPath compiler
 
 This release fixes a race condition in the XPath compiler. The
 `XPath::Compiler#compile` method would compile Procs using its own Binding, this
@@ -16,7 +16,7 @@ See commit bd48dc15cc26f4eb556068afaafd2ab18271d8d3 for more information.
 
 ## 1.3.0 - 2015-09-06
 
-## XPath query evaluation rewritten
+### XPath query evaluation rewritten
 
 The system used for evaluating XPath and CSS queries has been rewritten from the
 ground up, resulting in much better performance. Prior to 1.3.0 Oga would
@@ -75,7 +75,7 @@ In the mean time, see the following issues/pull requests for more information:
 * <https://github.com/YorickPeterse/oga/issues/102>
 * <https://github.com/YorickPeterse/oga/pull/138>
 
-## Escaping of characters in CSS expressions
+### Escaping of characters in CSS expressions
 
 CSS expressions now allow querying of nodes having dots in the element name or
 namespace. This can be done by escaping the dot using a backslash. For example:
@@ -85,14 +85,14 @@ namespace. This can be done by escaping the dot using a backslash. For example:
 See issue <https://github.com/YorickPeterse/oga/issues/124> for more
 information.
 
-## Support for the CSS :not() pseudo class
+### Support for the CSS :not() pseudo class
 
 CSS expressions can now use the `:not()` pseudo class.
 
 See issue <https://github.com/YorickPeterse/oga/issues/125> for more
 information.
 
-## Improved parsing of CSS expressions
+### Improved parsing of CSS expressions
 
 CSS expressions such as `foo>bar` and `foo > .bar` are now supported, previously
 these would result in parser errors.
@@ -102,7 +102,7 @@ See the following issues for more information:
 * <https://github.com/YorickPeterse/oga/issues/126>
 * <https://github.com/YorickPeterse/oga/issues/131>
 
-## Unicode support for CSS/XPath
+### Unicode support for CSS/XPath
 
 CSS and XPath expressions can now contain Unicode characters, previously only
 ASCII characters were allowed for identifiers (node tests, attribute names,
@@ -113,13 +113,13 @@ information.
 
 ## 1.2.3 - 2015-08-19
 
-## NodeSet performance improvements
+### NodeSet performance improvements
 
 Performance of the NodeSet class has been improved, especially when used in
 concurrent environments. See commit 4f94d03a85f6acabe5cc57ba8c778928e42186be for
 more information.
 
-## Comparing names in the XPath evaluator
+### Comparing names in the XPath evaluator
 
 Performance of comparing names of nodes in the XPath evaluator has been
 improved thanks to Daniel Fockler.
