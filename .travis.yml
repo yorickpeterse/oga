@@ -29,3 +29,7 @@ notifications:
     on_failure: change
 
 cache: bundler
+
+os:
+  - linux
+  - osx
