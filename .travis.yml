@@ -10,12 +10,9 @@ addons:
     packages:
       - ragel
 
-matrix:
-  include:
-    - env: TRAVIS_OS_NAME=osx
-      install:
-        - brew update
-        - brew install ragel
+before_install:
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew update; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install ragel; fi
 
 install:
   - bundle install --retry=3
