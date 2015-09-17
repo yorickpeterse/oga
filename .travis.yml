@@ -10,6 +10,13 @@ addons:
     packages:
       - ragel
 
+matrix:
+  include:
+    - env: TRAVIS_OS_NAME=osx
+      install:
+        - brew update
+        - brew install ragel
+
 install:
   - bundle install --retry=3
 
