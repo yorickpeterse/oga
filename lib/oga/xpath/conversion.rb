@@ -89,7 +89,7 @@ module Oga
 
       # @return [TrueClass|FalseClass]
       def self.boolean?(value)
-        value.is_a?(TrueClass) || value.is_a?(FalseClass)
+        value == true || value == false
       end
 
       # @param [Oga::XML::NodeSet] set
