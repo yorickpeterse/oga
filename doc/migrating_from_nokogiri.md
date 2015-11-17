@@ -44,12 +44,17 @@ CSS selectors. In Nokogiri one queries a document as following:
     document.xpath('root/foo')
     document.css('root foo')
 
-Oga currently only supports XPath expressions, CSS selectors will be added in
-the near future. Querying documents works similar to Nokogiri:
+Querying documents works similar to Nokogiri:
 
     document = Oga.parse_xml('<root><foo>bar</foo></root>')
 
     document.xpath('root/foo')
+
+or using CSS:
+
+    document = Oga.parse_xml('<root><foo>bar</foo></root>')
+
+    document.css('root foo')
 
 Nokogiri also allows you to query a document and return the first match, opposed
 to an entire node set, using the method `at`. In Nokogiri this method can be
