@@ -62,6 +62,7 @@ used for both XPath expression and CSS selectors. Oga has no such method,
 instead it provides the following more dedicated methods:
 
 * `at_xpath`: returns the first node of an XPath expression
+* `at_css`: returns the first node of a CSS expression
 
 For example:
 
