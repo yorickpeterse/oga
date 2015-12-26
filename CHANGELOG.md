@@ -3,6 +3,26 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 2.0.0 - 2015-12-26
+
+### Fixed parsing HTML identifiers
+
+HTML identifiers are now parsed correctly. This means that for the element
+`<foo:bar />` the element name is now "bar" _without_ a namespace prefix ever
+being set. For the element `<foo bar:baz="10" />` the attribute name is now
+"bar:baz" instead of just "baz".
+
+This particular change may break existing applications, hence the version bump
+to 2.0.
+
+See commit 66fc4b1dfcc4b651302c7582f62287d5750dcbfe for more information.
+
+### Slightly improved performance of checking XPath booleans
+
+Performance of checking if certain XPath values are booleans has been improved
+somewhat. See commit 9bb908f8b1f6c72582ae6070d30f8bd8316ec5ad for more
+information.
+
 ## 1.3.1 - 2015-09-07
 
 ### Race condition in the XPath compiler
