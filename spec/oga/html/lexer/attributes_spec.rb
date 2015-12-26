@@ -138,5 +138,16 @@ describe Oga::XML::Lexer do
         [:T_ELEM_END, nil, 2]
       ]
     end
+
+    it 'lexes an element containing a namespaced attribute' do
+      lex_html('<foo bar:baz="10" />').should == [
+        [:T_ELEM_NAME, 'foo', 1],
+        [:T_ATTR, 'bar:baz', 1],
+        [:T_STRING_DQUOTE, nil, 1],
+        [:T_STRING_BODY, '10', 1],
+        [:T_STRING_DQUOTE, nil, 1],
+        [:T_ELEM_END, nil, 1]
+      ]
+    end
   end
 end

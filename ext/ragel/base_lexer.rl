@@ -53,6 +53,9 @@
     ident_char = unicode | [a-zA-Z0-9\-_\.];
     identifier = ident_char+;
 
+    html_ident_char = unicode | [a-zA-Z0-9\-_\.:];
+    html_identifier = html_ident_char+;
+
     whitespace_or_newline = whitespace | newline;
 
     action count_newlines {
@@ -390,12 +393,23 @@
     # Machine used for lexing the name/namespace of an element.
     element_name := |*
         identifier ':' => {
-            callback(id_on_element_ns, data, encoding, ts, te - 1);
+            if ( !html_p )
+            {
+                callback(id_on_element_ns, data, encoding, ts, te - 1);
+            }
         };
 
         identifier => {
             callback(id_on_element_name, data, encoding, ts, te);
-            fnext element_head;
+
+            if ( html_p )
+            {
+                fnext html_element_head;
+            }
+            else
+            {
+                fnext element_head;
+            }
         };
     *|;
 
@@ -508,8 +522,33 @@
         any => hold_and_return;
     *|;
 
-    # Machine used for processing the contents of an element's starting tag.
-    # This includes the name, namespace and attributes.
+    action start_attribute_pre {
+        fcall attribute_pre;
+    }
+
+    action close_open_element {
+        callback_simple(id_on_element_open_end);
+
+        if ( html_script_p() )
+        {
+            fnext html_script;
+        }
+        else if ( html_style_p() )
+        {
+            fnext html_style;
+        }
+        else
+        {
+            fnext main;
+        }
+    }
+
+    action close_self_closing_element {
+        callback_simple(id_on_element_end);
+        fnext main;
+    }
+
+    # Machine used for processing the contents of an XML element's starting tag.
     element_head := |*
         newline => advance_newline;
 
@@ -522,12 +561,30 @@
             callback(id_on_attribute, data, encoding, ts, te);
         };
 
-        # Attribute values.
-        '=' => {
-            fcall attribute_pre;
+        '=' => start_attribute_pre;
+
+        '>' => {
+            callback_simple(id_on_element_open_end);
+
+            fnext main;
         };
 
-        # We're done with the open tag of the element.
+        '/>' => close_self_closing_element;
+
+        any;
+    *|;
+
+    # Machine used for processing the contents of an HTML element's starting
+    # tag.
+    html_element_head := |*
+        newline => advance_newline;
+
+        html_identifier => {
+            callback(id_on_attribute, data, encoding, ts, te);
+        };
+
+        '=' => start_attribute_pre;
+
         '>' => {
             callback_simple(id_on_element_open_end);
 
@@ -545,11 +602,7 @@
             }
         };
 
-        # Self closing tags.
-        '/>' => {
-            callback_simple(id_on_element_end);
-            fnext main;
-        };
+        '/>' => close_self_closing_element;
 
         any;
     *|;

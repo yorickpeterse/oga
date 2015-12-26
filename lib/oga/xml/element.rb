@@ -64,7 +64,11 @@ module Oga
       #
       # @return [Oga::XML::Attribute]
       def attribute(name)
-        name, ns = split_name(name)
+        if html?
+          ns = nil
+        else
+          name, ns = split_name(name)
+        end
 
         attributes.each do |attr|
           return attr if attribute_matches?(attr, ns, name)

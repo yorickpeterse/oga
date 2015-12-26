@@ -105,6 +105,16 @@ describe Oga::XML::Element do
     it 'returns nil if an attribute has a namespace that is not given' do
       @instance.attribute('bar').nil?.should == true
     end
+
+    describe 'using an HTML document' do
+      it 'returns an attribute containing a namespace separator' do
+        attr = Oga::XML::Attribute.new(:name => 'foo:bar', :value => 'foo')
+        el   = described_class.new(:name => 'foo', :attributes => [attr])
+        doc  = Oga::XML::Document.new(:children => [el], :type => :html)
+
+        el.attribute('foo:bar').should == attr
+      end
+    end
   end
 
   describe '#get' do
