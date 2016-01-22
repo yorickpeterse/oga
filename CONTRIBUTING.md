@@ -4,6 +4,12 @@ Everybody is more than welcome to contribute to Oga, no matter how small the
 change. To keep everything running smoothly there are a bunch of guidelines that
 one should follow.
 
+## Code of Conduct
+
+The code of conduct ("CoC") can be found in the file "COC.md". Everybody
+participating in this project must adhere to the rules and guidelines stated in
+this CoC.
+
 ## General
 
 * When changing code make sure to write RSpec tests for the changes.
