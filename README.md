@@ -18,9 +18,17 @@ From [Wikipedia][oga-wikipedia]:
 
 The name is a pun on [Nokogiri][nokogiri].
 
-Oga uses [Semantic Versioning 2.0][semver] as its versioning scheme. All
-classes, modules and methods are part of the public API _unless_ they are
-declared as private using Ruby's `private` keyword or YARD's `@api private` tag.
+## Versioning Policy
+
+Oga uses the version format `MAJOR.MINOR` (e.g. `2.1`). An increase of the MAJOR
+version indicates backwards incompatible changes were introduced. The MINOR
+version is _only_ increased when changes are backwards compatible, regardless of
+whether those changes are bugfixes or new features. Up until version 1.0 the
+code should be considered unstable meaning it can change (and break) at any
+given moment.
+
+APIs explicitly tagged as private (e.g. using Ruby's `private` keyword or YARD's
+`@api private` tag) are not covered by these rules.
 
 ## Examples
 
@@ -318,4 +326,3 @@ found the file "LICENSE" or at <https://www.mozilla.org/MPL/2.0/>.
 [oga-wikipedia]: https://en.wikipedia.org/wiki/Japanese_saw#Other_Japanese_saws
 [ox]: https://github.com/ohler55/ox
 [doc-website]: http://code.yorickpeterse.com/oga/latest/
-[semver]: http://semver.org/spec/v2.0.0.html
