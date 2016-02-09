@@ -74,14 +74,14 @@ module Oga
         input = input.gsub(REGULAR_ENTITY, mapping)
 
         if input.include?(AMPERSAND)
-          input = input.gsub(NUMERIC_CODE_POINT_ENTITY) do
-            [Integer($1, 10)].pack('U*')
+          input = input.gsub(NUMERIC_CODE_POINT_ENTITY) do |found|
+            pack_string($1, 10) || found
           end
         end
 
         if input.include?(AMPERSAND)
-          input = input.gsub(HEX_CODE_POINT_ENTITY) do
-            [Integer($1, 16)].pack('U*')
+          input = input.gsub(HEX_CODE_POINT_ENTITY) do |found|
+            pack_string($1, 16) || found
           end
         end
 
@@ -103,6 +103,17 @@ module Oga
       # @return [String]
       def self.encode_attribute(input)
         input.gsub(ENCODE_ATTRIBUTE_REGEXP, ENCODE_ATTRIBUTE_MAPPING)
+      end
+
+      private
+
+      # @param [String] input
+      # @param [Fixnum] base
+      # @return [String]
+      def self.pack_string(input, base)
+        packed = [Integer(input, base)].pack('U*')
+
+        packed.valid_encoding? ? packed : nil
       end
     end # Entities
   end # XML

@@ -85,6 +85,14 @@ describe Oga::XML::Entities do
     it 'preserves entity-like letters in non-hex mode' do
       described_class.decode('&#123A;').should == '&#123A;'
     end
+
+    it "preserves numeric entities when they can't be decoded" do
+      described_class.decode('&#2013265920;').should == '&#2013265920;'
+    end
+
+    it "preserves hex entities when they can't be decoded" do
+      described_class.decode('&#xffffff;').should == '&#xffffff;'
+    end
   end
 
   describe 'encode' do
