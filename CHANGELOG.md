@@ -3,6 +3,21 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 2.1 - 2016-02-09
+
+### Preserving entities that can't be decoded
+
+Decoding of invalid XML/HTML entities now results in these entities being
+preserved as-is, instead of raising an EncodingError in certain places. See
+<https://github.com/YorickPeterse/oga/issues/143> and commit
+5bfc2d50f2a3d387cb9fc28826d1f3d5a2d9d224 for more information.
+
+### New Versioning Format
+
+Starting with this release the patch number is dropped from the version. This
+means version numbers are now in the format `MAJOR.MINOR`. See the README for
+more information.
+
 ## 2.0.0 - 2015-12-26
 
 ### Fixed parsing HTML identifiers
