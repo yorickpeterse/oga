@@ -75,7 +75,7 @@ Use spaces for indentation, tabs are not accepted. The usage of spaces ensures
 the indentation is identical no matter what program or system is used to view
 the source code.
 
-Hard wrap lines at 80 characters per line. Most modern editors can eaisly handle
+Hard wrap lines at 80 characters per line. Most modern editors can easily handle
 this, if not you should get a better editor. For example, in Vim you can select
 text in visual mode (using `v`) and press `gq` to automatically re-wrap the
 selected text.
