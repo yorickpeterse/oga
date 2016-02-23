@@ -590,16 +590,20 @@ module Oga
       def on_pipe(ast, input, &block)
         left, right = *ast
 
-        union      = unique_literal(:union)
-        conversion = literal(Conversion)
+        union = unique_literal(:union)
 
-        union.assign(literal(XML::NodeSet).new)
-          .followed_by(process(left, input) { |node| union << node })
-          .followed_by(process(right, input) { |node| union << node })
-          .followed_by do
-            # block present means we're in a predicate
-            block ? conversion.to_boolean(union).if_true(&block) : union
-          end
+        # Expressions such as "a | b | c"
+        if left.type == :pipe
+          union.assign(process(left, input))
+            .followed_by(process(right, input) { |node| union << node })
+            .followed_by(union)
+        # Expressions such as "a | b"
+        else
+          union.assign(literal(XML::NodeSet).new)
+            .followed_by(process(left, input) { |node| union << node })
+            .followed_by(process(right, input) { |node| union << node })
+            .followed_by(union)
+        end
       end
 
       # @param [AST::Node] ast
