@@ -3,6 +3,14 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 2.2 - 2016-02-23
+
+### XPath support for nested pipe operators
+
+Nested pipe operators such as `a | b | c` are now supported as XPath
+expressions. See issue <https://github.com/YorickPeterse/oga/issues/149> and
+commit 6d3c5c2ce93cbce337338bdc1a4971da72517038 for more information.
+
 ## 2.1 - 2016-02-09
 
 ### Preserving entities that can't be decoded
