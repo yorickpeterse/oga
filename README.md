@@ -158,7 +158,7 @@ Querying a document using a namespace:
   * Stream/pull parsing
   * SAX parsing
 * Low memory footprint
-* High performance, if something doesn't perform well enough it's a bug
+* High performance (taking into account most work happens in Ruby)
 * Support for XPath 1.0
 * CSS3 selector support
 * XML namespace support (registering, querying, etc)
