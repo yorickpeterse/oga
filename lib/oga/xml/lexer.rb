@@ -147,8 +147,6 @@ module Oga
           tokens << [type, value, line]
         end
 
-        reset_native
-
         tokens
       end
 
