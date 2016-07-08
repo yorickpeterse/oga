@@ -17,14 +17,6 @@ describe Oga::XML::Lexer do
       ]
     end
 
-    it 'rewinds input when resetting the lexer' do
-      io    = StringIO.new("<p class='foo'>\nHello</p>")
-      lexer = described_class.new(io)
-
-      lexer.lex.empty?.should == false
-      lexer.lex.empty?.should == false
-    end
-
     it 'lexes an attribute value starting with a newline' do
       io    = StringIO.new("<foo bar='\n10'></foo>")
       lexer = described_class.new(io)
