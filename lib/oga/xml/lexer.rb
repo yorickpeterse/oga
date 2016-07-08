@@ -112,19 +112,8 @@ module Oga
         @data   = data
         @html   = options[:html]
         @strict = options[:strict] || false
-
-        reset
-      end
-
-      # Resets the internal state of the lexer. Typically you don't need to
-      # call this method yourself as its called by #lex after lexing a given
-      # String.
-      def reset
         @line     = 1
         @elements = []
-
-        @data.rewind if @data.respond_to?(:rewind)
-
         reset_native
       end
 
@@ -149,9 +138,6 @@ module Oga
 
       # Gathers all the tokens for the input and returns them as an Array.
       #
-      # This method resets the internal state of the lexer after consuming the
-      # input.
-      #
       # @see #advance
       # @return [Array]
       def lex
@@ -161,7 +147,7 @@ module Oga
           tokens << [type, value, line]
         end
 
-        reset
+        reset_native
 
         tokens
       end
@@ -177,8 +163,6 @@ module Oga
       #
       # This method stores the supplied block in `@block` and resets it after
       # the lexer loop has finished.
-      #
-      # This method does *not* reset the internal state of the lexer.
       #
       # @yieldparam [Symbol] type
       # @yieldparam [String] value

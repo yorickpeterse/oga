@@ -245,7 +245,7 @@ string_body
   def reset
     @line = 1
 
-    @lexer.reset
+    @lexer.reset_native
   end
 
   # Yields the next token from the lexer.
