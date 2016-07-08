@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 gemspec
 
-platforms :ruby_19 do
+platforms :mingw_19, :ruby_19 do
   gem 'json', '~> 1.8'
 end
 
