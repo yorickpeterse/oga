@@ -54,13 +54,9 @@ module Oga
         :xml_declaration => XML::XmlDeclaration
       }
 
-      # @see Oga::XML::Parser#reset
-      def reset
+      def initialize(*args)
         super
-
-        @block   = nil
         @nesting = []
-        @node    = nil
       end
 
       # Parses the input and yields every node to the supplied block.

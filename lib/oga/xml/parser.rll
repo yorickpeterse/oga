@@ -237,14 +237,7 @@ string_body
   def initialize(data, options = {})
     @data  = data
     @lexer = Lexer.new(data, options)
-
-    reset
-  end
-
-  # Resets the internal state of the parser.
-  def reset
     @line = 1
-
     @lexer.reset_native
   end
 
@@ -281,15 +274,6 @@ string_body
     message += " on line #{@line}"
 
     raise LL::ParserError, message
-  end
-
-  # @see [LL::Driver#parse]
-  def parse
-    retval = super
-
-    reset
-
-    retval
   end
 
   # @param [Array] children
