@@ -18,13 +18,13 @@ install:
   - bundle install --retry=3
 
 rvm:
+  - jruby
   - 1.9.3
   - 2.0.0
   - 2.1
   - 2.2
   - 2.3.1
   - rbx
-  - jruby
 
 matrix:
   allow_failures:
