@@ -26,12 +26,16 @@ rvm:
   - jruby
 
 matrix:
+  allow_failures:
+    - rvm: rbx
+      os: osx
   exclude:
     # Binaries for these rubies aren't available on OS X :<
     - rvm: 2.2
       os: osx
     - rvm: jruby
       os: osx
+  fast_finish: true
 
 notifications:
   email:
