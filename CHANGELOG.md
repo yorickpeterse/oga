@@ -3,6 +3,13 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 2.3 - 2016-07-13
+
+Thanks to various changes provided by Erik Michaels-Ober Oga can now be used to
+parse XML input from a pipe (as returned by for example `IO.pipe`). See the
+following pull request for more information:
+<https://github.com/YorickPeterse/oga/pull/154>.
+
 ## 2.2 - 2016-02-23
 
 ### XPath support for nested pipe operators
