@@ -86,7 +86,7 @@ describe Oga::XML::Node do
       @n1.next.should == @n2
     end
 
-    it 'returns nil if there is no previous node' do
+    it 'returns nil if there is no next node' do
       @n2.next.nil?.should == true
     end
   end

@@ -70,7 +70,7 @@ module Oga
         index  = node_set.index(self) + 1
         length = node_set.length
 
-        index <= length ? node_set[index] : nil
+        index < length ? node_set[index] : nil
       end
 
       # Returns the previous element node or nil if there is none.
