@@ -3,6 +3,7 @@ module Oga
     # Class for storing information about a single XML attribute.
     class Attribute
       include ExpandedName
+      include ToXML
 
       # The name of the attribute.
       # @return [String]
@@ -80,19 +81,6 @@ module Oga
       end
 
       alias_method :to_s, :text
-
-      # @return [String]
-      def to_xml
-        if namespace_name
-          full_name = "#{namespace_name}:#{name}"
-        else
-          full_name = name
-        end
-
-        enc_value = value ? Entities.encode_attribute(value) : nil
-
-        %Q(#{full_name}="#{enc_value}")
-      end
 
       # @return [String]
       def inspect

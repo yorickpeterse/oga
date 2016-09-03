@@ -2,6 +2,8 @@ module Oga
   module XML
     # Class used for storing information about Doctypes.
     class Doctype
+      include ToXML
+
       # The name of the doctype (e.g. "HTML").
       # @return [String]
       attr_accessor :name
@@ -37,20 +39,6 @@ module Oga
         @public_id    = options[:public_id]
         @system_id    = options[:system_id]
         @inline_rules = options[:inline_rules]
-      end
-
-      # Converts the doctype back to XML.
-      #
-      # @return [String]
-      def to_xml
-        segments = "<!DOCTYPE #{name}"
-
-        segments << " #{type}" if type
-        segments << %Q{ "#{public_id}"} if public_id
-        segments << %Q{ "#{system_id}"} if system_id
-        segments << " [#{inline_rules}]" if inline_rules
-
-        segments + '>'
       end
 
       # Inspects the doctype.

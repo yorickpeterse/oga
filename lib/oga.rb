@@ -23,6 +23,7 @@ if RUBY_PLATFORM == 'java'
 end
 #:nocov:
 
+require 'oga/xml/to_xml'
 require 'oga/xml/html_void_elements'
 require 'oga/xml/entities'
 require 'oga/xml/querying'
@@ -42,6 +43,7 @@ require 'oga/xml/default_namespace'
 require 'oga/xml/attribute'
 require 'oga/xml/element'
 require 'oga/xml/node_set'
+require 'oga/xml/generator'
 
 require 'oga/xml/sax_parser'
 require 'oga/xml/pull_parser'

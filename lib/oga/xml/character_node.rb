@@ -16,11 +16,6 @@ module Oga
       end
 
       # @return [String]
-      def to_xml
-        text.to_s
-      end
-
-      # @return [String]
       def inspect
         "#{self.class.to_s.split('::').last}(#{text.inspect})"
       end

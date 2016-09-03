@@ -28,15 +28,6 @@ module Oga
         @text
       end
 
-      # @see [Oga::XML::CharacterNode#to_xml]
-      def to_xml
-        return super if inside_literal_html?
-
-        Entities.encode(super)
-      end
-
-      private
-
       # @return [TrueClass|FalseClass]
       def decode_entities?
         !@decoded && !inside_literal_html?
@@ -46,8 +37,7 @@ module Oga
       def inside_literal_html?
         node = parent
 
-        node.is_a?(Element) && html? &&
-          Lexer::LITERAL_HTML_ELEMENTS.allow?(node.name)
+        node && html? && node.literal_html_name?
       end
     end # Text
   end # XML

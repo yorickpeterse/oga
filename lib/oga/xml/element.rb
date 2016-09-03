@@ -211,30 +211,6 @@ module Oga
         @children = NodeSet.new([text_node], self)
       end
 
-      # Converts the element and its child elements to XML.
-      #
-      # @return [String]
-      def to_xml
-        if namespace_name
-          full_name = "#{namespace_name}:#{name}"
-        else
-          full_name = name
-        end
-
-        body  = children.map(&:to_xml).join('')
-        attrs = ''
-
-        attributes.each do |attr|
-          attrs << " #{attr.to_xml}"
-        end
-
-        if self_closing?
-          return "<#{full_name}#{attrs} />"
-        else
-          return "<#{full_name}#{attrs}>#{body}</#{full_name}>"
-        end
-      end
-
       # @return [String]
       def inspect
         segments = []
@@ -321,6 +297,14 @@ module Oga
         children.each do |child|
           child.flush_namespaces_cache if child.is_a?(Element)
         end
+      end
+
+      # Returns true if the current element name is the name of one of the
+      # literal HTML elements.
+      #
+      # @return [TrueClass|FalseClass]
+      def literal_html_name?
+        Lexer::LITERAL_HTML_ELEMENTS.allow?(name)
       end
 
       private

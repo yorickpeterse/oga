@@ -16,11 +16,6 @@ module Oga
       end
 
       # @return [String]
-      def to_xml
-        "<?#{name}#{text}?>"
-      end
-
-      # @return [String]
       def inspect
         "ProcessingInstruction(name: #{name.inspect} text: #{text.inspect})"
       end

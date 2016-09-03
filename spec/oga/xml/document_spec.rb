@@ -142,4 +142,10 @@ Document(
       EOF
     end
   end
+
+  describe '#literal_html_name?' do
+    it 'returns false' do
+      described_class.new.literal_html_name?.should == false
+    end
+  end
 end

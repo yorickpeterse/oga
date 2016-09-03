@@ -636,4 +636,14 @@ describe Oga::XML::Element do
       end
     end
   end
+
+  describe '#literal_html_name?' do
+    it 'returns true for an element name matching one of the literal HTML elements' do
+      described_class.new(:name => 'script').literal_html_name?.should == true
+    end
+
+    it 'returns false for an element name not matching one of the literal HTML elements' do
+      described_class.new(:name => 'foo').literal_html_name?.should == false
+    end
+  end
 end

@@ -5,6 +5,7 @@ module Oga
     class Document
       include Querying
       include Traversal
+      include ToXML
 
       # @return [Oga::XML::Doctype]
       attr_accessor :doctype
@@ -56,23 +57,6 @@ module Oga
         self
       end
 
-      # Converts the document and its child nodes to XML.
-      #
-      # @return [String]
-      def to_xml
-        xml = children.map(&:to_xml).join('')
-
-        if doctype
-          xml = doctype.to_xml + "\n" + xml.strip
-        end
-
-        if xml_declaration
-          xml = xml_declaration.to_xml + "\n" + xml.strip
-        end
-
-        xml
-      end
-
       # @return [TrueClass|FalseClass]
       def html?
         type.equal?(:html)
@@ -98,6 +82,11 @@ Document(
   #{segments.join("\n  ")}
 )
         EOF
+      end
+
+      # @return [FalseClass]
+      def literal_html_name?
+        false
       end
     end # Document
   end # XML

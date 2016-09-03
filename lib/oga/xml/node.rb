@@ -5,6 +5,7 @@ module Oga
     # nodes.
     class Node
       include Traversal
+      include ToXML
 
       # @return [Oga::XML::NodeSet]
       attr_reader :node_set

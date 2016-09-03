@@ -14,12 +14,6 @@ describe Oga::XML::CharacterNode do
     end
   end
 
-  describe '#to_xml' do
-    it 'converts the node to XML' do
-      described_class.new(:text => 'a').to_xml.should == 'a'
-    end
-  end
-
   describe '#inspect' do
     it 'returns the inspect value' do
       described_class.new(:text => 'a').inspect.should == 'CharacterNode("a")'

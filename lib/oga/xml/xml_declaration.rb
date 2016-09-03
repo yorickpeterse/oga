@@ -2,6 +2,8 @@ module Oga
   module XML
     # Class containing information about an XML declaration tag.
     class XmlDeclaration
+      include ToXML
+
       # @return [String]
       attr_accessor :version
 
@@ -21,21 +23,6 @@ module Oga
         @version    = options[:version] || '1.0'
         @encoding   = options[:encoding] || 'UTF-8'
         @standalone = options[:standalone]
-      end
-
-      # Converts the declaration tag to XML.
-      #
-      # @return [String]
-      def to_xml
-        pairs = []
-
-        [:version, :encoding, :standalone].each do |getter|
-          value = send(getter)
-
-          pairs << %Q{#{getter}="#{value}"} if value
-        end
-
-        "<?xml #{pairs.join(' ')} ?>"
       end
 
       # @return [String]

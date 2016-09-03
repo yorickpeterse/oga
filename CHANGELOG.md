@@ -3,6 +3,17 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 2.4 - Unreleased
+
+### Serialising Large Documents
+
+Oga can now serialise large documents without causing the call stack to overflow
+thanks to the new `Oga::XML::Generator` class. This class can generate XML
+without using a stack at all.
+
+See issue <https://github.com/YorickPeterse/oga/issues/158> for more
+information.
+
 ## 2.3 - 2016-07-13
 
 Thanks to various changes provided by Erik Michaels-Ober Oga can now be used to
