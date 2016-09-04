@@ -10,6 +10,12 @@ module Oga
       # @return [Oga::XML::NodeSet]
       attr_reader :node_set
 
+      # @return [Oga::XML::Node]
+      attr_accessor :previous
+
+      # @return [Oga::XML::Node]
+      attr_accessor :next
+
       # @param [Hash] options
       #
       # @option options [Oga::XML::NodeSet] :node_set The node set that this
@@ -27,6 +33,8 @@ module Oga
         @node_set  = set
         @root_node = nil
         @html_p    = nil
+        @previous  = nil
+        @next      = nil
       end
 
       # Returns the child nodes of the current node.
@@ -53,25 +61,6 @@ module Oga
       # @return [Oga::XML::Node]
       def parent
         node_set ? node_set.owner : nil
-      end
-
-      # Returns the preceding node, or nil if there is none.
-      #
-      # @return [Oga::XML::Node]
-      def previous
-        index = node_set.index(self) - 1
-
-        index >= 0 ? node_set[index] : nil
-      end
-
-      # Returns the following node, or nil if there is none.
-      #
-      # @return [Oga::XML::Node]
-      def next
-        index  = node_set.index(self) + 1
-        length = node_set.length
-
-        index < length ? node_set[index] : nil
       end
 
       # Returns the previous element node or nil if there is none.

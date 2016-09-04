@@ -25,6 +25,30 @@ describe Oga::XML::NodeSet do
 
       node.node_set.should == set
     end
+
+    it 'sets the previous and next nodes for all nodes owned by the set' do
+      node1 = Oga::XML::Element.new
+      node2 = Oga::XML::Element.new
+      set   = described_class.new([node1, node2], node1)
+
+      node1.next.should     == node2
+      node1.previous.should == nil
+
+      node2.next.should     == nil
+      node2.previous.should == node1
+    end
+
+    it 'does not set the previous and next nodes for nodes that are not owned' do
+      node1 = Oga::XML::Element.new
+      node2 = Oga::XML::Element.new
+      set   = described_class.new([node1, node2])
+
+      node1.previous.should == nil
+      node1.next.should     == nil
+
+      node2.previous.should == nil
+      node2.next.should     == nil
+    end
   end
 
   describe '#each' do
@@ -111,6 +135,22 @@ describe Oga::XML::NodeSet do
 
       child.node_set.should == @set
     end
+
+    it 'updates the previous and next nodes of any owned nodes' do
+      node1 = Oga::XML::Element.new
+      node2 = Oga::XML::Element.new
+
+      @set.owner = node1
+
+      @set.push(node1)
+      @set.push(node2)
+
+      node1.next.should     == node2
+      node1.previous.should == nil
+
+      node2.next.should     == nil
+      node2.previous.should == node1
+    end
   end
 
   describe '#unshift' do
@@ -141,6 +181,24 @@ describe Oga::XML::NodeSet do
 
       child.node_set.should == @set
     end
+
+    it 'updates the next node of the added node' do
+      node = Oga::XML::Element.new
+      @set.owner = node
+
+      @set.unshift(node)
+
+      node.next.should == @n1
+    end
+
+    it 'updates the previous node of the existing node' do
+      node = Oga::XML::Element.new
+      @set.owner = node
+
+      @set.unshift(node)
+
+      @n1.previous.should == node
+    end
   end
 
   describe '#shift' do
@@ -164,6 +222,22 @@ describe Oga::XML::NodeSet do
 
       @n1.node_set.nil?.should == true
     end
+
+    it 'updates the previous and next nodes of the removed node' do
+      @set.shift
+
+      @n1.previous.should == nil
+      @n1.next.should     == nil
+    end
+
+    it 'updates the previous node of the remaining node' do
+      node = Oga::XML::Element.new
+
+      @set.push(node)
+      @set.shift
+
+      node.previous.should == nil
+    end
   end
 
   describe '#pop' do
@@ -186,6 +260,21 @@ describe Oga::XML::NodeSet do
       @set.pop
 
       @n1.node_set.nil?.should == true
+    end
+
+    it 'updates the previous node of the removed node' do
+      @set.pop
+
+      @n1.previous.should == nil
+    end
+
+    it 'updates the next node of the last remaining node' do
+      node = Oga::XML::Element.new
+
+      @set.push(node)
+      @set.pop
+
+      @n1.next.should == nil
     end
   end
 
@@ -229,6 +318,40 @@ describe Oga::XML::NodeSet do
       @owned_set.insert(0, node)
 
       node.node_set.should == @owned_set
+    end
+
+    it 'updates the previous and next nodes of the inserted node' do
+      node1 = Oga::XML::Element.new
+      node2 = Oga::XML::Element.new
+      node3 = Oga::XML::Element.new
+
+      @owned_set.push(node1)
+      @owned_set.push(node2)
+
+      @owned_set.insert(1, node3)
+
+      node3.previous.should == node1
+      node3.next.should     == node2
+    end
+
+    it 'updates the next node of the node preceding the inserted node' do
+      node1 = Oga::XML::Element.new
+      node2 = Oga::XML::Element.new
+
+      @owned_set.push(node1)
+      @owned_set.insert(1, node2)
+
+      node1.next.should == node2
+    end
+
+    it 'updates the previous node of the node following the inserted node' do
+      node1 = Oga::XML::Element.new
+      node2 = Oga::XML::Element.new
+
+      @owned_set.push(node1)
+      @owned_set.insert(0, node2)
+
+      node1.previous.should == node2
     end
   end
 
@@ -338,6 +461,16 @@ describe Oga::XML::NodeSet do
 
       @doc_set.empty?.should == true
     end
+
+    it 'updates the previous and next nodes for all removed nodes' do
+      @doc_set.remove
+
+      @n1.previous.should == nil
+      @n1.next.should     == nil
+
+      @n2.previous.should == nil
+      @n2.next.should     == nil
+    end
   end
 
   describe '#delete' do
@@ -361,6 +494,16 @@ describe Oga::XML::NodeSet do
       @set.delete(@n1)
 
       @n1.node_set.nil?.should == true
+    end
+
+    it 'updates the previous and next nodes of the removed node' do
+      node = Oga::XML::Element.new
+
+      @set.push(node)
+      @set.delete(@n1)
+
+      @n1.previous.should == nil
+      @n1.next.should     == nil
     end
   end
 

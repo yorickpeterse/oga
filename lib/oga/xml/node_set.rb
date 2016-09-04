@@ -42,10 +42,10 @@ module Oga
         @owner    = owner
         @existing = {}
 
-        @nodes.each do |node|
+        @nodes.each_with_index do |node, index|
           mark_existing(node)
 
-          take_ownership(node) if @owner
+          take_ownership(node, index) if @owner
         end
       end
 
@@ -98,7 +98,7 @@ module Oga
 
         mark_existing(node)
 
-        take_ownership(node) if @owner
+        take_ownership(node, length - 1) if @owner
       end
 
       alias_method :<<, :push
@@ -113,7 +113,7 @@ module Oga
 
         mark_existing(node)
 
-        take_ownership(node) if @owner
+        take_ownership(node, 0) if @owner
       end
 
       # Shifts a node from the start of the set.
@@ -157,7 +157,7 @@ module Oga
 
         mark_existing(node)
 
-        take_ownership(node) if @owner
+        take_ownership(node, index) if @owner
       end
 
       # Returns the node for the given index.
@@ -224,6 +224,8 @@ module Oga
             sets << node.node_set
 
             node.node_set = nil
+            node.next     = nil
+            node.previous = nil
           end
         end
 
@@ -291,15 +293,34 @@ module Oga
       # set has an owner.
       #
       # @param [Oga::XML::Node] node
-      def take_ownership(node)
+      # @param [Fixnum] index
+      def take_ownership(node, index)
         node.node_set = self
+
+        node.previous = index > 0 ? @nodes[index - 1] : nil
+        node.next = index + 1 < @nodes.length ? @nodes[index + 1] : nil
+
+        node.previous.next = node if node.previous
+        node.next.previous = node if node.next
       end
 
       # Removes ownership of the node if it belongs to the current set.
       #
       # @param [Oga::XML::Node] node
       def remove_ownership(node)
-        node.node_set = nil if node.node_set == self
+        return unless node.node_set == self
+
+        if previous_node = node.previous
+          previous_node.next = node.next
+        end
+
+        if next_node = node.next
+          next_node.previous = node.previous
+        end
+
+        node.node_set = nil
+        node.previous = nil
+        node.next     = nil
       end
 
       # @param [Oga::XML::Node|Oga::XML::Attribute] node
