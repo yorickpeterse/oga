@@ -3,7 +3,7 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
-## 2.4 - Unreleased
+## 2.4 - 2016-09-04
 
 ### Serialising Large Documents
 
@@ -11,8 +11,18 @@ Oga can now serialise large documents without causing the call stack to overflow
 thanks to the new `Oga::XML::Generator` class. This class can generate XML
 without using a stack at all.
 
-See issue <https://github.com/YorickPeterse/oga/issues/158> for more
-information.
+See issue <https://github.com/YorickPeterse/oga/issues/158> and commit
+dd138981f68a606eff5d5a01e990f04398087dc4 for more information.
+
+### Faster retrieval of previous/next nodes
+
+The methods `Oga::XML::Node#previous` and `Oga::XML::Node#next` now simply
+return the value of an instance variable instead of calculating the
+previous/next node on the fly. This greatly improves the performance of these
+methods at the cost of a bit of extra work when adding or removing nodes from a
+NodeSet.
+
+See commit 5a58b1413767fed4518e8a67c4eb432a31592660 for more information.
 
 ## 2.3 - 2016-07-13
 
