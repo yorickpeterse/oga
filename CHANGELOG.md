@@ -3,6 +3,14 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 2.5 - 2016-09-06
+
+This release fixes a bug in the XML parser that would prevent it from parsing
+doctypes that contain a mixture of public/system IDs, a name, and inline rules.
+
+See issue <https://github.com/YorickPeterse/oga/issues/159> and commit
+68f1f9f660b90a43d22c8514e8cbf53f7ca0097d for more information.
+
 ## 2.4 - 2016-09-04
 
 ### Serialising Large Documents
