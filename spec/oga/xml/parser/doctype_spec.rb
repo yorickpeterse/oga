@@ -104,4 +104,34 @@ describe Oga::XML::Parser do
       @document.doctype.inline_rules.should == "\nfoo"
     end
   end
+
+  describe 'doctypes with a type, public ID, system ID, and inline rules' do
+    before :all do
+      @document = parse('<!DOCTYPE svg PUBLIC "foo" "bar" [rule1]>')
+    end
+
+    it 'returns a Doctype instance' do
+      @document.doctype.should be_an_instance_of(Oga::XML::Doctype)
+    end
+
+    it 'sets the name of the doctype' do
+      @document.doctype.name.should == 'svg'
+    end
+
+    it 'sets the type of the doctype' do
+      @document.doctype.type.should == 'PUBLIC'
+    end
+
+    it 'sets the public ID of the doctype' do
+      @document.doctype.public_id.should == 'foo'
+    end
+
+    it 'sets the system ID of the doctype' do
+      @document.doctype.system_id.should == 'bar'
+    end
+
+    it 'sets the inline rules of the doctype' do
+      @document.doctype.inline_rules.should == 'rule1'
+    end
+  end
 end

@@ -60,35 +60,20 @@ expression
 #     <!DOCTYPE html [ ... ]>
 
 doctype
-  = T_DOCTYPE_START T_DOCTYPE_NAME doctype_follow
+  = T_DOCTYPE_START T_DOCTYPE_NAME T_DOCTYPE_TYPE? string? string? doctype_inline T_DOCTYPE_END
     {
-      name   = val[1]
-      follow = val[2]
-
       on_doctype(
-        :name         => name,
-        :type         => follow[0],
-        :public_id    => follow[1],
-        :system_id    => follow[2],
-        :inline_rules => follow[3]
+        :name         => val[1],
+        :type         => val[2],
+        :public_id    => val[3],
+        :system_id    => val[4],
+        :inline_rules => val[5]
       )
     }
   ;
 
-# Returns: [T_DOCTYPE_TYPE, string, string, doctype_inline]
-doctype_follow
-  = T_DOCTYPE_END                { [] }
-  | T_DOCTYPE_TYPE doctype_types { [val[0], *val[1]] }
-  | doctype_inline T_DOCTYPE_END { [nil, nil, nil, val[0]] }
-  ;
-
 doctype_inline
-  = T_DOCTYPE_INLINE+ { val[0].inject(:+) }
-  ;
-
-doctype_types
-  = string string? T_DOCTYPE_END { [val[0], val[1]] }
-  | T_DOCTYPE_END                { nil }
+  = T_DOCTYPE_INLINE* { val[0].inject(:+) }
   ;
 
 # CDATA tags
