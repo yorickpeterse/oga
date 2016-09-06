@@ -13,7 +13,7 @@ module Oga
     #
     # @private
     class Generator
-      # @param [Oga::XML::Document|Oga::XML::Node] start The node to serialise.
+      # @param [Oga::XML::Document|Oga::XML::Node] root The node to serialise.
       def initialize(root)
         @start = root
 
@@ -112,7 +112,7 @@ module Oga
       end
 
       # @param [Oga::XML::Element] element
-      # @param [String] body The content of the element.
+      # @param [String] output The content of the element.
       def on_element(element, output)
         name = element.expanded_name
         attrs = ''
@@ -156,7 +156,7 @@ module Oga
         output << '>'
       end
 
-      # @param [Oga::XML::Document] node
+      # @param [Oga::XML::Document] doc
       # @param [String] output
       def on_document(doc, output)
         if doc.xml_declaration
