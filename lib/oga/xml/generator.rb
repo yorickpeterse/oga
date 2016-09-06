@@ -71,7 +71,7 @@ module Oga
                 current = current.parent
               end
 
-              send(:after_element, current, output) if current.is_a?(Element)
+              after_element(current, output) if current.is_a?(Element)
 
               break if current == @start
             end
