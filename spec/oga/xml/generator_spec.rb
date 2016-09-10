@@ -47,5 +47,36 @@ describe Oga::XML::Generator do
         output.should == '<root><a /><b><c /></b></root>'
       end
     end
+
+    describe 'using a Text node in a Document as the root node' do
+      it 'returns a String' do
+        text     = Oga::XML::Text.new(text: "\n")
+        element  = Oga::XML::Element.new(name: 'foo')
+        document = Oga::XML::Document.new(children: [text, element])
+
+        described_class.new(text).to_xml.should == "\n"
+      end
+    end
+
+    describe 'using an Element in a Document as the root node' do
+      it 'returns a String' do
+        text     = Oga::XML::Text.new(text: "\n")
+        element  = Oga::XML::Element.new(name: 'foo')
+        document = Oga::XML::Document.new(children: [text, element])
+
+        described_class.new(element).to_xml.should == '<foo />'
+      end
+    end
+
+    describe 'using an Element with a sibling as the root node' do
+      it 'returns a String' do
+        element1 = Oga::XML::Element.new(name: 'a')
+        element2 = Oga::XML::Element.new(name: 'b')
+        document = Oga::XML::Document.new(children: [element1, element2])
+
+        described_class.new(element1).to_xml.should == '<a />'
+        described_class.new(element2).to_xml.should == '<b />'
+      end
+    end
   end
 end

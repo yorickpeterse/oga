@@ -65,6 +65,13 @@ module Oga
 
           if child_node = children && current.children[0]
             current = child_node
+          elsif current == @start
+            # When we have reached the root node we should not process
+            # any of its siblings. If we did we'd include XML in the
+            # output from elements no part of the root node.
+            after_element(current, output) if current.is_a?(Element)
+
+            break
           else
             until next_node = current.is_a?(Node) && current.next
               if current.is_a?(Node) && current != @start
