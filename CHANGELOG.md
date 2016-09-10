@@ -3,6 +3,13 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 2.6 - 2016-09-10
+
+This release fixes a bug in the XML generation code that would cause it to get
+stuck in the generation loop. See issue
+<https://github.com/YorickPeterse/oga/issues/161> and commit
+38284278d542640c3d8300ef15890af93b6df779 for more information.
+
 ## 2.5 - 2016-09-06
 
 This release fixes a bug in the XML parser that would prevent it from parsing
