@@ -91,6 +91,8 @@ module Oga
         found ? found.value : nil
       end
 
+      alias_method :[], :get
+
       # Adds a new attribute to the element.
       #
       # @param [Oga::XML::Attribute] attribute
@@ -113,11 +115,7 @@ module Oga
         if found
           found.value = value
         else
-          if name.include?(':')
-            ns, name = name.split(':')
-          else
-            ns = nil
-          end
+          name, ns = split_name(name)
 
           attr = Attribute.new(
             :name           => name,
@@ -128,6 +126,8 @@ module Oga
           add_attribute(attr)
         end
       end
+
+      alias_method :[]=, :set
 
       # Removes an attribute from the element.
       #

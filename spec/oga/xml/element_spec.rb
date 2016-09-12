@@ -129,6 +129,13 @@ describe Oga::XML::Element do
     end
   end
 
+  describe '#[]' do
+    it 'is an alias to get' do
+      described_class.instance_method(:[]).should ==
+        described_class.instance_method(:get)
+    end
+  end
+
   describe '#add_attribute' do
     before do
       @element   = described_class.new
@@ -161,6 +168,14 @@ describe Oga::XML::Element do
       @element.get('class').should == 'foo'
     end
 
+    it 'supports the use of Symbols for attribute names' do
+      @element.set(:foo, 'foo')
+      @element.get('foo').should == 'foo'
+
+      @element.set('bar', 'bar')
+      @element.get(:bar).should == 'bar'
+    end
+
     it 'adds a new attribute with a namespace' do
       @element.set('x:bar', 'foo')
 
@@ -183,6 +198,13 @@ describe Oga::XML::Element do
       @element.set('foo', 'baz')
 
       @element.get('foo').should == 'baz'
+    end
+  end
+
+  describe '#[]=' do
+    it 'is an alias to set' do
+      described_class.instance_method(:[]=).should ==
+        described_class.instance_method(:set)
     end
   end
 
