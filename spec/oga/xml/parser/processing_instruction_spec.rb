@@ -32,4 +32,11 @@ describe Oga::XML::Parser do
       @node.text.should == ' bar '
     end
   end
+
+  it 'parses a processing instruction with a namespace prefix' do
+    node = parse('<?foo:bar ?>').children[0]
+
+    node.should be_an_instance_of(Oga::XML::ProcessingInstruction)
+    node.name.should == 'foo:bar'
+  end
 end

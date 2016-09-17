@@ -161,7 +161,7 @@
     # instruction.
     #
 
-    proc_ins_start = '<?' identifier;
+    proc_ins_start = '<?' identifier (':' identifier)?;
     proc_ins_end   = '?>';
 
     # Everything except "?" OR a single "?"

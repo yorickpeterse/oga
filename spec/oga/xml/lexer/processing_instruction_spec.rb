@@ -70,6 +70,14 @@ describe Oga::XML::Lexer do
       ]
     end
 
+    it 'lexes an instruction with a namespace prefix' do
+      lex('<?foo:bar?>').should == [
+        [:T_PROC_INS_START, nil, 1],
+        [:T_PROC_INS_NAME, 'foo:bar', 1],
+        [:T_PROC_INS_END, nil, 1]
+      ]
+    end
+
     describe 'using an IO as input' do
       it 'lexes an instruction with a newline after the name' do
         lex_stringio("<?foo\nbar?>").should == [
