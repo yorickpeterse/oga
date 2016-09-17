@@ -36,4 +36,28 @@ describe Oga::XML::Parser do
       @node.encoding.should == 'foo'
     end
   end
+
+  it 'parses an XML declaration inside an element' do
+    document = parse('<foo><?xml ?></foo>')
+
+    document.children[0].should be_an_instance_of(Oga::XML::Element)
+    document.children[0].children[0].should be_an_instance_of(Oga::XML::XmlDeclaration)
+  end
+
+  it 'parses an XML declaration preceded by an element' do
+    document = parse('<foo /><?xml ?>')
+
+    document.xml_declaration.should be_an_instance_of(Oga::XML::XmlDeclaration)
+    document.children[0].should be_an_instance_of(Oga::XML::Element)
+  end
+
+  it 'parses an XML declaration preceded by an element with a common ancestor' do
+    document = parse('<root><a /><?xml ?></root>')
+    root = document.children[0]
+
+    root.children[0].should be_an_instance_of(Oga::XML::Element)
+    root.children[1].should be_an_instance_of(Oga::XML::XmlDeclaration)
+
+    root.children[1].previous.should == root.children[0]
+  end
 end

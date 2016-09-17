@@ -48,12 +48,14 @@ module Oga
             callback = :on_comment
           when Oga::XML::Attribute
             callback = :on_attribute
+          when Oga::XML::XmlDeclaration
+            # This must come before ProcessingInstruction since XmlDeclaration
+            # extends ProcessingInstruction.
+            callback = :on_xml_declaration
           when Oga::XML::ProcessingInstruction
             callback = :on_processing_instruction
           when Oga::XML::Doctype
             callback = :on_doctype
-          when Oga::XML::XmlDeclaration
-            callback = :on_xml_declaration
           when Oga::XML::Document
             callback = :on_document
             children = true

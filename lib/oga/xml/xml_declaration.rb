@@ -1,9 +1,7 @@
 module Oga
   module XML
     # Class containing information about an XML declaration tag.
-    class XmlDeclaration
-      include ToXML
-
+    class XmlDeclaration < ProcessingInstruction
       # @return [String]
       attr_accessor :version
 
@@ -20,9 +18,12 @@ module Oga
       # @option options [String] :encoding
       # @option options [String] :standalone
       def initialize(options = {})
+        super
+
         @version    = options[:version] || '1.0'
         @encoding   = options[:encoding] || 'UTF-8'
         @standalone = options[:standalone]
+        @name       = 'xml'
       end
 
       # @return [String]

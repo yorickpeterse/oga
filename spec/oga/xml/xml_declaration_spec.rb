@@ -28,6 +28,12 @@ describe Oga::XML::XmlDeclaration do
     end
   end
 
+  describe '#name' do
+    it 'returns the name of the node' do
+      described_class.new.name.should == 'xml'
+    end
+  end
+
   describe '#to_xml' do
     before do
       @instance = described_class.new(
