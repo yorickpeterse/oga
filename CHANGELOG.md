@@ -3,6 +3,41 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 2.7 - 2016-09-27
+
+### Closing Elements When Generating XML
+
+When generating XML Oga now properly closes elements with siblings but without
+children. See commit e0e0687dc29427c854c9fa6d3c19cee1c04f92c7 for more
+information.
+
+### Newlines After Doctypes
+
+When generating XML a newline would be inserted after a doctype. If another
+newline would follow in a text node this would lead to multiple newlines being
+present. Oga now ensures there is only 1 newline following a doctype. See commit
+e0e0687dc29427c854c9fa6d3c19cee1c04f92c7 for more information.
+
+### Processing Instructions With Namespace Prefixes
+
+The XML lexer now supports processing instructions containing namespace prefixes
+such as `<?xml:foo ?>`. See commit 01fa1513f4bd6f194bf6d1ca17e510003fa23312 for
+more information.
+
+### XML Declarations Are Now Processing Instructions
+
+The class `Oga::XML::XmlDeclaration` now extends
+`Oga::XML::ProcessingInstruction`. This allows documents to contain XML
+declarations in nested elements, instead of only allowing this at the root of
+the document. See commit 116b9b0ceb6feab4daa0bb417302590fba948bef for more
+information.
+
+### Aliases For Getting & Setting Attributes
+
+The methods `Oga::XML::Element#get` and `Oga::XML::Element#set` are now aliased
+as `#[]` and `#[]=` respectively. See d40baf0c724a3874f43100fbefa775cfb8dcacda
+for more information and thanks to Scott Wheeler for contributing the patch.
+
 ## 2.6 - 2016-09-10
 
 This release fixes a bug in the XML generation code that would cause it to get
