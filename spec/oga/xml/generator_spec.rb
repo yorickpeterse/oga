@@ -29,6 +29,27 @@ describe Oga::XML::Generator do
       end
     end
 
+    describe 'using an HTML Document as the root node' do
+      it 'returns a String' do
+        element = Oga::XML::Element.new(name: 'foo')
+        doc = Oga::XML::Document.new(children: [element], type: :html)
+        output = described_class.new(doc).to_xml
+
+        output.should == '<foo></foo>'
+      end
+    end
+
+    describe 'using an HTML Document as the root node with nested elements' do
+      it 'returns a String' do
+        el2 = Oga::XML::Element.new(name: 'bar')
+        el1 = Oga::XML::Element.new(name: 'foo', children: [el2])
+        doc = Oga::XML::Document.new(children: [el1], type: :html)
+        output = described_class.new(doc).to_xml
+
+        output.should == '<foo><bar></bar></foo>'
+      end
+    end
+
     describe 'using Element nodes with siblings' do
       it 'returns a String' do
         root = Oga::XML::Element.new(
@@ -76,6 +97,33 @@ describe Oga::XML::Generator do
 
         described_class.new(element1).to_xml.should == '<a />'
         described_class.new(element2).to_xml.should == '<b />'
+      end
+    end
+
+    describe 'using a parsed HTML document' do
+      it 'returns a String with the same formatting as the input document' do
+        input = <<-EOF
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hello</title>
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    <p>Hello</p>
+    <ul>
+      <li>Hello</li>
+      <li></li>
+      Hello
+    </ul>
+  <div></div></body>
+</html>
+        EOF
+
+        doc = Oga.parse_html(input)
+        output = described_class.new(doc)
+
+        output.to_xml.should == input
       end
     end
   end

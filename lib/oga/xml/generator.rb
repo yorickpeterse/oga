@@ -17,8 +17,8 @@ module Oga
       def initialize(root)
         @start = root
 
-        if @start.respond_to?(:root_node)
-          @html_mode = @start.root_node.html?
+        if @start.respond_to?(:html?)
+          @html_mode = @start.html?
         else
           @html_mode = false
         end
@@ -75,6 +75,10 @@ module Oga
 
             break
           else
+            # Make sure to always close the current element before
+            # moving to any siblings.
+            after_element(current, output) if current.is_a?(Element)
+
             until next_node = current.is_a?(Node) && current.next
               if current.is_a?(Node) && current != @start
                 current = current.parent
@@ -176,6 +180,14 @@ module Oga
         if doc.doctype
           on_doctype(doc.doctype, output)
           output << "\n"
+        end
+
+        first_child = doc.children[0]
+
+        # Prevent excessive newlines in case the next node is a newline text
+        # node.
+        if first_child.is_a?(Text) && first_child.text.start_with?("\r\n", "\n")
+          output.chomp!
         end
       end
 
