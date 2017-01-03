@@ -76,7 +76,7 @@ module Oga
 
         if value.is_a?(Float)
           bool = !value.nan? && !value.zero?
-        elsif value.is_a?(Fixnum)
+        elsif value.is_a?(Integer)
           bool = !value.zero?
         elsif value.respond_to?(:empty?)
           bool = !value.empty?
