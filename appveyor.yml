@@ -10,8 +10,8 @@ install:
   - SET PATH=C:\ragel;%PATH%
   - ruby --version
   - gem --version
-  - appveyor DownloadFile https://rubygems.org/downloads/bundler-1.9.0.gem -FileName bundler-1.9.0.gem
-  - gem install bundler-1.9.0.gem --local --quiet --no-ri --no-rdoc
+  - appveyor DownloadFile https://rubygems.org/downloads/bundler-1.13.7.gem -FileName bundler-1.13.7.gem
+  - gem install bundler-1.13.7.gem --local --quiet --no-ri --no-rdoc
   - bundle install --retry 3
 
 build: off
@@ -21,12 +21,12 @@ test_script:
 
 environment:
   matrix:
-    - ruby_version: "193"
-    - ruby_version: "200"
-    - ruby_version: "21"
-    - ruby_version: "21-x64"
     - ruby_version: "22"
     - ruby_version: "22-x64"
+    - ruby_version: "23"
+    - ruby_version: "23-x64"
+    - ruby_version: "24"
+    - ruby_version: "24-x64"
 
 skip_tags: true
 

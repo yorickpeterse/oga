@@ -19,25 +19,14 @@ install:
 
 rvm:
   - jruby
-  - 1.9.3
-  - 2.0.0
-  - 2.1
-  - 2.2
-  - 2.3.1
+  - 2.2.5
+  - 2.3.3
+  - 2.4.0
   - rbx
 
 matrix:
   allow_failures:
     - rvm: rbx
-      os: osx
-  exclude:
-    # Binaries for these rubies aren't available on OS X :<
-    - rvm: 2.2
-      os: osx
-    - rvm: 2.3.1
-      os: osx
-    - rvm: jruby
-      os: osx
   fast_finish: true
 
 notifications:
