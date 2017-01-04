@@ -3,6 +3,13 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 2.8 - 2017-01-04
+
+Ruby 2.4 deprecates Fixnum in favour of Integer, producing warnings whenever
+Fixnum is used. Oga 2.8 contains a fix contributed by Po Shan Cheah to remove
+these deprecation warnings. See commit c75ca96d229a50b369e16057622255a674f2cabc
+for more information.
+
 ## 2.7 - 2016-09-27
 
 ### Closing Elements When Generating XML
