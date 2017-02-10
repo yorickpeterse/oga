@@ -5,6 +5,12 @@ Dates are in the format `yyyy-mm-dd`.
 
 ## 2.9 - 2017-02-10
 
+### Closing tags for HTML void elements
+
+Certain HTML elements such as `<img>` and `<link>` (called "void elements" in
+Oga) are now closed using a `>` tag instead of `/>`. In other words, instead of
+outputting `<img src="..." />` Oga now outputs `<img src="...">`.
+
 ### Doctypes are now Nodes
 
 Each Doctype now inherits from `Oga::XML::Node`. This makes it possible to parse

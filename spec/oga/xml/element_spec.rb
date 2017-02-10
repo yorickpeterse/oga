@@ -462,7 +462,7 @@ describe Oga::XML::Element do
       element  = described_class.new(:name => 'link')
       document = Oga::XML::Document.new(:type => :html, :children => [element])
 
-      element.to_xml.should == '<link />'
+      element.to_xml.should == '<link>'
     end
 
     it 'generates the XML for an empty explicitly closed HTML element' do

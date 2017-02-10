@@ -136,7 +136,9 @@ module Oga
         end
 
         if self_closing?(element)
-          output << "<#{name}#{attrs} />"
+          closing_tag = html_void_element?(element) ? '>' : ' />'
+
+          output << "<#{name}#{attrs}#{closing_tag}"
         else
           output << "<#{name}#{attrs}>"
         end
@@ -213,6 +215,10 @@ module Oga
         else
           element.children.empty?
         end
+      end
+
+      def html_void_element?(element)
+        @html_mode && HTML_VOID_ELEMENTS.allow?(element.name)
       end
     end
   end

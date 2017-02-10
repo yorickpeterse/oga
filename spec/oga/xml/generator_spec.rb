@@ -107,7 +107,7 @@ describe Oga::XML::Generator do
 <html>
   <head>
     <title>Hello</title>
-    <meta charset="utf-8" />
+    <meta charset="utf-8">
   </head>
   <body>
     <p>Hello</p>
@@ -124,6 +124,48 @@ describe Oga::XML::Generator do
         output = described_class.new(doc)
 
         output.to_xml.should == input
+      end
+    end
+
+    describe 'using an XML document containing HTML void elements' do
+      describe 'using empty void elements' do
+        it 'returns a String' do
+          img = Oga::XML::Element.new(name: 'img')
+          doc = Oga::XML::Document.new(children: [img], type: :xml)
+
+          doc.to_xml.should == '<img />'
+        end
+      end
+
+      describe 'using non-empty void elements' do
+        it 'returns a String' do
+          text = Oga::XML::Text.new(text: 'kittens')
+          img = Oga::XML::Element.new(name: 'img', children: [text])
+          doc = Oga::XML::Document.new(children: [img], type: :xml)
+
+          doc.to_xml.should == '<img>kittens</img>'
+        end
+      end
+    end
+
+    describe 'using an HTML document containing HTML void elements' do
+      describe 'using empty void elements' do
+        it 'returns a String' do
+          img = Oga::XML::Element.new(name: 'img')
+          doc = Oga::XML::Document.new(children: [img], type: :html)
+
+          doc.to_xml.should == '<img>'
+        end
+      end
+
+      describe 'using non-empty void elements' do
+        it 'returns a String' do
+          text = Oga::XML::Text.new(text: 'kittens')
+          img = Oga::XML::Element.new(name: 'img', children: [text])
+          doc = Oga::XML::Document.new(children: [img], type: :html)
+
+          doc.to_xml.should == '<img>kittens</img>'
+        end
       end
     end
   end
