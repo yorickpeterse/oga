@@ -7,6 +7,11 @@ module Oga
       include Traversal
       include ToXML
 
+      # The doctype of the document.
+      #
+      # When parsing a document this attribute will be set automatically if a
+      # doctype resides at the root of the document.
+      #
       # @return [Oga::XML::Doctype]
       attr_accessor :doctype
 

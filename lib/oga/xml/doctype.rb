@@ -1,9 +1,7 @@
 module Oga
   module XML
     # Class used for storing information about Doctypes.
-    class Doctype
-      include ToXML
-
+    class Doctype < Node
       # The name of the doctype (e.g. "HTML").
       # @return [String]
       attr_accessor :name

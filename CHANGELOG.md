@@ -3,6 +3,15 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 2.9 - 2017-02-10
+
+### Doctypes are now Nodes
+
+Each Doctype now inherits from `Oga::XML::Node`. This makes it possible to parse
+documents where a doctype is located in a child node. However, in these cases
+Oga will _not_ populate `Oga::XML::Document#doctype` as this can not be done in
+an efficient way.
+
 ## 2.8 - 2017-01-04
 
 Ruby 2.4 deprecates Fixnum in favour of Integer, producing warnings whenever

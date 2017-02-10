@@ -134,4 +134,25 @@ describe Oga::XML::Parser do
       @document.doctype.inline_rules.should == 'rule1'
     end
   end
+
+  describe 'doctypes inside an element' do
+    before :all do
+      @document = parse('<foo><!DOCTYPE html><bar /></foo>')
+    end
+
+    it 'does not set the doctype of the document' do
+      # This is because the doctype does not reside at the root. Supporting
+      # doctypes at arbitrary locations would come at a hefty performance
+      # impact, and requires doctypes to reach back into their owning documents
+      # (which leads to ugly code).
+      @document.doctype.should be_nil
+    end
+
+    it 'sets the next node of the doctype' do
+      doctype = @document.children[0].children[0]
+      bar = @document.children[0].children[1]
+
+      doctype.next.should == bar
+    end
+  end
 end
