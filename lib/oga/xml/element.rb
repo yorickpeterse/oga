@@ -64,14 +64,14 @@ module Oga
       #
       # @return [Oga::XML::Attribute]
       def attribute(name)
-        if html?
-          ns = nil
+        name_str, ns = if html?
+          [name.to_s, nil]
         else
-          name, ns = split_name(name)
+          split_name(name)
         end
 
         attributes.each do |attr|
-          return attr if attribute_matches?(attr, ns, name)
+          return attr if attribute_matches?(attr, ns, name_str)
         end
 
         return
@@ -115,10 +115,10 @@ module Oga
         if found
           found.value = value
         else
-          name, ns = split_name(name)
+          name_str, ns = split_name(name)
 
           attr = Attribute.new(
-            :name           => name,
+            :name           => name_str,
             :namespace_name => ns,
             :value          => value
           )
