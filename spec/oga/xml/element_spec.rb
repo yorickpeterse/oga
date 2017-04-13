@@ -107,12 +107,22 @@ describe Oga::XML::Element do
     end
 
     describe 'using an HTML document' do
-      it 'returns an attribute containing a namespace separator' do
-        attr = Oga::XML::Attribute.new(:name => 'foo:bar', :value => 'foo')
-        el   = described_class.new(:name => 'foo', :attributes => [attr])
-        doc  = Oga::XML::Document.new(:children => [el], :type => :html)
+      let!(:attr) do
+        Oga::XML::Attribute.new(:name => 'foo:bar', :value => 'foo')
+      end
+      let!(:el) do
+        described_class.new(:name => 'foo', :attributes => [attr])
+      end
+      let!(:doc) do
+        Oga::XML::Document.new(:children => [el], :type => :html)
+      end
 
+      it 'returns an attribute with a name containing a namespace separator' do
         el.attribute('foo:bar').should == attr
+      end
+
+      it 'returns an attribute with a name containing a namespace separator when using a Symbol' do
+        el.attribute(:'foo:bar').should == attr
       end
     end
   end
