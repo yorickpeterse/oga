@@ -3,6 +3,13 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## Unreleased
+
+### Fix `Element#attribute` result for HTML doc when `Symbol` passed as name
+
+Using `Symbol` is working for XML doc, but was not working for HTML doc.
+See [PR #174](https://github.com/YorickPeterse/oga/pull/174)
+
 ## 2.9 - 2017-02-10
 
 ### Closing tags for HTML void elements
