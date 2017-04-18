@@ -34,7 +34,9 @@ APIs explicitly tagged as private (e.g. using Ruby's `private` keyword or YARD's
 
 Parsing a simple string of XML:
 
-    Oga.parse_xml('<people><person>Alice</person></people>')
+```ruby
+Oga.parse_xml('<people><person>Alice</person></people>')
+```
 
 Parsing XML using strict mode (disables automatic tag insertion):
 
@@ -43,113 +45,131 @@ Parsing XML using strict mode (disables automatic tag insertion):
 
 Parsing a simple string of HTML:
 
-    Oga.parse_html('<link rel="stylesheet" href="foo.css">')
+```ruby
+Oga.parse_html('<link rel="stylesheet" href="foo.css">')
+```
 
 Parsing an IO handle pointing to XML (this also works when using
 `Oga.parse_html`):
 
-    handle = File.open('path/to/file.xml')
+```ruby
+handle = File.open('path/to/file.xml')
 
-    Oga.parse_xml(handle)
+Oga.parse_xml(handle)
+```
 
 Parsing an IO handle using the pull parser:
 
-    handle = File.open('path/to/file.xml')
-    parser = Oga::XML::PullParser.new(handle)
+```ruby
+handle = File.open('path/to/file.xml')
+parser = Oga::XML::PullParser.new(handle)
 
-    parser.parse do |node|
-      parser.on(:text) do
-        puts node.text
-      end
-    end
+parser.parse do |node|
+parser.on(:text) do
+  puts node.text
+end
+end
+```
 
 Using an Enumerator to download and parse an XML document on the fly:
 
-    enum = Enumerator.new do |yielder|
-      HTTPClient.get('http://some-website.com/some-big-file.xml') do |chunk|
-        yielder << chunk
-      end
-    end
+```ruby
+enum = Enumerator.new do |yielder|
+HTTPClient.get('http://some-website.com/some-big-file.xml') do |chunk|
+  yielder << chunk
+end
+end
 
-    document = Oga.parse_xml(enum)
+document = Oga.parse_xml(enum)
+```
 
 Parse a string of XML using the SAX parser:
 
-    class ElementNames
-      attr_reader :names
+```ruby
+class ElementNames
+attr_reader :names
 
-      def initialize
-        @names = []
-      end
+def initialize
+  @names = []
+end
 
-      def on_element(namespace, name, attrs = {})
-        @names << name
-      end
-    end
+def on_element(namespace, name, attrs = {})
+  @names << name
+end
+end
 
-    handler = ElementNames.new
+handler = ElementNames.new
 
-    Oga.sax_parse_xml(handler, '<foo><bar></bar></foo>')
+Oga.sax_parse_xml(handler, '<foo><bar></bar></foo>')
 
-    handler.names # => ["foo", "bar"]
+handler.names # => ["foo", "bar"]
+```
 
 Querying a document using XPath:
 
-    document = Oga.parse_xml <<-EOF
-    <people>
-      <person id="1">
-        <name>Alice</name>
-        <age>28</name>
-      </person>
-    </people>
-    EOF
+```ruby
+document = Oga.parse_xml <<-EOF
+<people>
+<person id="1">
+  <name>Alice</name>
+  <age>28</name>
+</person>
+</people>
+EOF
 
-    # The "xpath" method returns an enumerable (Oga::XML::NodeSet) that you can
-    # iterate over.
-    document.xpath('people/person').each do |person|
-      puts person.get('id') # => "1"
+# The "xpath" method returns an enumerable (Oga::XML::NodeSet) that you can
+# iterate over.
+document.xpath('people/person').each do |person|
+puts person.get('id') # => "1"
 
-      # The "at_xpath" method returns a single node from a set, it's the same as
-      # person.xpath('name').first.
-      puts person.at_xpath('name').text # => "Alice"
-    end
+# The "at_xpath" method returns a single node from a set, it's the same as
+# person.xpath('name').first.
+puts person.at_xpath('name').text # => "Alice"
+end
+```
 
 Querying the same document using CSS:
 
-    document = Oga.parse_xml <<-EOF
-    <people>
-      <person id="1">
-        <name>Alice</name>
-        <age>28</name>
-      </person>
-    </people>
-    EOF
+```ruby
+document = Oga.parse_xml <<-EOF
+<people>
+<person id="1">
+  <name>Alice</name>
+  <age>28</name>
+</person>
+</people>
+EOF
 
-    # The "css" method returns an enumerable (Oga::XML::NodeSet) that you can
-    # iterate over.
-    document.css('people person').each do |person|
-      puts person.get('id') # => "1"
+# The "css" method returns an enumerable (Oga::XML::NodeSet) that you can
+# iterate over.
+document.css('people person').each do |person|
+puts person.get('id') # => "1"
 
-      # The "at_css" method returns a single node from a set, it's the same as
-      # person.css('name').first.
-      puts person.at_css('name').text # => "Alice"
-    end
+# The "at_css" method returns a single node from a set, it's the same as
+# person.css('name').first.
+puts person.at_css('name').text # => "Alice"
+end
+```
 
 Modifying a document and serializing it back to XML:
 
-    document = Oga.parse_xml('<people><person>Alice</person></people>')
-    name     = document.at_xpath('people/person[1]/text()')
+```ruby
+document = Oga.parse_xml('<people><person>Alice</person></people>')
+name     = document.at_xpath('people/person[1]/text()')
 
-    name.text = 'Bob'
+name.text = 'Bob'
 
-    document.to_xml # => "<people><person>Bob</person></people>"
+document.to_xml # => "<people><person>Bob</person></people>"
+```
 
 Querying a document using a namespace:
 
-    document = Oga.parse_xml('<root xmlns:x="foo"><x:div></x:div></root>')
-    div      = document.xpath('root/x:div').first
+```ruby
+document = Oga.parse_xml('<root xmlns:x="foo"><x:div></x:div></root>')
+div      = document.xpath('root/x:div').first
 
-    div.namespace # => Namespace(name: "x" uri: "foo")
+div.namespace # => Namespace(name: "x" uri: "foo")
+```
 
 ## Features
 
@@ -203,44 +223,58 @@ at the same time.
 Oga fully supports parsing/registering XML namespaces as well as querying them
 using XPath. For example, take the following XML:
 
-    <root xmlns="http://example.com">
-        <bar>bar</bar>
-    </root>
+```xml
+<root xmlns="http://example.com">
+  <bar>bar</bar>
+</root>
+```
 
 If one were to try and query the `bar` element (e.g. using XPath `root/bar`)
 they'd end up with an empty node set. This is due to `<root>` defining an
 alternative default namespace. Instead you can query this element using the
 following XPath:
 
-    *[local-name() = "root"]/*[local-name() = "bar"]
+```
+*[local-name() = "root"]/*[local-name() = "bar"]
+```
 
 Alternatively, if you don't really care where the `<bar>` element is located you
 can use the following:
 
-    descendant::*[local-name() = "bar"]
+```
+descendant::*[local-name() = "bar"]
+```
 
 And if you want to specify an explicit namespace URI, you can use this:
 
-    descendant::*[local-name() = "bar" and namespace-uri() = "http://example.com"]
+```
+descendant::*[local-name() = "bar" and namespace-uri() = "http://example.com"]
+```
 
 Unlike Nokogiri, Oga does _not_ provide a way to create "dynamic" namespaces.
 That is, Nokogiri allows one to query the above document as following:
 
-    document = Nokogiri::XML('<root xmlns="http://example.com"><bar>bar</bar></root>')
+```ruby
+document = Nokogiri::XML('<root xmlns="http://example.com"><bar>bar</bar></root>')
 
-    document.xpath('x:root/x:bar', :x => 'http://example.com')
+document.xpath('x:root/x:bar', :x => 'http://example.com')
+```
 
 Oga does have a small trick you can use to cut down the size of your XPath
 queries. Because Oga assigns the name "xmlns" to default namespaces you can use
 this in your XPath queries:
 
-    document = Oga.parse_xml('<root xmlns="http://example.com"><bar>bar</bar></root>')
+```ruby
+document = Oga.parse_xml('<root xmlns="http://example.com"><bar>bar</bar></root>')
 
-    document.xpath('xmlns:root/xmlns:bar')
+document.xpath('xmlns:root/xmlns:bar')
+```
 
 When using this you can still restrict the query to the correct namespace URI:
 
-    document.xpath('xmlns:root[namespace-uri() = "http://example.com"]/xmlns:bar')
+```ruby
+document.xpath('xmlns:root[namespace-uri() = "http://example.com"]/xmlns:bar')
+```
 
 In the future I might add an API to ease this process, although at this time I
 have little interest in providing an API similar to Nokogiri.
@@ -250,13 +284,17 @@ have little interest in providing an API similar to Nokogiri.
 Oga fully supports HTML5 including the omission of certain tags. For example,
 the following is parsed just fine:
 
-    <li>Hello
-    <li>World
+```html
+<li>Hello
+<li>World
+```
 
 This is effectively parsed into:
 
-    <li>Hello</li>
-    <li>World</li>
+```html
+<li>Hello</li>
+<li>World</li>
+```
 
 One exception Oga makes is that it does _not_ automatically insert `html`,
 `head` and `body` tags. Automatically inserting these tags requires a
