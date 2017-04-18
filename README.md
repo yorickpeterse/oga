@@ -1,5 +1,7 @@
 # Oga
 
+[![Build Status](https://travis-ci.org/YorickPeterse/oga.svg?branch=master)](https://travis-ci.org/YorickPeterse/oga)
+
 Oga is an XML/HTML parser written in Ruby. It provides an easy to use API for
 parsing, modifying and querying documents (using XPath expressions). Oga does
 not require system libraries such as libxml, making it easier and faster to
