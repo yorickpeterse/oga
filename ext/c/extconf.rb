@@ -1,7 +1,7 @@
 require 'mkmf'
 
 if RbConfig::CONFIG['CC'] =~ /clang|gcc/
-  $CFLAGS << ' -pedantic'
+  $CFLAGS << ' -pedantic -Wno-implicit-fallthrough'
 end
 
 if ENV['DEBUG']
