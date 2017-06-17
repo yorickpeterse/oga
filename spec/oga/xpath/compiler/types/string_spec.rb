@@ -7,7 +7,7 @@ describe Oga::XPath::Compiler do
     end
 
     it 'returns the literal string' do
-      evaluate_xpath(@document, '"foo"').should == 'foo'
+      expect(evaluate_xpath(@document, '"foo"')).to eq('foo')
     end
   end
 end

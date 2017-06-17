@@ -8,14 +8,14 @@ describe Oga::XML::PullParser do
 
     it 'sets the nesting for the outer element' do
       @parser.parse do |node|
-        @parser.nesting.should == %w{a} if node.name == 'a'
+        expect(@parser.nesting).to eq(%w{a}) if node.name == 'a'
 
-        @parser.nesting.should == %w{a b} if node.name == 'b'
+        expect(@parser.nesting).to eq(%w{a b}) if node.name == 'b'
       end
     end
 
     it 'pops element names after leaving an element' do
-      @parser.nesting.should_receive(:pop).twice
+      expect(@parser.nesting).to receive(:pop).twice
 
       @parser.parse { |node| }
     end

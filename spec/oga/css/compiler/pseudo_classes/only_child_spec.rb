@@ -11,7 +11,7 @@ describe 'CSS selector evaluation' do
     end
 
     it 'returns a node set containing <c> nodes' do
-      evaluate_css(@document, 'root :only-child').should == node_set(@c1, @c2)
+      expect(evaluate_css(@document, 'root :only-child')).to eq(node_set(@c1, @c2))
     end
   end
 end

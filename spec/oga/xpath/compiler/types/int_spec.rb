@@ -7,15 +7,15 @@ describe Oga::XPath::Compiler do
     end
 
     it 'returns an integer' do
-      evaluate_xpath(@document, '1').should == 1
+      expect(evaluate_xpath(@document, '1')).to eq(1)
     end
 
     it 'returns a negative integer' do
-      evaluate_xpath(@document, '-2').should == -2
+      expect(evaluate_xpath(@document, '-2')).to eq(-2)
     end
 
     it 'returns integers as a Float' do
-      evaluate_xpath(@document, '1').is_a?(Float).should == true
+      expect(evaluate_xpath(@document, '1').is_a?(Float)).to eq(true)
     end
   end
 end

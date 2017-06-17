@@ -7,11 +7,11 @@ describe Oga::XML::Parser do
     end
 
     it 'returns a Doctype instance' do
-      @document.doctype.is_a?(Oga::XML::Doctype).should == true
+      expect(@document.doctype.is_a?(Oga::XML::Doctype)).to eq(true)
     end
 
     it 'sets the name of the doctype' do
-      @document.doctype.name.should == 'html'
+      expect(@document.doctype.name).to eq('html')
     end
   end
 
@@ -21,15 +21,15 @@ describe Oga::XML::Parser do
     end
 
     it 'returns a Doctype instance' do
-      @document.doctype.is_a?(Oga::XML::Doctype).should == true
+      expect(@document.doctype.is_a?(Oga::XML::Doctype)).to eq(true)
     end
 
     it 'sets the name of the doctype' do
-      @document.doctype.name.should == 'html'
+      expect(@document.doctype.name).to eq('html')
     end
 
     it 'sets the type of the doctype' do
-      @document.doctype.type.should == 'PUBLIC'
+      expect(@document.doctype.type).to eq('PUBLIC')
     end
   end
 
@@ -39,19 +39,19 @@ describe Oga::XML::Parser do
     end
 
     it 'returns a Doctype instance' do
-      @document.doctype.is_a?(Oga::XML::Doctype).should == true
+      expect(@document.doctype.is_a?(Oga::XML::Doctype)).to eq(true)
     end
 
     it 'sets the name of the doctype' do
-      @document.doctype.name.should == 'html'
+      expect(@document.doctype.name).to eq('html')
     end
 
     it 'sets the type of the doctype' do
-      @document.doctype.type.should == 'PUBLIC'
+      expect(@document.doctype.type).to eq('PUBLIC')
     end
 
     it 'sets the public ID of the doctype' do
-      @document.doctype.public_id.should == 'foo'
+      expect(@document.doctype.public_id).to eq('foo')
     end
   end
 
@@ -61,23 +61,23 @@ describe Oga::XML::Parser do
     end
 
     it 'returns a Doctype instance' do
-      @document.doctype.is_a?(Oga::XML::Doctype).should == true
+      expect(@document.doctype.is_a?(Oga::XML::Doctype)).to eq(true)
     end
 
     it 'sets the name of the doctype' do
-      @document.doctype.name.should == 'html'
+      expect(@document.doctype.name).to eq('html')
     end
 
     it 'sets the type of the doctype' do
-      @document.doctype.type.should == 'PUBLIC'
+      expect(@document.doctype.type).to eq('PUBLIC')
     end
 
     it 'sets the public ID of the doctype' do
-      @document.doctype.public_id.should == 'foo'
+      expect(@document.doctype.public_id).to eq('foo')
     end
 
     it 'sets the system ID of the doctype' do
-      @document.doctype.system_id.should == 'bar'
+      expect(@document.doctype.system_id).to eq('bar')
     end
   end
 
@@ -87,11 +87,11 @@ describe Oga::XML::Parser do
     end
 
     it 'returns a Doctype instance' do
-      @document.doctype.is_a?(Oga::XML::Doctype).should == true
+      expect(@document.doctype.is_a?(Oga::XML::Doctype)).to eq(true)
     end
 
     it 'sets the inline doctype rules' do
-      @document.doctype.inline_rules.should == '<!ELEMENT foo>'
+      expect(@document.doctype.inline_rules).to eq('<!ELEMENT foo>')
     end
   end
 
@@ -101,7 +101,7 @@ describe Oga::XML::Parser do
     end
 
     it 'sets the inline doctype rules' do
-      @document.doctype.inline_rules.should == "\nfoo"
+      expect(@document.doctype.inline_rules).to eq("\nfoo")
     end
   end
 
@@ -111,27 +111,27 @@ describe Oga::XML::Parser do
     end
 
     it 'returns a Doctype instance' do
-      @document.doctype.should be_an_instance_of(Oga::XML::Doctype)
+      expect(@document.doctype).to be_an_instance_of(Oga::XML::Doctype)
     end
 
     it 'sets the name of the doctype' do
-      @document.doctype.name.should == 'svg'
+      expect(@document.doctype.name).to eq('svg')
     end
 
     it 'sets the type of the doctype' do
-      @document.doctype.type.should == 'PUBLIC'
+      expect(@document.doctype.type).to eq('PUBLIC')
     end
 
     it 'sets the public ID of the doctype' do
-      @document.doctype.public_id.should == 'foo'
+      expect(@document.doctype.public_id).to eq('foo')
     end
 
     it 'sets the system ID of the doctype' do
-      @document.doctype.system_id.should == 'bar'
+      expect(@document.doctype.system_id).to eq('bar')
     end
 
     it 'sets the inline rules of the doctype' do
-      @document.doctype.inline_rules.should == 'rule1'
+      expect(@document.doctype.inline_rules).to eq('rule1')
     end
   end
 
@@ -145,14 +145,14 @@ describe Oga::XML::Parser do
       # doctypes at arbitrary locations would come at a hefty performance
       # impact, and requires doctypes to reach back into their owning documents
       # (which leads to ugly code).
-      @document.doctype.should be_nil
+      expect(@document.doctype).to be_nil
     end
 
     it 'sets the next node of the doctype' do
       doctype = @document.children[0].children[0]
       bar = @document.children[0].children[1]
 
-      doctype.next.should == bar
+      expect(doctype.next).to eq(bar)
     end
   end
 end

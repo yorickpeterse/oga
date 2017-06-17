@@ -12,13 +12,13 @@ describe Oga::XPath::Compiler do
     describe 'relative to a document' do
       describe 'a/processing-instruction()' do
         it 'returns a NodeSet' do
-          evaluate_xpath(@document).should == node_set(@proc_ins1)
+          expect(evaluate_xpath(@document)).to eq(node_set(@proc_ins1))
         end
       end
 
       describe 'a/b/processing-instruction()' do
         it 'returns a NodeSet' do
-          evaluate_xpath(@document).should == node_set(@proc_ins2)
+          expect(evaluate_xpath(@document)).to eq(node_set(@proc_ins2))
         end
       end
     end
@@ -29,8 +29,8 @@ describe Oga::XPath::Compiler do
       document = parse('<root><?xml version="1.0" ?></root>')
       xml_decl = document.children[0].children[0]
 
-      evaluate_xpath(document, 'root/processing-instruction()')
-        .should == node_set(xml_decl)
+      expect(evaluate_xpath(document, 'root/processing-instruction()'))
+        .to eq(node_set(xml_decl))
     end
   end
 end

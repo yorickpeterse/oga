@@ -7,25 +7,25 @@ describe Oga::XPath::Compiler do
     end
 
     it 'returns the length of a literal string' do
-      evaluate_xpath(@document, 'string-length("foo")').should == 3.0
+      expect(evaluate_xpath(@document, 'string-length("foo")')).to eq(3.0)
     end
 
     it 'returns the length of a literal integer' do
-      evaluate_xpath(@document, 'string-length(10)').should == 2.0
+      expect(evaluate_xpath(@document, 'string-length(10)')).to eq(2.0)
     end
 
     it 'returns the length of a literal float' do
       # This includes the counting of the dot. That is, "10.5".length => 4
-      evaluate_xpath(@document, 'string-length(10.5)').should == 4.0
+      expect(evaluate_xpath(@document, 'string-length(10.5)')).to eq(4.0)
     end
 
     it 'returns the length of a string in a node set' do
-      evaluate_xpath(@document, 'string-length(root)').should == 1.0
+      expect(evaluate_xpath(@document, 'string-length(root)')).to eq(1.0)
     end
 
     it 'returns a node set containing nodes with a specific text length' do
-      evaluate_xpath(@document, 'root/a[string-length() = 1]')
-        .should == node_set(@document.children[0].children[0])
+      expect(evaluate_xpath(@document, 'root/a[string-length() = 1]'))
+        .to eq(node_set(@document.children[0].children[0]))
     end
   end
 end

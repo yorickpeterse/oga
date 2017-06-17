@@ -11,7 +11,7 @@ describe Oga::Ruby::Generator do
       node2  = Oga::Ruby::Node.new(:lit, %w{20})
       joined = node1.followed_by(node2)
 
-      @generator.on_followed_by(joined).should == "10\n\n20"
+      expect(@generator.on_followed_by(joined)).to eq("10\n\n20")
     end
   end
 
@@ -21,7 +21,7 @@ describe Oga::Ruby::Generator do
       val    = Oga::Ruby::Node.new(:lit, %w{10})
       assign = var.assign(val)
 
-      @generator.on_assign(assign).should == 'number = 10'
+      expect(@generator.on_assign(assign)).to eq('number = 10')
     end
 
     describe 'using a followed_by node' do
@@ -30,7 +30,7 @@ describe Oga::Ruby::Generator do
       val    = Oga::Ruby::Node.new(:lit, %w{10})
       assign = var.assign(val.followed_by(val))
 
-      @generator.on_assign(assign).should == <<-EOF
+      expect(@generator.on_assign(assign)).to eq <<-EOF
 number = begin
   10
 
@@ -49,7 +49,7 @@ EOF
 
       assign = Oga::Ruby::Node.new(:massign, [[var1, var2], val])
 
-      @generator.on_massign(assign).should == 'foo, bar = 10'
+      expect(@generator.on_massign(assign)).to eq('foo, bar = 10')
     end
   end
 
@@ -58,7 +58,7 @@ EOF
       number = Oga::Ruby::Node.new(:lit, %w{10})
       node   = Oga::Ruby::Node.new(:begin, [number])
 
-      @generator.on_begin(node).should == <<-EOF
+      expect(@generator.on_begin(node)).to eq <<-EOF
 begin
   10
 end
@@ -72,7 +72,7 @@ end
       val = Oga::Ruby::Node.new(:lit, %w{10})
       eq  = var.eq(val)
 
-      @generator.on_eq(eq).should == 'number == 10'
+      expect(@generator.on_eq(eq)).to eq('number == 10')
     end
   end
 
@@ -82,7 +82,7 @@ end
       right     = Oga::Ruby::Node.new(:lit, %w{bar})
       condition = left.and(right)
 
-      @generator.on_and(condition).should == 'foo && bar'
+      expect(@generator.on_and(condition)).to eq('foo && bar')
     end
   end
 
@@ -92,7 +92,7 @@ end
       right     = Oga::Ruby::Node.new(:lit, %w{bar})
       condition = left.or(right)
 
-      @generator.on_or(condition).should == '(foo || bar)'
+      expect(@generator.on_or(condition)).to eq('(foo || bar)')
     end
   end
 
@@ -102,7 +102,7 @@ end
         Oga::Ruby::Node.new(:lit, %w{bar})
       end
 
-      @generator.on_if(statement).should == <<-EOF
+      expect(@generator.on_if(statement)).to eq <<-EOF
 if foo
   bar
 end
@@ -117,7 +117,7 @@ end
 
         statement = foo.if_true { bar }.else { baz }
 
-        @generator.on_if(statement).should == <<-EOF
+        expect(@generator.on_if(statement)).to eq <<-EOF
 if foo
   bar
 else
@@ -134,7 +134,7 @@ end
         Oga::Ruby::Node.new(:lit, %w{bar})
       end
 
-      @generator.on_while(statement).should == <<-EOF
+      expect(@generator.on_while(statement)).to eq <<-EOF
 while foo
   bar
 end
@@ -147,7 +147,7 @@ end
       it 'returns a String' do
         node = Oga::Ruby::Node.new(:lit, %w{number}).foobar
 
-        @generator.on_send(node).should == 'number.foobar'
+        expect(@generator.on_send(node)).to eq('number.foobar')
       end
     end
 
@@ -156,7 +156,7 @@ end
         arg  = Oga::Ruby::Node.new(:lit, %w{10})
         node = Oga::Ruby::Node.new(:lit, %w{number}).foobar(arg)
 
-        @generator.on_send(node).should == 'number.foobar(10)'
+        expect(@generator.on_send(node)).to eq('number.foobar(10)')
       end
     end
 
@@ -165,7 +165,7 @@ end
         arg  = Oga::Ruby::Node.new(:lit, %w{10})
         node = Oga::Ruby::Node.new(:lit, %w{number})[arg]
 
-        @generator.on_send(node).should == 'number[10]'
+        expect(@generator.on_send(node)).to eq('number[10]')
       end
     end
   end
@@ -177,7 +177,7 @@ end
           Oga::Ruby::Node.new(:lit, %w{10})
         end
 
-        @generator.on_block(node).should == <<-EOF
+        expect(@generator.on_block(node)).to eq <<-EOF
 number do ||
   10
 end
@@ -192,7 +192,7 @@ end
           Oga::Ruby::Node.new(:lit, %w{10})
         end
 
-        @generator.on_block(node).should == <<-EOF
+        expect(@generator.on_block(node)).to eq <<-EOF
 number do |foo|
   10
 end
@@ -207,7 +207,7 @@ end
       stop  = Oga::Ruby::Node.new(:lit, %w{20})
       node  = Oga::Ruby::Node.new(:range, [start, stop])
 
-      @generator.on_range(node).should == '(10..20)'
+      expect(@generator.on_range(node)).to eq('(10..20)')
     end
   end
 
@@ -215,7 +215,7 @@ end
     it 'returns a String' do
       node = Oga::Ruby::Node.new(:string, %w{foo})
 
-      @generator.on_string(node).should == '"foo"'
+      expect(@generator.on_string(node)).to eq('"foo"')
     end
   end
 
@@ -223,7 +223,7 @@ end
     it 'returns a String' do
       node = Oga::Ruby::Node.new(:symbol, [:foo])
 
-      @generator.on_symbol(node).should == ':foo'
+      expect(@generator.on_symbol(node)).to eq(':foo')
     end
   end
 
@@ -231,7 +231,7 @@ end
     it 'returns a String' do
       node = Oga::Ruby::Node.new(:lit, %w{foo})
 
-      @generator.on_lit(node).should == 'foo'
+      expect(@generator.on_lit(node)).to eq('foo')
     end
   end
 end

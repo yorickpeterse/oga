@@ -6,14 +6,14 @@ describe Oga::XML::Parser do
       io  = StringIO.new("<foo bar='\n10'></foo>")
       doc = parse(io)
 
-      doc.children[0].attributes[0].value.should == "\n10"
+      expect(doc.children[0].attributes[0].value).to eq("\n10")
     end
 
     it 'parses an attribute value split in two by a newline' do
       io  = StringIO.new("<foo bar='foo\nbar'></foo>")
       doc = parse(io)
 
-      doc.children[0].attributes[0].value.should == "foo\nbar"
+      expect(doc.children[0].attributes[0].value).to eq("foo\nbar")
     end
   end
 end

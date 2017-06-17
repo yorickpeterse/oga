@@ -9,11 +9,11 @@ describe 'CSS selector evaluation' do
     end
 
     it 'returns a node set containing nodes with an attribute' do
-      evaluate_css(@document, 'root a[class]').should == node_set(@a1)
+      expect(evaluate_css(@document, 'root a[class]')).to eq(node_set(@a1))
     end
 
     it 'returns a node set containing nodes with a matching attribute value' do
-      evaluate_css(@document, 'root a[class="foo"]').should == node_set(@a1)
+      expect(evaluate_css(@document, 'root a[class="foo"]')).to eq(node_set(@a1))
     end
   end
 end

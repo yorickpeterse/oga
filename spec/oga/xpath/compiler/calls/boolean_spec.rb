@@ -7,51 +7,51 @@ describe Oga::XPath::Compiler do
     end
 
     it 'returns true for a non empty string literal' do
-      evaluate_xpath(@document, 'boolean("foo")').should == true
+      expect(evaluate_xpath(@document, 'boolean("foo")')).to eq(true)
     end
 
     it 'returns false for an empty string' do
-      evaluate_xpath(@document, 'boolean("")').should == false
+      expect(evaluate_xpath(@document, 'boolean("")')).to eq(false)
     end
 
     it 'returns true for a positive integer' do
-      evaluate_xpath(@document, 'boolean(10)').should == true
+      expect(evaluate_xpath(@document, 'boolean(10)')).to eq(true)
     end
 
     it 'returns true for a boolean true' do
-      evaluate_xpath(@document, 'boolean(true())').should == true
+      expect(evaluate_xpath(@document, 'boolean(true())')).to eq(true)
     end
 
     it 'returns false for a boolean false' do
-      evaluate_xpath(@document, 'boolean(false())').should == false
+      expect(evaluate_xpath(@document, 'boolean(false())')).to eq(false)
     end
 
     it 'returns true for a positive float' do
-      evaluate_xpath(@document, 'boolean(10.5)').should == true
+      expect(evaluate_xpath(@document, 'boolean(10.5)')).to eq(true)
     end
 
     it 'returns true for a negative integer' do
-      evaluate_xpath(@document, 'boolean(-5)').should == true
+      expect(evaluate_xpath(@document, 'boolean(-5)')).to eq(true)
     end
 
     it 'returns true for a negative float' do
-      evaluate_xpath(@document, 'boolean(-5.2)').should == true
+      expect(evaluate_xpath(@document, 'boolean(-5.2)')).to eq(true)
     end
 
     it 'returns false for a zero integer' do
-      evaluate_xpath(@document, 'boolean(0)').should == false
+      expect(evaluate_xpath(@document, 'boolean(0)')).to eq(false)
     end
 
     it 'returns false for a zero float' do
-      evaluate_xpath(@document, 'boolean(0.0)').should == false
+      expect(evaluate_xpath(@document, 'boolean(0.0)')).to eq(false)
     end
 
     it 'returns true for a non empty node set' do
-      evaluate_xpath(@document, 'boolean(root/a)').should == true
+      expect(evaluate_xpath(@document, 'boolean(root/a)')).to eq(true)
     end
 
     it 'returns false for an empty node set' do
-      evaluate_xpath(@document, 'boolean(root/b)').should == false
+      expect(evaluate_xpath(@document, 'boolean(root/b)')).to eq(false)
     end
   end
 end

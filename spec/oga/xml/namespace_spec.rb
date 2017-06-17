@@ -3,13 +3,13 @@ require 'spec_helper'
 describe Oga::XML::Namespace do
   describe '#initialize' do
     it 'sets the name' do
-      described_class.new(:name => 'a').name.should == 'a'
+      expect(described_class.new(:name => 'a').name).to eq('a')
     end
   end
 
   describe '#to_s' do
     it 'converts the Namespace to a String' do
-      described_class.new(:name => 'x').to_s.should == 'x'
+      expect(described_class.new(:name => 'x').to_s).to eq('x')
     end
   end
 
@@ -17,15 +17,17 @@ describe Oga::XML::Namespace do
     it 'returns the inspect value' do
       ns = described_class.new(:name => 'x', :uri => 'y')
 
-      ns.inspect.should == 'Namespace(name: "x" uri: "y")'
+      expect(ns.inspect).to eq('Namespace(name: "x" uri: "y")')
     end
   end
 
   describe '#==' do
     describe 'when comparing with an object that is not a Namespace' do
-      ns = described_class.new(:name => 'a')
+      it 'returns false' do
+        ns = described_class.new(:name => 'a')
 
-      ns.should_not == 10
+        expect(ns).not_to eq(10)
+      end
     end
 
     describe 'when comparing two Namespace instances' do
@@ -33,28 +35,28 @@ describe Oga::XML::Namespace do
         ns1 = described_class.new(:name => 'a')
         ns2 = described_class.new(:name => 'a')
 
-        ns1.should == ns2
+        expect(ns1).to eq(ns2)
       end
 
       it 'returns true if both namespace names and URIs are equal' do
         ns1 = described_class.new(:name => 'a', :uri => 'foo')
         ns2 = described_class.new(:name => 'a', :uri => 'foo')
 
-        ns1.should == ns2
+        expect(ns1).to eq(ns2)
       end
 
       it 'returns false if two namespace names are not equal' do
         ns1 = described_class.new(:name => 'a')
         ns2 = described_class.new(:name => 'b')
 
-        ns1.should_not == ns2
+        expect(ns1).not_to eq(ns2)
       end
 
       it 'retrns false if two namespace URIs are not equal' do
         ns1 = described_class.new(:name => 'a', :uri => 'foo')
         ns2 = described_class.new(:name => 'a', :uri => 'bar')
 
-        ns1.should_not == ns2
+        expect(ns1).not_to eq(ns2)
       end
     end
   end

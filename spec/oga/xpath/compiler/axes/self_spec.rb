@@ -12,43 +12,43 @@ describe Oga::XPath::Compiler do
   describe 'relative to a document' do
     describe 'a/self::a' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@document).should == node_set(@a1)
+        expect(evaluate_xpath(@document)).to eq(node_set(@a1))
       end
     end
 
     describe 'a/self::b' do
       it 'returns an empty NodeSet' do
-        evaluate_xpath(@document).should == node_set
+        expect(evaluate_xpath(@document)).to eq(node_set)
       end
     end
 
     describe 'a/.' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@document).should == node_set(@a1)
+        expect(evaluate_xpath(@document)).to eq(node_set(@a1))
       end
     end
 
     describe 'a/b[. = "foo"]' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@document).should == node_set(@b1)
+        expect(evaluate_xpath(@document)).to eq(node_set(@b1))
       end
     end
 
     describe 'a/b[c/. = "test"]' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@document).should == node_set(@b2)
+        expect(evaluate_xpath(@document)).to eq(node_set(@b2))
       end
     end
 
     describe 'a/b[c[. = "test"]]' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@document).should == node_set(@b2)
+        expect(evaluate_xpath(@document)).to eq(node_set(@b2))
       end
     end
 
     describe 'self::node()' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@document).should == node_set(@document)
+        expect(evaluate_xpath(@document)).to eq(node_set(@document))
       end
     end
   end
@@ -56,7 +56,7 @@ describe Oga::XPath::Compiler do
   describe 'relative to an element' do
     describe 'self::node()' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@a1).should == node_set(@a1)
+        expect(evaluate_xpath(@a1)).to eq(node_set(@a1))
       end
     end
   end
@@ -66,7 +66,7 @@ describe Oga::XPath::Compiler do
       it 'returns a NodeSet' do
         attr = @a1.attribute('foo')
 
-        evaluate_xpath(attr).should == node_set(attr)
+        expect(evaluate_xpath(attr)).to eq(node_set(attr))
       end
     end
   end

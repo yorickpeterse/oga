@@ -5,15 +5,15 @@ require 'spec_helper'
 describe Oga::HTML::Entities do
   describe 'decode' do
     it 'decodes &amp; into &' do
-      described_class.decode('&amp;').should == '&'
+      expect(described_class.decode('&amp;')).to eq('&')
     end
 
     it 'decodes &lambda; into λ' do
-      described_class.decode('&lambda;').should == 'λ'
+      expect(described_class.decode('&lambda;')).to eq('λ')
     end
 
     it 'decodes &frac12; into ½' do
-      described_class.decode('&frac12;').should == '½'
+      expect(described_class.decode('&frac12;')).to eq('½')
     end
   end
 end

@@ -24,19 +24,19 @@ describe Oga::XPath::Compiler do
   describe 'relative to a document' do
     describe 'preceding::*' do
       it 'returns an empty NodeSet' do
-        evaluate_xpath(@document).should == node_set
+        expect(evaluate_xpath(@document)).to eq(node_set)
       end
     end
 
     describe 'root/foo/baz/preceding::bar' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@document).should == node_set(@bar1)
+        expect(evaluate_xpath(@document)).to eq(node_set(@bar1))
       end
     end
 
     describe 'root/baz/preceding::baz' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@document).should == node_set(@baz1, @baz2)
+        expect(evaluate_xpath(@document)).to eq(node_set(@baz1, @baz2))
       end
     end
   end
@@ -44,13 +44,13 @@ describe Oga::XPath::Compiler do
   describe 'relative to an element' do
     describe 'preceding::root' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@foo1).should == @document.children
+        expect(evaluate_xpath(@foo1)).to eq(@document.children)
       end
     end
 
     describe 'preceding::baz' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@baz3).should == node_set(@baz1, @baz2)
+        expect(evaluate_xpath(@baz3)).to eq(node_set(@baz1, @baz2))
       end
     end
   end
@@ -58,7 +58,7 @@ describe Oga::XPath::Compiler do
   describe 'relative to the root element' do
     describe 'preceding::*' do
       it 'returns an empty NodeSet' do
-        evaluate_xpath(@document.children[0]).should == node_set
+        expect(evaluate_xpath(@document.children[0])).to eq(node_set)
       end
     end
   end
@@ -68,7 +68,7 @@ describe Oga::XPath::Compiler do
       it 'returns an empty NodeSet' do
         root = @document.children[0]
 
-        evaluate_xpath(root.attribute('foo')).should == node_set
+        expect(evaluate_xpath(root.attribute('foo'))).to eq(node_set)
       end
     end
   end

@@ -6,11 +6,11 @@ describe Oga::XML::Document do
       child    = Oga::XML::Comment.new(:text => 'foo')
       document = described_class.new(:children => [child])
 
-      document.children[0].should == child
+      expect(document.children[0]).to eq(child)
     end
 
     it 'sets the document type' do
-      described_class.new(:type => :html).type.should == :html
+      expect(described_class.new(:type => :html).type).to eq(:html)
     end
   end
 
@@ -21,7 +21,7 @@ describe Oga::XML::Document do
 
       document.children = [child]
 
-      document.children[0].should == child
+      expect(document.children[0]).to eq(child)
     end
 
     it 'sets the child nodes using a NodeSet' do
@@ -30,7 +30,7 @@ describe Oga::XML::Document do
 
       document.children = Oga::XML::NodeSet.new([child])
 
-      document.children[0].should == child
+      expect(document.children[0]).to eq(child)
     end
   end
 
@@ -38,7 +38,7 @@ describe Oga::XML::Document do
     it 'returns self' do
       doc = described_class.new
 
-      doc.root_node.should == doc
+      expect(doc.root_node).to eq(doc)
     end
   end
 
@@ -49,7 +49,7 @@ describe Oga::XML::Document do
     end
 
     it 'generates the corresponding XML' do
-      @document.to_xml.should == '<!--foo-->'
+      expect(@document.to_xml).to eq('<!--foo-->')
     end
   end
 
@@ -65,8 +65,8 @@ describe Oga::XML::Document do
     end
 
     it 'includes the XML of the declaration tag' do
-      @document.to_xml
-        .should == %Q{<?xml version="5.0" encoding="UTF-8" ?>\n<!--foo-->}
+      expect(@document.to_xml)
+        .to eq(%Q{<?xml version="5.0" encoding="UTF-8" ?>\n<!--foo-->})
     end
   end
 
@@ -82,7 +82,7 @@ describe Oga::XML::Document do
     end
 
     it 'includes the doctype' do
-      @document.to_xml.should == %Q{<!DOCTYPE html PUBLIC>\n<!--foo-->}
+      expect(@document.to_xml).to eq(%Q{<!DOCTYPE html PUBLIC>\n<!--foo-->})
     end
   end
 
@@ -100,18 +100,18 @@ describe Oga::XML::Document do
     end
 
     it 'includes the doctype and XML declaration' do
-      @document.to_xml.should == '<?xml version="5.0" encoding="UTF-8" ?>' \
-        "\n<!DOCTYPE html PUBLIC>\n<!--foo-->"
+      expect(@document.to_xml).to eq('<?xml version="5.0" encoding="UTF-8" ?>' \
+        "\n<!DOCTYPE html PUBLIC>\n<!--foo-->")
     end
   end
 
   describe '#html?' do
     it 'returns false for an XML document' do
-      described_class.new(:type => :xml).html?.should == false
+      expect(described_class.new(:type => :xml).html?).to eq(false)
     end
 
     it 'returns true for an HTML document' do
-      described_class.new(:type => :html).html?.should == true
+      expect(described_class.new(:type => :html).html?).to eq(true)
     end
   end
 
@@ -125,7 +125,7 @@ describe Oga::XML::Document do
     end
 
     it 'returns the inspect value' do
-      @instance.inspect.should == <<-EOF.strip
+      expect(@instance.inspect).to eq <<-EOF.strip
 Document(
   doctype: Doctype(name: "html")
   xml_declaration: XmlDeclaration(version: "1.0" encoding: "UTF-8")
@@ -135,7 +135,7 @@ Document(
     end
 
     it 'returns the inspect value of an empty document' do
-      described_class.new.inspect.should == <<-EOF.strip
+      expect(described_class.new.inspect).to eq <<-EOF.strip
 Document(
   children: NodeSet()
 )
@@ -145,7 +145,7 @@ Document(
 
   describe '#literal_html_name?' do
     it 'returns false' do
-      described_class.new.literal_html_name?.should == false
+      expect(described_class.new.literal_html_name?).to eq(false)
     end
   end
 end

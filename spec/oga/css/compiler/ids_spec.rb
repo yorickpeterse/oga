@@ -7,11 +7,11 @@ describe 'CSS selector evaluation' do
     end
 
     it 'returns a node set containing a node with a single ID' do
-      evaluate_css(@document, '#foo').should == @document.children
+      expect(evaluate_css(@document, '#foo')).to eq(@document.children)
     end
 
     it 'returns an empty node set for non matching IDs' do
-      evaluate_css(@document, '#bar').should == node_set
+      expect(evaluate_css(@document, '#bar')).to eq(node_set)
     end
   end
 end

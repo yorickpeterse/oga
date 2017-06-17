@@ -3,24 +3,24 @@ require 'spec_helper'
 describe Oga::XPath::Lexer do
   describe 'function calls' do
     it 'lexes a function call without arguments' do
-      lex_xpath('count()').should == [
+      expect(lex_xpath('count()')).to eq([
         [:T_IDENT, 'count'],
         [:T_LPAREN, nil],
         [:T_RPAREN, nil]
-      ]
+      ])
     end
 
     it 'lexes a function call with a single argument' do
-      lex_xpath('count(foo)').should == [
+      expect(lex_xpath('count(foo)')).to eq([
         [:T_IDENT, 'count'],
         [:T_LPAREN, nil],
         [:T_IDENT, 'foo'],
         [:T_RPAREN, nil]
-      ]
+      ])
     end
 
     it 'lexes a function call with two arguments' do
-      lex_xpath('count(/foo, "bar")').should == [
+      expect(lex_xpath('count(/foo, "bar")')).to eq([
         [:T_IDENT, 'count'],
         [:T_LPAREN, nil],
         [:T_SLASH, nil],
@@ -28,7 +28,7 @@ describe Oga::XPath::Lexer do
         [:T_COMMA, nil],
         [:T_STRING, 'bar'],
         [:T_RPAREN, nil]
-      ]
+      ])
     end
   end
 end

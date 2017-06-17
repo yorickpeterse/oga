@@ -21,7 +21,7 @@ describe Oga::XML::SaxParser do
     it 'ignores return values of callback methods' do
       parser = described_class.new(@handler.new, 'foo')
 
-      parser.parse.should be_nil
+      expect(parser.parse).to be_nil
     end
 
     it 'uses custom callback methods if defined' do
@@ -30,7 +30,7 @@ describe Oga::XML::SaxParser do
 
       parser.parse
 
-      handler.name.should == 'foo'
+      expect(handler.name).to eq('foo')
     end
 
     it 'always passes element names to after_element' do
@@ -39,15 +39,15 @@ describe Oga::XML::SaxParser do
 
       parser.parse
 
-      handler.after_name.should      == 'foo'
-      handler.after_namespace.should == 'namespace'
+      expect(handler.after_name).to      eq('foo')
+      expect(handler.after_namespace).to eq('namespace')
     end
 
     it 'ignores callbacks that are not defined in the handler' do
       parser = described_class.new(@handler.new, '<!--foo-->')
 
       # This would raise if undefined callbacks were _not_ ignored.
-      lambda { parser.parse }.should_not raise_error
+      expect { parser.parse }.not_to raise_error
     end
 
     it 'passes the attributes to the on_element callback' do
@@ -56,7 +56,7 @@ describe Oga::XML::SaxParser do
 
       parser.parse
 
-      handler.attrs.should == {'b' => '10', 'x:c' => '20'}
+      expect(handler.attrs).to eq({'b' => '10', 'x:c' => '20'})
     end
 
     describe 'when parsing XML documents' do
@@ -73,7 +73,7 @@ describe Oga::XML::SaxParser do
 
         parser.parse
 
-        handler.text.should == '<'
+        expect(handler.text).to eq('<')
       end
     end
 
@@ -91,7 +91,7 @@ describe Oga::XML::SaxParser do
 
         parser.parse
 
-        handler.text.should == Oga::HTML::Entities::DECODE_MAPPING['&nbsp;']
+        expect(handler.text).to eq(Oga::HTML::Entities::DECODE_MAPPING['&nbsp;'])
       end
     end
   end
@@ -111,14 +111,14 @@ describe Oga::XML::SaxParser do
       parser = described_class.new(@handler_without, '<a x:foo="bar" />')
       hash   = parser.on_attribute('foo', 'x', 'bar')
 
-      hash.should == {'x:foo' => 'bar'}
+      expect(hash).to eq({'x:foo' => 'bar'})
     end
 
     it 'returns the return value of a custom callback' do
       parser = described_class.new(@handler_with, nil)
       hash   = parser.on_attribute('foo', 'x', 'bar')
 
-      hash.should == {'FOO' => 'bar'}
+      expect(hash).to eq({'FOO' => 'bar'})
     end
 
     describe 'when parsing an XML document' do
@@ -126,7 +126,7 @@ describe Oga::XML::SaxParser do
         parser = described_class.new(@handler_without, '<a a="&lt;" />')
         hash   = parser.on_attribute('a', nil, '&lt;')
 
-        hash.should == {'a' => '<'}
+        expect(hash).to eq({'a' => '<'})
       end
     end
 
@@ -140,7 +140,7 @@ describe Oga::XML::SaxParser do
 
         hash = parser.on_attribute('a', nil, '&nbsp;')
 
-        hash.should == {'a' => Oga::HTML::Entities::DECODE_MAPPING['&nbsp;']}
+        expect(hash).to eq({'a' => Oga::HTML::Entities::DECODE_MAPPING['&nbsp;']})
       end
     end
   end
@@ -160,14 +160,14 @@ describe Oga::XML::SaxParser do
       parser = described_class.new(@handler_without, nil)
       hash   = parser.on_attributes([{'a' => 'b'}, {'c' => 'd'}])
 
-      hash.should == {'a' => 'b', 'c' => 'd'}
+      expect(hash).to eq({'a' => 'b', 'c' => 'd'})
     end
 
     it 'returns the return value of a custom callback' do
       parser = described_class.new(@handler_with, nil)
       retval = parser.on_attributes([{'a' => 'b'}, {'c' => 'd'}])
 
-      retval.should == %w{Alice Bob}
+      expect(retval).to eq(%w{Alice Bob})
     end
   end
 
@@ -185,7 +185,7 @@ describe Oga::XML::SaxParser do
 
       parser.on_text('foo')
 
-      handler.text.should == 'FOO'
+      expect(handler.text).to eq('FOO')
     end
 
     describe 'when parsing an XML document' do
@@ -204,7 +204,7 @@ describe Oga::XML::SaxParser do
       it 'decodes XML entities' do
         @parser.on_text('&lt;')
 
-        @handler.text.should == '<'
+        expect(@handler.text).to eq('<')
       end
     end
 
@@ -224,24 +224,25 @@ describe Oga::XML::SaxParser do
       it 'decodes HTML entities' do
         @parser.on_text('&nbsp;')
 
-        @handler.text.should ==
+        expect(@handler.text).to eq(
           Oga::HTML::Entities::DECODE_MAPPING['&nbsp;']
+        )
       end
 
       it 'does not decode HTML entities of script tags' do
-        @parser.stub(:inside_literal_html?).and_return(true)
+        allow(@parser).to receive(:inside_literal_html?).and_return(true)
 
         @parser.on_text('&nbsp;')
 
-        @handler.text.should == '&nbsp;'
+        expect(@handler.text).to eq('&nbsp;')
       end
 
       it 'does not decode HTML entities of style tags' do
-        @parser.stub(:inside_literal_html?).and_return(true)
+        allow(@parser).to receive(:inside_literal_html?).and_return(true)
 
         @parser.on_text('&nbsp;')
 
-        @handler.text.should == '&nbsp;'
+        expect(@handler.text).to eq('&nbsp;')
       end
     end
   end

@@ -12,19 +12,19 @@ describe Oga::XPath::Compiler do
     describe 'at the top level' do
       describe 'using a string' do
         it 'returns a NodeSet' do
-          evaluate_xpath(@document, 'id("a1")').should == node_set(@a1)
+          expect(evaluate_xpath(@document, 'id("a1")')).to eq(node_set(@a1))
         end
       end
 
       describe 'using a space separated string' do
         it 'returns a NodeSet' do
-          evaluate_xpath(@document, 'id("a1 a2")').should == node_set(@a1, @a2)
+          expect(evaluate_xpath(@document, 'id("a1 a2")')).to eq(node_set(@a1, @a2))
         end
       end
 
       describe 'using a path' do
         it 'returns a NodeSet' do
-          evaluate_xpath(@document, 'id(root/a[2])').should == node_set(@a1)
+          expect(evaluate_xpath(@document, 'id(root/a[2])')).to eq(node_set(@a1))
         end
       end
     end
@@ -32,12 +32,12 @@ describe Oga::XPath::Compiler do
     describe 'in a predicate' do
       describe 'using a string' do
         it 'matches nodes when a non-empty NodeSet is returned' do
-          evaluate_xpath(@document, 'root/a[id("a1")]')
-            .should == node_set(@a1, @a2)
+          expect(evaluate_xpath(@document, 'root/a[id("a1")]'))
+            .to eq(node_set(@a1, @a2))
         end
 
         it 'does not match nodes when an empty NodeSet is returned' do
-          evaluate_xpath(@document, 'root/a[id("foo")]').should == node_set
+          expect(evaluate_xpath(@document, 'root/a[id("foo")]')).to eq(node_set)
         end
       end
     end

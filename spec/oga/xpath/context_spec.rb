@@ -5,7 +5,7 @@ describe Oga::XPath::Context do
     it 'returns the result of eval()' do
       context = described_class.new
 
-      context.evaluate('10').should == 10
+      expect(context.evaluate('10')).to eq(10)
     end
 
     describe 'assigning a variable in a lambda' do

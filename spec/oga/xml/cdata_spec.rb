@@ -3,14 +3,14 @@ require 'spec_helper'
 describe Oga::XML::Cdata do
   describe 'setting attributes' do
     it 'sets the text via the constructor' do
-      described_class.new(:text => 'foo').text.should == 'foo'
+      expect(described_class.new(:text => 'foo').text).to eq('foo')
     end
 
     it 'sets the text via a setter' do
       instance = described_class.new
       instance.text = 'foo'
 
-      instance.text.should == 'foo'
+      expect(instance.text).to eq('foo')
     end
   end
 
@@ -20,7 +20,7 @@ describe Oga::XML::Cdata do
     end
 
     it 'generates the corresponding XML' do
-      @instance.to_xml.should == '<![CDATA[foo]]>'
+      expect(@instance.to_xml).to eq('<![CDATA[foo]]>')
     end
   end
 
@@ -30,7 +30,7 @@ describe Oga::XML::Cdata do
     end
 
     it 'returns the inspect value' do
-      @instance.inspect.should == 'Cdata("foo")'
+      expect(@instance.inspect).to eq('Cdata("foo")')
     end
   end
 end

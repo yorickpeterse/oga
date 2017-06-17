@@ -13,31 +13,31 @@ describe Oga::XPath::Compiler do
   describe 'relative to a document' do
     describe 'descendant::a' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@document).should == node_set(@a1, @a2)
+        expect(evaluate_xpath(@document)).to eq(node_set(@a1, @a2))
       end
     end
 
     describe 'descendant::c' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@document).should == node_set(@c1)
+        expect(evaluate_xpath(@document)).to eq(node_set(@c1))
       end
     end
 
     describe 'a/descendant::a' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@document).should == node_set(@a2)
+        expect(evaluate_xpath(@document)).to eq(node_set(@a2))
       end
     end
 
     describe 'descendant::a[1]' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@document).should == node_set(@a1)
+        expect(evaluate_xpath(@document)).to eq(node_set(@a1))
       end
     end
 
     describe 'a/b/c/descendant::c' do
       it 'returns an empty NodeSet' do
-        evaluate_xpath(@document).should == node_set
+        expect(evaluate_xpath(@document)).to eq(node_set)
       end
     end
   end
@@ -45,7 +45,7 @@ describe Oga::XPath::Compiler do
   describe 'relative to an element' do
     describe 'descendant::b' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@a1).should == node_set(@b1)
+        expect(evaluate_xpath(@a1)).to eq(node_set(@b1))
       end
     end
   end
@@ -53,7 +53,7 @@ describe Oga::XPath::Compiler do
   describe 'relative to an attribute' do
     describe 'descendant::b' do
       it 'returns an empty NodeSet' do
-        evaluate_xpath(@a1.attribute('foo')).should == node_set
+        expect(evaluate_xpath(@a1.attribute('foo'))).to eq(node_set)
       end
     end
   end

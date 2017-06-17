@@ -3,27 +3,27 @@ require 'spec_helper'
 describe Oga::XPath::Parser do
   describe 'paths' do
     it 'parses an absolute path' do
-      parse_xpath('/A').should == s(
+      expect(parse_xpath('/A')).to eq(s(
         :absolute_path,
         s(:axis, 'child', s(:test, nil, 'A'))
-      )
+      ))
     end
 
     it 'parses a relative path' do
-      parse_xpath('A').should == s(:axis, 'child', s(:test, nil, 'A'))
+      expect(parse_xpath('A')).to eq(s(:axis, 'child', s(:test, nil, 'A')))
     end
 
     it 'parses a relative path using two steps' do
-      parse_xpath('A/B').should == s(
+      expect(parse_xpath('A/B')).to eq(s(
         :axis,
         'child',
         s(:test, nil, 'A'),
         s(:axis, 'child', s(:test, nil, 'B'))
-      )
+      ))
     end
 
     it 'parses a relative path using three steps' do
-      parse_xpath('A/B/C').should == s(
+      expect(parse_xpath('A/B/C')).to eq(s(
         :axis,
         'child',
         s(:test, nil, 'A'),
@@ -33,11 +33,11 @@ describe Oga::XPath::Parser do
           s(:test, nil, 'B'),
           s(:axis, 'child', s(:test, nil, 'C'))
         )
-      )
+      ))
     end
 
     it 'parses an expression using two paths' do
-      parse_xpath('/A/B').should == s(
+      expect(parse_xpath('/A/B')).to eq(s(
         :absolute_path,
         s(
           :axis,
@@ -45,11 +45,11 @@ describe Oga::XPath::Parser do
           s(:test, nil, 'A'),
           s(:axis, 'child', s(:test, nil, 'B'))
         )
-      )
+      ))
     end
 
     it 'parses an expression using three paths' do
-      parse_xpath('/A/B/C').should == s(
+      expect(parse_xpath('/A/B/C')).to eq(s(
         :absolute_path,
         s(
           :axis,
@@ -62,11 +62,11 @@ describe Oga::XPath::Parser do
             s(:axis, 'child', s(:test, nil, 'C'))
           )
         )
-      )
+      ))
     end
 
     it 'parses an absolute path without a node test' do
-      parse_xpath('/').should == s(:absolute_path)
+      expect(parse_xpath('/')).to eq(s(:absolute_path))
     end
   end
 end

@@ -7,27 +7,27 @@ describe Oga::XPath::Compiler do
     end
 
     it 'adds two numbers' do
-      evaluate_xpath(@document, '1 + 2').should == 3.0
+      expect(evaluate_xpath(@document, '1 + 2')).to eq(3.0)
     end
 
     it 'adds a number and a string' do
-      evaluate_xpath(@document, '1 + "2"').should == 3.0
+      expect(evaluate_xpath(@document, '1 + "2"')).to eq(3.0)
     end
 
     it 'adds two strings' do
-      evaluate_xpath(@document, '"1" + "2"').should == 3.0
+      expect(evaluate_xpath(@document, '"1" + "2"')).to eq(3.0)
     end
 
     it 'adds a number and a node set' do
-      evaluate_xpath(@document, 'root/a + 2').should == 3.0
+      expect(evaluate_xpath(@document, 'root/a + 2')).to eq(3.0)
     end
 
     it 'adds two node sets' do
-      evaluate_xpath(@document, 'root/a + root/b').should == 3.0
+      expect(evaluate_xpath(@document, 'root/a + root/b')).to eq(3.0)
     end
 
     it 'returns NaN when trying to add invalid values' do
-      evaluate_xpath(@document, '"" + 1').should be_nan
+      expect(evaluate_xpath(@document, '"" + 1')).to be_nan
     end
   end
 end

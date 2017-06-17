@@ -13,25 +13,25 @@ describe Oga::XPath::Compiler do
   describe 'relative to a document' do
     describe 'a/*' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@document).should == @a1.children
+        expect(evaluate_xpath(@document)).to eq(@a1.children)
       end
     end
 
     describe 'a/*:b' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@document).should == node_set(@b1, @b2)
+        expect(evaluate_xpath(@document)).to eq(node_set(@b1, @b2))
       end
     end
 
     describe 'a/ns1:*' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@document).should == node_set(@c1)
+        expect(evaluate_xpath(@document)).to eq(node_set(@c1))
       end
     end
 
     describe 'a/*:*' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@document).should == @a1.children
+        expect(evaluate_xpath(@document)).to eq(@a1.children)
       end
     end
   end

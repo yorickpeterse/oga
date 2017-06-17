@@ -3,14 +3,14 @@ require 'spec_helper'
 describe Oga::XML::Comment do
   describe 'setting attributes' do
     it 'sets the text via the constructor' do
-      described_class.new(:text => 'foo').text.should == 'foo'
+      expect(described_class.new(:text => 'foo').text).to eq('foo')
     end
 
     it 'sets the text via a setter' do
       instance = described_class.new
       instance.text = 'foo'
 
-      instance.text.should == 'foo'
+      expect(instance.text).to eq('foo')
     end
   end
 
@@ -20,7 +20,7 @@ describe Oga::XML::Comment do
     end
 
     it 'generates the corresponding XML' do
-      @instance.to_xml.should == '<!--foo-->'
+      expect(@instance.to_xml).to eq('<!--foo-->')
     end
   end
 
@@ -30,7 +30,7 @@ describe Oga::XML::Comment do
     end
 
     it 'returns the inspect value' do
-      @instance.inspect.should == 'Comment("foo")'
+      expect(@instance.inspect).to eq('Comment("foo")')
     end
   end
 end

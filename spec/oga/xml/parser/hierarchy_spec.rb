@@ -7,11 +7,11 @@ describe Oga::XML::Parser do
     end
 
     it 'returns an Element instance for the parent' do
-      @parent.children[0].parent.is_a?(Oga::XML::Element).should == true
+      expect(@parent.children[0].parent.is_a?(Oga::XML::Element)).to eq(true)
     end
 
     it 'sets the correct parent' do
-      @parent.children[0].parent.should == @parent
+      expect(@parent.children[0].parent).to eq(@parent)
     end
   end
 
@@ -21,11 +21,11 @@ describe Oga::XML::Parser do
     end
 
     it 'returns an Element instance for the parent' do
-      @parent.children[0].parent.is_a?(Oga::XML::Element).should == true
+      expect(@parent.children[0].parent.is_a?(Oga::XML::Element)).to eq(true)
     end
 
     it 'sets the correct parent' do
-      @parent.children[0].parent.should == @parent
+      expect(@parent.children[0].parent).to eq(@parent)
     end
   end
 
@@ -35,19 +35,19 @@ describe Oga::XML::Parser do
     end
 
     it 'returns an Element instance for the next element' do
-      @document.children[0].next.is_a?(Oga::XML::Element).should == true
+      expect(@document.children[0].next.is_a?(Oga::XML::Element)).to eq(true)
     end
 
     it 'sets the correct next element' do
-      @document.children[0].next.should == @document.children[1]
+      expect(@document.children[0].next).to eq(@document.children[1])
     end
 
     it 'returns an Element instance for the previous element' do
-      @document.children[1].previous.is_a?(Oga::XML::Element).should == true
+      expect(@document.children[1].previous.is_a?(Oga::XML::Element)).to eq(true)
     end
 
     it 'sets the correct previous element' do
-      @document.children[1].previous.should == @document.children[0]
+      expect(@document.children[1].previous).to eq(@document.children[0])
     end
   end
 end

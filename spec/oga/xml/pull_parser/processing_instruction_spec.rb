@@ -11,15 +11,15 @@ describe Oga::XML::PullParser do
     end
 
     it 'returns a ProcessingInstruction node' do
-      @node.is_a?(Oga::XML::ProcessingInstruction).should == true
+      expect(@node.is_a?(Oga::XML::ProcessingInstruction)).to eq(true)
     end
 
     it 'sets the name of the node' do
-      @node.name.should == 'foo'
+      expect(@node.name).to eq('foo')
     end
 
     it 'sets the text of the node' do
-      @node.text.should == ' bar '
+      expect(@node.text).to eq(' bar ')
     end
   end
 end

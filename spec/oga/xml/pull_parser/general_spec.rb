@@ -8,7 +8,7 @@ describe Oga::XML::PullParser do
 
     it 'tracks the current node' do
       @parser.parse do
-        @parser.node.is_a?(Oga::XML::Element).should == true
+        expect(@parser.node.is_a?(Oga::XML::Element)).to eq(true)
       end
     end
   end

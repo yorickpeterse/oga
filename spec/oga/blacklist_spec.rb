@@ -14,15 +14,15 @@ describe Oga::Blacklist do
     it 'returns true for a name not in the list' do
       list = described_class.new(%w{foo})
 
-      list.allow?('bar').should == true
-      list.allow?('BAR').should == true
+      expect(list.allow?('bar')).to eq(true)
+      expect(list.allow?('BAR')).to eq(true)
     end
 
     it 'returns false for a name in the list' do
       list = described_class.new(%w{foo})
 
-      list.allow?('foo').should == false
-      list.allow?('FOO').should == false
+      expect(list.allow?('foo')).to eq(false)
+      expect(list.allow?('FOO')).to eq(false)
     end
   end
 
@@ -32,8 +32,8 @@ describe Oga::Blacklist do
       list2 = described_class.new(%w{bar})
       list3 = list1 + list2
 
-      list3.should be_an_instance_of(described_class)
-      list3.names.to_a.should == %w{foo FOO bar BAR}
+      expect(list3).to be_an_instance_of(described_class)
+      expect(list3.names.to_a).to eq(%w{foo FOO bar BAR})
     end
   end
 end

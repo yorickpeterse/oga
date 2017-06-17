@@ -10,15 +10,15 @@ describe 'CSS selector evaluation' do
     end
 
     it 'returns a node set containing the last child node' do
-      evaluate_css(@document, 'root :last-child').should == node_set(@b1)
+      expect(evaluate_css(@document, 'root :last-child')).to eq(node_set(@b1))
     end
 
     it 'returns a node set containing the last child node with a node test' do
-      evaluate_css(@document, 'root b:last-child').should == node_set(@b1)
+      expect(evaluate_css(@document, 'root b:last-child')).to eq(node_set(@b1))
     end
 
     it 'returns an empty node set for non last-child nodes' do
-      evaluate_css(@document, 'root a:last-child').should == node_set
+      expect(evaluate_css(@document, 'root a:last-child')).to eq(node_set)
     end
   end
 end

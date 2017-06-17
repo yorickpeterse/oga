@@ -17,6 +17,6 @@ describe Oga::HTML::SaxParser do
 
     parser.parse
 
-    handler.name.should == 'link'
+    expect(handler.name).to eq('link')
   end
 end

@@ -13,7 +13,7 @@ describe Oga::XML::PullParser do
         name = node.name if node.is_a?(Oga::XML::Element)
       end
 
-      name.should == 'person'
+      expect(name).to eq('person')
     end
 
     it 'parses the text of an element' do
@@ -23,7 +23,7 @@ describe Oga::XML::PullParser do
         text = node.text if node.is_a?(Oga::XML::Text)
       end
 
-      text.should == 'Alice'
+      expect(text).to eq('Alice')
     end
   end
 end

@@ -11,25 +11,25 @@ describe Oga::XPath::Compiler do
   describe 'relative to a document' do
     describe 'namespace::*' do
       it 'returns an empty NodeSet' do
-        evaluate_xpath(@document).should == node_set
+        expect(evaluate_xpath(@document)).to eq(node_set)
       end
     end
 
     describe 'root/namespace::x' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@document).should == node_set(@ns_x)
+        expect(evaluate_xpath(@document)).to eq(node_set(@ns_x))
       end
     end
 
     describe 'root/foo/namespace::*' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@document).should == node_set(@ns_y, @ns_x)
+        expect(evaluate_xpath(@document)).to eq(node_set(@ns_y, @ns_x))
       end
     end
 
     describe 'root/namespace::*' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@document).should == node_set(@ns_x)
+        expect(evaluate_xpath(@document)).to eq(node_set(@ns_x))
       end
     end
   end
@@ -39,7 +39,7 @@ describe Oga::XPath::Compiler do
       it 'returns a NodeSet' do
         root = @document.children[0]
 
-        evaluate_xpath(root).should == node_set(@ns_x)
+        expect(evaluate_xpath(root)).to eq(node_set(@ns_x))
       end
     end
   end
@@ -49,7 +49,7 @@ describe Oga::XPath::Compiler do
       it 'returns an empty NodeSet' do
         root = @document.children[0]
 
-        evaluate_xpath(root.attribute('foo')).should == node_set
+        expect(evaluate_xpath(root.attribute('foo'))).to eq(node_set)
       end
     end
   end

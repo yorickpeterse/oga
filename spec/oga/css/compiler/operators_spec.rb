@@ -8,11 +8,11 @@ describe 'CSS selector evaluation' do
       end
 
       it 'returns a node set containing nodes with matching attributes' do
-        evaluate_css(@document, 'x[a = "b"]').should == @document.children
+        expect(evaluate_css(@document, 'x[a = "b"]')).to eq(@document.children)
       end
 
       it 'returns an empty node set for non matching attribute values' do
-        evaluate_css(@document, 'x[a = "c"]').should == node_set
+        expect(evaluate_css(@document, 'x[a = "c"]')).to eq(node_set)
       end
     end
 
@@ -20,19 +20,19 @@ describe 'CSS selector evaluation' do
       it 'returns a node set containing nodes with matching attributes' do
         document = parse('<x a="1 2 3" />')
 
-        evaluate_css(document, 'x[a ~= "2"]').should == document.children
+        expect(evaluate_css(document, 'x[a ~= "2"]')).to eq(document.children)
       end
 
       it 'returns a node set containing nodes with single attribute values' do
         document = parse('<x a="1" />')
 
-        evaluate_css(document, 'x[a ~= "1"]').should == document.children
+        expect(evaluate_css(document, 'x[a ~= "1"]')).to eq(document.children)
       end
 
       it 'returns an empty node set for non matching attributes' do
         document = parse('<x a="1 2 3" />')
 
-        evaluate_css(document, 'x[a ~= "4"]').should == node_set
+        expect(evaluate_css(document, 'x[a ~= "4"]')).to eq(node_set)
       end
     end
 
@@ -42,11 +42,11 @@ describe 'CSS selector evaluation' do
       end
 
       it 'returns a node set containing nodes with matching attributes' do
-        evaluate_css(@document, 'x[a ^= "fo"]').should == @document.children
+        expect(evaluate_css(@document, 'x[a ^= "fo"]')).to eq(@document.children)
       end
 
       it 'returns an empty node set for non matching attributes' do
-        evaluate_css(@document, 'x[a ^= "bar"]').should == node_set
+        expect(evaluate_css(@document, 'x[a ^= "bar"]')).to eq(node_set)
       end
     end
 
@@ -56,11 +56,11 @@ describe 'CSS selector evaluation' do
       end
 
       it 'returns a node set containing nodes with matching attributes' do
-        evaluate_css(@document, 'x[a $= "oo"]').should == @document.children
+        expect(evaluate_css(@document, 'x[a $= "oo"]')).to eq(@document.children)
       end
 
       it 'returns an empty node set for non matching attributes' do
-        evaluate_css(@document, 'x[a $= "x"]').should == node_set
+        expect(evaluate_css(@document, 'x[a $= "x"]')).to eq(node_set)
       end
     end
 
@@ -70,11 +70,11 @@ describe 'CSS selector evaluation' do
       end
 
       it 'returns a node set containing nodes with matching attributes' do
-        evaluate_css(@document, 'x[a *= "o"]').should == @document.children
+        expect(evaluate_css(@document, 'x[a *= "o"]')).to eq(@document.children)
       end
 
       it 'returns an empty node set for non matching attributes' do
-        evaluate_css(@document, 'x[a *= "x"]').should == node_set
+        expect(evaluate_css(@document, 'x[a *= "x"]')).to eq(node_set)
       end
     end
 
@@ -82,19 +82,19 @@ describe 'CSS selector evaluation' do
       it 'returns a node set containing nodes with matching attributes' do
         document = parse('<x a="foo-bar" />')
 
-        evaluate_css(document, 'x[a |= "foo"]').should == document.children
+        expect(evaluate_css(document, 'x[a |= "foo"]')).to eq(document.children)
       end
 
       it 'returns a node set containing nodes with single attribute values' do
         document = parse('<x a="foo" />')
 
-        evaluate_css(document, 'x[a |= "foo"]').should == document.children
+        expect(evaluate_css(document, 'x[a |= "foo"]')).to eq(document.children)
       end
 
       it 'returns an empty node set for non matching attributes' do
         document = parse('<x a="bar" />')
 
-        evaluate_css(document, 'x[a |= "foo"]').should == node_set
+        expect(evaluate_css(document, 'x[a |= "foo"]')).to eq(node_set)
       end
     end
   end

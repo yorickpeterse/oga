@@ -7,59 +7,59 @@ describe Oga::XPath::Compiler do
     end
 
     it 'returns true if a number is greater than another number' do
-      evaluate_xpath(@document, '20 >= 10').should == true
+      expect(evaluate_xpath(@document, '20 >= 10')).to eq(true)
     end
 
     it 'returns true if a number is equal to another number' do
-      evaluate_xpath(@document, '10 >= 10').should == true
+      expect(evaluate_xpath(@document, '10 >= 10')).to eq(true)
     end
 
     it 'returns false if a number is not greater than/equal to another number' do
-      evaluate_xpath(@document, '10 >= 20').should == false
+      expect(evaluate_xpath(@document, '10 >= 20')).to eq(false)
     end
 
     it 'returns true if a number is greater than a string' do
-      evaluate_xpath(@document, '20 >= "10"').should == true
+      expect(evaluate_xpath(@document, '20 >= "10"')).to eq(true)
     end
 
     it 'returns true if a number is equal to a string' do
-      evaluate_xpath(@document, '10 >= "10"').should == true
+      expect(evaluate_xpath(@document, '10 >= "10"')).to eq(true)
     end
 
     it 'returns true if a string is greater than a number' do
-      evaluate_xpath(@document, '"20" >= 10').should == true
+      expect(evaluate_xpath(@document, '"20" >= 10')).to eq(true)
     end
 
     it 'returns true if a string is equal to a number' do
-      evaluate_xpath(@document, '"10" >= 10').should == true
+      expect(evaluate_xpath(@document, '"10" >= 10')).to eq(true)
     end
 
     it 'returns true if a string is greater than another string' do
-      evaluate_xpath(@document, '"20" >= "10"').should == true
+      expect(evaluate_xpath(@document, '"20" >= "10"')).to eq(true)
     end
 
     it 'returns true if a number is greater than a node set' do
-      evaluate_xpath(@document, '20 >= root/a').should == true
+      expect(evaluate_xpath(@document, '20 >= root/a')).to eq(true)
     end
 
     it 'returns true if a number is equal to a node set' do
-      evaluate_xpath(@document, '20 >= root/b').should == true
+      expect(evaluate_xpath(@document, '20 >= root/b')).to eq(true)
     end
 
     it 'returns true if a string is greater than a node set' do
-      evaluate_xpath(@document, '"20" >= root/a').should == true
+      expect(evaluate_xpath(@document, '"20" >= root/a')).to eq(true)
     end
 
     it 'returns true if a string is equal to a node set' do
-      evaluate_xpath(@document, '"10" >= root/a').should == true
+      expect(evaluate_xpath(@document, '"10" >= root/a')).to eq(true)
     end
 
     it 'returns true if a node set is greater than another node set' do
-      evaluate_xpath(@document, 'root/b >= root/a').should == true
+      expect(evaluate_xpath(@document, 'root/b >= root/a')).to eq(true)
     end
 
     it 'returns true if a node set is equal to another node set' do
-      evaluate_xpath(@document, 'root/b >= root/b').should == true
+      expect(evaluate_xpath(@document, 'root/b >= root/b')).to eq(true)
     end
   end
 end

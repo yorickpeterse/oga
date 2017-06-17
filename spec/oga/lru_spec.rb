@@ -7,7 +7,7 @@ describe Oga::LRU do
 
       cache.maximum = 20
 
-      cache.maximum.should == 20
+      expect(cache.maximum).to eq(20)
     end
 
     it 'resizes the cache when needed' do
@@ -18,20 +18,20 @@ describe Oga::LRU do
 
       cache.maximum = 1
 
-      cache.size.should == 1
-      cache.keys.should == [:b]
+      expect(cache.size).to eq(1)
+      expect(cache.keys).to eq([:b])
     end
   end
 
   describe '#maximum' do
     it 'returns the maximum amount of keys' do
-      described_class.new(5).maximum.should == 5
+      expect(described_class.new(5).maximum).to eq(5)
     end
   end
 
   describe '#[]' do
     it 'returns nil for a non existing key' do
-      described_class.new[:a].should be_nil
+      expect(described_class.new[:a]).to be_nil
     end
 
     it 'returns the value of an existing key' do
@@ -39,7 +39,7 @@ describe Oga::LRU do
 
       cache[:a] = 10
 
-      cache[:a].should == 10
+      expect(cache[:a]).to eq(10)
     end
   end
 
@@ -49,7 +49,7 @@ describe Oga::LRU do
 
       cache[:a] = 10
 
-      cache[:a].should == 10
+      expect(cache[:a]).to eq(10)
     end
 
     it 'resizes the cache if the new amount of keys exceeds the limit' do
@@ -58,7 +58,7 @@ describe Oga::LRU do
       cache[:a] = 10
       cache[:b] = 20
 
-      cache.keys.should == [:b]
+      expect(cache.keys).to eq([:b])
     end
 
     it 'adds duplicate keys at the end of the list of keys' do
@@ -68,7 +68,7 @@ describe Oga::LRU do
       cache[:b] = 20
       cache[:a] = 30
 
-      cache.keys.should == [:b, :a]
+      expect(cache.keys).to eq([:b, :a])
     end
 
     describe 'using multiple threads' do
@@ -81,7 +81,7 @@ describe Oga::LRU do
         end
 
         numbers.each do |number|
-          cache[number].should == number
+          expect(cache[number]).to eq(number)
         end
       end
 
@@ -93,7 +93,7 @@ describe Oga::LRU do
           cache[number] = number
         end
 
-        cache.size.should == 5
+        expect(cache.size).to eq(5)
       end
     end
   end
@@ -102,7 +102,7 @@ describe Oga::LRU do
     it 'sets a non existing key' do
       cache = described_class.new
 
-      cache.get_or_set(:a) { 10 }.should == 10
+      expect(cache.get_or_set(:a) { 10 }).to eq(10)
     end
 
     it 'returns the value of an existing key' do
@@ -110,14 +110,14 @@ describe Oga::LRU do
 
       cache[:a] = 10
 
-      cache.get_or_set(:a) { 20 }.should == 10
+      expect(cache.get_or_set(:a) { 20 }).to eq(10)
     end
 
     describe 'using multiple threads' do
       it 'only sets a key once' do
         cache = described_class.new
 
-        cache.should_receive(:[]=).once.and_call_original
+        expect(cache).to receive(:[]=).once.and_call_original
 
         each_in_parallel([1, 1, 1]) do |number|
           cache.get_or_set(number) { number }
@@ -133,7 +133,7 @@ describe Oga::LRU do
       cache[:a] = 10
       cache[:b] = 20
 
-      cache.keys.should == [:a, :b]
+      expect(cache.keys).to eq([:a, :b])
     end
 
     it 'returns the keys without any duplicates' do
@@ -142,7 +142,7 @@ describe Oga::LRU do
       cache[:a] = 10
       cache[:a] = 20
 
-      cache.keys.should == [:a]
+      expect(cache.keys).to eq([:a])
     end
   end
 
@@ -152,13 +152,13 @@ describe Oga::LRU do
 
       cache[:a] = 10
 
-      cache.key?(:a).should == true
+      expect(cache.key?(:a)).to eq(true)
     end
 
     it 'returns false for a non existing key' do
       cache = described_class.new
 
-      cache.key?(:a).should == false
+      expect(cache.key?(:a)).to eq(false)
     end
   end
 
@@ -170,13 +170,13 @@ describe Oga::LRU do
 
       cache.clear
 
-      cache.size.should == 0
+      expect(cache.size).to eq(0)
     end
   end
 
   describe '#size' do
     it 'returns 0 for an empty cache' do
-      described_class.new.size.should == 0
+      expect(described_class.new.size).to eq(0)
     end
 
     it 'returns the number of keys for a non empty cache' do
@@ -184,7 +184,7 @@ describe Oga::LRU do
 
       cache[:a] = 10
 
-      cache.size.should == 1
+      expect(cache.size).to eq(1)
     end
   end
 end

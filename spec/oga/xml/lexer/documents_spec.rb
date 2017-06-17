@@ -13,7 +13,7 @@ describe Oga::XML::Lexer do
 </html>
       EOF
 
-      lex(html).should == [
+      expect(lex(html)).to eq([
         [:T_DOCTYPE_START, nil, 1],
         [:T_DOCTYPE_NAME, 'html', 1],
         [:T_DOCTYPE_END, nil, 1],
@@ -45,7 +45,7 @@ describe Oga::XML::Lexer do
         # </html>
         [:T_ELEM_END, nil, 7],
         [:T_TEXT, "\n", 7]
-      ]
+      ])
     end
   end
 end

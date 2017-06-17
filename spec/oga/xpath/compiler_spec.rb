@@ -14,20 +14,20 @@ describe Oga::XPath::Compiler do
       ast   = parse_xpath('foo')
       block = described_class.compile_with_cache(ast)
 
-      block.should be_an_instance_of(Proc)
-      block.lambda?.should == true
+      expect(block).to be_an_instance_of(Proc)
+      expect(block.lambda?).to eq(true)
     end
 
     it 'caches a compiled Proc' do
       ast = parse_xpath('foo')
 
-      described_class.any_instance
-        .should_receive(:compile)
+      expect_any_instance_of(described_class)
+        .to receive(:compile)
         .once
         .and_call_original
 
-      described_class.compile_with_cache(ast).should be_an_instance_of(Proc)
-      described_class.compile_with_cache(ast).should be_an_instance_of(Proc)
+      expect(described_class.compile_with_cache(ast)).to be_an_instance_of(Proc)
+      expect(described_class.compile_with_cache(ast)).to be_an_instance_of(Proc)
     end
   end
 
@@ -36,8 +36,8 @@ describe Oga::XPath::Compiler do
       ast   = parse_xpath('foo')
       block = @compiler.compile(ast)
 
-      block.should be_an_instance_of(Proc)
-      block.lambda?.should == true
+      expect(block).to be_an_instance_of(Proc)
+      expect(block.lambda?).to eq(true)
     end
 
     describe 'calling the compiled Proc' do
@@ -46,7 +46,7 @@ describe Oga::XPath::Compiler do
         ast   = parse_xpath('foo')
         block = @compiler.compile(ast)
 
-        block.call(doc).should be_an_instance_of(Oga::XML::NodeSet)
+        expect(block.call(doc)).to be_an_instance_of(Oga::XML::NodeSet)
       end
     end
 
@@ -64,7 +64,7 @@ describe Oga::XPath::Compiler do
 
             binding_context = block.binding.send(binding_method)
 
-            binding_context.should be_an_instance_of(Oga::XPath::Context)
+            expect(binding_context).to be_an_instance_of(Oga::XPath::Context)
           end
         end
 

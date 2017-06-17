@@ -3,147 +3,147 @@ require 'spec_helper'
 describe Oga::XML::Entities do
   describe 'decode' do
     it 'decodes &lt; into <' do
-      described_class.decode('&lt;').should == '<'
+      expect(described_class.decode('&lt;')).to eq('<')
     end
 
     it 'decodes &gt; into >' do
-      described_class.decode('&gt;').should == '>'
+      expect(described_class.decode('&gt;')).to eq('>')
     end
 
     it "decodes &apos; into '" do
-      described_class.decode('&apos;').should == "'"
+      expect(described_class.decode('&apos;')).to eq("'")
     end
 
     it 'decodes &quot; into "' do
-      described_class.decode('&quot;').should == '"'
+      expect(described_class.decode('&quot;')).to eq('"')
     end
 
     it 'decodes &amp; into &' do
-      described_class.decode('&amp;').should == '&'
+      expect(described_class.decode('&amp;')).to eq('&')
     end
 
     it 'decodes &#60; into <' do
-      described_class.decode('&#60;').should == '<'
+      expect(described_class.decode('&#60;')).to eq('<')
     end
 
     it 'decodes &#62; into >' do
-      described_class.decode('&#62;').should == '>'
+      expect(described_class.decode('&#62;')).to eq('>')
     end
 
     it "decodes &#39; into '" do
-      described_class.decode('&#39;').should == "'"
+      expect(described_class.decode('&#39;')).to eq("'")
     end
 
     it 'decodes &#34; into "' do
-      described_class.decode('&#34;').should == '"'
+      expect(described_class.decode('&#34;')).to eq('"')
     end
 
     it 'decodes &#38; into &' do
-      described_class.decode('&#38;').should == '&'
+      expect(described_class.decode('&#38;')).to eq('&')
     end
 
     it 'decodes &#38;#60; into &#60;' do
-      described_class.decode('&#38;#60;').should == '&#60;'
+      expect(described_class.decode('&#38;#60;')).to eq('&#60;')
     end
 
     it 'decodes &#38;#38; into &#38;' do
-      described_class.decode('&#38;#38;').should == '&#38;'
+      expect(described_class.decode('&#38;#38;')).to eq('&#38;')
     end
 
     it 'decodes &amp;gt; into &gt;' do
-      described_class.decode('&amp;gt;').should == '&gt;'
+      expect(described_class.decode('&amp;gt;')).to eq('&gt;')
     end
 
     it 'decodes &amp;&amp;gt; into &>' do
-      described_class.decode('&amp;&amp;gt;').should == '&&gt;'
+      expect(described_class.decode('&amp;&amp;gt;')).to eq('&&gt;')
     end
 
     it 'decodes &amp;lt; into <' do
-      described_class.decode('&amp;lt;').should == '&lt;'
+      expect(described_class.decode('&amp;lt;')).to eq('&lt;')
     end
 
     it 'decodes &amp;&amp;lt; into &<' do
-      described_class.decode('&amp;&amp;lt;').should == '&&lt;'
+      expect(described_class.decode('&amp;&amp;lt;')).to eq('&&lt;')
     end
 
     it 'decodes &#x3C; into <' do
-      described_class.decode('&#x3C;').should == '<'
+      expect(described_class.decode('&#x3C;')).to eq('<')
     end
 
     it 'decodes numeric entities starting with a 0' do
-      described_class.decode('&#038;').should == '&'
+      expect(described_class.decode('&#038;')).to eq('&')
     end
 
     it 'preserves entity-like tokens' do
-      described_class.decode('&#TAB;').should == '&#TAB;'
+      expect(described_class.decode('&#TAB;')).to eq('&#TAB;')
     end
 
     it 'preserves entity-like hex tokens' do
-      described_class.decode('&#x;').should == '&#x;'
+      expect(described_class.decode('&#x;')).to eq('&#x;')
     end
 
     it 'preserves entity-like letters in non-hex mode' do
-      described_class.decode('&#123A;').should == '&#123A;'
+      expect(described_class.decode('&#123A;')).to eq('&#123A;')
     end
 
     it "preserves numeric entities when they can't be decoded" do
-      described_class.decode('&#2013265920;').should == '&#2013265920;'
+      expect(described_class.decode('&#2013265920;')).to eq('&#2013265920;')
     end
 
     it "preserves hex entities when they can't be decoded" do
-      described_class.decode('&#xffffff;').should == '&#xffffff;'
+      expect(described_class.decode('&#xffffff;')).to eq('&#xffffff;')
     end
   end
 
   describe 'encode' do
     it 'encodes & as &amp;' do
-      described_class.encode('&').should == '&amp;'
+      expect(described_class.encode('&')).to eq('&amp;')
     end
 
     it 'does not encode double quotes' do
-      described_class.encode('"').should == '"'
+      expect(described_class.encode('"')).to eq('"')
     end
 
     it 'does not encode single quotes' do
-      described_class.encode("'").should == "'"
+      expect(described_class.encode("'")).to eq("'")
     end
 
     it 'encodes < as &lt;' do
-      described_class.encode('<').should == '&lt;'
+      expect(described_class.encode('<')).to eq('&lt;')
     end
 
     it 'encodes > as &gt;' do
-      described_class.encode('>').should == '&gt;'
+      expect(described_class.encode('>')).to eq('&gt;')
     end
 
     it 'encodes &gt; as &amp;gt;' do
-      described_class.encode('&gt;').should == '&amp;gt;'
+      expect(described_class.encode('&gt;')).to eq('&amp;gt;')
     end
 
     it 'encodes &lt; as &amp;lt;' do
-      described_class.encode('&lt;').should == '&amp;lt;'
+      expect(described_class.encode('&lt;')).to eq('&amp;lt;')
     end
   end
 
   describe 'encode_attribute' do
     it 'encodes & as &amp;' do
-      described_class.encode_attribute('&').should == '&amp;'
+      expect(described_class.encode_attribute('&')).to eq('&amp;')
     end
 
     it 'encodes > as &gt;' do
-      described_class.encode_attribute('>').should == '&gt;'
+      expect(described_class.encode_attribute('>')).to eq('&gt;')
     end
 
     it 'encodes < as &gt;' do
-      described_class.encode_attribute('<').should == '&lt;'
+      expect(described_class.encode_attribute('<')).to eq('&lt;')
     end
 
     it 'encodes a single quote as &apos;' do
-      described_class.encode_attribute("'").should == '&apos;'
+      expect(described_class.encode_attribute("'")).to eq('&apos;')
     end
 
     it 'encodes a double quote as &quot;' do
-      described_class.encode_attribute('"').should == '&quot;'
+      expect(described_class.encode_attribute('"')).to eq('&quot;')
     end
   end
 end

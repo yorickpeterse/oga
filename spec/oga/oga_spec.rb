@@ -5,13 +5,13 @@ describe Oga do
     it 'parses an XML document' do
       document = described_class.parse_xml('<root>foo</root>')
 
-      document.is_a?(Oga::XML::Document).should == true
+      expect(document.is_a?(Oga::XML::Document)).to eq(true)
     end
 
     it 'raises an error when parsing an invalid document in strict mode' do
       block = proc { described_class.parse_xml('<root>foo', :strict => true) }
 
-      block.should raise_error(LL::ParserError)
+      expect(block).to raise_error(LL::ParserError)
     end
   end
 
@@ -19,7 +19,7 @@ describe Oga do
     it 'parses an HTML document' do
       document = described_class.parse_xml('<html><body></body></html>')
 
-      document.is_a?(Oga::XML::Document).should == true
+      expect(document.is_a?(Oga::XML::Document)).to eq(true)
     end
   end
 
@@ -39,19 +39,19 @@ describe Oga do
     it 'parses an XML document using the SAX parser' do
       described_class.sax_parse_xml(@handler, '<foo />')
 
-      @handler.name.should == 'foo'
+      expect(@handler.name).to eq('foo')
     end
 
     it 'raises an error when parsing an invalid XML document in strict mode' do
       block = proc { Oga.sax_parse_xml(@handler, '<foo>', :strict => true) }
 
-      block.should raise_error(LL::ParserError)
+      expect(block).to raise_error(LL::ParserError)
     end
 
     it 'parses an HTML document using the SAX parser' do
       described_class.sax_parse_html(@handler, '<link>')
 
-      @handler.name.should == 'link'
+      expect(@handler.name).to eq('link')
     end
   end
 end

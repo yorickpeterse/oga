@@ -3,48 +3,48 @@ require 'spec_helper'
 describe Oga::XML::Text do
   describe 'setting attributes' do
     it 'sets the text via the constructor' do
-      described_class.new(:text => 'foo').text.should == 'foo'
+      expect(described_class.new(:text => 'foo').text).to eq('foo')
     end
 
     it 'sets the text via a setter' do
       instance = described_class.new
       instance.text = 'foo'
 
-      instance.text.should == 'foo'
+      expect(instance.text).to eq('foo')
     end
   end
 
   describe '#text' do
     describe 'with XML entities' do
       it 'converts &amp; to &' do
-        described_class.new(:text => '&amp;').text.should == '&'
+        expect(described_class.new(:text => '&amp;').text).to eq('&')
       end
 
       it 'converts &lt; to <' do
-        described_class.new(:text => '&lt;').text.should == '<'
+        expect(described_class.new(:text => '&lt;').text).to eq('<')
       end
 
       it 'converts &gt; to >' do
-        described_class.new(:text => '&gt;').text.should == '>'
+        expect(described_class.new(:text => '&gt;').text).to eq('>')
       end
 
       it 'caches the converted text' do
         node = described_class.new(:text => '&amp;')
 
-        Oga::XML::Entities.should_receive(:decode).once.and_call_original
+        expect(Oga::XML::Entities).to receive(:decode).once.and_call_original
 
-        node.text.should == '&'
-        node.text.should == '&'
+        expect(node.text).to eq('&')
+        expect(node.text).to eq('&')
       end
 
       it 'converts new text set using text=' do
         node = described_class.new(:text => '&amp;')
 
-        node.text.should == '&'
+        expect(node.text).to eq('&')
 
         node.text = '&lt;'
 
-        node.text.should == '<'
+        expect(node.text).to eq('<')
       end
     end
 
@@ -58,7 +58,7 @@ describe Oga::XML::Text do
 
         @document.children << node
 
-        node.text.should == '&'
+        expect(node.text).to eq('&')
       end
 
       it 'converts &lt; to <' do
@@ -66,7 +66,7 @@ describe Oga::XML::Text do
 
         @document.children << node
 
-        node.text.should == '<'
+        expect(node.text).to eq('<')
       end
 
       it 'converts &gt; to >' do
@@ -74,7 +74,7 @@ describe Oga::XML::Text do
 
         @document.children << node
 
-        node.text.should == '>'
+        expect(node.text).to eq('>')
       end
 
       it 'converts &nbsp; into a space' do
@@ -82,7 +82,7 @@ describe Oga::XML::Text do
 
         @document.children << node
 
-        node.text.should == [160].pack('U')
+        expect(node.text).to eq([160].pack('U'))
       end
     end
 
@@ -98,7 +98,7 @@ describe Oga::XML::Text do
       it 'does not decode any entities' do
         @element.inner_text = '&foo;'
 
-        @element.inner_text.should == '&foo;'
+        expect(@element.inner_text).to eq('&foo;')
       end
     end
 
@@ -114,7 +114,7 @@ describe Oga::XML::Text do
       it 'does not decode any entities' do
         @element.inner_text = '&foo;'
 
-        @element.inner_text.should == '&foo;'
+        expect(@element.inner_text).to eq('&foo;')
       end
     end
   end
@@ -123,13 +123,13 @@ describe Oga::XML::Text do
     it 'generates the corresponding XML' do
       node = described_class.new(:text => 'foo')
 
-      node.to_xml.should == 'foo'
+      expect(node.to_xml).to eq('foo')
     end
 
     it 'encodes special characters as XML entities' do
       node = described_class.new(:text => '&<>')
 
-      node.to_xml.should == '&amp;&lt;&gt;'
+      expect(node.to_xml).to eq('&amp;&lt;&gt;')
     end
 
     describe 'inside an XML document' do
@@ -141,7 +141,7 @@ describe Oga::XML::Text do
         script.children   << text
         document.children << script
 
-        text.to_xml.should == 'x &gt; y'
+        expect(text.to_xml).to eq('x &gt; y')
       end
     end
 
@@ -154,7 +154,7 @@ describe Oga::XML::Text do
         script.children   << text
         document.children << script
 
-        text.to_xml.should == 'x > y'
+        expect(text.to_xml).to eq('x > y')
       end
     end
 
@@ -167,7 +167,7 @@ describe Oga::XML::Text do
         style.children    << text
         document.children << style
 
-        text.to_xml.should == 'x > y'
+        expect(text.to_xml).to eq('x > y')
       end
     end
   end
@@ -178,7 +178,7 @@ describe Oga::XML::Text do
     end
 
     it 'returns the inspect value' do
-      @instance.inspect.should == 'Text("foo")'
+      expect(@instance.inspect).to eq('Text("foo")')
     end
   end
 end

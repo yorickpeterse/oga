@@ -7,21 +7,21 @@ describe Oga::XPath::Parser do
     end
 
     it 'parses an expression' do
-      described_class.parse_with_cache('foo')
-        .should == s(:axis, 'child', s(:test, nil, 'foo'))
+      expect(described_class.parse_with_cache('foo'))
+        .to eq(s(:axis, 'child', s(:test, nil, 'foo')))
     end
 
     it 'caches an expression after parsing it' do
-      described_class.any_instance
-        .should_receive(:parse)
+      expect_any_instance_of(described_class)
+        .to receive(:parse)
         .once
         .and_call_original
 
-      described_class.parse_with_cache('foo')
-        .should == s(:axis, 'child', s(:test, nil, 'foo'))
+      expect(described_class.parse_with_cache('foo'))
+        .to eq(s(:axis, 'child', s(:test, nil, 'foo')))
 
-      described_class.parse_with_cache('foo')
-        .should == s(:axis, 'child', s(:test, nil, 'foo'))
+      expect(described_class.parse_with_cache('foo'))
+        .to eq(s(:axis, 'child', s(:test, nil, 'foo')))
     end
   end
 end

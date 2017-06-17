@@ -10,15 +10,15 @@ describe 'CSS selector evaluation' do
     end
 
     it 'returns a node set containing empty nodes' do
-      evaluate_css(@document, 'root :empty').should == node_set(@a1)
+      expect(evaluate_css(@document, 'root :empty')).to eq(node_set(@a1))
     end
 
     it 'returns a node set containing empty nodes with a node test' do
-      evaluate_css(@document, 'root a:empty').should == node_set(@a1)
+      expect(evaluate_css(@document, 'root a:empty')).to eq(node_set(@a1))
     end
 
     it 'returns an empty node set containing non empty nodes' do
-      evaluate_css(@document, 'root b:empty').should == node_set
+      expect(evaluate_css(@document, 'root b:empty')).to eq(node_set)
     end
   end
 end

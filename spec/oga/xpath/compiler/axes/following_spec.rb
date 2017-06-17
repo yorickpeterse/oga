@@ -26,19 +26,19 @@ describe Oga::XPath::Compiler do
     # following nodes.
     describe 'following::foo' do
       it 'returns an empty NodeSet' do
-        evaluate_xpath(@document).should == node_set
+        expect(evaluate_xpath(@document)).to eq(node_set)
       end
     end
 
     describe 'root/foo/following::baz' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@document).should == node_set(@baz3)
+        expect(evaluate_xpath(@document)).to eq(node_set(@baz3))
       end
     end
 
     describe 'root/foo/bar/following::baz' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@document).should == node_set(@baz1, @baz2, @baz3)
+        expect(evaluate_xpath(@document)).to eq(node_set(@baz1, @baz2, @baz3))
       end
     end
   end
@@ -46,7 +46,7 @@ describe Oga::XPath::Compiler do
   describe 'relative to an element' do
     describe 'following::baz' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@bar1).should == node_set(@baz1, @baz2, @baz3)
+        expect(evaluate_xpath(@bar1)).to eq(node_set(@baz1, @baz2, @baz3))
       end
     end
   end
@@ -56,7 +56,7 @@ describe Oga::XPath::Compiler do
       it 'returns an empty NodeSet' do
         root = @document.children[0]
 
-        evaluate_xpath(root.attribute('foo')).should == node_set
+        expect(evaluate_xpath(root.attribute('foo'))).to eq(node_set)
       end
     end
   end

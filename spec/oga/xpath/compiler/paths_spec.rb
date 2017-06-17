@@ -12,49 +12,49 @@ describe Oga::XPath::Compiler do
   describe 'relative to a document' do
     describe '/a' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@document).should == node_set(@a1)
+        expect(evaluate_xpath(@document)).to eq(node_set(@a1))
       end
     end
 
     describe '/A' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@document).should == node_set(@a1)
+        expect(evaluate_xpath(@document)).to eq(node_set(@a1))
       end
     end
 
     describe '/' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@document).should == node_set(@document)
+        expect(evaluate_xpath(@document)).to eq(node_set(@document))
       end
     end
 
     describe 'a' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@document).should == node_set(@a1)
+        expect(evaluate_xpath(@document)).to eq(node_set(@a1))
       end
     end
 
     describe 'x/a' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@document).should == node_set
+        expect(evaluate_xpath(@document)).to eq(node_set)
       end
     end
 
     describe '/a/b' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@document).should == node_set(@b1, @b2)
+        expect(evaluate_xpath(@document)).to eq(node_set(@b1, @b2))
       end
     end
 
     describe '/x/a' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@document).should == node_set
+        expect(evaluate_xpath(@document)).to eq(node_set)
       end
     end
 
     describe 'a/ns1:c' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@document).should == node_set(@a1.children[-1])
+        expect(evaluate_xpath(@document)).to eq(node_set(@a1.children[-1]))
       end
     end
   end
@@ -64,7 +64,7 @@ describe Oga::XPath::Compiler do
       it 'returns a NodeSet' do
         b_node = @document.children[0].children[0]
 
-        evaluate_xpath(b_node, '/a').should == node_set(@a1)
+        expect(evaluate_xpath(b_node, '/a')).to eq(node_set(@a1))
       end
     end
   end

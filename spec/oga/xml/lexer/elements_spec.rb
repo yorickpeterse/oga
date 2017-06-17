@@ -5,151 +5,151 @@ require 'spec_helper'
 describe Oga::XML::Lexer do
   describe 'elements' do
     it 'lexes an opening element' do
-      lex('<p>').should == [
+      expect(lex('<p>')).to eq([
         [:T_ELEM_NAME, 'p', 1],
         [:T_ELEM_END, nil, 1]
-      ]
+      ])
     end
 
     it 'lexes an opening element with a stray double quote' do
-      lex('<p">').should == [
+      expect(lex('<p">')).to eq([
         [:T_ELEM_NAME, 'p', 1],
         [:T_ELEM_END, nil, 1]
-      ]
+      ])
     end
 
     it 'lexes an opening element with a stray double quoted string' do
-      lex('<p"">').should == [
+      expect(lex('<p"">')).to eq([
         [:T_ELEM_NAME, 'p', 1],
         [:T_ELEM_END, nil, 1]
-      ]
+      ])
     end
 
     it 'lexes an opening an closing element' do
-      lex('<p></p>').should == [
+      expect(lex('<p></p>')).to eq([
         [:T_ELEM_NAME, 'p', 1],
         [:T_ELEM_END, nil, 1]
-      ]
+      ])
     end
 
     it 'lexes an opening an closing element with a stray double quote' do
-      lex('<p"></p>').should == [
+      expect(lex('<p"></p>')).to eq([
         [:T_ELEM_NAME, 'p', 1],
         [:T_ELEM_END, nil, 1]
-      ]
+      ])
     end
 
     it 'lexes an opening an closing element with a stray double quoted string' do
-      lex('<p""></p>').should == [
+      expect(lex('<p""></p>')).to eq([
         [:T_ELEM_NAME, 'p', 1],
         [:T_ELEM_END, nil, 1]
-      ]
+      ])
     end
 
     it 'lexes a paragraph element with text inside it' do
-      lex('<p>Hello</p>').should == [
+      expect(lex('<p>Hello</p>')).to eq([
         [:T_ELEM_NAME, 'p', 1],
         [:T_TEXT, 'Hello', 1],
         [:T_ELEM_END, nil, 1]
-      ]
+      ])
     end
 
     it 'lexes text followed by a paragraph element' do
-      lex('Foo<p>').should == [
+      expect(lex('Foo<p>')).to eq([
         [:T_TEXT, 'Foo', 1],
         [:T_ELEM_NAME, 'p', 1],
         [:T_ELEM_END, nil, 1]
-      ]
+      ])
     end
 
     it 'lexes an element with a newline in the open tag' do
-      lex("<p\n></p>").should == [
+      expect(lex("<p\n></p>")).to eq([
         [:T_ELEM_NAME, 'p', 1],
         [:T_ELEM_END, nil, 2]
-      ]
+      ])
     end
 
     it 'lexes an element with a carriage return in the open tag' do
-      lex("<p\r></p>").should == [
+      expect(lex("<p\r></p>")).to eq([
         [:T_ELEM_NAME, 'p', 1],
         [:T_ELEM_END, nil, 2]
-      ]
+      ])
     end
 
     it 'lexes an element with a space in the closing tag' do
-      lex("<foo></foo >bar").should == [
+      expect(lex("<foo></foo >bar")).to eq([
         [:T_ELEM_NAME, 'foo', 1],
         [:T_ELEM_END, nil, 1],
         [:T_TEXT, 'bar', 1]
-      ]
+      ])
     end
 
     it 'lexes an element with a newline in the closing tag' do
-      lex("<foo></foo\n>bar").should == [
+      expect(lex("<foo></foo\n>bar")).to eq([
         [:T_ELEM_NAME, 'foo', 1],
         [:T_ELEM_END, nil, 1],
         [:T_TEXT, 'bar', 2]
-      ]
+      ])
     end
 
     it 'lexes an element with a newline in the closing tag using an IO as input' do
-      lex(StringIO.new("<foo></foo\n>bar")).should == [
+      expect(lex(StringIO.new("<foo></foo\n>bar"))).to eq([
         [:T_ELEM_NAME, 'foo', 1],
         [:T_ELEM_END, nil, 1],
         [:T_TEXT, 'bar', 2]
-      ]
+      ])
     end
   end
 
   describe 'elements with attributes' do
     it 'lexes an element with an attribute without a value' do
-      lex('<p foo></p>').should == [
+      expect(lex('<p foo></p>')).to eq([
         [:T_ELEM_NAME, 'p', 1],
         [:T_ATTR, 'foo', 1],
         [:T_ELEM_END, nil, 1]
-      ]
+      ])
     end
 
     it 'lexes an element with an empty attribute followed by a stray double quote' do
-      lex('<p foo"></p>').should == [
+      expect(lex('<p foo"></p>')).to eq([
         [:T_ELEM_NAME, 'p', 1],
         [:T_ATTR, 'foo', 1],
         [:T_ELEM_END, nil, 1]
-      ]
+      ])
     end
 
     it 'lexes an element with an attribute with an empty value' do
-      lex('<p foo=""></p>').should == [
+      expect(lex('<p foo=""></p>')).to eq([
         [:T_ELEM_NAME, 'p', 1],
         [:T_ATTR, 'foo', 1],
         [:T_STRING_DQUOTE, nil, 1],
         [:T_STRING_DQUOTE, nil, 1],
         [:T_ELEM_END, nil, 1]
-      ]
+      ])
     end
 
     it 'lexes an attribute value followed by a stray double quote' do
-      lex('<p foo="""></p>').should == [
+      expect(lex('<p foo="""></p>')).to eq([
         [:T_ELEM_NAME, 'p', 1],
         [:T_ATTR, 'foo', 1],
         [:T_STRING_DQUOTE, nil, 1],
         [:T_STRING_DQUOTE, nil, 1],
         [:T_ELEM_END, nil, 1]
-      ]
+      ])
     end
 
     it 'lexes an attribute value followed by a stray single quote' do
-      lex('<p foo=""\'></p>').should == [
+      expect(lex('<p foo=""\'></p>')).to eq([
         [:T_ELEM_NAME, 'p', 1],
         [:T_ATTR, 'foo', 1],
         [:T_STRING_DQUOTE, nil, 1],
         [:T_STRING_DQUOTE, nil, 1],
         [:T_ELEM_END, nil, 1]
-      ]
+      ])
     end
 
     it 'lexes a paragraph element with attributes' do
-      lex('<p class="foo">Hello</p>').should == [
+      expect(lex('<p class="foo">Hello</p>')).to eq([
         [:T_ELEM_NAME, 'p', 1],
         [:T_ATTR, 'class', 1],
         [:T_STRING_DQUOTE, nil, 1],
@@ -157,11 +157,11 @@ describe Oga::XML::Lexer do
         [:T_STRING_DQUOTE, nil, 1],
         [:T_TEXT, 'Hello', 1],
         [:T_ELEM_END, nil, 1]
-      ]
+      ])
     end
 
     it 'lexes a paragraph element with a newline in an attribute' do
-      lex("<p class=\"\nfoo\">Hello</p>").should == [
+      expect(lex("<p class=\"\nfoo\">Hello</p>")).to eq([
         [:T_ELEM_NAME, 'p', 1],
         [:T_ATTR, 'class', 1],
         [:T_STRING_DQUOTE, nil, 1],
@@ -169,22 +169,22 @@ describe Oga::XML::Lexer do
         [:T_STRING_DQUOTE, nil, 2],
         [:T_TEXT, 'Hello', 2],
         [:T_ELEM_END, nil, 2]
-      ]
+      ])
     end
 
     it 'lexes a paragraph element with single quoted attributes' do
-      lex("<p class='foo'></p>").should == [
+      expect(lex("<p class='foo'></p>")).to eq([
         [:T_ELEM_NAME, 'p', 1],
         [:T_ATTR, 'class', 1],
         [:T_STRING_SQUOTE, nil, 1],
         [:T_STRING_BODY, 'foo', 1],
         [:T_STRING_SQUOTE, nil, 1],
         [:T_ELEM_END, nil, 1]
-      ]
+      ])
     end
 
     it 'lexes a paragraph element with a namespaced attribute' do
-      lex('<p foo:bar="baz"></p>').should == [
+      expect(lex('<p foo:bar="baz"></p>')).to eq([
         [:T_ELEM_NAME, 'p', 1],
         [:T_ATTR_NS, 'foo', 1],
         [:T_ATTR, 'bar', 1],
@@ -192,55 +192,55 @@ describe Oga::XML::Lexer do
         [:T_STRING_BODY, 'baz', 1],
         [:T_STRING_DQUOTE, nil, 1],
         [:T_ELEM_END, nil, 1]
-      ]
+      ])
     end
 
     it 'lexes an element with spaces around the attribute equal sign' do
-      lex('<p foo = "bar"></p>').should == [
+      expect(lex('<p foo = "bar"></p>')).to eq([
         [:T_ELEM_NAME, 'p', 1],
         [:T_ATTR, 'foo', 1],
         [:T_STRING_DQUOTE, nil, 1],
         [:T_STRING_BODY, 'bar', 1],
         [:T_STRING_DQUOTE, nil, 1],
         [:T_ELEM_END, nil, 1]
-      ]
+      ])
     end
 
     it 'lexes an element with a newline following the equals sign' do
-      lex(%Q{<p foo =\n"bar"></p>}).should == [
+      expect(lex(%Q{<p foo =\n"bar"></p>})).to eq([
         [:T_ELEM_NAME, 'p', 1],
         [:T_ATTR, 'foo', 1],
         [:T_STRING_DQUOTE, nil, 2],
         [:T_STRING_BODY, 'bar', 2],
         [:T_STRING_DQUOTE, nil, 2],
         [:T_ELEM_END, nil, 2]
-      ]
+      ])
     end
 
     it 'lexes an element with a newline following the equals sign using an IO as input' do
-      lex_stringio(%Q{<p foo =\n"bar"></p>}).should == [
+      expect(lex_stringio(%Q{<p foo =\n"bar"></p>})).to eq([
         [:T_ELEM_NAME, 'p', 1],
         [:T_ATTR, 'foo', 1],
         [:T_STRING_DQUOTE, nil, 2],
         [:T_STRING_BODY, 'bar', 2],
         [:T_STRING_DQUOTE, nil, 2],
         [:T_ELEM_END, nil, 2]
-      ]
+      ])
     end
   end
 
   describe 'nested elements' do
     it 'lexes a nested element' do
-      lex('<p><a></a></p>').should == [
+      expect(lex('<p><a></a></p>')).to eq([
         [:T_ELEM_NAME, 'p', 1],
         [:T_ELEM_NAME, 'a', 1],
         [:T_ELEM_END, nil, 1],
         [:T_ELEM_END, nil, 1]
-      ]
+      ])
     end
 
     it 'lexes nested elements and text nodes' do
-      lex('<p>Foo<a>bar</a>baz</p>').should == [
+      expect(lex('<p>Foo<a>bar</a>baz</p>')).to eq([
         [:T_ELEM_NAME, 'p', 1],
         [:T_TEXT, 'Foo', 1],
         [:T_ELEM_NAME, 'a', 1],
@@ -248,100 +248,100 @@ describe Oga::XML::Lexer do
         [:T_ELEM_END, nil, 1],
         [:T_TEXT, 'baz', 1],
         [:T_ELEM_END, nil, 1]
-      ]
+      ])
     end
   end
 
   describe 'void elements' do
     it 'lexes a void element' do
-      lex('<br />').should == [
+      expect(lex('<br />')).to eq([
         [:T_ELEM_NAME, 'br', 1],
         [:T_ELEM_END, nil, 1]
-      ]
+      ])
     end
 
     it 'lexes a void element with an attribute' do
-      lex('<br class="foo" />').should == [
+      expect(lex('<br class="foo" />')).to eq([
         [:T_ELEM_NAME, 'br', 1],
         [:T_ATTR, 'class', 1],
         [:T_STRING_DQUOTE, nil, 1],
         [:T_STRING_BODY, 'foo', 1],
         [:T_STRING_DQUOTE, nil, 1],
         [:T_ELEM_END, nil, 1]
-      ]
+      ])
     end
 
     describe 'without a space before the closing tag' do
       it 'lexes a void element' do
-        lex('<br/>').should == [
+        expect(lex('<br/>')).to eq([
           [:T_ELEM_NAME, 'br', 1],
           [:T_ELEM_END, nil, 1]
-        ]
+        ])
       end
 
       it 'lexes a void element with an attribute' do
-        lex('<br class="foo"/>').should == [
+        expect(lex('<br class="foo"/>')).to eq([
           [:T_ELEM_NAME, 'br', 1],
           [:T_ATTR, 'class', 1],
           [:T_STRING_DQUOTE, nil, 1],
           [:T_STRING_BODY, 'foo', 1],
           [:T_STRING_DQUOTE, nil, 1],
           [:T_ELEM_END, nil, 1]
-        ]
+        ])
       end
     end
   end
 
   describe 'elements with namespaces' do
     it 'lexes an element with namespaces' do
-      lex('<foo:p></p>').should == [
+      expect(lex('<foo:p></p>')).to eq([
         [:T_ELEM_NS, 'foo', 1],
         [:T_ELEM_NAME, 'p', 1],
         [:T_ELEM_END, nil, 1]
-      ]
+      ])
     end
 
     it 'lexes an element with a start and end namespace' do
-      lex('<foo:p></foo:p>').should == [
+      expect(lex('<foo:p></foo:p>')).to eq([
         [:T_ELEM_NS, 'foo', 1],
         [:T_ELEM_NAME, 'p', 1],
         [:T_ELEM_END, nil, 1]
-      ]
+      ])
     end
   end
 
   it 'lexes an element with inline dots' do
-    lex('<SOAP..TestMapping..MappablePerson>').should == [
+    expect(lex('<SOAP..TestMapping..MappablePerson>')).to eq([
       [:T_ELEM_NAME, "SOAP..TestMapping..MappablePerson", 1],
       [:T_ELEM_END, nil, 1]
-    ]
+    ])
   end
 
   it 'lexes an element with a name containing Unicode characters' do
-    lex('<foobár />').should == [
+    expect(lex('<foobár />')).to eq([
       [:T_ELEM_NAME, 'foobár', 1],
       [:T_ELEM_END, nil, 1]
-    ]
+    ])
   end
 
   it 'lexes an element with a name containing an underscore' do
-    lex('<foo_bar />').should == [
+    expect(lex('<foo_bar />')).to eq([
       [:T_ELEM_NAME, 'foo_bar', 1],
       [:T_ELEM_END, nil, 1]
-    ]
+    ])
   end
 
   it 'lexes an element with a name containing a dash' do
-    lex('<foo-bar />').should == [
+    expect(lex('<foo-bar />')).to eq([
       [:T_ELEM_NAME, 'foo-bar', 1],
       [:T_ELEM_END, nil, 1]
-    ]
+    ])
   end
 
   it 'lexes an element with a name containing numbers' do
-    lex('<foo123 />').should == [
+    expect(lex('<foo123 />')).to eq([
       [:T_ELEM_NAME, 'foo123', 1],
       [:T_ELEM_END, nil, 1]
-    ]
+    ])
   end
 end

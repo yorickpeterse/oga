@@ -3,27 +3,27 @@ require 'spec_helper'
 describe Oga::XML::NodeSet do
   describe '#initialize' do
     it 'creates an empty node set' do
-      described_class.new.length.should == 0
+      expect(described_class.new.length).to eq(0)
     end
 
     it 'creates a node set with a single node' do
       node = Oga::XML::Element.new(:name => 'p')
 
-      described_class.new([node]).length.should == 1
+      expect(described_class.new([node]).length).to eq(1)
     end
 
     it 'sets the owner of a set' do
       node = Oga::XML::Element.new
       set  = described_class.new([], node)
 
-      set.owner.should == node
+      expect(set.owner).to eq(node)
     end
 
     it 'takes ownership of the nodes when the set has an owner' do
       node = Oga::XML::Element.new
       set  = described_class.new([node], node)
 
-      node.node_set.should == set
+      expect(node.node_set).to eq(set)
     end
 
     it 'sets the previous and next nodes for all nodes owned by the set' do
@@ -31,11 +31,11 @@ describe Oga::XML::NodeSet do
       node2 = Oga::XML::Element.new
       set   = described_class.new([node1, node2], node1)
 
-      node1.next.should     == node2
-      node1.previous.should == nil
+      expect(node1.next).to     eq(node2)
+      expect(node1.previous).to eq(nil)
 
-      node2.next.should     == nil
-      node2.previous.should == node1
+      expect(node2.next).to     eq(nil)
+      expect(node2.previous).to eq(node1)
     end
 
     it 'does not set the previous and next nodes for nodes that are not owned' do
@@ -43,11 +43,11 @@ describe Oga::XML::NodeSet do
       node2 = Oga::XML::Element.new
       set   = described_class.new([node1, node2])
 
-      node1.previous.should == nil
-      node1.next.should     == nil
+      expect(node1.previous).to eq(nil)
+      expect(node1.next).to     eq(nil)
 
-      node2.previous.should == nil
-      node2.next.should     == nil
+      expect(node2.previous).to eq(nil)
+      expect(node2.next).to     eq(nil)
     end
   end
 
@@ -61,7 +61,7 @@ describe Oga::XML::NodeSet do
 
       set.each { |node| yielded << node }
 
-      yielded.should == [n1, n2]
+      expect(yielded).to eq([n1, n2])
     end
   end
 
@@ -73,21 +73,21 @@ describe Oga::XML::NodeSet do
     end
 
     it 'returns the first node' do
-      @set.first.should == @n1
+      expect(@set.first).to eq(@n1)
     end
 
     it 'returns the last node' do
-      @set.last.should == @n2
+      expect(@set.last).to eq(@n2)
     end
 
     it 'returns the amount of nodes' do
-      @set.count.should  == 2
-      @set.length.should == 2
-      @set.size.should   == 2
+      expect(@set.count).to  eq(2)
+      expect(@set.length).to eq(2)
+      expect(@set.size).to   eq(2)
     end
 
     it 'returns a boolean that indicates if a set is empty or not' do
-      @set.empty?.should == false
+      expect(@set.empty?).to eq(false)
     end
   end
 
@@ -99,11 +99,11 @@ describe Oga::XML::NodeSet do
     end
 
     it 'returns the index of the first node' do
-      @set.index(@n1).should == 0
+      expect(@set.index(@n1)).to eq(0)
     end
 
     it 'returns the index of the last node' do
-      @set.index(@n2).should == 1
+      expect(@set.index(@n2)).to eq(1)
     end
   end
 
@@ -115,7 +115,7 @@ describe Oga::XML::NodeSet do
     it 'pushes a node into the set' do
       @set.push(Oga::XML::Element.new(:name => 'a'))
 
-      @set.length.should == 1
+      expect(@set.length).to eq(1)
     end
 
     it 'does not push a node that is already part of the set' do
@@ -124,7 +124,7 @@ describe Oga::XML::NodeSet do
       @set.push(element)
       @set.push(element)
 
-      @set.length.should == 1
+      expect(@set.length).to eq(1)
     end
 
     it 'takes ownership of a node if the set has an owner' do
@@ -133,7 +133,7 @@ describe Oga::XML::NodeSet do
 
       @set.push(child)
 
-      child.node_set.should == @set
+      expect(child.node_set).to eq(@set)
     end
 
     it 'updates the previous and next nodes of any owned nodes' do
@@ -145,11 +145,11 @@ describe Oga::XML::NodeSet do
       @set.push(node1)
       @set.push(node2)
 
-      node1.next.should     == node2
-      node1.previous.should == nil
+      expect(node1.next).to     eq(node2)
+      expect(node1.previous).to eq(nil)
 
-      node2.next.should     == nil
-      node2.previous.should == node1
+      expect(node2.next).to     eq(nil)
+      expect(node2.previous).to eq(node1)
     end
   end
 
@@ -164,13 +164,13 @@ describe Oga::XML::NodeSet do
 
       @set.unshift(n2)
 
-      @set.first.should == n2
+      expect(@set.first).to eq(n2)
     end
 
     it 'does not push a node if it is already part of the set' do
       @set.unshift(@n1)
 
-      @set.length.should == 1
+      expect(@set.length).to eq(1)
     end
 
     it 'takes ownership of a node if the set has an owner' do
@@ -179,7 +179,7 @@ describe Oga::XML::NodeSet do
 
       @set.unshift(child)
 
-      child.node_set.should == @set
+      expect(child.node_set).to eq(@set)
     end
 
     it 'updates the next node of the added node' do
@@ -188,7 +188,7 @@ describe Oga::XML::NodeSet do
 
       @set.unshift(node)
 
-      node.next.should == @n1
+      expect(node.next).to eq(@n1)
     end
 
     it 'updates the previous node of the existing node' do
@@ -197,7 +197,7 @@ describe Oga::XML::NodeSet do
 
       @set.unshift(node)
 
-      @n1.previous.should == node
+      expect(@n1.previous).to eq(node)
     end
   end
 
@@ -210,24 +210,24 @@ describe Oga::XML::NodeSet do
 
     it 'removes the node from the set' do
       @set.shift
-      @set.empty?.should == true
+      expect(@set.empty?).to eq(true)
     end
 
     it 'returns the node when shifting it' do
-      @set.shift.should == @n1
+      expect(@set.shift).to eq(@n1)
     end
 
     it 'removes ownership if the node belongs to a node set' do
       @set.shift
 
-      @n1.node_set.nil?.should == true
+      expect(@n1.node_set.nil?).to eq(true)
     end
 
     it 'updates the previous and next nodes of the removed node' do
       @set.shift
 
-      @n1.previous.should == nil
-      @n1.next.should     == nil
+      expect(@n1.previous).to eq(nil)
+      expect(@n1.next).to     eq(nil)
     end
 
     it 'updates the previous node of the remaining node' do
@@ -236,7 +236,7 @@ describe Oga::XML::NodeSet do
       @set.push(node)
       @set.shift
 
-      node.previous.should == nil
+      expect(node.previous).to eq(nil)
     end
   end
 
@@ -249,23 +249,23 @@ describe Oga::XML::NodeSet do
 
     it 'removes the node from the set' do
       @set.pop
-      @set.empty?.should == true
+      expect(@set.empty?).to eq(true)
     end
 
     it 'returns the node when popping it' do
-      @set.pop.should == @n1
+      expect(@set.pop).to eq(@n1)
     end
 
     it 'removes ownership if the node belongs to a node set' do
       @set.pop
 
-      @n1.node_set.nil?.should == true
+      expect(@n1.node_set.nil?).to eq(true)
     end
 
     it 'updates the previous node of the removed node' do
       @set.pop
 
-      @n1.previous.should == nil
+      expect(@n1.previous).to eq(nil)
     end
 
     it 'updates the next node of the last remaining node' do
@@ -274,7 +274,7 @@ describe Oga::XML::NodeSet do
       @set.push(node)
       @set.pop
 
-      @n1.next.should == nil
+      expect(@n1.next).to eq(nil)
     end
   end
 
@@ -289,7 +289,7 @@ describe Oga::XML::NodeSet do
 
       @set.insert(0, node)
 
-      @set[0].should == node
+      expect(@set[0]).to eq(node)
     end
 
     it 'does not insert a node that is already in the set' do
@@ -298,7 +298,7 @@ describe Oga::XML::NodeSet do
       @set.insert(0, node)
       @set.insert(0, node)
 
-      @set.length.should == 1
+      expect(@set.length).to eq(1)
     end
 
     it 'inserts a node before another node' do
@@ -308,8 +308,8 @@ describe Oga::XML::NodeSet do
       @set.insert(0, node1)
       @set.insert(0, node2)
 
-      @set[0].should == node2
-      @set[1].should == node1
+      expect(@set[0]).to eq(node2)
+      expect(@set[1]).to eq(node1)
     end
 
     it 'takes ownership of a node when inserting into an owned set' do
@@ -317,7 +317,7 @@ describe Oga::XML::NodeSet do
 
       @owned_set.insert(0, node)
 
-      node.node_set.should == @owned_set
+      expect(node.node_set).to eq(@owned_set)
     end
 
     it 'updates the previous and next nodes of the inserted node' do
@@ -330,8 +330,8 @@ describe Oga::XML::NodeSet do
 
       @owned_set.insert(1, node3)
 
-      node3.previous.should == node1
-      node3.next.should     == node2
+      expect(node3.previous).to eq(node1)
+      expect(node3.next).to     eq(node2)
     end
 
     it 'updates the next node of the node preceding the inserted node' do
@@ -341,7 +341,7 @@ describe Oga::XML::NodeSet do
       @owned_set.push(node1)
       @owned_set.insert(1, node2)
 
-      node1.next.should == node2
+      expect(node1.next).to eq(node2)
     end
 
     it 'updates the previous node of the node following the inserted node' do
@@ -351,7 +351,7 @@ describe Oga::XML::NodeSet do
       @owned_set.push(node1)
       @owned_set.insert(0, node2)
 
-      node1.previous.should == node2
+      expect(node1.previous).to eq(node2)
     end
   end
 
@@ -362,7 +362,7 @@ describe Oga::XML::NodeSet do
     end
 
     it 'returns a node from a given index' do
-      @set[0].should == @n1
+      expect(@set[0]).to eq(@n1)
     end
   end
 
@@ -373,7 +373,7 @@ describe Oga::XML::NodeSet do
     end
 
     it 'converts a set to an Array' do
-      @set.to_a.should == [@n1]
+      expect(@set.to_a).to eq([@n1])
     end
   end
 
@@ -386,11 +386,11 @@ describe Oga::XML::NodeSet do
     end
 
     it 'merges two sets together' do
-      (@set1 + @set2).to_a.should == [@n1, @n2]
+      expect((@set1 + @set2).to_a).to eq([@n1, @n2])
     end
 
     it 'ignores duplicate nodes' do
-      (@set1 + described_class.new([@n1])).length.should == 1
+      expect((@set1 + described_class.new([@n1])).length).to eq(1)
     end
   end
 
@@ -403,11 +403,11 @@ describe Oga::XML::NodeSet do
     end
 
     it 'returns true if two node sets are equal' do
-      @set1.should == @set2
+      expect(@set1).to eq(@set2)
     end
 
     it 'returns false if two node sets are not equal' do
-      @set1.should_not == @set3
+      expect(@set1).not_to eq(@set3)
     end
   end
 
@@ -423,7 +423,7 @@ describe Oga::XML::NodeSet do
     it 'concatenates two node sets' do
       @set1.concat(@set2)
 
-      @set1.length.should == 2
+      expect(@set1.length).to eq(2)
     end
   end
 
@@ -440,36 +440,36 @@ describe Oga::XML::NodeSet do
     it 'does not remove the nodes from the current set' do
       @query_set.remove
 
-      @query_set.empty?.should == false
+      expect(@query_set.empty?).to eq(false)
     end
 
     it 'removes the nodes from the owning set' do
       @query_set.remove
 
-      @doc_set.empty?.should == true
+      expect(@doc_set.empty?).to eq(true)
     end
 
     it 'unlinks the nodes from the sets they belong to' do
       @query_set.remove
 
-      @n1.node_set.nil?.should == true
-      @n2.node_set.nil?.should == true
+      expect(@n1.node_set.nil?).to eq(true)
+      expect(@n2.node_set.nil?).to eq(true)
     end
 
     it 'removes all nodes from the owned set' do
       @doc_set.remove
 
-      @doc_set.empty?.should == true
+      expect(@doc_set.empty?).to eq(true)
     end
 
     it 'updates the previous and next nodes for all removed nodes' do
       @doc_set.remove
 
-      @n1.previous.should == nil
-      @n1.next.should     == nil
+      expect(@n1.previous).to eq(nil)
+      expect(@n1.next).to     eq(nil)
 
-      @n2.previous.should == nil
-      @n2.next.should     == nil
+      expect(@n2.previous).to eq(nil)
+      expect(@n2.next).to     eq(nil)
     end
   end
 
@@ -481,19 +481,19 @@ describe Oga::XML::NodeSet do
     end
 
     it 'returns the node when deleting it' do
-      @set.delete(@n1).should == @n1
+      expect(@set.delete(@n1)).to eq(@n1)
     end
 
     it 'removes the node from the set' do
       @set.delete(@n1)
 
-      @set.empty?.should == true
+      expect(@set.empty?).to eq(true)
     end
 
     it 'removes ownership of the removed node' do
       @set.delete(@n1)
 
-      @n1.node_set.nil?.should == true
+      expect(@n1.node_set.nil?).to eq(true)
     end
 
     it 'updates the previous and next nodes of the removed node' do
@@ -502,8 +502,8 @@ describe Oga::XML::NodeSet do
       @set.push(node)
       @set.delete(@n1)
 
-      @n1.previous.should == nil
-      @n1.next.should     == nil
+      expect(@n1.previous).to eq(nil)
+      expect(@n1.next).to     eq(nil)
     end
   end
 
@@ -516,7 +516,7 @@ describe Oga::XML::NodeSet do
     end
 
     it 'returns the values of an attribute' do
-      @set.attribute('a').should == [@attr]
+      expect(@set.attribute('a')).to eq([@attr])
     end
   end
 
@@ -536,7 +536,7 @@ describe Oga::XML::NodeSet do
     end
 
     it 'returns the text of all nodes' do
-      @set.text.should == "foobaz\nbar"
+      expect(@set.text).to eq("foobaz\nbar")
     end
   end
 end

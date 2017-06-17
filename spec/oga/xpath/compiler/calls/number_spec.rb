@@ -7,43 +7,43 @@ describe Oga::XPath::Compiler do
     end
 
     it 'converts a literal string to a number' do
-      evaluate_xpath(@document, 'number("10")').should == 10.0
+      expect(evaluate_xpath(@document, 'number("10")')).to eq(10.0)
     end
 
     it 'converts a literal string with deciamsl to a number' do
-      evaluate_xpath(@document, 'number("10.5")').should == 10.5
+      expect(evaluate_xpath(@document, 'number("10.5")')).to eq(10.5)
     end
 
     it 'converts boolean true to a number' do
-      evaluate_xpath(@document, 'number(true())').should == 1.0
+      expect(evaluate_xpath(@document, 'number(true())')).to eq(1.0)
     end
 
     it 'converts boolean false to a number' do
-      evaluate_xpath(@document, 'number(false())').should be_zero
+      expect(evaluate_xpath(@document, 'number(false())')).to be_zero
     end
 
     it 'converts a node set to a number' do
-      evaluate_xpath(@document, 'number(root/a)').should == 10.0
+      expect(evaluate_xpath(@document, 'number(root/a)')).to eq(10.0)
     end
 
     it 'converts a node set with decimals to a number' do
-      evaluate_xpath(@document, 'number(root/b)').should == 10.5
+      expect(evaluate_xpath(@document, 'number(root/b)')).to eq(10.5)
     end
 
     it 'converts a comment to a number' do
-      evaluate_xpath(@document, 'number(root/comment())').should == 10.0
+      expect(evaluate_xpath(@document, 'number(root/comment())')).to eq(10.0)
     end
 
     it 'returns NaN for values that can not be converted to floats' do
-      evaluate_xpath(@document, 'number("a")').should be_nan
+      expect(evaluate_xpath(@document, 'number("a")')).to be_nan
     end
 
     it 'returns NaN for empty node sets' do
-      evaluate_xpath(@document, 'number(foo)').should be_nan
+      expect(evaluate_xpath(@document, 'number(foo)')).to be_nan
     end
 
     it 'returns NaN for empty strings' do
-      evaluate_xpath(@document, 'number("")').should be_nan
+      expect(evaluate_xpath(@document, 'number("")')).to be_nan
     end
   end
 end

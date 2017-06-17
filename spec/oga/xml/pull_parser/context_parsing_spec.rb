@@ -5,7 +5,7 @@ describe Oga::XML::PullParser do
     before do
       @parser = Oga::XML::PullParser.new('<a><b></b></a>')
 
-      @parser.stub(:node).and_return(Oga::XML::Text.new)
+      allow(@parser).to receive(:node).and_return(Oga::XML::Text.new)
     end
 
     it 'does not yield if the node types do not match' do
@@ -21,7 +21,7 @@ describe Oga::XML::PullParser do
     end
 
     it 'yields if the node type and the nesting matches' do
-      @parser.stub(:nesting).and_return(%w{a b})
+      allow(@parser).to receive(:nesting).and_return(%w{a b})
 
       expect { |b| @parser.on(:text, %w{a b}, &b) }.to yield_control
     end

@@ -11,12 +11,12 @@ describe Oga::XPath::Compiler do
 
     describe 'in a predicate' do
       it 'returns a NodeSet containing the last node' do
-        evaluate_xpath(@document, 'root/a[last()]').should == node_set(@a2)
+        expect(evaluate_xpath(@document, 'root/a[last()]')).to eq(node_set(@a2))
       end
 
       it 'returns a NodeSet matching all <a> nodes' do
-        evaluate_xpath(@document, 'root/a[1 < last()]')
-          .should == node_set(@a1, @a2)
+        expect(evaluate_xpath(@document, 'root/a[1 < last()]'))
+          .to eq(node_set(@a1, @a2))
       end
     end
   end

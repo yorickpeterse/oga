@@ -12,7 +12,7 @@ describe Oga::XPath::Compiler do
   describe 'relative to a document' do
     describe 'ancestor-or-self::a' do
       it 'returns an empty NodeSet' do
-        evaluate_xpath(@document).should == node_set
+        expect(evaluate_xpath(@document)).to eq(node_set)
       end
     end
   end
@@ -20,13 +20,13 @@ describe Oga::XPath::Compiler do
   describe 'relative to an attribute' do
     describe 'ancestor-or-self::a' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@a1.attribute('foo')).should == node_set(@a1)
+        expect(evaluate_xpath(@a1.attribute('foo'))).to eq(node_set(@a1))
       end
     end
 
     describe 'ancestor-or-self::foo' do
       it 'returns an empty NodeSet' do
-        evaluate_xpath(@a1.attribute('foo')).should == node_set
+        expect(evaluate_xpath(@a1.attribute('foo'))).to eq(node_set)
       end
     end
   end
@@ -34,43 +34,43 @@ describe Oga::XPath::Compiler do
   describe 'relative to an element' do
     describe 'ancestor-or-self::a' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@c1).should == node_set(@a1)
+        expect(evaluate_xpath(@c1)).to eq(node_set(@a1))
       end
     end
 
     describe 'ancestor-or-self::b' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@c1).should == node_set(@b1)
+        expect(evaluate_xpath(@c1)).to eq(node_set(@b1))
       end
     end
 
     describe 'ancestor-or-self::c' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@c1).should == node_set(@c1)
+        expect(evaluate_xpath(@c1)).to eq(node_set(@c1))
       end
     end
 
     describe 'ancestor-or-self::*[1]' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@c1).should == node_set(@c1)
+        expect(evaluate_xpath(@c1)).to eq(node_set(@c1))
       end
     end
 
     describe 'ancestor-or-self::*' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@c1).should == node_set(@c1, @b1, @a1)
+        expect(evaluate_xpath(@c1)).to eq(node_set(@c1, @b1, @a1))
       end
     end
 
     describe 'ancestor-or-self::foo' do
       it 'returns an empty NodeSet' do
-        evaluate_xpath(@c1).should == node_set
+        expect(evaluate_xpath(@c1)).to eq(node_set)
       end
     end
 
     describe 'ancestor-or-self::*/ancestor-or-self::a' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@c1).should == node_set(@a1)
+        expect(evaluate_xpath(@c1)).to eq(node_set(@a1))
       end
     end
   end

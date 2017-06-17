@@ -18,8 +18,8 @@ describe 'CSS selector evaluation' do
     end
 
     it 'returns a node set containing all first <a> nodes' do
-      evaluate_css(@document, 'root a:first-of-type')
-        .should == node_set(@a1, @a3)
+      expect(evaluate_css(@document, 'root a:first-of-type'))
+        .to eq(node_set(@a1, @a3))
     end
   end
 end

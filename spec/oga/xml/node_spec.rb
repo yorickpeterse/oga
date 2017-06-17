@@ -6,20 +6,20 @@ describe Oga::XML::Node do
       set  = Oga::XML::NodeSet.new
       node = described_class.new(:node_set => set)
 
-      node.node_set.should == set
+      expect(node.node_set).to eq(set)
     end
   end
 
   describe '#children' do
     it 'returns an empty set by default' do
-      described_class.new.children.empty?.should == true
+      expect(described_class.new.children.empty?).to eq(true)
     end
 
     it 'returns a set that was created manually' do
       set  = Oga::XML::NodeSet.new([described_class.new])
       node = described_class.new(:children => set)
 
-      node.children.should == set
+      expect(node.children).to eq(set)
     end
   end
 
@@ -30,7 +30,7 @@ describe Oga::XML::Node do
 
       node.children = [child]
 
-      node.children[0].should == child
+      expect(node.children[0]).to eq(child)
     end
 
     it 'sets the child nodes using a NodeSet' do
@@ -39,7 +39,7 @@ describe Oga::XML::Node do
 
       node.children = Oga::XML::NodeSet.new([child])
 
-      node.children[0].should == child
+      expect(node.children[0]).to eq(child)
     end
   end
 
@@ -49,11 +49,11 @@ describe Oga::XML::Node do
       set   = Oga::XML::NodeSet.new([], owner)
       node  = described_class.new(:node_set => set)
 
-      node.parent.should == owner
+      expect(node.parent).to eq(owner)
     end
 
     it 'returns nil if there is no parent node' do
-      described_class.new.parent.nil?.should == true
+      expect(described_class.new.parent.nil?).to eq(true)
     end
   end
 
@@ -66,11 +66,11 @@ describe Oga::XML::Node do
     end
 
     it 'returns the previous node' do
-      @n2.previous.should == @n1
+      expect(@n2.previous).to eq(@n1)
     end
 
     it 'returns nil if there is no previous node' do
-      @n1.previous.nil?.should == true
+      expect(@n1.previous.nil?).to eq(true)
     end
   end
 
@@ -83,11 +83,11 @@ describe Oga::XML::Node do
     end
 
     it 'returns the next node' do
-      @n1.next.should == @n2
+      expect(@n1.next).to eq(@n2)
     end
 
     it 'returns nil if there is no next node' do
-      @n2.next.nil?.should == true
+      expect(@n2.next.nil?).to eq(true)
     end
   end
 
@@ -101,15 +101,15 @@ describe Oga::XML::Node do
     end
 
     it 'returns the previous element of a generic node' do
-      @n3.previous_element.should == @n1
+      expect(@n3.previous_element).to eq(@n1)
     end
 
     it 'returns the previous element of a text node' do
-      @n2.previous_element.should == @n1
+      expect(@n2.previous_element).to eq(@n1)
     end
 
     it 'returns nil if there is no previous element' do
-      @n1.previous_element.nil?.should == true
+      expect(@n1.previous_element.nil?).to eq(true)
     end
   end
 
@@ -123,15 +123,15 @@ describe Oga::XML::Node do
     end
 
     it 'returns the next element of a generic node' do
-      @n1.next_element.should == @n3
+      expect(@n1.next_element).to eq(@n3)
     end
 
     it 'returns the next element of a text node' do
-      @n2.next_element.should == @n3
+      expect(@n2.next_element).to eq(@n3)
     end
 
     it 'returns nil if there is no next element' do
-      @n3.next_element.nil?.should == true
+      expect(@n3.next_element.nil?).to eq(true)
     end
   end
 
@@ -145,17 +145,17 @@ describe Oga::XML::Node do
     end
 
     it 'returns the root document of a Node' do
-      @n2.root_node.should == @doc
+      expect(@n2.root_node).to eq(@doc)
     end
 
     it 'returns the root Node of another Node' do
-      @n4.root_node.should == @n3
+      expect(@n4.root_node).to eq(@n3)
     end
 
     it 'flushes the cache when changing the NodeSet of a Node' do
       @n1.children << @n4
 
-      @n4.root_node.should == @doc
+      expect(@n4.root_node).to eq(@doc)
     end
   end
 
@@ -169,13 +169,13 @@ describe Oga::XML::Node do
     it 'returns a node from the node set' do
       @n1.remove
 
-      @set.empty?.should == true
+      expect(@set.empty?).to eq(true)
     end
 
     it 'removes the reference to the set' do
       @n1.remove
 
-      @n1.node_set.nil?.should == true
+      expect(@n1.node_set.nil?).to eq(true)
     end
   end
 
@@ -190,14 +190,14 @@ describe Oga::XML::Node do
 
       @node.replace(other)
 
-      @container.children[0].should == other
+      expect(@container.children[0]).to eq(other)
     end
 
     it 'replaces a node with Oga::XML::Text when called with String' do
       @node.replace('a string')
 
-      @container.children[0].should be_an_instance_of(Oga::XML::Text)
-      @container.children[0].text.should == 'a string'
+      expect(@container.children[0]).to be_an_instance_of(Oga::XML::Text)
+      expect(@container.children[0].text).to eq('a string')
     end
   end
 
@@ -212,8 +212,8 @@ describe Oga::XML::Node do
 
       @node.before(other)
 
-      @container.children[0].should == other
-      @container.children[1].should == @node
+      expect(@container.children[0]).to eq(other)
+      expect(@container.children[1]).to eq(@node)
     end
   end
 
@@ -228,8 +228,8 @@ describe Oga::XML::Node do
 
       @node.after(other)
 
-      @container.children[0].should == @node
-      @container.children[1].should == other
+      expect(@container.children[0]).to eq(@node)
+      expect(@container.children[1]).to eq(other)
     end
   end
 
@@ -238,14 +238,14 @@ describe Oga::XML::Node do
       node     = described_class.new
       document = Oga::XML::Document.new(:children => [node], :type => :html)
 
-      node.html?.should == true
+      expect(node.html?).to eq(true)
     end
 
     it 'returns false if the node resides within an XML document' do
       node     = described_class.new
       document = Oga::XML::Document.new(:children => [node], :type => :xml)
 
-      node.html?.should == false
+      expect(node.html?).to eq(false)
     end
 
     it 'flushes the cache when changing the NodeSet of a Node' do
@@ -253,11 +253,11 @@ describe Oga::XML::Node do
       html_doc = Oga::XML::Document.new(:type => :html)
       xml_doc  = Oga::XML::Document.new(:type => :xml, :children => [node])
 
-      node.html?.should == false
+      expect(node.html?).to eq(false)
 
       html_doc.children << node
 
-      node.html?.should == true
+      expect(node.html?).to eq(true)
     end
   end
 
@@ -266,14 +266,14 @@ describe Oga::XML::Node do
       node     = described_class.new
       document = Oga::XML::Document.new(:children => [node], :type => :xml)
 
-      node.xml?.should == true
+      expect(node.xml?).to eq(true)
     end
 
     it 'returns false if the node resides within an HTML document' do
       node     = described_class.new
       document = Oga::XML::Document.new(:children => [node], :type => :html)
 
-      node.xml?.should == false
+      expect(node.xml?).to eq(false)
     end
   end
 

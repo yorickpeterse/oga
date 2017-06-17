@@ -16,12 +16,4 @@ RSpec.configure do |config|
   config.include Oga::ParsingHelpers
   config.include Oga::EvaluationHelpers
   config.include Oga::ThreadingHelpers
-
-  config.expect_with :rspec do |c|
-    c.syntax = [:should, :expect]
-  end
-
-  config.mock_with :rspec do |c|
-    c.syntax = [:should, :expect]
-  end
 end

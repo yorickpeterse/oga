@@ -10,15 +10,15 @@ describe 'CSS selector evaluation' do
       end
 
       it 'returns a node set containing direct child nodes' do
-        evaluate_css(@document, 'root > a').should == node_set(@a1)
+        expect(evaluate_css(@document, 'root > a')).to eq(node_set(@a1))
       end
 
       it 'returns a node set containing direct child nodes relative to a node' do
-        evaluate_css(@a1, '> a').should == @a1.children
+        expect(evaluate_css(@a1, '> a')).to eq(@a1.children)
       end
 
       it 'returns an empty node set for non matching child nodes' do
-        evaluate_css(@document, '> a').should == node_set
+        expect(evaluate_css(@document, '> a')).to eq(node_set)
       end
     end
 
@@ -31,15 +31,15 @@ describe 'CSS selector evaluation' do
       end
 
       it 'returns a node set containing following siblings' do
-        evaluate_css(@document, 'root a + b').should == node_set(@b1)
+        expect(evaluate_css(@document, 'root a + b')).to eq(node_set(@b1))
       end
 
       it 'returns a node set containing following siblings relatie to a node' do
-        evaluate_css(@b1, '+ b').should == node_set(@b2)
+        expect(evaluate_css(@b1, '+ b')).to eq(node_set(@b2))
       end
 
       it 'returns an empty node set for non matching following siblings' do
-        evaluate_css(@document, 'root a + c').should == node_set
+        expect(evaluate_css(@document, 'root a + c')).to eq(node_set)
       end
     end
 
@@ -52,15 +52,15 @@ describe 'CSS selector evaluation' do
       end
 
       it 'returns a node set containing following siblings' do
-        evaluate_css(@document, 'root a ~ b').should == node_set(@b1, @b2)
+        expect(evaluate_css(@document, 'root a ~ b')).to eq(node_set(@b1, @b2))
       end
 
       it 'returns a node set containing following siblings relative to a node' do
-        evaluate_css(@b1, '~ b').should == node_set(@b2)
+        expect(evaluate_css(@b1, '~ b')).to eq(node_set(@b2))
       end
 
       it 'returns an empty node set for non matching following siblings' do
-        evaluate_css(@document, 'root a ~ c').should == node_set
+        expect(evaluate_css(@document, 'root a ~ c')).to eq(node_set)
       end
     end
   end

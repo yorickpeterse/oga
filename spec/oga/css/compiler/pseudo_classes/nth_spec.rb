@@ -11,11 +11,11 @@ describe 'CSS selector evaluation' do
     end
 
     it 'returns a node set containing the first <a> node' do
-      evaluate_css(@document, 'root a:nth(1)').should == node_set(@a1)
+      expect(evaluate_css(@document, 'root a:nth(1)')).to eq(node_set(@a1))
     end
 
     it 'returns a node set containing the second <a> node' do
-      evaluate_css(@document, 'root a:nth(2)').should == node_set(@a2)
+      expect(evaluate_css(@document, 'root a:nth(2)')).to eq(node_set(@a2))
     end
   end
 end

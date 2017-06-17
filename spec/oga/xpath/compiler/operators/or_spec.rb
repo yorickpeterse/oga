@@ -7,27 +7,27 @@ describe Oga::XPath::Compiler do
     end
 
     it 'returns true if both boolean literals are true' do
-      evaluate_xpath(@document, 'true() or true()').should == true
+      expect(evaluate_xpath(@document, 'true() or true()')).to eq(true)
     end
 
     it 'returns true if one of the boolean literals is false' do
-      evaluate_xpath(@document, 'true() or false()').should == true
+      expect(evaluate_xpath(@document, 'true() or false()')).to eq(true)
     end
 
     it 'returns true if the left node set is not empty' do
-      evaluate_xpath(@document, 'root/a or root/x').should == true
+      expect(evaluate_xpath(@document, 'root/a or root/x')).to eq(true)
     end
 
     it 'returns true if the right node set is not empty' do
-      evaluate_xpath(@document, 'root/x or root/b').should == true
+      expect(evaluate_xpath(@document, 'root/x or root/b')).to eq(true)
     end
 
     it 'returns true if both node sets are not empty' do
-      evaluate_xpath(@document, 'root/a or root/b').should == true
+      expect(evaluate_xpath(@document, 'root/a or root/b')).to eq(true)
     end
 
     it 'returns false if both node sets are empty' do
-      evaluate_xpath(@document, 'root/x or root/y').should == false
+      expect(evaluate_xpath(@document, 'root/x or root/y')).to eq(false)
     end
   end
 end

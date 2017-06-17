@@ -5,25 +5,25 @@ describe 'CSS selector evaluation' do
     it 'returns a node set containing a node with a single class' do
       document = parse('<x class="foo" />')
 
-      evaluate_css(document, '.foo').should == document.children
+      expect(evaluate_css(document, '.foo')).to eq(document.children)
     end
 
     it 'returns a node set containing a node having one of two classes' do
       document = parse('<x class="foo bar" />')
 
-      evaluate_css(document, '.foo').should == document.children
+      expect(evaluate_css(document, '.foo')).to eq(document.children)
     end
 
     it 'returns a node set containing a node having both classes' do
       document = parse('<x class="foo bar" />')
 
-      evaluate_css(document, '.foo.bar').should == document.children
+      expect(evaluate_css(document, '.foo.bar')).to eq(document.children)
     end
 
     it 'returns an empty node set for non matching classes' do
       document = parse('<x class="bar" />')
 
-      evaluate_css(document, '.foo').should == node_set
+      expect(evaluate_css(document, '.foo')).to eq(node_set)
     end
   end
 end

@@ -7,11 +7,11 @@ describe Oga::HTML::Parser do
     end
 
     it 'returns an Element instance' do
-      @node.is_a?(Oga::XML::Element).should == true
+      expect(@node.is_a?(Oga::XML::Element)).to eq(true)
     end
 
     it 'sets the name of the element' do
-      @node.name.should == 'meta'
+      expect(@node.name).to eq('meta')
     end
   end
 end

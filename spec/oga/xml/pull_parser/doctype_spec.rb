@@ -13,7 +13,7 @@ describe Oga::XML::PullParser do
         amount += 1
       end
 
-      amount.should == 0
+      expect(amount).to eq(0)
     end
   end
 end

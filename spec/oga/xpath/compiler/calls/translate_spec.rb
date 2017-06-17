@@ -7,32 +7,32 @@ describe Oga::XPath::Compiler do
     end
 
     it 'translates a string using all string literals' do
-      evaluate_xpath(@document, 'translate("bar", "abc", "ABC")')
-        .should == 'BAr'
+      expect(evaluate_xpath(@document, 'translate("bar", "abc", "ABC")'))
+        .to eq('BAr')
     end
 
     it "removes characters that don't occur in the replacement string" do
-      evaluate_xpath(@document, 'translate("-aaa-", "abc-", "ABC")')
-        .should == 'AAA'
+      expect(evaluate_xpath(@document, 'translate("-aaa-", "abc-", "ABC")'))
+        .to eq('AAA')
     end
 
     it 'uses the first character occurence in the search string' do
-      evaluate_xpath(@document, 'translate("ab", "aba", "123")').should == '12'
+      expect(evaluate_xpath(@document, 'translate("ab", "aba", "123")')).to eq('12')
     end
 
     it 'ignores excess characters in the replacement string' do
-      evaluate_xpath(@document, 'translate("abc", "abc", "123456")')
-        .should == '123'
+      expect(evaluate_xpath(@document, 'translate("abc", "abc", "123456")'))
+        .to eq('123')
     end
 
     it 'translates a node set string using string literals' do
-      evaluate_xpath(@document, 'translate(root/a, "abc", "ABC")')
-        .should == 'BAr'
+      expect(evaluate_xpath(@document, 'translate(root/a, "abc", "ABC")'))
+        .to eq('BAr')
     end
 
     it 'translates a node set string using other node set strings' do
-      evaluate_xpath(@document, 'translate(root/a, root/b, root/c)')
-        .should == 'BAr'
+      expect(evaluate_xpath(@document, 'translate(root/a, root/b, root/c)'))
+        .to eq('BAr')
     end
   end
 end

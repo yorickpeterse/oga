@@ -10,13 +10,13 @@ describe Oga::XPath::Compiler do
     end
 
     it 'returns a node set containing the first node' do
-      evaluate_xpath(@document, 'root/a[position() = 1]')
-        .should == node_set(@a1)
+      expect(evaluate_xpath(@document, 'root/a[position() = 1]'))
+        .to eq(node_set(@a1))
     end
 
     it 'returns a node set containing the second node' do
-      evaluate_xpath(@document, 'root/a[position() = 2]')
-        .should == node_set(@a2)
+      expect(evaluate_xpath(@document, 'root/a[position() = 2]'))
+        .to eq(node_set(@a2))
     end
   end
 end

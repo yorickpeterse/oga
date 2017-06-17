@@ -5,7 +5,7 @@ describe Oga::Ruby::Node do
     it 'returns the type of the node as a Symbol' do
       node = described_class.new('foo')
 
-      node.type.should == :foo
+      expect(node.type).to eq(:foo)
     end
   end
 
@@ -13,7 +13,7 @@ describe Oga::Ruby::Node do
     it 'returns the children of the Node as an Array' do
       node = described_class.new(:foo, %w{10})
 
-      node.to_a.should == %w{10}
+      expect(node.to_a).to eq(%w{10})
     end
   end
 
@@ -22,8 +22,8 @@ describe Oga::Ruby::Node do
       number = described_class.new(:lit, %w{10})
       node   = number.to_array
 
-      node.type.should == :send
-      node.to_a.should == [number, :to_a]
+      expect(node.type).to eq(:send)
+      expect(node.to_a).to eq([number, :to_a])
     end
   end
 
@@ -33,8 +33,8 @@ describe Oga::Ruby::Node do
       right = described_class.new(:lit, %w{10})
       node  = left.assign(right)
 
-      node.type.should == :assign
-      node.to_a.should == [left, right]
+      expect(node.type).to eq(:assign)
+      expect(node.to_a).to eq([left, right])
     end
   end
 
@@ -44,8 +44,8 @@ describe Oga::Ruby::Node do
       right = described_class.new(:lit, %w{10})
       node  = left.eq(right)
 
-      node.type.should == :eq
-      node.to_a.should == [left, right]
+      expect(node.type).to eq(:eq)
+      expect(node.to_a).to eq([left, right])
     end
   end
 
@@ -55,8 +55,8 @@ describe Oga::Ruby::Node do
       right = described_class.new(:lit, %w{10})
       node  = left.and(right)
 
-      node.type.should == :and
-      node.to_a.should == [left, right]
+      expect(node.type).to eq(:and)
+      expect(node.to_a).to eq([left, right])
     end
   end
 
@@ -66,8 +66,8 @@ describe Oga::Ruby::Node do
       right = described_class.new(:lit, %w{10})
       node  = left.or(right)
 
-      node.type.should == :or
-      node.to_a.should == [left, right]
+      expect(node.type).to eq(:or)
+      expect(node.to_a).to eq([left, right])
     end
   end
 
@@ -76,8 +76,8 @@ describe Oga::Ruby::Node do
       node     = described_class.new(:lit, %w{foo})
       inverted = node.not
 
-      inverted.type.should == :send
-      inverted.to_a.should == [node, '!']
+      expect(inverted.type).to eq(:send)
+      expect(inverted.to_a).to eq([node, '!'])
     end
   end
 
@@ -86,13 +86,13 @@ describe Oga::Ruby::Node do
       left = described_class.new(:lit, %w{number})
       node = left.is_a?(String)
 
-      node.type.should == :send
+      expect(node.type).to eq(:send)
 
-      node.to_a[0].should == left
-      node.to_a[1].should == 'is_a?'
+      expect(node.to_a[0]).to eq(left)
+      expect(node.to_a[1]).to eq('is_a?')
 
-      node.to_a[2].type.should == :lit
-      node.to_a[2].to_a.should == %w{String}
+      expect(node.to_a[2].type).to eq(:lit)
+      expect(node.to_a[2].to_a).to eq(%w{String})
     end
   end
 
@@ -103,8 +103,8 @@ describe Oga::Ruby::Node do
       body  = described_class.new(:lit, %w{20})
       block = left.add_block(arg) { body }
 
-      block.type.should == :block
-      block.to_a.should == [left, [arg], body]
+      expect(block.type).to eq(:block)
+      expect(block.to_a).to eq([left, [arg], body])
     end
   end
 
@@ -113,8 +113,8 @@ describe Oga::Ruby::Node do
       number  = described_class.new(:lit, %w{10})
       wrapped = number.wrap
 
-      wrapped.type.should == :begin
-      wrapped.to_a.should == [number]
+      expect(wrapped.type).to eq(:begin)
+      expect(wrapped.to_a).to eq([number])
     end
   end
 
@@ -124,8 +124,8 @@ describe Oga::Ruby::Node do
       body      = described_class.new(:lit, %w{10})
       statement = condition.if_true { body }
 
-      statement.type.should == :if
-      statement.to_a.should == [condition, body]
+      expect(statement.type).to eq(:if)
+      expect(statement.to_a).to eq([condition, body])
     end
   end
 
@@ -135,12 +135,12 @@ describe Oga::Ruby::Node do
       body      = described_class.new(:lit, %w{10})
       statement = condition.if_false { body }
 
-      statement.type.should == :if
+      expect(statement.type).to eq(:if)
 
-      statement.to_a[0].type.should == :send
+      expect(statement.to_a[0].type).to eq(:send)
 
-      statement.to_a[0].to_a.should == [condition, '!']
-      statement.to_a[1].should      == body
+      expect(statement.to_a[0].to_a).to eq([condition, '!'])
+      expect(statement.to_a[1]).to      eq(body)
     end
   end
 
@@ -150,8 +150,8 @@ describe Oga::Ruby::Node do
       body      = described_class.new(:lit, %w{10})
       statement = condition.while_true { body }
 
-      statement.type.should == :while
-      statement.to_a.should == [condition, body]
+      expect(statement.type).to eq(:while)
+      expect(statement.to_a).to eq([condition, body])
     end
   end
 
@@ -162,8 +162,8 @@ describe Oga::Ruby::Node do
       or_else   = described_class.new(:lit, %w{20})
       statement = condition.if_true { body }.else { or_else }
 
-      statement.type.should == :if
-      statement.to_a.should == [condition, body, or_else]
+      expect(statement.type).to eq(:if)
+      expect(statement.to_a).to eq([condition, body, or_else])
     end
   end
 
@@ -174,8 +174,8 @@ describe Oga::Ruby::Node do
         node2  = described_class.new(:lit, %w{B})
         joined = node1.followed_by(node2)
 
-        joined.type.should == :followed_by
-        joined.to_a.should == [node1, node2]
+        expect(joined.type).to eq(:followed_by)
+        expect(joined.to_a).to eq([node1, node2])
       end
     end
 
@@ -185,8 +185,8 @@ describe Oga::Ruby::Node do
         node2  = described_class.new(:lit, %w{B})
         joined = node1.followed_by { node2 }
 
-        joined.type.should == :followed_by
-        joined.to_a.should == [node1, node2]
+        expect(joined.type).to eq(:followed_by)
+        expect(joined.to_a).to eq([node1, node2])
       end
     end
   end
@@ -197,8 +197,8 @@ describe Oga::Ruby::Node do
       arg      = described_class.new(:lit, %w{10})
       call     = receiver.foo(arg)
 
-      call.type.should == :send
-      call.to_a.should == [receiver, 'foo', arg]
+      expect(call.type).to eq(:send)
+      expect(call.to_a).to eq([receiver, 'foo', arg])
     end
   end
 
@@ -206,7 +206,7 @@ describe Oga::Ruby::Node do
     it 'returns a String' do
       node = described_class.new(:lit, %w{10})
 
-      node.inspect.should == '(lit "10")'
+      expect(node.inspect).to eq('(lit "10")')
     end
   end
 end

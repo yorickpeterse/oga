@@ -7,7 +7,7 @@ describe Oga::XML::Parser do
     end
 
     it 'returns a Comment instance' do
-      @node.is_a?(Oga::XML::Comment).should == true
+      expect(@node.is_a?(Oga::XML::Comment)).to eq(true)
     end
   end
 
@@ -17,11 +17,11 @@ describe Oga::XML::Parser do
     end
 
     it 'returns a Comment instance' do
-      @node.is_a?(Oga::XML::Comment).should == true
+      expect(@node.is_a?(Oga::XML::Comment)).to eq(true)
     end
 
     it 'sets the text of the comment' do
-      @node.text.should == 'foo'
+      expect(@node.text).to eq('foo')
     end
   end
 end

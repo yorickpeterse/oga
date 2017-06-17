@@ -3,11 +3,11 @@ require 'spec_helper'
 describe Oga::XML::Attribute do
   describe '#initialize' do
     it 'sets the name' do
-      described_class.new(:name => 'a').name.should == 'a'
+      expect(described_class.new(:name => 'a').name).to eq('a')
     end
 
     it 'sets the value' do
-      described_class.new(:value => 'a').value.should == 'a'
+      expect(described_class.new(:value => 'a').value).to eq('a')
     end
   end
 
@@ -16,7 +16,7 @@ describe Oga::XML::Attribute do
       element = Oga::XML::Element.new(:name => 'foo')
       attr    = described_class.new(:element => element)
 
-      attr.parent.should == element
+      expect(attr.parent).to eq(element)
     end
   end
 
@@ -38,11 +38,11 @@ describe Oga::XML::Attribute do
     end
 
     it 'returns a Namespace instance' do
-      @attribute.namespace.should == @namespace
+      expect(@attribute.namespace).to eq(@namespace)
     end
 
     it 'returns the default XML namespace when the "xml" prefix is used' do
-      @default.namespace.should == Oga::XML::Attribute::DEFAULT_NAMESPACE
+      expect(@default.namespace).to eq(Oga::XML::Attribute::DEFAULT_NAMESPACE)
     end
   end
 
@@ -52,23 +52,23 @@ describe Oga::XML::Attribute do
 
       attr.value = 'foo'
 
-      attr.value.should == 'foo'
+      expect(attr.value).to eq('foo')
     end
 
     it 'flushes the decoded cache when setting a new value' do
       attr = described_class.new(:value => '&lt;')
 
-      attr.value.should == Oga::XML::Entities::DECODE_MAPPING['&lt;']
+      expect(attr.value).to eq(Oga::XML::Entities::DECODE_MAPPING['&lt;'])
 
       attr.value = '&gt;'
 
-      attr.value.should == Oga::XML::Entities::DECODE_MAPPING['&gt;']
+      expect(attr.value).to eq(Oga::XML::Entities::DECODE_MAPPING['&gt;'])
     end
   end
 
   describe '#value' do
     it 'returns the value of an attribute' do
-      described_class.new(:value => 'foo').value.should == 'foo'
+      expect(described_class.new(:value => 'foo').value).to eq('foo')
     end
 
     describe 'using an XML document' do
@@ -84,7 +84,7 @@ describe Oga::XML::Attribute do
           :element => @el
         )
 
-        attr.value.should == '<'
+        expect(attr.value).to eq('<')
       end
     end
 
@@ -101,18 +101,18 @@ describe Oga::XML::Attribute do
           :element => @el
         )
 
-        attr.value.should == Oga::HTML::Entities::DECODE_MAPPING['&copy;']
+        expect(attr.value).to eq(Oga::HTML::Entities::DECODE_MAPPING['&copy;'])
       end
     end
   end
 
   describe '#text' do
     it 'returns an empty String when there is no value' do
-      described_class.new.text.should == ''
+      expect(described_class.new.text).to eq('')
     end
 
     it 'returns the value if it is present' do
-      described_class.new(:value => 'a').text.should == 'a'
+      expect(described_class.new(:value => 'a').text).to eq('a')
     end
   end
 
@@ -120,7 +120,7 @@ describe Oga::XML::Attribute do
     it 'converts an attribute to XML' do
       attr = described_class.new(:name => 'foo', :value => 'bar')
 
-      attr.to_xml.should == 'foo="bar"'
+      expect(attr.to_xml).to eq('foo="bar"')
     end
 
     it 'includes the namespace when converting an attribute to XML' do
@@ -135,7 +135,7 @@ describe Oga::XML::Attribute do
         :element        => element
       )
 
-      attr.to_xml.should == 'foo:class="10"'
+      expect(attr.to_xml).to eq('foo:class="10"')
     end
 
     it 'includes the "xmlns" namespace when present but not registered' do
@@ -145,13 +145,13 @@ describe Oga::XML::Attribute do
         :element        => Oga::XML::Element.new
       )
 
-      attr.to_xml.should == 'xmlns:class=""'
+      expect(attr.to_xml).to eq('xmlns:class=""')
     end
 
     it 'decodes XML entities' do
       attr = described_class.new(:name => 'href', :value => %q{&<>'"})
 
-      attr.to_xml.should == 'href="&amp;&lt;&gt;&apos;&quot;"'
+      expect(attr.to_xml).to eq('href="&amp;&lt;&gt;&apos;&quot;"')
     end
   end
 
@@ -168,7 +168,7 @@ describe Oga::XML::Attribute do
         :element        => element
       )
 
-      obj.inspect.should == <<-EOF.strip
+      expect(obj.inspect).to eq <<-EOF.strip
 Attribute(name: "a" namespace: Namespace(name: "b" uri: nil) value: "c")
 EOF
     end
@@ -179,7 +179,7 @@ EOF
       it 'returns a String' do
         attr = described_class.new(:namespace_name => 'foo', :name => 'bar')
 
-        attr.expanded_name.should == 'foo:bar'
+        expect(attr.expanded_name).to eq('foo:bar')
       end
     end
 
@@ -187,7 +187,7 @@ EOF
       it 'returns a String' do
         attr = described_class.new(:name => 'bar')
 
-        attr.expanded_name.should == 'bar'
+        expect(attr.expanded_name).to eq('bar')
       end
     end
   end

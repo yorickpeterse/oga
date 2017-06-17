@@ -7,7 +7,7 @@ describe Oga::XPath::Compiler do
     end
 
     it 'returns false' do
-      evaluate_xpath(@document, 'false()').should == false
+      expect(evaluate_xpath(@document, 'false()')).to eq(false)
     end
   end
 end

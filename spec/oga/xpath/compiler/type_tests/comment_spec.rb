@@ -11,13 +11,13 @@ describe Oga::XPath::Compiler do
   describe 'relative to a document' do
     describe 'a/comment()' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@document).should == node_set(@comment1)
+        expect(evaluate_xpath(@document)).to eq(node_set(@comment1))
       end
     end
 
     describe 'a/b/comment()' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@document).should == node_set(@comment2)
+        expect(evaluate_xpath(@document)).to eq(node_set(@comment2))
       end
     end
   end

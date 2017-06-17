@@ -7,15 +7,15 @@ describe Oga::XPath::Compiler do
     end
 
     it 'returns a float' do
-      evaluate_xpath(@document, '1.2').should == 1.2
+      expect(evaluate_xpath(@document, '1.2')).to eq(1.2)
     end
 
     it 'returns a negative float' do
-      evaluate_xpath(@document, '-1.2').should == -1.2
+      expect(evaluate_xpath(@document, '-1.2')).to eq(-1.2)
     end
 
     it 'returns floats as a Float' do
-      evaluate_xpath(@document, '1.2').is_a?(Float).should == true
+      expect(evaluate_xpath(@document, '1.2').is_a?(Float)).to eq(true)
     end
   end
 end

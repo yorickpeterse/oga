@@ -11,15 +11,15 @@ describe Oga::XPath::Compiler do
     end
 
     it 'returns a node set containing nodes with language "en"' do
-      evaluate_xpath(@document, 'root[lang("en")]').should == node_set(@root)
+      expect(evaluate_xpath(@document, 'root[lang("en")]')).to eq(node_set(@root))
     end
 
     it 'returns a node  set containing the nodes with language "nl"' do
-      evaluate_xpath(@document, 'root/a[lang("nl")]').should == node_set(@a2)
+      expect(evaluate_xpath(@document, 'root/a[lang("nl")]')).to eq(node_set(@a2))
     end
 
     it 'returns a node set containing the nodes with an inherited language' do
-      evaluate_xpath(@document, 'root/a[lang("en")]').should == node_set(@a1)
+      expect(evaluate_xpath(@document, 'root/a[lang("en")]')).to eq(node_set(@a1))
     end
   end
 end

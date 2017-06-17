@@ -7,7 +7,7 @@ describe 'CSS selector evaluation' do
     end
 
     it 'returns a node set containing the root node' do
-      evaluate_css(@document, ':root').should == @document.children
+      expect(evaluate_css(@document, ':root')).to eq(@document.children)
     end
   end
 end

@@ -7,7 +7,7 @@ describe Oga::XML::Parser do
     end
 
     it 'returns a Cdata instance' do
-      @node.is_a?(Oga::XML::Cdata).should == true
+      expect(@node.is_a?(Oga::XML::Cdata)).to eq(true)
     end
   end
 
@@ -17,11 +17,11 @@ describe Oga::XML::Parser do
     end
 
     it 'returns a Cdata instance' do
-      @node.is_a?(Oga::XML::Cdata).should == true
+      expect(@node.is_a?(Oga::XML::Cdata)).to eq(true)
     end
 
     it 'sets the text of the tag' do
-      @node.text.should == 'foo'
+      expect(@node.text).to eq('foo')
     end
   end
 
@@ -31,7 +31,7 @@ describe Oga::XML::Parser do
     end
 
     it 'sets the HTML as raw text' do
-      @node.text.should == '<p>foo</p>'
+      expect(@node.text).to eq('<p>foo</p>')
     end
   end
 end

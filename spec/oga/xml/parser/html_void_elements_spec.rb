@@ -7,11 +7,11 @@ describe Oga::XML::Parser do
     end
 
     it 'returns an Element instance' do
-      @node.is_a?(Oga::XML::Element).should == true
+      expect(@node.is_a?(Oga::XML::Element)).to eq(true)
     end
 
     it 'sets the name of the element' do
-      @node.name.should == 'link'
+      expect(@node.name).to eq('link')
     end
   end
 
@@ -21,11 +21,11 @@ describe Oga::XML::Parser do
     end
 
     it 'sets the name of the outer element' do
-      @node.name.should == 'head'
+      expect(@node.name).to eq('head')
     end
 
     it 'sets the name of the inner element' do
-      @node.children[0].name.should == 'link'
+      expect(@node.children[0].name).to eq('link')
     end
   end
 
@@ -35,11 +35,11 @@ describe Oga::XML::Parser do
     end
 
     it 'parses void elements with different casing' do
-      @node_uc.is_a?(Oga::XML::Element).should == true
+      expect(@node_uc.is_a?(Oga::XML::Element)).to eq(true)
     end
 
     it 'sets the name of the void element to match casing' do
-      @node_uc.name.should == 'BR'
+      expect(@node_uc.name).to eq('BR')
     end
   end
 
@@ -49,11 +49,11 @@ describe Oga::XML::Parser do
     end
 
     it 'sets the name of the element' do
-      @node.name.should == 'link'
+      expect(@node.name).to eq('link')
     end
 
     it 'sets the attributes' do
-      @node.attribute('href').value.should == 'foo'
+      expect(@node.attribute('href').value).to eq('foo')
     end
   end
 end

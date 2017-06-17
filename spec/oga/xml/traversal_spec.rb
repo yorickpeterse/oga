@@ -22,7 +22,7 @@ describe Oga::XML::Traversal do
         names << (node.is_a?(Oga::XML::Element) ? node.name : node.text)
       end
 
-      names.should == %w{books book1 title1 Foo book2 title2 Bar}
+      expect(names).to eq(%w{books book1 title1 Foo book2 title2 Bar})
     end
 
     it 'skips child nodes when skip_children is thrown' do
@@ -38,7 +38,7 @@ describe Oga::XML::Traversal do
         end
       end
 
-      names.should == %w{books book2 title2}
+      expect(names).to eq(%w{books book2 title2})
     end
   end
 end

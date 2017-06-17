@@ -7,7 +7,7 @@ describe Oga::XML::Parser do
     end
 
     it 'returns a Document instance' do
-      @document.is_a?(Oga::XML::Document).should == true
+      expect(@document.is_a?(Oga::XML::Document)).to eq(true)
     end
   end
 
@@ -17,11 +17,11 @@ describe Oga::XML::Parser do
     end
 
     it 'returns a Document instance' do
-      @document.is_a?(Oga::XML::Document).should == true
+      expect(@document.is_a?(Oga::XML::Document)).to eq(true)
     end
 
     it 'sets the document type' do
-      @document.type.should == :xml
+      expect(@document.type).to eq(:xml)
     end
   end
 
@@ -42,23 +42,23 @@ describe Oga::XML::Parser do
     end
 
     it 'returns a Document instance' do
-      @document.is_a?(Oga::XML::Document).should == true
+      expect(@document.is_a?(Oga::XML::Document)).to eq(true)
     end
 
     it 'sets the document type' do
-      @document.type.should == :html
+      expect(@document.type).to eq(:html)
     end
 
     it 'sets the doctype of the document' do
-      @document.doctype.is_a?(Oga::XML::Doctype).should == true
+      expect(@document.doctype.is_a?(Oga::XML::Doctype)).to eq(true)
     end
 
     it 'sets the XML declaration of the document' do
-      @document.xml_declaration.is_a?(Oga::XML::XmlDeclaration).should == true
+      expect(@document.xml_declaration.is_a?(Oga::XML::XmlDeclaration)).to eq(true)
     end
 
     it 'sets the children of the document' do
-      @document.children.empty?.should == false
+      expect(@document.children.empty?).to eq(false)
     end
   end
 end

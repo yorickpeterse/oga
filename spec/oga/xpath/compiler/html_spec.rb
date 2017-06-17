@@ -9,7 +9,7 @@ describe Oga::XPath::Compiler do
   describe 'relative to an HTML document' do
     describe 'html/body' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@document).should == node_set(@body)
+        expect(evaluate_xpath(@document)).to eq(node_set(@body))
       end
     end
   end

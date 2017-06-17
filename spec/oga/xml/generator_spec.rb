@@ -4,7 +4,7 @@ describe Oga::XML::Generator do
   describe '#to_xml' do
     describe 'using an unsupported root type' do
       it 'raises TypeError' do
-        -> { described_class.new(:foo).to_xml }.should raise_error(TypeError)
+        expect { described_class.new(:foo).to_xml }.to raise_error(TypeError)
       end
     end
 
@@ -15,7 +15,7 @@ describe Oga::XML::Generator do
 
         output = described_class.new(element).to_xml
 
-        output.should == '<foo attr="value" />'
+        expect(output).to eq('<foo attr="value" />')
       end
     end
 
@@ -25,7 +25,7 @@ describe Oga::XML::Generator do
         doc = Oga::XML::Document.new(children: [element])
         output = described_class.new(doc).to_xml
 
-        output.should == '<foo />'
+        expect(output).to eq('<foo />')
       end
     end
 
@@ -35,7 +35,7 @@ describe Oga::XML::Generator do
         doc = Oga::XML::Document.new(children: [element], type: :html)
         output = described_class.new(doc).to_xml
 
-        output.should == '<foo></foo>'
+        expect(output).to eq('<foo></foo>')
       end
     end
 
@@ -46,7 +46,7 @@ describe Oga::XML::Generator do
         doc = Oga::XML::Document.new(children: [el1], type: :html)
         output = described_class.new(doc).to_xml
 
-        output.should == '<foo><bar></bar></foo>'
+        expect(output).to eq('<foo><bar></bar></foo>')
       end
     end
 
@@ -65,7 +65,7 @@ describe Oga::XML::Generator do
 
         output = described_class.new(root).to_xml
 
-        output.should == '<root><a /><b><c /></b></root>'
+        expect(output).to eq('<root><a /><b><c /></b></root>')
       end
     end
 
@@ -75,7 +75,7 @@ describe Oga::XML::Generator do
         element  = Oga::XML::Element.new(name: 'foo')
         document = Oga::XML::Document.new(children: [text, element])
 
-        described_class.new(text).to_xml.should == "\n"
+        expect(described_class.new(text).to_xml).to eq("\n")
       end
     end
 
@@ -85,7 +85,7 @@ describe Oga::XML::Generator do
         element  = Oga::XML::Element.new(name: 'foo')
         document = Oga::XML::Document.new(children: [text, element])
 
-        described_class.new(element).to_xml.should == '<foo />'
+        expect(described_class.new(element).to_xml).to eq('<foo />')
       end
     end
 
@@ -95,8 +95,8 @@ describe Oga::XML::Generator do
         element2 = Oga::XML::Element.new(name: 'b')
         document = Oga::XML::Document.new(children: [element1, element2])
 
-        described_class.new(element1).to_xml.should == '<a />'
-        described_class.new(element2).to_xml.should == '<b />'
+        expect(described_class.new(element1).to_xml).to eq('<a />')
+        expect(described_class.new(element2).to_xml).to eq('<b />')
       end
     end
 
@@ -123,7 +123,7 @@ describe Oga::XML::Generator do
         doc = Oga.parse_html(input)
         output = described_class.new(doc)
 
-        output.to_xml.should == input
+        expect(output.to_xml).to eq(input)
       end
     end
 
@@ -133,7 +133,7 @@ describe Oga::XML::Generator do
           img = Oga::XML::Element.new(name: 'img')
           doc = Oga::XML::Document.new(children: [img], type: :xml)
 
-          doc.to_xml.should == '<img />'
+          expect(doc.to_xml).to eq('<img />')
         end
       end
 
@@ -143,7 +143,7 @@ describe Oga::XML::Generator do
           img = Oga::XML::Element.new(name: 'img', children: [text])
           doc = Oga::XML::Document.new(children: [img], type: :xml)
 
-          doc.to_xml.should == '<img>kittens</img>'
+          expect(doc.to_xml).to eq('<img>kittens</img>')
         end
       end
     end
@@ -154,7 +154,7 @@ describe Oga::XML::Generator do
           img = Oga::XML::Element.new(name: 'img')
           doc = Oga::XML::Document.new(children: [img], type: :html)
 
-          doc.to_xml.should == '<img>'
+          expect(doc.to_xml).to eq('<img>')
         end
       end
 
@@ -164,7 +164,7 @@ describe Oga::XML::Generator do
           img = Oga::XML::Element.new(name: 'img', children: [text])
           doc = Oga::XML::Document.new(children: [img], type: :html)
 
-          doc.to_xml.should == '<img>kittens</img>'
+          expect(doc.to_xml).to eq('<img>kittens</img>')
         end
       end
     end

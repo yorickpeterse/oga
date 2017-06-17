@@ -7,11 +7,11 @@ describe Oga::XML::Parser do
     end
 
     it 'returns a Text instance' do
-      @node.is_a?(Oga::XML::Text).should == true
+      expect(@node.is_a?(Oga::XML::Text)).to eq(true)
     end
 
     it 'sets the text' do
-      @node.text.should == 'foo'
+      expect(@node.text).to eq('foo')
     end
   end
 end

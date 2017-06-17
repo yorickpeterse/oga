@@ -22,38 +22,38 @@ describe 'CSS selector evaluation' do
     end
 
     it 'returns a node set containing the first child node' do
-      evaluate_css(@document, 'root a:nth-of-type(1)')
-        .should == node_set(@a1, @a4)
+      expect(evaluate_css(@document, 'root a:nth-of-type(1)'))
+        .to eq(node_set(@a1, @a4))
     end
 
     it 'returns a node set containing even nodes' do
-      evaluate_css(@document, 'root a:nth-of-type(even)')
-        .should == node_set(@a2)
+      expect(evaluate_css(@document, 'root a:nth-of-type(even)'))
+        .to eq(node_set(@a2))
     end
 
     it 'returns a node set containing odd nodes' do
-      evaluate_css(@document, 'root a:nth-of-type(odd)')
-        .should == node_set(@a1, @a3, @a4)
+      expect(evaluate_css(@document, 'root a:nth-of-type(odd)'))
+        .to eq(node_set(@a1, @a3, @a4))
     end
 
     it 'returns a node set containing every 2 nodes starting at node 2' do
-      evaluate_css(@document, 'root a:nth-of-type(2n+2)')
-        .should == node_set(@a2)
+      expect(evaluate_css(@document, 'root a:nth-of-type(2n+2)'))
+        .to eq(node_set(@a2))
     end
 
     it 'returns a node set containing all nodes' do
-      evaluate_css(@document, 'root a:nth-of-type(n)')
-        .should == node_set(@a1, @a2, @a3, @a4)
+      expect(evaluate_css(@document, 'root a:nth-of-type(n)'))
+        .to eq(node_set(@a1, @a2, @a3, @a4))
     end
 
     it 'returns a node set containing the first two nodes' do
-      evaluate_css(@document, 'root a:nth-of-type(-n+2)')
-        .should == node_set(@a1, @a2, @a4)
+      expect(evaluate_css(@document, 'root a:nth-of-type(-n+2)'))
+        .to eq(node_set(@a1, @a2, @a4))
     end
 
     it 'returns a node set containing all nodes starting at node 2' do
-      evaluate_css(@document, 'root a:nth-of-type(n+2)')
-        .should == node_set(@a2, @a3)
+      expect(evaluate_css(@document, 'root a:nth-of-type(n+2)'))
+        .to eq(node_set(@a2, @a3))
     end
   end
 end

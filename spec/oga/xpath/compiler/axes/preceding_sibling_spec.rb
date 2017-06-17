@@ -21,19 +21,19 @@ describe Oga::XPath::Compiler do
   describe 'relative to a document' do
     describe 'preceding-sibling::*' do
       it 'returns an empty NodeSet' do
-        evaluate_xpath(@document).should == node_set
+        expect(evaluate_xpath(@document)).to eq(node_set)
       end
     end
 
     describe 'root/bar/preceding-sibling::foo' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@document).should == node_set(@foo1)
+        expect(evaluate_xpath(@document)).to eq(node_set(@foo1))
       end
     end
 
     describe 'root/bar/baz/preceding-sibling::foo' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@document).should == node_set(@foo2)
+        expect(evaluate_xpath(@document)).to eq(node_set(@foo2))
       end
     end
   end
@@ -41,7 +41,7 @@ describe Oga::XPath::Compiler do
   describe 'relative to an element' do
     describe 'preceding-sibling::foo' do
       it 'returns a NodeSet' do
-        evaluate_xpath(@bar1).should == node_set(@foo1)
+        expect(evaluate_xpath(@bar1)).to eq(node_set(@foo1))
       end
     end
   end
@@ -49,7 +49,7 @@ describe Oga::XPath::Compiler do
   describe 'relative to the root element' do
     describe 'preceding-sibling::*' do
       it 'returns an empty NodeSet' do
-        evaluate_xpath(@document.children[0]).should == node_set
+        expect(evaluate_xpath(@document.children[0])).to eq(node_set)
       end
     end
   end
@@ -59,7 +59,7 @@ describe Oga::XPath::Compiler do
       it 'returns an empty NodeSet' do
         root = @document.children[0]
 
-        evaluate_xpath(root.attribute('foo')).should == node_set
+        expect(evaluate_xpath(root.attribute('foo'))).to eq(node_set)
       end
     end
   end

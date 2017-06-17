@@ -7,15 +7,15 @@ describe Oga::XML::Parser do
     end
 
     it 'returns an Element instance' do
-      @element.is_a?(Oga::XML::Element).should == true
+      expect(@element.is_a?(Oga::XML::Element)).to eq(true)
     end
 
     it 'sets the name of the element' do
-      @element.name.should == 'p'
+      expect(@element.name).to eq('p')
     end
 
     it 'does not set a namespace' do
-      @element.namespace.should be_nil
+      expect(@element.namespace).to be_nil
     end
   end
 
@@ -25,15 +25,15 @@ describe Oga::XML::Parser do
     end
 
     it 'returns an Element instance' do
-      @element.is_a?(Oga::XML::Element).should == true
+      expect(@element.is_a?(Oga::XML::Element)).to eq(true)
     end
 
     it 'sets the name of the element' do
-      @element.name.should == 'p'
+      expect(@element.name).to eq('p')
     end
 
     it 'sets the namespace of the element' do
-      @element.namespace.name.should == 'foo'
+      expect(@element.namespace.name).to eq('foo')
     end
   end
 
@@ -46,19 +46,19 @@ describe Oga::XML::Parser do
     end
 
     it 'sets the namespace name of the <foo> element' do
-      @foo.namespace.name.should == 'xmlns'
+      expect(@foo.namespace.name).to eq('xmlns')
     end
 
     it 'sets the namespace URI of the <foo> element' do
-      @foo.namespace.uri.should == 'bar'
+      expect(@foo.namespace.uri).to eq('bar')
     end
 
     it 'sets the namespace name of the <bar> element' do
-      @bar.namespace.name.should == 'xmlns'
+      expect(@bar.namespace.name).to eq('xmlns')
     end
 
     it 'sets the namespace URI of the <bar> element' do
-      @bar.namespace.uri.should == 'bar'
+      expect(@bar.namespace.uri).to eq('bar')
     end
   end
 
@@ -68,15 +68,15 @@ describe Oga::XML::Parser do
     end
 
     it 'returns an Element instance' do
-      @element.is_a?(Oga::XML::Element).should == true
+      expect(@element.is_a?(Oga::XML::Element)).to eq(true)
     end
 
     it 'sets the bar attribute' do
-      @element.attribute('bar').value.should == 'baz'
+      expect(@element.attribute('bar').value).to eq('baz')
     end
 
     it 'does not set the attribute namespace' do
-      @element.attribute('bar').namespace.should be_nil
+      expect(@element.attribute('bar').namespace).to be_nil
     end
   end
 
@@ -86,11 +86,11 @@ describe Oga::XML::Parser do
     end
 
     it 'returns an Element instance' do
-      @element.is_a?(Oga::XML::Element).should == true
+      expect(@element.is_a?(Oga::XML::Element)).to eq(true)
     end
 
     it 'sets the bar attribute' do
-      @element.attribute('bar').value.should be_nil
+      expect(@element.attribute('bar').value).to be_nil
     end
   end
 
@@ -100,11 +100,11 @@ describe Oga::XML::Parser do
     end
 
     it 'returns an Element instance' do
-      @element.is_a?(Oga::XML::Element).should == true
+      expect(@element.is_a?(Oga::XML::Element)).to eq(true)
     end
 
     it 'sets the bar attribute' do
-      @element.attribute('bar').value.should == ''
+      expect(@element.attribute('bar').value).to eq('')
     end
   end
 
@@ -114,19 +114,19 @@ describe Oga::XML::Parser do
     end
 
     it 'returns an Element instance' do
-      @element.is_a?(Oga::XML::Element).should == true
+      expect(@element.is_a?(Oga::XML::Element)).to eq(true)
     end
 
     it 'includes the namespace of the attribute' do
-      @element.attribute('x:bar').namespace.name.should == 'x'
+      expect(@element.attribute('x:bar').namespace.name).to eq('x')
     end
 
     it 'includes the name of the attribute' do
-      @element.attribute('x:bar').name.should == 'bar'
+      expect(@element.attribute('x:bar').name).to eq('bar')
     end
 
     it 'includes the value of the attribute' do
-      @element.attribute('x:bar').value.should == 'baz'
+      expect(@element.attribute('x:bar').value).to eq('baz')
     end
   end
 
@@ -136,15 +136,15 @@ describe Oga::XML::Parser do
     end
 
     it 'sets the name of the outer element' do
-      @element.name.should == 'a'
+      expect(@element.name).to eq('a')
     end
 
     it 'sets the child elements' do
-      @element.children[0].is_a?(Oga::XML::Element).should == true
+      expect(@element.children[0].is_a?(Oga::XML::Element)).to eq(true)
     end
 
     it 'sets the name of the child element' do
-      @element.children[0].name.should == 'b'
+      expect(@element.children[0].name).to eq('b')
     end
   end
 
@@ -154,11 +154,11 @@ describe Oga::XML::Parser do
     end
 
     it 'includes the text node of the outer element' do
-      @element.children[0].is_a?(Oga::XML::Text).should == true
+      expect(@element.children[0].is_a?(Oga::XML::Text)).to eq(true)
     end
 
     it 'includes the text node of the inner element' do
-      @element.children[1].children[0].is_a?(Oga::XML::Text).should == true
+      expect(@element.children[1].children[0].is_a?(Oga::XML::Text)).to eq(true)
     end
   end
 
@@ -171,22 +171,22 @@ describe Oga::XML::Parser do
     end
 
     it 'returns the namespaces of the <root> node' do
-      @root.namespaces['a'].name.should == 'a'
-      @root.namespaces['a'].uri.should  == '1'
+      expect(@root.namespaces['a'].name).to eq('a')
+      expect(@root.namespaces['a'].uri).to  eq('1')
     end
 
     it 'returns the namespaces of the <foo> node' do
-      @foo.namespaces['b'].name.should == 'b'
-      @foo.namespaces['b'].uri.should  == '2'
+      expect(@foo.namespaces['b'].name).to eq('b')
+      expect(@foo.namespaces['b'].uri).to  eq('2')
     end
 
     it 'returns the available namespaces of the <root> node' do
-      @root.available_namespaces['a'].name.should == 'a'
+      expect(@root.available_namespaces['a'].name).to eq('a')
     end
 
     it 'returns the available namespaces of the <foo> node' do
-      @foo.available_namespaces['a'].name.should == 'a'
-      @foo.available_namespaces['b'].name.should == 'b'
+      expect(@foo.available_namespaces['a'].name).to eq('a')
+      expect(@foo.available_namespaces['b'].name).to eq('b')
     end
   end
 end

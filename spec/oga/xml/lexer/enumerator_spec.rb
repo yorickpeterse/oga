@@ -10,18 +10,18 @@ describe Oga::XML::Lexer do
     end
 
     it 'lexes a paragraph element' do
-      lex(@enum).should == [
+      expect(lex(@enum)).to eq([
         [:T_ELEM_NAME, 'p', 1],
         [:T_TEXT, 'foo', 1],
         [:T_ELEM_END, nil, 1]
-      ]
+      ])
     end
 
     it 'rewinds input when resetting the lexer' do
       lexer = described_class.new(@enum)
 
-      lexer.lex.empty?.should == false
-      lexer.lex.empty?.should == false
+      expect(lexer.lex.empty?).to eq(false)
+      expect(lexer.lex.empty?).to eq(false)
     end
   end
 end

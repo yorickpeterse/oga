@@ -14,15 +14,15 @@ describe Oga::Whitelist do
     it 'returns false for a name not in the list' do
       list = described_class.new(%w{foo})
 
-      list.allow?('bar').should == false
-      list.allow?('BAR').should == false
+      expect(list.allow?('bar')).to eq(false)
+      expect(list.allow?('BAR')).to eq(false)
     end
 
     it 'returns true for a name in the list' do
       list = described_class.new(%w{foo})
 
-      list.allow?('foo').should == true
-      list.allow?('FOO').should == true
+      expect(list.allow?('foo')).to eq(true)
+      expect(list.allow?('FOO')).to eq(true)
     end
   end
 
@@ -32,8 +32,8 @@ describe Oga::Whitelist do
       list2 = described_class.new(%w{bar})
       list3 = list1 + list2
 
-      list3.should be_an_instance_of(described_class)
-      list3.names.to_a.should == %w{foo FOO bar BAR}
+      expect(list3).to be_an_instance_of(described_class)
+      expect(list3.names.to_a).to eq(%w{foo FOO bar BAR})
     end
   end
 
@@ -42,8 +42,8 @@ describe Oga::Whitelist do
       whitelist = described_class.new(%w{foo})
       blacklist = whitelist.to_blacklist
 
-      blacklist.should be_an_instance_of(Oga::Blacklist)
-      blacklist.names.should == whitelist.names
+      expect(blacklist).to be_an_instance_of(Oga::Blacklist)
+      expect(blacklist.names).to eq(whitelist.names)
     end
   end
 end

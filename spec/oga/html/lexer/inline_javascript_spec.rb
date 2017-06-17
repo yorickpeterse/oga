@@ -7,54 +7,54 @@ describe Oga::XML::Lexer do
     end
 
     it 'lexes inline Javascript' do
-      lex("<script>#{@javascript}</script>").should == [
+      expect(lex("<script>#{@javascript}</script>")).to eq([
         [:T_ELEM_NAME, 'script', 1],
         [:T_TEXT, @javascript, 1],
         [:T_ELEM_END, nil, 1]
-      ]
+      ])
     end
 
     it 'lexes inline Javascript containing an XML comment' do
-      lex("<script>#{@javascript}<!--foo--></script>").should == [
+      expect(lex("<script>#{@javascript}<!--foo--></script>")).to eq([
         [:T_ELEM_NAME, 'script', 1],
         [:T_TEXT, @javascript, 1],
         [:T_COMMENT_START, nil, 1],
         [:T_COMMENT_BODY, 'foo', 1],
         [:T_COMMENT_END, nil, 1],
         [:T_ELEM_END, nil, 1]
-      ]
+      ])
     end
 
     it 'lexes inline Javascript containing a CDATA tag' do
-      lex("<script>#{@javascript}<![CDATA[foo]]></script>").should == [
+      expect(lex("<script>#{@javascript}<![CDATA[foo]]></script>")).to eq([
         [:T_ELEM_NAME, 'script', 1],
         [:T_TEXT, @javascript, 1],
         [:T_CDATA_START, nil, 1],
         [:T_CDATA_BODY, 'foo', 1],
         [:T_CDATA_END, nil, 1],
         [:T_ELEM_END, nil, 1]
-      ]
+      ])
     end
 
     it 'lexes inline Javascript containing a processing instruction' do
-      lex("<script>#{@javascript}<?foo?></script>").should == [
+      expect(lex("<script>#{@javascript}<?foo?></script>")).to eq([
         [:T_ELEM_NAME, 'script', 1],
         [:T_TEXT, @javascript, 1],
         [:T_PROC_INS_START, nil, 1],
         [:T_PROC_INS_NAME, 'foo', 1],
         [:T_PROC_INS_END, nil, 1],
         [:T_ELEM_END, nil, 1]
-      ]
+      ])
     end
 
     it 'lexes inline Javascript containing another element' do
-      lex("<script>#{@javascript}<p></p></script>").should == [
+      expect(lex("<script>#{@javascript}<p></p></script>")).to eq([
         [:T_ELEM_NAME, 'script', 1],
         [:T_TEXT, @javascript, 1],
         [:T_ELEM_NAME, 'p', 1],
         [:T_ELEM_END, nil, 1],
         [:T_ELEM_END, nil, 1]
-      ]
+      ])
     end
   end
 end

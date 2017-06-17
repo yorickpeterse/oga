@@ -12,23 +12,23 @@ describe 'CSS selector evaluation' do
     end
 
     it 'returns a node set containing the root node' do
-      evaluate_css(@document, 'a').should == node_set(@a1)
+      expect(evaluate_css(@document, 'a')).to eq(node_set(@a1))
     end
 
     it 'returns a node set containing nested nodes' do
-      evaluate_css(@document, 'a b').should == node_set(@b1, @b2)
+      expect(evaluate_css(@document, 'a b')).to eq(node_set(@b1, @b2))
     end
 
     it 'returns a node set containing the union of multiple paths' do
-      evaluate_css(@document, 'b, ns1|c').should == node_set(@b1, @b2, @c1)
+      expect(evaluate_css(@document, 'b, ns1|c')).to eq(node_set(@b1, @b2, @c1))
     end
 
     it 'returns a node set containing namespaced nodes' do
-      evaluate_css(@document, 'a ns1|c').should == node_set(@c1)
+      expect(evaluate_css(@document, 'a ns1|c')).to eq(node_set(@c1))
     end
 
     it 'returns a node set containing wildcard nodes' do
-      evaluate_css(@document, 'a *').should == node_set(@b1, @b2, @c1)
+      expect(evaluate_css(@document, 'a *')).to eq(node_set(@b1, @b2, @c1))
     end
 
     it 'returns a node set containing nodes with namespace wildcards' do
@@ -36,11 +36,11 @@ describe 'CSS selector evaluation' do
     end
 
     it 'returns a node set containing nodes with a namespace name and name wildcard' do
-      evaluate_css(@document, 'a ns1|*').should == node_set(@c1)
+      expect(evaluate_css(@document, 'a ns1|*')).to eq(node_set(@c1))
     end
 
     it 'returns a node set containing nodes using full wildcards' do
-      evaluate_css(@document, 'a *|*').should == node_set(@b1, @b2, @c1)
+      expect(evaluate_css(@document, 'a *|*')).to eq(node_set(@b1, @b2, @c1))
     end
   end
 end

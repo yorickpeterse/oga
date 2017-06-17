@@ -18,8 +18,8 @@ describe 'CSS selector evaluation' do
     end
 
     it 'returns a node set containing all last <a> nodes' do
-      evaluate_css(@document, 'root a:last-of-type')
-        .should == node_set(@a2, @a4)
+      expect(evaluate_css(@document, 'root a:last-of-type'))
+        .to eq(node_set(@a2, @a4))
     end
   end
 end

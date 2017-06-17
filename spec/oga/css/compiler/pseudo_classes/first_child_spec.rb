@@ -10,15 +10,15 @@ describe 'CSS selector evaluation' do
     end
 
     it 'returns a node set containing the first child node' do
-      evaluate_css(@document, 'root :first-child').should == node_set(@a1)
+      expect(evaluate_css(@document, 'root :first-child')).to eq(node_set(@a1))
     end
 
     it 'returns a node set containing the first child node with a node test' do
-      evaluate_css(@document, 'root a:first-child').should == node_set(@a1)
+      expect(evaluate_css(@document, 'root a:first-child')).to eq(node_set(@a1))
     end
 
     it 'returns an empty node set for non first-child nodes' do
-      evaluate_css(@document, 'root b:first-child').should == node_set
+      expect(evaluate_css(@document, 'root b:first-child')).to eq(node_set)
     end
   end
 end

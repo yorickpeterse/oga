@@ -7,7 +7,7 @@ describe Oga::XPath::Compiler do
     end
 
     it 'returns true' do
-      evaluate_xpath(@document, 'true()').should == true
+      expect(evaluate_xpath(@document, 'true()')).to eq(true)
     end
   end
 end
