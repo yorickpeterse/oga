@@ -6,9 +6,9 @@ one should follow.
 
 ## Code of Conduct
 
-The code of conduct ("CoC") can be found in the file "COC.md". Everybody
-participating in this project must adhere to the rules and guidelines stated in
-this CoC.
+The code of conduct ("CoC") can be found in the file "CODE_OF_CONDUCT.md".
+Everybody participating in this project must adhere to the rules and guidelines
+stated in this CoC.
 
 ## General
 
