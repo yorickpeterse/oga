@@ -1,5 +1,9 @@
 # Oga
 
+**NOTE:** my spare time is limited which means I am unable to dedicate a lot of
+time on Oga. If you're interested in contributing to FOSS, please take a look at
+the open issues and submit a pull request to address them where possible.
+
 Oga is an XML/HTML parser written in Ruby. It provides an easy to use API for
 parsing, modifying and querying documents (using XPath expressions). Oga does
 not require system libraries such as libxml, making it easier and faster to
