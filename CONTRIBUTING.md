@@ -75,36 +75,29 @@ Use spaces for indentation, tabs are not accepted. The usage of spaces ensures
 the indentation is identical no matter what program or system is used to view
 the source code.
 
-Hard wrap lines at 80 characters per line. Most modern editors can easily handle
-this, if not you should get a better editor. For example, in Vim you can select
-text in visual mode (using `v`) and press `gq` to automatically re-wrap the
-selected text.
+Hard wrap lines at roughly 80 characters per line. Most modern editors can
+easily handle this. For example, in Vim you can select text in visual mode
+(using `v`) and press `gq` to automatically re-wrap the selected text.
 
 It's OK if a line is a few characters longer than 80 but _please_ keep it as
 close to 80 characters as possible. Typically I do this when wrapping the line
 results in several extra lines without it being much more readable.
 
-I often have multiple windows vertically next to each other and 80 characters
-per line is the only setup that lets me do so, even on smaller screen
-resolutions. For example, my typical setup is 1 file browser and two vertical
-windows. Using 80 characters per line ensures all code fits in that space along
-with some slight padding to make reading more pleasant.
-
 To make this process easier Oga comes with an [EditorConfig][editorconfig]
 configuration file. If your editor supports this it will automatically apply
-the required settings for you.
+various settings for you.
 
 ## Hacking on Oga
 
 Before you start hacking on Oga make sure the following libraries/tools are
 installed:
 
-* Ragel 6.x (6.9 recommended)
+* Ragel 6.x (6.10 recommended), Ragel 7.x is not supported
 * gunzip (to unpack the fixtures)
 * javac (only when using JRuby)
 
-Assuming you have the above tools installed and a local Git clone of Oga, lets
-install the required Gems:
+Assuming you have the above tools installed and a local Git clone of Oga, first
+you'll need to install the required Gems:
 
     bundle install
 
@@ -112,7 +105,8 @@ Next up, compile the required files and run the tests:
 
     rake
 
-You can compile the various parsers/extensions by running:
+If you just want to generate various files (e.g. the C extension), run the
+following instead:
 
     rake generate
 
@@ -128,19 +122,10 @@ benchmark is just a matter of running a Ruby script, for example:
 
 ## Tests
 
-Tests are written using RSpec and use the "should" syntax instead of the
-"expect" syntax (for as long as RSpec keeps supporting this). This means that
-assertions are written as following:
-
-    some_object.should == some_value
-
-instead of this:
-
-    expect(some_object).to eq(some_value)
-
-Specification blocks should be written using `it`, grouping should be done using
-`describe`. Specification descriptions should be meaningful and human friendly
-English. For example:
+Tests are written using RSpec and use the "expect" syntax. Specification blocks
+should be written using `it`, grouping should be done using `describe`.
+Specification descriptions should be meaningful and human-friendly English. For
+example:
 
     describe Oga::XML::Entities do
       describe 'decode' do
@@ -154,29 +139,10 @@ Typically the top-level `describe` block is used to describe a method name. In
 such a case use `describe 'foo'` for class methods and `describe '#foo'` for
 instance methods.
 
-Do not use `let` for creating data re-used between specifications, instead use
-a `before` block that sets an instance variable. In other words, use this:
-
-    before do
-      @number = 10
-    end
-
-instead of this:
-
-    let(:number) { 10 }
-
-Instance variables stand out much more and they don't require one to also
-understand what exactly `let` does which in turn simplifies the process of
-reading and writing specifications.
-
-Whenever adding new specifications please keep them in the existing style unless
-I indicate otherwise. There's nothing more annoying than inconsistent
-specifications.
-
-If you insist on changing the structure/style of specifications please open an
-issue and ask about it _before_ making any changes. I am very picky about how I
-want things and it would be a shame for somebody to spend hours working on
-something that isn't going to be merged in any way.
+Whenever adding new specifications please keep them in the existing style. If
+the style is problematic you can open a separate pull request to address it. If
+you expect this to be a lot of work you should open an issue first to discuss
+things.
 
 ## Continuous Integration
 
@@ -186,8 +152,7 @@ at all times:
 * Travis CI: <https://travis-ci.org/YorickPeterse/oga>
 * AppVeyor (Windows): <https://ci.appveyor.com/project/YorickPeterse/oga>
 
-Please note that I will not accept patches that break any tests unless stated
-otherwise.
+Pull requests won't be merged if any of the builds fail unless stated otherwise.
 
 ## Extension Setup
 
