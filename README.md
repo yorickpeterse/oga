@@ -291,7 +291,7 @@ Currently there are a few existing parser out there, the most famous one being
 
 The sad truth is that these existing libraries are problematic in their own
 ways. Nokogiri for example is extremely unstable on Rubinius. On MRI it works
-because of the non conccurent nature of MRI, on JRuby it works because it's
+because of the non concurrent nature of MRI, on JRuby it works because it's
 implemented as Java. Nokogiri also uses libxml2 which is a massive beast of a
 library, is not thread-safe and problematic to install on certain platforms
 (apparently). I don't want to compile libxml2 every time I install Nokogiri
