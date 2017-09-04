@@ -74,18 +74,7 @@ module Oga
         super(*args)
       end
 
-      # Delegate all callbacks to the handler object.
-      instance_methods.grep(/^(on_|after_)/).each do |method|
-        eval <<-EOF, nil, __FILE__, __LINE__ + 1
-        def #{method}(*args)
-          run_callback(:#{method}, *args)
-
-          return
-        end
-        EOF
-      end
-
-      # Manually overwrite `on_element` so we can ensure that `after_element`
+      # Manually define `on_element` so we can ensure that `after_element`
       # always receives the namespace and name.
       #
       # @see [Oga::XML::Parser#on_element]
@@ -96,7 +85,7 @@ module Oga
         [namespace, name]
       end
 
-      # Manually overwrite `after_element` so it can take a namespace and name.
+      # Manually define `after_element` so it can take a namespace and name.
       # This differs a bit from the regular `after_element` which only takes an
       # {Oga::XML::Element} instance.
       #
@@ -107,7 +96,7 @@ module Oga
         return
       end
 
-      # Manually overwrite this method since for this one we _do_ want the
+      # Manually define this method since for this one we _do_ want the
       # return value so it can be passed to `on_element`.
       #
       # @see [Oga::XML::Parser#on_attribute]
@@ -155,6 +144,21 @@ module Oga
         end
 
         return
+      end
+
+      # Delegate remaining callbacks to the handler object.
+      existing_methods = instance_methods(false)
+
+      instance_methods.grep(/^(on_|after_)/).each do |method|
+        next if existing_methods.include?(method)
+
+        eval <<-EOF, nil, __FILE__, __LINE__ + 1
+        def #{method}(*args)
+          run_callback(:#{method}, *args)
+
+          return
+        end
+        EOF
       end
 
       private
