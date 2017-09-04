@@ -34,10 +34,11 @@ module Oga
       def initialize(options = {})
         super
 
-        @name           = options[:name]
-        @namespace_name = options[:namespace_name]
-        @attributes     = options[:attributes] || []
-        @namespaces     = options[:namespaces] || {}
+        @name                 = options[:name]
+        @namespace_name       = options[:namespace_name]
+        @attributes           = options[:attributes] || []
+        @namespaces           = options[:namespaces] || {}
+        @available_namespaces = nil
 
         link_attributes
         register_namespaces_from_attributes
