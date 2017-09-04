@@ -34,10 +34,11 @@ module Oga
       # @option options [String] :value
       # @option options [Oga::XML::Element] :element
       def initialize(options = {})
-        @name    = options[:name]
-        @value   = options[:value]
-        @element = options[:element]
-
+        @name           = options[:name]
+        @value          = options[:value]
+        @element        = options[:element]
+        @decoded        = false
+        @namespace      = nil
         @namespace_name = options[:namespace_name]
       end
 
