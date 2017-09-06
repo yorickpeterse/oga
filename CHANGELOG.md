@@ -3,13 +3,18 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 2.11 - 2017-09-07
+
+Various Ruby warnings have been resolved by Loic Nageleisen. See pull request
+<https://github.com/YorickPeterse/oga/pull/180> for more information.
+
 ## 2.10 - 2017-04-18
 
 ### Fix `Element#attribute` for HTML documents when using Symbol arguments
 
 You can now pass a Symbol to `Oga::XML::Element#attribute` for both XML and HTML
-documents, previously this only worked for XML documents. See [PR
-#174](https://github.com/YorickPeterse/oga/pull/174) for more information.
+documents, previously this only worked for XML documents. See
+[PR #174](https://github.com/YorickPeterse/oga/pull/174) for more information.
 
 ## 2.9 - 2017-02-10
 
