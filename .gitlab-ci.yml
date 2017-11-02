@@ -2,6 +2,7 @@
 .defaults: &defaults
   before_script:
     - apk add --update ragel build-base
+    - if [ "$INSTALL_OPENJDK" == "true" ]; then apk add openjdk8; fi
     - gem install bundler --no-ri --no-rdoc
     - ruby --version
     - gem --version
@@ -27,4 +28,6 @@ Ruby 2.4:
 
 JRuby 9.1:
   image: "jruby:9.1-alpine"
+  variables:
+    INSTALL_OPENJDK: true
   <<: *defaults
