@@ -1,7 +1,7 @@
 ---
 .defaults: &defaults
   before_script:
-    - apk add --update ragel=6.9-r0
+    - apk add --update ragel=6.9-r0 build-base
     - gem install bundler --no-ri --no-rdoc
     - ruby --version
     - gem --version
