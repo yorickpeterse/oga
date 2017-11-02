@@ -20,7 +20,7 @@ stated in this CoC.
 
 ## Submitting Changes
 
-Before making any big changes it's best to open a Github issue to discuss the
+Before making any big changes it's best to open a GitLab issue to discuss the
 matter, this saves you from potentially spending hours on something that might
 ultimately be rejected.
 
@@ -43,11 +43,11 @@ changes are submitted.
 
 Some examples of good pull request:
 
-* https://github.com/YorickPeterse/oga/pull/96
-* https://github.com/YorickPeterse/oga/pull/67
-* https://github.com/YorickPeterse/ffi-aspell/pull/21
-* https://github.com/YorickPeterse/ffi-aspell/pull/20
-* https://github.com/YorickPeterse/ruby-ll/pull/16
+* https://gitlab.com/yorickpeterse/oga/pull/96
+* https://gitlab.com/yorickpeterse/oga/pull/67
+* https://gitlab.com/yorickpeterse/ffi-aspell/pull/21
+* https://gitlab.com/yorickpeterse/ffi-aspell/pull/20
+* https://gitlab.com/yorickpeterse/ruby-ll/pull/16
 
 ## Git
 

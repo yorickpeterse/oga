@@ -1,0 +1,29 @@
+.defaults: &defaults
+	before_script:
+		- sudo apk add --update ragel=6.9
+		- gem install bundler --no-ri --no-rdoc
+		- ruby --version
+		- gem --version
+		- bundle --version
+		- bundle install -j $(nproc) --path vendor --retry=3
+	script:
+		- bundle exec rake
+	cache:
+		paths:
+			- vendor/ruby
+
+Ruby 2.2:
+	image: "ruby:2.2-alpine"
+  <<: *defaults
+
+Ruby 2.3:
+	image: "ruby:2.3-alpine"
+  <<: *defaults
+
+Ruby 2.4:
+	image: "ruby:2.4-alpine"
+  <<: *defaults
+
+JRuby 9.1:
+  image: "jruby:9.1-alpine"
+  <<: *defaults

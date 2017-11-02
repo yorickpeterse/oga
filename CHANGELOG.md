@@ -6,7 +6,7 @@ Dates are in the format `yyyy-mm-dd`.
 ## 2.11 - 2017-09-07
 
 Various Ruby warnings have been resolved by Loic Nageleisen. See pull request
-<https://github.com/YorickPeterse/oga/pull/180> for more information.
+<https://gitlab.com/yorickpeterse/oga/pull/180> for more information.
 
 ## 2.10 - 2017-04-18
 
@@ -14,7 +14,7 @@ Various Ruby warnings have been resolved by Loic Nageleisen. See pull request
 
 You can now pass a Symbol to `Oga::XML::Element#attribute` for both XML and HTML
 documents, previously this only worked for XML documents. See
-[PR #174](https://github.com/YorickPeterse/oga/pull/174) for more information.
+[PR #174](https://gitlab.com/yorickpeterse/oga/pull/174) for more information.
 
 ## 2.9 - 2017-02-10
 
@@ -77,7 +77,7 @@ for more information and thanks to Scott Wheeler for contributing the patch.
 
 This release fixes a bug in the XML generation code that would cause it to get
 stuck in the generation loop. See issue
-<https://github.com/YorickPeterse/oga/issues/161> and commit
+<https://gitlab.com/yorickpeterse/oga/issues/161> and commit
 38284278d542640c3d8300ef15890af93b6df779 for more information.
 
 ## 2.5 - 2016-09-06
@@ -85,7 +85,7 @@ stuck in the generation loop. See issue
 This release fixes a bug in the XML parser that would prevent it from parsing
 doctypes that contain a mixture of public/system IDs, a name, and inline rules.
 
-See issue <https://github.com/YorickPeterse/oga/issues/159> and commit
+See issue <https://gitlab.com/yorickpeterse/oga/issues/159> and commit
 68f1f9f660b90a43d22c8514e8cbf53f7ca0097d for more information.
 
 ## 2.4 - 2016-09-04
@@ -96,7 +96,7 @@ Oga can now serialise large documents without causing the call stack to overflow
 thanks to the new `Oga::XML::Generator` class. This class can generate XML
 without using a stack at all.
 
-See issue <https://github.com/YorickPeterse/oga/issues/158> and commit
+See issue <https://gitlab.com/yorickpeterse/oga/issues/158> and commit
 dd138981f68a606eff5d5a01e990f04398087dc4 for more information.
 
 ### Faster retrieval of previous/next nodes
@@ -114,14 +114,14 @@ See commit 5a58b1413767fed4518e8a67c4eb432a31592660 for more information.
 Thanks to various changes provided by Erik Michaels-Ober Oga can now be used to
 parse XML input from a pipe (as returned by for example `IO.pipe`). See the
 following pull request for more information:
-<https://github.com/YorickPeterse/oga/pull/154>.
+<https://gitlab.com/yorickpeterse/oga/pull/154>.
 
 ## 2.2 - 2016-02-23
 
 ### XPath support for nested pipe operators
 
 Nested pipe operators such as `a | b | c` are now supported as XPath
-expressions. See issue <https://github.com/YorickPeterse/oga/issues/149> and
+expressions. See issue <https://gitlab.com/yorickpeterse/oga/issues/149> and
 commit 6d3c5c2ce93cbce337338bdc1a4971da72517038 for more information.
 
 ## 2.1 - 2016-02-09
@@ -130,7 +130,7 @@ commit 6d3c5c2ce93cbce337338bdc1a4971da72517038 for more information.
 
 Decoding of invalid XML/HTML entities now results in these entities being
 preserved as-is, instead of raising an EncodingError in certain places. See
-<https://github.com/YorickPeterse/oga/issues/143> and commit
+<https://gitlab.com/yorickpeterse/oga/issues/143> and commit
 5bfc2d50f2a3d387cb9fc28826d1f3d5a2d9d224 for more information.
 
 ### New Versioning Format
@@ -228,8 +228,8 @@ new compiler setup, how it works, how it performs, etc.
 
 In the mean time, see the following issues/pull requests for more information:
 
-* <https://github.com/YorickPeterse/oga/issues/102>
-* <https://github.com/YorickPeterse/oga/pull/138>
+* <https://gitlab.com/yorickpeterse/oga/issues/102>
+* <https://gitlab.com/yorickpeterse/oga/pull/138>
 
 ### Escaping of characters in CSS expressions
 
@@ -238,14 +238,14 @@ namespace. This can be done by escaping the dot using a backslash. For example:
 
     Oga.parse_xml('<foo.bar />').css('foo\.bar') # => NodeSet(Element(name: "foo.bar"))
 
-See issue <https://github.com/YorickPeterse/oga/issues/124> for more
+See issue <https://gitlab.com/yorickpeterse/oga/issues/124> for more
 information.
 
 ### Support for the CSS :not() pseudo class
 
 CSS expressions can now use the `:not()` pseudo class.
 
-See issue <https://github.com/YorickPeterse/oga/issues/125> for more
+See issue <https://gitlab.com/yorickpeterse/oga/issues/125> for more
 information.
 
 ### Improved parsing of CSS expressions
@@ -255,8 +255,8 @@ these would result in parser errors.
 
 See the following issues for more information:
 
-* <https://github.com/YorickPeterse/oga/issues/126>
-* <https://github.com/YorickPeterse/oga/issues/131>
+* <https://gitlab.com/yorickpeterse/oga/issues/126>
+* <https://gitlab.com/yorickpeterse/oga/issues/131>
 
 ### Unicode support for CSS/XPath
 
@@ -264,7 +264,7 @@ CSS and XPath expressions can now contain Unicode characters, previously only
 ASCII characters were allowed for identifiers (node tests, attribute names,
 etc).
 
-See issue <https://github.com/YorickPeterse/oga/issues/140> for more
+See issue <https://gitlab.com/yorickpeterse/oga/issues/140> for more
 information.
 
 ## 1.2.3 - 2015-08-19
@@ -312,8 +312,8 @@ Jakub Pawlowicz improved the process of decoding XML/HTML entities so that it
 handles unrecognized entities better. Previously Oga would raise an error when
 trying to decode entities such as `&#TAB;` instead of just leaving them as-is.
 
-See issue <https://github.com/YorickPeterse/oga/issues/118> and pull request
-<https://github.com/YorickPeterse/oga/pull/122> for more information.
+See issue <https://gitlab.com/yorickpeterse/oga/issues/118> and pull request
+<https://gitlab.com/yorickpeterse/oga/pull/122> for more information.
 
 ## 1.2.0 - 2015-06-30
 
@@ -372,7 +372,7 @@ replaced with a Text node). For example:
 Thanks to Tero Tasanen for adding this.
 
 See commit 0b4791b277abf492ae0feb1c467dfc03aef4f2ec and
-<https://github.com/YorickPeterse/oga/pull/116> for more information.
+<https://gitlab.com/yorickpeterse/oga/pull/116> for more information.
 
 ### Encoding quotes in attribute values
 
@@ -527,8 +527,8 @@ See the following commits for more information:
 
 The following issues are also worth checking out:
 
-* https://github.com/YorickPeterse/oga/issues/101
-* https://github.com/YorickPeterse/oga/issues/99
+* https://gitlab.com/yorickpeterse/oga/issues/101
+* https://gitlab.com/yorickpeterse/oga/issues/99
 
 ### Handling of invalid XML/HTML
 
@@ -605,7 +605,7 @@ And so is this:
 
     <a href=foo/bar>Foo/bar</a>
 
-See Github issue <https://github.com/YorickPeterse/oga/issues/94> and the
+See GitLab issue <https://gitlab.com/yorickpeterse/oga/issues/94> and the
 following commits for more information:
 
 * bc9b9bc9537d9dc614b47323e0a6727a4ec2dd04
@@ -629,7 +629,7 @@ The XML lexer has been tweaked so it can handle multi-line CDATA tags, comments
 and processing instructions, both when using a String and IO (or similar) as
 input.
 
-See Github issue <https://github.com/YorickPeterse/oga/issues/93> and the
+See GitLab issue <https://gitlab.com/yorickpeterse/oga/issues/93> and the
 following commits for more information:
 
 * b2ea20ba615953254554565e0c8b11587ac4f59c
@@ -745,7 +745,7 @@ like the other callbacks.
 ### Parser rewritten using ruby-ll
 
 The XML, CSS and XPath parsers have been re-written using ruby-ll
-(<https://github.com/yorickpeterse/ruby-ll>). While Racc served its purpose
+(<https://gitlab.com/yorickpeterse/ruby-ll>). While Racc served its purpose
 (until now) it has three main problems:
 
 1. Performance is not as good as it should be.
@@ -758,7 +758,7 @@ ruby-ll parsers. These parsers are LL(1) parsers which makes them a lot easier
 to debug. Performance is currently a tiny bit faster than the old Racc parsers,
 but this will be improved in the coming releases of both Oga and ruby-ll.
 
-See pull request <https://github.com/YorickPeterse/oga/pull/78> for more
+See pull request <https://gitlab.com/yorickpeterse/oga/pull/78> for more
 information.
 
 ### Lazy decoding of XML/HTML entities
@@ -804,7 +804,7 @@ documents _don't_ have their contents converted, ensuring proper Javascript
 syntax upon output.
 
 See commit 874d7124af540f0bc78e6c586868bbffb4310c5d and issue
-<https://github.com/YorickPeterse/oga/issues/79> for more information.
+<https://gitlab.com/yorickpeterse/oga/issues/79> for more information.
 
 ### Proper lexing support for script tags
 
@@ -812,7 +812,7 @@ When lexing HTML documents the XML lexer is now capable of lexing the contents
 of `<script>` tags properly. Previously input such as `<script>x >y</script>`
 would result in incorrect tokens being emitted. See commit
 ba2177e2cfda958ea12c5b04dbf60907aaa8816d and issue
-<https://github.com/YorickPeterse/oga/issues/70> for more information.
+<https://gitlab.com/yorickpeterse/oga/issues/70> for more information.
 
 ### Element Inner Text
 
@@ -820,7 +820,7 @@ When setting the inner text of an element using `Oga::XML::Element#inner_text=`
 _all_ child nodes of the element are now removed first, instead of only text
 nodes being removed.
 
-See <https://github.com/YorickPeterse/oga/issues/64> for more information.
+See <https://gitlab.com/yorickpeterse/oga/issues/64> for more information.
 
 ### Support for extra XML entities
 
@@ -878,14 +878,14 @@ perhaps other libraries) the parser _does not_ output XPath expressions as a
 String or a CSS specific AST. Instead it directly emits an XPath AST. This
 allows the resulting AST to be directly evaluated by `Oga::XPath::Evaluator`.
 
-See <https://github.com/YorickPeterse/oga/issues/11> for more information.
+See <https://gitlab.com/yorickpeterse/oga/issues/11> for more information.
 
 ### Mutli-line Attribute Support
 
 Oga can now lex/parse elements that have attributes with newlines in them.
 Previously this would trigger memory allocation errors.
 
-See <https://github.com/YorickPeterse/oga/issues/58> for more information.
+See <https://gitlab.com/yorickpeterse/oga/issues/58> for more information.
 
 ### SAX after_element
 
@@ -893,7 +893,7 @@ The `after_element` method in the SAX parsing API now always takes two
 arguments: the namespace name and element name. Previously this method would
 always receive a single nil value as its argument, which is rather pointless.
 
-See <https://github.com/YorickPeterse/oga/issues/54> for more information.
+See <https://gitlab.com/yorickpeterse/oga/issues/54> for more information.
 
 ### XPath Grouping
 
@@ -913,7 +913,7 @@ This can be used to download and parse XML files on the fly. For example:
 
     document = Oga.parse_xml(enum)
 
-See <https://github.com/YorickPeterse/oga/issues/48> for more information.
+See <https://gitlab.com/yorickpeterse/oga/issues/48> for more information.
 
 ### Removing Attributes
 
@@ -947,7 +947,7 @@ the usage of the default `Object#==` method.
 XML entities such as `&amp;` and `&lt;` are now encoded/decoded by the lexer,
 string and text nodes.
 
-See <https://github.com/YorickPeterse/oga/issues/49> for more information.
+See <https://gitlab.com/yorickpeterse/oga/issues/49> for more information.
 
 ### General
 
@@ -970,7 +970,7 @@ improved by removing String allocations that were not needed.
 ## 0.1.3 - 2014-09-24
 
 This release fixes a problem with serializing attributes using the namespace
-prefix "xmlns". See <https://github.com/YorickPeterse/oga/issues/47> for more
+prefix "xmlns". See <https://gitlab.com/yorickpeterse/oga/issues/47> for more
 information.
 
 ## 0.1.2 - 2014-09-23
