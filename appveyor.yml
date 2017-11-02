@@ -8,13 +8,14 @@ install:
   - 7z e C:\ragel.7z -oC:\ragel -y > nul
   - SET PATH=C:\Ruby%ruby_version%\bin;%PATH%
   - SET PATH=C:\ragel;%PATH%
-  - ruby --version
-  - gem --version
-  - appveyor DownloadFile https://rubygems.org/downloads/bundler-1.13.7.gem -FileName bundler-1.13.7.gem
-  - gem install bundler-1.13.7.gem --local --quiet --no-ri --no-rdoc
   - bundle install --retry 3
 
 build: off
+
+before_test:
+  - ruby --version
+  - gem --version
+  - bundle --version
 
 test_script:
   - rake
