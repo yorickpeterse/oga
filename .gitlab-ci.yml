@@ -6,7 +6,7 @@
     - ruby --version
     - gem --version
     - bundle --version
-    - bundle install -j $(nproc) --path vendor --retry=3
+    - bundle install --path vendor --retry=3
   script:
     - bundle exec rake
   cache:
