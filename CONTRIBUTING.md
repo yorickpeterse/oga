@@ -149,8 +149,8 @@ things.
 Two continuous integration services are used to ensure the tests of Oga pass
 at all times:
 
-* Travis CI: <https://travis-ci.org/YorickPeterse/oga>
-* AppVeyor (Windows): <https://ci.appveyor.com/project/YorickPeterse/oga>
+* Travis CI: <https://gitlab.com/yorickpeterse/oga/pipelines>
+* AppVeyor (Windows): <https://ci.appveyor.com/project/yorickpeterse/oga>
 
 Pull requests won't be merged if any of the builds fail unless stated otherwise.
 
