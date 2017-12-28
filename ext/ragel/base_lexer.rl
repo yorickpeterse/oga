@@ -389,6 +389,7 @@
 
     element_start = '<' ident_char;
     element_end   = '</';
+    element_start_pattern = '<' identifier (':' identifier)?;
 
     # Machine used for lexing the name/namespace of an element.
     element_name := |*
@@ -551,6 +552,7 @@
     # Machine used for processing the contents of an XML element's starting tag.
     element_head := |*
         newline => advance_newline;
+        element_start_pattern;
 
         # Attribute names and namespaces.
         identifier ':' => {
@@ -578,6 +580,7 @@
     # tag.
     html_element_head := |*
         newline => advance_newline;
+        element_start_pattern;
 
         html_identifier => {
             callback(id_on_attribute, data, encoding, ts, te);

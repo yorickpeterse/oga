@@ -344,4 +344,21 @@ describe Oga::XML::Lexer do
       [:T_ELEM_END, nil, 1]
     ])
   end
+
+  it 'lexes an element with a nested opening tag' do
+    expect(lex('<script<script>foo</script>')).to eq([
+      [:T_ELEM_NAME, 'script', 1],
+      [:T_TEXT, 'foo', 1],
+      [:T_ELEM_END, nil, 1]
+    ])
+  end
+
+  it 'lexes an element with a nested opening tag followed by an attribute' do
+    expect(lex('<script<script foo>foo</script>')).to eq([
+      [:T_ELEM_NAME, 'script', 1],
+      [:T_ATTR, 'foo', 1],
+      [:T_TEXT, 'foo', 1],
+      [:T_ELEM_END, nil, 1]
+    ])
+  end
 end
