@@ -6,7 +6,7 @@ Dates are in the format `yyyy-mm-dd`.
 ## 2.12 - 2017-12-29
 
 Element start tags containing other start tags (e.g. `<script<script>`) are now
-parser correctly.
+parsed correctly.
 
 See f574197ea657cf09405336ca618a22e32c94d0d0 for more information.
 
