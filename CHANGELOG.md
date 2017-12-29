@@ -3,6 +3,13 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 2.12 - 2017-12-29
+
+Element start tags containing other start tags (e.g. `<script<script>`) are now
+parser correctly.
+
+See f574197ea657cf09405336ca618a22e32c94d0d0 for more information.
+
 ## 2.11 - 2017-09-07
 
 Various Ruby warnings have been resolved by Loic Nageleisen. See pull request
