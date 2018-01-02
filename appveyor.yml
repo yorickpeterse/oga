@@ -4,17 +4,19 @@ image: Visual Studio 2017
 version: "{build}"
 
 install:
-  # Binary taken from http://w858rkbfg.homepage.t-online.de/index.php/software/ragel-windows/,
-  # rehosted on AWS so it doesn't randomly vanish.
-  - vcpkg install ragel
+  - if "%platform%"=="Win32" set VCPKG_ARCH=x86-windows
+  - if "%platform%"=="x64"   set VCPKG_ARCH=x64-windows
+  - vcpkg install ragel:%VCPKG_ARCH%
+  - SET PATH=C:\tools\vcpkg\installed\%VCPKG_ARCH%\bin;%PATH%
   - SET PATH=C:\Ruby%ruby_version%\bin;%PATH%
   - bundle install --retry 3
 
-cache: C:\tools\vcpkg\installed\
+cache: C:\tools\vcpkg\installed
 
 build: off
 
 before_test:
+  - ragel --version
   - ruby --version
   - gem --version
   - bundle --version
