@@ -1,14 +1,16 @@
 ---
+image: Visual Studio 2017
+
 version: "{build}"
 
 install:
   # Binary taken from http://w858rkbfg.homepage.t-online.de/index.php/software/ragel-windows/,
   # rehosted on AWS so it doesn't randomly vanish.
-  - appveyor DownloadFile http://downloads.yorickpeterse.com/files/ragel-68-visualstudio2012.7z -FileName C:\ragel.7z
-  - 7z e C:\ragel.7z -oC:\ragel -y > nul
+  - vcpkg install ragel
   - SET PATH=C:\Ruby%ruby_version%\bin;%PATH%
-  - SET PATH=C:\ragel;%PATH%
   - bundle install --retry 3
+
+cache: C:\tools\vcpkg\installed\
 
 build: off
 
