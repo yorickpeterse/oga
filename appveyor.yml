@@ -4,14 +4,10 @@ image: Visual Studio 2017
 version: "{build}"
 
 install:
-  - if "%platform%"=="Win32" set VCPKG_ARCH=x86-windows
-  - if "%platform%"=="x64"   set VCPKG_ARCH=x64-windows
-  - vcpkg install ragel:%VCPKG_ARCH%
-  - SET PATH=C:\tools\vcpkg\installed\%VCPKG_ARCH%\bin;%PATH%
+  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-x86_64-ragel"
+  - SET PATH=C:\msys64\mingw64\bin;%PATH%
   - SET PATH=C:\Ruby%ruby_version%\bin;%PATH%
   - bundle install --retry 3
-
-cache: C:\tools\vcpkg\installed
 
 build: off
 
