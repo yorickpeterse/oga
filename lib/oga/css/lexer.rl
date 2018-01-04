@@ -23,7 +23,7 @@ module Oga
 
       # @param [String] data The data to lex.
       def initialize(data)
-        @data = data
+        @data = data.strip
       end
 
       # Gathers all the tokens for the input and returns them as an Array.
