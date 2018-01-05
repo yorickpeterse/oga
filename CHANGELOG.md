@@ -3,6 +3,11 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 2.13 - 2018-01-05
+
+Leading and trailing whitespace is now removed from CSS selectors. See
+<https://gitlab.com/yorickpeterse/oga/merge_requests/183> for more information.
+
 ## 2.12 - 2017-12-29
 
 Element start tags containing other start tags (e.g. `<script<script>`) are now
