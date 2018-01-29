@@ -289,5 +289,13 @@ describe Oga::XML::Node do
       expect { |b| @child2.each_ancestor(&b) }
         .to yield_successive_args(@child1, @root)
     end
+
+    describe 'without a block' do
+      it 'returns an enumerator' do
+        enum = @child2.each_ancestor
+        expect(enum).to be_a(Enumerator)
+        expect(enum.to_a).to eq([@child1, @root])
+      end
+    end
   end
 end

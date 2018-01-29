@@ -27,6 +27,8 @@ module Oga
       #
       # @yieldparam [Oga::XML::Node] The current node.
       def each_node
+        return to_enum(:each_node) unless block_given?
+
         visit = children.to_a.reverse
 
         until visit.empty?

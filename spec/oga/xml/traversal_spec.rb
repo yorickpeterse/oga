@@ -40,5 +40,17 @@ describe Oga::XML::Traversal do
 
       expect(names).to eq(%w{books book2 title2})
     end
+
+    describe 'without a block' do
+      it 'returns an enumerator' do
+        enum = @document.each_node
+        expect(enum).to be_a(Enumerator)
+
+        names = enum.to_a.map do |node| 
+          node.is_a?(Oga::XML::Element) ? node.name : node.text
+        end
+        expect(names).to eq(%w{books book1 title1 Foo book2 title2 Bar})
+      end
+    end
   end
 end

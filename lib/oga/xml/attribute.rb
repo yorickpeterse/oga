@@ -99,12 +99,14 @@ module Oga
       end
 
       # @see [Oga::XML::Node#each_ancestor]
-      def each_ancestor(&block)
+      def each_ancestor
+        return to_enum(:each_ancestor) unless block_given?
+
         return unless element
 
         yield element
 
-        element.each_ancestor(&block)
+        element.each_ancestor { |ancestor| yield ancestor }
       end
 
       private

@@ -211,5 +211,17 @@ EOF
           .to yield_successive_args(child, parent)
       end
     end
+
+    describe 'without a block' do
+      it 'returns an enumerator' do
+        child  = Oga::XML::Element.new(:name => 'b')
+        parent = Oga::XML::Element.new(:name => 'a', :children => [child])
+        attr   = described_class.new(:name => 'class', :element => child)
+
+        enum = attr.each_ancestor
+        expect(enum).to be_a(Enumerator)
+        expect(enum.to_a).to eq([child, parent])
+      end
+    end
   end
 end

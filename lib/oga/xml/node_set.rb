@@ -53,6 +53,8 @@ module Oga
       #
       # @yieldparam [Oga::XML::Node]
       def each
+        return to_enum(:each) unless block_given?
+
         @nodes.each { |node| yield node }
       end
 

@@ -180,6 +180,8 @@ module Oga
       #
       # @yieldparam [Oga::XML::Node]
       def each_ancestor
+        return to_enum(:each_ancestor) unless block_given?
+
         node = parent
 
         while node.is_a?(XML::Element)

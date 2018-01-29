@@ -63,6 +63,18 @@ describe Oga::XML::NodeSet do
 
       expect(yielded).to eq([n1, n2])
     end
+
+    describe 'without a block' do
+      it 'returns an enumerator' do
+        n1 = Oga::XML::Element.new(:name => 'a')
+        n2 = Oga::XML::Element.new(:name => 'b')
+        set = described_class.new([n1, n2])
+
+        enum = set.each
+        expect(enum).to be_a(Enumerator)
+        expect(enum.to_a).to eq([n1, n2])
+      end
+    end
   end
 
   describe 'Enumerable behaviour' do
