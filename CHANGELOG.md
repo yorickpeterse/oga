@@ -3,6 +3,12 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 2.14 - 2018-01-30
+
+Various methods that yield a block now return an Enumerator when no block is
+provided. See merge request
+<https://gitlab.com/yorickpeterse/oga/merge_requests/184> for more information.
+
 ## 2.13 - 2018-01-05
 
 Leading and trailing whitespace is now removed from CSS selectors. See
