@@ -3,6 +3,12 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 2.15 - 2018-04-11
+
+The HTML parser now allows `th` elements to occur in `thead`, `tbody`, and
+`tfoot` elements. See issue <https://gitlab.com/yorickpeterse/oga/issues/190>
+for more information.
+
 ## 2.14 - 2018-01-30
 
 Various methods that yield a block now return an Enumerator when no block is
