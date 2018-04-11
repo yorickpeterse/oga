@@ -58,7 +58,11 @@ module Oga
 
       HTML_SCRIPT_ELEMENTS = Whitelist.new(%w{script template})
 
-      HTML_TABLE_ROW_ELEMENTS = Whitelist.new(%w{tr}) + HTML_SCRIPT_ELEMENTS
+      # The elements that may occur in a thead, tbody, or tfoot.
+      #
+      # Technically "th" is not allowed per the HTML5 spec, but it's so commonly
+      # used in these elements that we allow it anyway.
+      HTML_TABLE_ROW_ELEMENTS = Whitelist.new(%w{tr th}) + HTML_SCRIPT_ELEMENTS
 
       # Elements that should be closed automatically before a new opening tag is
       # processed.

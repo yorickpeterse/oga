@@ -53,5 +53,15 @@ describe Oga::XML::Lexer do
         [:T_ELEM_END, nil, 1]
       ])
     end
+
+    it 'lexes a <tbody> element containing a <th> element' do
+      expect(lex_html('<tbody><th>foo</th></tbody>')).to eq([
+        [:T_ELEM_NAME, 'tbody', 1],
+        [:T_ELEM_NAME, 'th', 1],
+        [:T_TEXT, 'foo', 1],
+        [:T_ELEM_END, nil, 1],
+        [:T_ELEM_END, nil, 1]
+      ])
+    end
   end
 end
