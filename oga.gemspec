@@ -29,7 +29,6 @@ Gem::Specification.new do |s|
     s.extensions = ['ext/c/extconf.rb']
   end
 
-  s.has_rdoc              = 'yard'
   s.required_ruby_version = '>= 1.9.3'
 
   s.add_dependency 'ast'
