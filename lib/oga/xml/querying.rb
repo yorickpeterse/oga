@@ -10,6 +10,7 @@ module Oga
       #     document = Oga.parse_xml <<-EOF
       #     <people>
       #       <person age="25">Alice</person>
+      #       <ns:person xmlns:ns="http://example.net">Bob</ns:person>
       #     </people>
       #     EOF
       #
@@ -25,15 +26,23 @@ module Oga
       #
       #     document.xpath('people/person[@age = $age]', 'age' => 25)
       #
+      # Using namespace aliases:
+      #
+      #     namespaces = {'example' => 'http://example.net'}
+      #     document.xpath('people/example:person', namespaces: namespaces)
+      #
       # @param [String] expression The XPath expression to run.
       #
       # @param [Hash] variables Variables to bind. The keys of this Hash should
       #  be String values.
       #
+      # @param [Hash] namespaces Namespace aliases. The keys of this Hash should
+      #  be String values.
+      #
       # @return [Oga::XML::NodeSet]
-      def xpath(expression, variables = {})
+      def xpath(expression, variables = {}, namespaces: nil)
         ast   = XPath::Parser.parse_with_cache(expression)
-        block = XPath::Compiler.compile_with_cache(ast)
+        block = XPath::Compiler.compile_with_cache(ast, namespaces: namespaces)
 
         block.call(self, variables)
       end

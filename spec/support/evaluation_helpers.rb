@@ -5,9 +5,9 @@ module Oga
     # @param [String] xpath
     # @return [Oga::XML::NodeSet]
     #
-    def evaluate_xpath(document, xpath = self.class.description)
+    def evaluate_xpath(document, xpath = self.class.description, namespaces: nil)
       ast      = parse_xpath(xpath)
-      compiler = Oga::XPath::Compiler.new
+      compiler = Oga::XPath::Compiler.new(namespaces: namespaces)
       block    = compiler.compile(ast)
 
       block.call(document)

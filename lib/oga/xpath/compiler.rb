@@ -42,12 +42,16 @@ module Oga
       # Compiles and caches an AST.
       #
       # @see [#compile]
-      def self.compile_with_cache(ast)
-        CACHE.get_or_set(ast) { new.compile(ast) }
+      def self.compile_with_cache(ast, namespaces: nil)
+        cache_key = namespaces ? [ast, namespaces] : ast
+        CACHE.get_or_set(cache_key) { new(namespaces: namespaces).compile(ast) }
       end
 
-      def initialize
+      # @param [Hash] namespaces
+      def initialize(namespaces: nil)
         reset
+
+        @namespaces = namespaces
       end
 
       # Resets the internal state.
@@ -1385,7 +1389,18 @@ module Oga
         end
 
         if ns and ns != STAR
-          ns_match  = input.namespace_name.eq(string(ns))
+          if @namespaces
+            ns_uri = @namespaces[ns]
+            ns_match = 
+              if ns_uri
+                input.namespace.and(input.namespace.uri.eq(string(ns_uri)))
+              else
+                self.false
+              end
+          else
+            ns_match = input.namespace_name.eq(string(ns))
+          end
+
           condition = condition ? condition.and(ns_match) : ns_match
         end
 
