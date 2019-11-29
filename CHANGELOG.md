@@ -3,6 +3,18 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 2.16 - 2019-11-29
+
+* XPath namespace aliases can now be used when querying elements using XPath
+  expressions.
+* Several RDOc and RubyGems deprecation warnings have been resolved.
+
+See the following commits for more information:
+
+* <https://gitlab.com/yorickpeterse/oga/commit/d9e7346b60c3afa2b3e83a240f9807c6bb819d48>
+* <https://gitlab.com/yorickpeterse/oga/commit/da9721cb34f91527e72b096c6bd6a128e37b1992>
+* <https://gitlab.com/yorickpeterse/oga/commit/977bd594c8bfd1a29aeba9d3a4ab7d0ebbc7d11a>
+
 ## 2.15 - 2018-04-11
 
 The HTML parser now allows `th` elements to occur in `thead`, `tbody`, and
