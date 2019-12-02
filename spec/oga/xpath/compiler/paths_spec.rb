@@ -68,4 +68,26 @@ describe Oga::XPath::Compiler do
       end
     end
   end
+
+  describe 'querying elements with a default namespace' do
+    before do
+      @document = parse('<a xmlns="n" xmlns:ns1="x">Foo<b></b><b></b><ns1:c></ns1:c></a>')
+
+      @a1 = @document.children[0]
+      @b1 = @a1.children[1]
+      @b2 = @a1.children[2]
+    end
+
+    describe '/xmlns:a' do
+      it 'returns a NodeSet' do
+        expect(evaluate_xpath(@document)).to eq(node_set(@a1))
+      end
+    end
+
+    describe '//xmlns:b' do
+      it 'returns a NodeSet' do
+        expect(evaluate_xpath(@document)).to eq(node_set(@b1, @b2))
+      end
+    end
+  end
 end

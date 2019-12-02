@@ -1391,14 +1391,19 @@ module Oga
         if ns and ns != STAR
           if @namespaces
             ns_uri = @namespaces[ns]
-            ns_match = 
+            ns_match =
               if ns_uri
                 input.namespace.and(input.namespace.uri.eq(string(ns_uri)))
               else
                 self.false
               end
           else
-            ns_match = input.namespace_name.eq(string(ns))
+            ns_match =
+              if ns == XML::Element::XMLNS_PREFIX
+                input
+              else
+                input.namespace_name.eq(string(ns))
+              end
           end
 
           condition = condition ? condition.and(ns_match) : ns_match
