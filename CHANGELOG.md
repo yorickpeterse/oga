@@ -3,6 +3,14 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 2.17 - 2019-12-02
+
+Elements using the default XML namespace can now be queried using XPath queries,
+which was broken for quite a while.
+
+See commit <https://gitlab.com/yorickpeterse/oga/commit/95da93949bf613612981f5cd7decc0d2c2a60e15>
+for more information.
+
 ## 2.16 - 2019-11-29
 
 * XPath namespace aliases can now be used when querying elements using XPath

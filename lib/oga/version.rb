@@ -1,3 +1,3 @@
 module Oga
-  VERSION = '2.16'
+  VERSION = '2.17'
 end # Oga
