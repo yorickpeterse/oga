@@ -29,7 +29,7 @@ Gem::Specification.new do |s|
     s.extensions = ['ext/c/extconf.rb']
   end
 
-  s.required_ruby_version = '>= 1.9.3'
+  s.required_ruby_version = '>= 2.3.0'
 
   s.add_dependency 'ast'
   s.add_dependency 'ruby-ll', '~> 2.1'

@@ -172,7 +172,7 @@ Querying a document using a namespace:
 
 | Ruby     | Required      | Recommended |
 |:---------|:--------------|:------------|
-| MRI      | >= 1.9.3      | >= 2.1.2    |
+| MRI      | >= 2.3.0      | >= 2.6.0    |
 | Rubinius | >= 2.2        | >= 2.2.10   |
 | JRuby    | >= 1.7        | >= 1.7.12   |
 | Maglev   | Not supported |             |
