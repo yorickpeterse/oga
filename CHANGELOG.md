@@ -3,6 +3,12 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 3.0 - 2019-12-03
+
+This release bumps the Ruby version requirement to Ruby 2.3.0, as we haven't
+supported older versions for several years now. We also no longer officially
+support Rubinius.
+
 ## 2.17 - 2019-12-02
 
 Elements using the default XML namespace can now be queried using XPath queries,
