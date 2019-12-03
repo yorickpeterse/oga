@@ -227,15 +227,14 @@ And if you want to specify an explicit namespace URI, you can use this:
 
     descendant::*[local-name() = "bar" and namespace-uri() = "http://example.com"]
 
-Unlike Nokogiri, Oga does _not_ provide a way to create "dynamic" namespaces.
-That is, Nokogiri allows one to query the above document as following:
+Like Nokogiri, Oga provides a way to create "dynamic" namespaces.
+That is, Oga allows one to query the above document as following:
 
-    document = Nokogiri::XML('<root xmlns="http://example.com"><bar>bar</bar></root>')
+    document = Oga.parse_xml('<root xmlns="http://example.com"><bar>bar</bar></root>')
 
-    document.xpath('x:root/x:bar', :x => 'http://example.com')
+    document.xpath('x:root/x:bar', namespaces: {'x' => 'http://example.com'})
 
-Oga does have a small trick you can use to cut down the size of your XPath
-queries. Because Oga assigns the name "xmlns" to default namespaces you can use
+Moreover, because Oga assigns the name "xmlns" to default namespaces you can use
 this in your XPath queries:
 
     document = Oga.parse_xml('<root xmlns="http://example.com"><bar>bar</bar></root>')
@@ -245,9 +244,6 @@ this in your XPath queries:
 When using this you can still restrict the query to the correct namespace URI:
 
     document.xpath('xmlns:root[namespace-uri() = "http://example.com"]/xmlns:bar')
-
-In the future I might add an API to ease this process, although at this time I
-have little interest in providing an API similar to Nokogiri.
 
 ## HTML5 Support
 
