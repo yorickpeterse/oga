@@ -108,10 +108,36 @@ describe Oga::XML::Lexer do
 
     # Technically not valid, put in place to make sure that the Ragel rules are
     # not too greedy.
-    it 'lexes an inline doftype followed by a system ID' do
+    it 'lexes an inline doctype followed by a system ID' do
       expect(lex('<!DOCTYPE html [<!ELEMENT foo>] "foo">')).to eq([
         [:T_DOCTYPE_START, nil, 1],
         [:T_DOCTYPE_NAME, 'html', 1],
+        [:T_DOCTYPE_INLINE, '<!ELEMENT foo>', 1],
+        [:T_STRING_DQUOTE, nil, 1],
+        [:T_STRING_BODY, 'foo', 1],
+        [:T_STRING_DQUOTE, nil, 1],
+        [:T_DOCTYPE_END, nil, 1]
+      ])
+    end
+
+    it 'does not care about the casing when using a public doctype' do
+      expect(lex('<!DoCtYpE HtMl PuBlIc [<!ELEMENT foo>] "foo">')).to eq([
+        [:T_DOCTYPE_START, nil, 1],
+        [:T_DOCTYPE_NAME, 'HtMl', 1],
+        [:T_DOCTYPE_TYPE, 'PuBlIc', 1],
+        [:T_DOCTYPE_INLINE, '<!ELEMENT foo>', 1],
+        [:T_STRING_DQUOTE, nil, 1],
+        [:T_STRING_BODY, 'foo', 1],
+        [:T_STRING_DQUOTE, nil, 1],
+        [:T_DOCTYPE_END, nil, 1]
+      ])
+    end
+
+    it 'does not care about the casing when using a system doctype' do
+      expect(lex('<!DoCtYpE HtMl SyStEm [<!ELEMENT foo>] "foo">')).to eq([
+        [:T_DOCTYPE_START, nil, 1],
+        [:T_DOCTYPE_NAME, 'HtMl', 1],
+        [:T_DOCTYPE_TYPE, 'SyStEm', 1],
         [:T_DOCTYPE_INLINE, '<!ELEMENT foo>', 1],
         [:T_STRING_DQUOTE, nil, 1],
         [:T_STRING_BODY, 'foo', 1],

@@ -289,7 +289,7 @@
     # Machine for processing doctypes. Doctype values such as the public
     # and system IDs are treated as T_STRING tokens.
     doctype := |*
-        'PUBLIC' | 'SYSTEM' => {
+        'PUBLIC'i | 'SYSTEM'i => {
             callback(id_on_doctype_type, data, encoding, ts, te);
         };
 
