@@ -19,7 +19,7 @@ describe Oga::XML::Querying do
     end
 
     it 'evaluates an expression using a variable' do
-      expect(@document.xpath('$number', 'number' => 10)).to eq(10)
+      expect(@document.xpath('$number', {'number' => 10})).to eq(10)
     end
 
     it 'respects custom namespace aliases' do
@@ -37,7 +37,7 @@ describe Oga::XML::Querying do
     end
 
     it 'evaluates an expression using a variable' do
-      expect(@document.at_xpath('$number', 'number' => 10)).to eq(10)
+      expect(@document.at_xpath('$number', {'number' => 10})).to eq(10)
     end
 
     it 'respects custom namespace aliases' do
