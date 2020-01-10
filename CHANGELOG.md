@@ -3,6 +3,12 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 3.2 - 2020-01-10
+
+This release fixes a few warnings that would show up when using Oga on Ruby
+2.7.0. See https://gitlab.com/yorickpeterse/oga/merge_requests/190 for more
+information.
+
 ## 3.1 - 2020-01-08
 
 This release fixes a bug in the XML lexer that prevented the parsing of doctypes
