@@ -30,6 +30,10 @@ Ruby 2.6:
   image: "ruby:2.6-alpine"
   <<: *defaults
 
+Ruby 2.7:
+  image: "ruby:2.7-alpine"
+  <<: *defaults
+
 JRuby 9.1:
   image: "jruby:9.1-alpine"
   variables:
