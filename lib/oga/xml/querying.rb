@@ -63,8 +63,8 @@ module Oga
       #
       # @see [#xpath]
       # @return [Oga::XML::Node|Oga::XML::Attribute]
-      def at_xpath(*args)
-        result = xpath(*args)
+      def at_xpath(*args, namespaces: nil)
+        result = xpath(*args, namespaces: namespaces)
 
         result.is_a?(XML::NodeSet) ? result.first : result
       end
