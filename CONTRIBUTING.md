@@ -146,13 +146,8 @@ things.
 
 ## Continuous Integration
 
-Two continuous integration services are used to ensure the tests of Oga pass
-at all times:
-
-* Travis CI: <https://gitlab.com/yorickpeterse/oga/pipelines>
-* AppVeyor (Windows): <https://ci.appveyor.com/project/yorickpeterse/oga>
-
-Pull requests won't be merged if any of the builds fail unless stated otherwise.
+Oga is tested using GitLab CI. Merge requests require that all tests pass before
+they can be merged.
 
 ## Extension Setup
 
@@ -219,7 +214,7 @@ modify `$LOAD_PATH`, instead run any scripts using `ruby -I lib`.
 In case you have any further questions or would like to receive feedback before
 submitting a change, feel free to contact me. You can either open an issue,
 send a tweet to [@yorickpeterse][twitter] or send an Email to
-<yorickpeterse@gmail.com>.
+<yorick@yorickpeterse.com>.
 
 [editorconfig]:http://editorconfig.org/
 [twitter]: https://twitter.com/yorickpeterse
