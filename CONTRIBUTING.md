@@ -28,7 +28,7 @@ When making changes please stick to the existing style and patterns as this
 keeps the codebase consistent. If a certain pattern or style is getting in your
 way please open a separate issue about this so it can be discussed.
 
-Every commit and every pull request made is carefully reviewed. Chances are I'll
+Every commit and every merge request made is carefully reviewed. Chances are I'll
 spend more time reviewing it than the time an author spent on their changes.
 This should ensure that Oga's codebase is stable, of high quality and easy to
 maintain. As such _please_ take my feedback into consideration (or discuss it in
@@ -36,18 +36,18 @@ a civilized manner) instead of just dismissing it with comments such as "But I
 fixed the problem so your feedback is irrelevant" or "This is my way of doing
 things".
 
-Finally, and this will sound harsh: I will _not_ merge pull requests if the
+Finally, and this will sound harsh: I will _not_ merge merge requests if the
 author(s) simply disregard the feedback I've given them or if there are other
-problems with the pull request. Do not expect me to just blindly accept whatever
+problems with the merge request. Do not expect me to just blindly accept whatever
 changes are submitted.
 
-Some examples of good pull request:
+Some examples of good merge requests:
 
-* https://gitlab.com/yorickpeterse/oga/pull/96
-* https://gitlab.com/yorickpeterse/oga/pull/67
-* https://gitlab.com/yorickpeterse/ffi-aspell/pull/21
-* https://gitlab.com/yorickpeterse/ffi-aspell/pull/20
-* https://gitlab.com/yorickpeterse/ruby-ll/pull/16
+* https://gitlab.com/yorickpeterse/oga/-/merge_requests/96
+* https://gitlab.com/yorickpeterse/oga/-/merge_requests/67
+* https://gitlab.com/yorickpeterse/ffi-aspell/-/merge_requests/21
+* https://gitlab.com/yorickpeterse/ffi-aspell/-/merge_requests/20
+* https://gitlab.com/yorickpeterse/ruby-ll/-/merge_requests/16
 
 ## Git
 
@@ -140,7 +140,7 @@ such a case use `describe 'foo'` for class methods and `describe '#foo'` for
 instance methods.
 
 Whenever adding new specifications please keep them in the existing style. If
-the style is problematic you can open a separate pull request to address it. If
+the style is problematic you can open a separate merge request to address it. If
 you expect this to be a lot of work you should open an issue first to discuss
 things.
 
