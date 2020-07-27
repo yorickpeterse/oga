@@ -3,6 +3,12 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 3.3 - 2020-07-27
+
+This release adds `to_s` as an alias for `to_xml`, thanks to Roy Zwambag. See
+merge request https://gitlab.com/yorickpeterse/oga/-/merge_requests/192 for more
+information.
+
 ## 3.2 - 2020-01-10
 
 This release fixes a few warnings that would show up when using Oga on Ruby
