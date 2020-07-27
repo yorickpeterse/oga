@@ -7,6 +7,8 @@ module Oga
       def to_xml
         Generator.new(self).to_xml
       end
+
+      alias_method :to_s, :to_xml
     end
   end
 end
