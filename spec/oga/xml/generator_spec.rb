@@ -168,5 +168,16 @@ describe Oga::XML::Generator do
         end
       end
     end
+
+    describe 'using an Element with replaced children' do
+      it 'returns a string' do
+        element = Oga::XML::Element.new(name: 'foo')
+        element.children = Oga::XML::Parser.new('<bar></bar>').parse.children
+
+        output = described_class.new(element).to_xml
+
+        expect(output).to eq('<foo><bar /></foo>')
+      end
+    end
   end
 end

@@ -47,6 +47,7 @@ module Oga
       def children=(nodes)
         if nodes.is_a?(NodeSet)
           nodes.owner = self
+          nodes.take_ownership_on_nodes
           @children = nodes
         else
           @children = NodeSet.new(nodes, self)

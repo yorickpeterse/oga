@@ -42,11 +42,7 @@ module Oga
         @owner    = owner
         @existing = {}
 
-        @nodes.each_with_index do |node, index|
-          mark_existing(node)
-
-          take_ownership(node, index) if @owner
-        end
+        take_ownership_on_nodes
       end
 
       # Yields the supplied block for every node.
@@ -287,6 +283,14 @@ module Oga
         values = @nodes.map(&:inspect).join(', ')
 
         "NodeSet(#{values})"
+      end
+
+      def take_ownership_on_nodes
+        @nodes.each_with_index do |node, index|
+          mark_existing(node)
+
+          take_ownership(node, index) if @owner
+        end
       end
 
       private
