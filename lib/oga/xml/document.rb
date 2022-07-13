@@ -46,6 +46,7 @@ module Oga
       # @param [Oga::XML::NodeSet|Array] nodes
       def children=(nodes)
         if nodes.is_a?(NodeSet)
+          nodes.owner = self
           @children = nodes
         else
           @children = NodeSet.new(nodes, self)

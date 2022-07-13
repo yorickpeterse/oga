@@ -22,6 +22,7 @@ describe Oga::XML::Document do
       document.children = [child]
 
       expect(document.children[0]).to eq(child)
+      expect(document.children[0].parent).to eq(document)
     end
 
     it 'sets the child nodes using a NodeSet' do
@@ -31,6 +32,7 @@ describe Oga::XML::Document do
       document.children = Oga::XML::NodeSet.new([child])
 
       expect(document.children[0]).to eq(child)
+      expect(document.children[0].parent).to eq(document)
     end
   end
 
