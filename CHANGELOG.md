@@ -3,6 +3,12 @@
 This document contains details of the various releases and their release dates.
 Dates are in the format `yyyy-mm-dd`.
 
+## 3.4 - 2022-08-02
+
+This release includes a change that when setting the child nodes of a node A,
+node A takes ownership over the entire new child tree. See merge request
+https://gitlab.com/yorickpeterse/oga/-/merge_requests/194 for more details.
+
 ## 3.3 - 2020-07-27
 
 This release adds `to_s` as an alias for `to_xml`, thanks to Roy Zwambag. See
