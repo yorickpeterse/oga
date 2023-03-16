@@ -266,7 +266,7 @@ well as complicating the parsing internals of Oga. As a result I have decided
 that Oga _does not_ insert these tags when left out.
 
 A more in depth explanation can be found here:
-<https://gitlab.com/yorickpeterse/oga/issues/98#note_45443992>
+<https://github.com/yorickpeterse/oga/issues/98>
 
 ## Documentation
 
