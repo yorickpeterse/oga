@@ -27,9 +27,8 @@ describe Oga::XPath::Compiler do
     end
 
     it 'raises a TypeError for invalid argument types' do
-      block = -> { evaluate_xpath(@document, 'name("foo")') }
-
-      expect(block).to raise_error(TypeError)
+      expect { evaluate_xpath(@document, 'name("foo")') }
+        .to raise_error(TypeError)
     end
 
     it 'returns a node set containing nodes with a name' do

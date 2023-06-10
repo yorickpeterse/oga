@@ -23,9 +23,8 @@ describe Oga::XPath::Compiler do
       end
 
       it 'raises a TypeError for non node set arguments' do
-        block = -> { evaluate_xpath(@document, 'sum("foo")') }
-
-        expect(block).to raise_error(TypeError)
+        expect { evaluate_xpath(@document, 'sum("foo")') }
+          .to raise_error(TypeError)
       end
     end
 

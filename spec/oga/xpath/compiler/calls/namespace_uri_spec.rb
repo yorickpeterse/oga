@@ -19,9 +19,8 @@ describe Oga::XPath::Compiler do
     end
 
     it 'raises TypeError for invalid argument types' do
-      block = -> { evaluate_xpath(@document, 'namespace-uri("foo")') }
-
-      expect(block).to raise_error(TypeError)
+      expect { evaluate_xpath(@document, 'namespace-uri("foo")') }
+        .to raise_error(TypeError)
     end
 
     it 'returns a node set containing nodes with a namespace URI' do

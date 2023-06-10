@@ -23,15 +23,13 @@ describe Oga::XPath::Compiler do
     end
 
     it 'raises ArgumentError if no arguments are given' do
-      block = -> { evaluate_xpath(@document, 'count()') }
-
-      expect(block).to raise_error(ArgumentError)
+      expect { evaluate_xpath(@document, 'count()') }
+        .to raise_error(ArgumentError)
     end
 
     it 'raises TypeError if the argument is not a NodeSet' do
-      block = -> { evaluate_xpath(@document, 'count(1)') }
-
-      expect(block).to raise_error(TypeError)
+      expect { evaluate_xpath(@document, 'count(1)') }
+        .to raise_error(TypeError)
     end
   end
 end

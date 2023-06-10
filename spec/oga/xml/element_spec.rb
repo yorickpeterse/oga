@@ -538,9 +538,8 @@ describe Oga::XML::Element do
     end
 
     it 'raises ArgumentError if the namespace already exists' do
-      block = lambda { @element.register_namespace('foo', 'bar') }
-
-      expect(block).to raise_error(ArgumentError)
+      expect { @element.register_namespace('foo', 'bar') }
+        .to raise_error(ArgumentError)
     end
 
     it 'flushes the cache when registering a namespace' do
