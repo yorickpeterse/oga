@@ -22,6 +22,8 @@ if RUBY_PLATFORM == 'java'
 
   Rake::JavaExtensionTask.new('liboga', GEMSPEC) do |task|
     task.ext_dir = 'ext/java'
+    task.target_version = '1.8'
+    task.source_version = '1.8'
   end
 else
   require 'rake/extensiontask'
