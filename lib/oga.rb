@@ -19,6 +19,8 @@ require 'liboga'
 
 #:nocov:
 if RUBY_PLATFORM == 'java'
+  require 'jruby'
+
   org.liboga.Liboga.load(JRuby.runtime)
 end
 #:nocov:
