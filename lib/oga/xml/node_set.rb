@@ -267,7 +267,7 @@ module Oga
       #
       # @return [String]
       def text
-        text = ''
+        text = +''
 
         @nodes.each do |node|
           if node.respond_to?(:text) and !node.is_a?(Comment)
