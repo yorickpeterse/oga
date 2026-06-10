@@ -68,6 +68,17 @@ void liboga_xml_lexer_callback_simple(VALUE self, VALUE name)
 
 %% write data;
 
+static size_t oga_xml_lexer_memsize(const void *state)
+{
+    return state ? sizeof(OgaLexerState) : 0;
+}
+
+static const rb_data_type_t oga_xml_lexer_data_type = {
+    "Oga::XML::Lexer",
+    {NULL, RUBY_DEFAULT_FREE, oga_xml_lexer_memsize,},
+    0, 0, RUBY_TYPED_FREE_IMMEDIATELY,
+};
+
 /**
  * Lexes the String specifies as the method argument. Token values have the
  * same encoding as the input value.
@@ -124,7 +135,7 @@ VALUE oga_xml_lexer_advance(VALUE self, VALUE data_block)
     ID id_on_xml_decl_end     = rb_intern("on_xml_decl_end");
     ID id_on_xml_decl_start   = rb_intern("on_xml_decl_start");
 
-    Data_Get_Struct(self, OgaLexerState, state);
+    TypedData_Get_Struct(self, OgaLexerState, &oga_xml_lexer_data_type, state);
 
     lines = state->lines;
 
@@ -142,7 +153,7 @@ VALUE oga_xml_lexer_reset(VALUE self)
 {
     OgaLexerState *state;
 
-    Data_Get_Struct(self, OgaLexerState, state);
+    TypedData_Get_Struct(self, OgaLexerState, &oga_xml_lexer_data_type, state);
 
     state->act   = 0;
     state->cs    = c_lexer_start;
@@ -160,7 +171,7 @@ VALUE oga_xml_lexer_allocate(VALUE klass)
 {
     OgaLexerState *state;
 
-    return Data_Make_Struct(klass, OgaLexerState, NULL, RUBY_DEFAULT_FREE, state);
+    return TypedData_Make_Struct(klass, OgaLexerState, &oga_xml_lexer_data_type, state);
 }
 
 %%{
