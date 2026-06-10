@@ -153,22 +153,14 @@ VALUE oga_xml_lexer_reset(VALUE self)
 }
 
 /**
- * Frees the associated lexer state struct.
- */
-void oga_xml_lexer_free(void *state)
-{
-    free((OgaLexerState *) state);
-}
-
-/**
  * Allocates and wraps the C lexer state struct. This state is used to keep
  * track of the current position, line numbers, etc.
  */
 VALUE oga_xml_lexer_allocate(VALUE klass)
 {
-    OgaLexerState *state = malloc(sizeof(OgaLexerState));
+    OgaLexerState *state;
 
-    return Data_Wrap_Struct(klass, NULL, oga_xml_lexer_free, state);
+    return Data_Make_Struct(klass, OgaLexerState, NULL, RUBY_DEFAULT_FREE, state);
 }
 
 %%{
